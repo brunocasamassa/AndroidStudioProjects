@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        app:srcCompat="@drawable/detalhe_empresa"
+        android:id="@+id/imageView" />
+
+    <ScrollView
+        android:layout_height="300dp"
+        android:layout_marginBottom="24dp"
+        android:layout_width="300dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_height="300dp"
+            android:layout_width="300dp"
+            android:text="A empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa A empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa A empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa A empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA A empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA emprA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresaA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresaA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresaA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresaA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresaesaMA empresa empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa ATMA empresa" />
+    </ScrollView>
+
+    <TextView
+        android:text="Sobre a ATM"
+        android:id="@+id/textView"
+        android:layout_height="50dp"
+        tools:text="Sobre a ATM"
+        android:layout_width="250dp"
+        android:textSize="40sp"
+        android:textColor="@color/empresaTitle"
+        android:textStyle="normal|bold"
+        android:layout_marginTop="36dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <ImageButton
+        app:srcCompat="@drawable/home"
+        android:id="@+id/imageButton"
+        android:scaleType="fitCenter"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" /><!--android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />-->
+</RelativeLayout>
