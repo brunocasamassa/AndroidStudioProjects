@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
-    <com.facebook.login.widget.ProfilePictureView
-        android:id="@+id/profileImage"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        tools:ignore="UnknownId"
+        app:srcCompat="@mipmap/ic_launcher"
+        android:layout_marginTop="108dp"
+        android:id="@+id/profileImage"
+        tools:ignore="ContentDescription"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="125dp" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:text="TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profileImage"
-        android:layout_alignRight="@+id/profileImage"
-        android:layout_alignEnd="@+id/profileImage"
-        android:layout_marginTop="105dp"
-        android:id="@+id/nome" />
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/nome"
+        tools:ignore="HardcodedText"
+        android:layout_marginBottom="75dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

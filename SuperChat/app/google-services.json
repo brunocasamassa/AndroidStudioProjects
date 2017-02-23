@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "203654646895",
+    "firebase_url": "https://superchat-54b9e.firebaseio.com",
+    "project_id": "superchat-54b9e",
+    "storage_bucket": "superchat-54b9e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:203654646895:android:940734433bab3a3a",
+        "android_client_info": {
+          "package_name": "studio.brunocasamassa.superchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "203654646895-nm8rsc5564gagee5j4gp0500vvrs9gii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "studio.brunocasamassa.superchat",
+            "certificate_hash": "BE4A186F9C27306E8452C0AFBFF3DA58EB8D9252"
+          }
+        },
+        {
+          "client_id": "203654646895-0c05iefk8k72eu3u4plgujbu4rmshj92.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTX-7FdEF7kMt5AmtPDhdeveg3eK17zvs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "203654646895-0c05iefk8k72eu3u4plgujbu4rmshj92.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

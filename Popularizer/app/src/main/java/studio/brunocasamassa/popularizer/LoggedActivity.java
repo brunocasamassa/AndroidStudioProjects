@@ -1,18 +1,24 @@
 package studio.brunocasamassa.popularizer;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.preference.Preference;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
+import com.bumptech.glide.Glide;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.Profile;
+import com.facebook.internal.ImageRequest;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
@@ -24,21 +30,69 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoggedActivity extends AppCompatActivity {
 
     private LoginButton btnLogin;
     private CallbackManager callbackManager;
-    private ProfilePictureView profileImage;
+    private ImageView profileImage;
     private TextView profileName;
+    private LoginResult loginResult;
+    private Preference prefUtil;
+    private ImageRequest glide;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        loginResult = MainActivity.lr;
+        System.out.println("LOGIN RESULT: "+ loginResult);
 
+        profileImage = (ImageView) findViewById(R.id.profileImage);
+
+        profileName = (TextView) findViewById(R.id.nome);
+
+        Profile profile = Profile.getCurrentProfile();
+
+        String userid = loginResult.getAccessToken().getUserId();
+        String namee = message(profile);
+        profileName.setText(namee);
+        System.out.println("MENSAGEM DO FRONT: "+ message(profile));
+
+        String userId = loginResult.getAccessToken().getUserId();
+        System.out.println("ID USER: "+userId);
+        String accessToken = loginResult.getAccessToken().getToken();
+
+        String profileImgUrl = "https://graph.facebook.com/" + userId + "/picture?type=large";
+
+        Glide.with(LoggedActivity.this).load(profileImgUrl).into(profileImage);
+    }
+
+
+
+    private String message(Profile profile) {
+        StringBuilder stringBuffer = new StringBuilder();
+            stringBuffer.append(profile.getName());
+            System.out.println(stringBuffer);
+
+        return stringBuffer.toString();
+    }
+
+
+
+    // save accessToken to SharedPreference
+
+    // loginResult.saveAccessToken(accessToken);
+
+
+}
+
+
+
+/*
         if (AccessToken.getCurrentAccessToken() == null) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            startActivity(new Intent(LoggedActivity.this, MainActivity.class)); //comeback
         } else {
             GraphRequest request = GraphRequest.newMeRequest(
                     AccessToken.getCurrentAccessToken(),
@@ -53,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
                     });
 
             Bundle parameters = new Bundle();
-            parameters.putString("fields", "id, name,email,gender, birthday");
+            parameters.putString("fields", "id, nome,email,gender, birthday");
             request.setParameters(parameters);
             request.executeAsync();
 
@@ -66,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
 //            email.setText(jsonObject.getString("email"));
 //            gender.setText(jsonObject.getString("gender"));
 
-            profileName.setText(jsonObject.getString("name"));
+            profileName.setText(jsonObject.getString("nome"));
             profileImage.setPresetSize(ProfilePictureView.NORMAL);
             profileImage.setProfileId(jsonObject.getString("id"));
 //            infoLayout.setVisibility(View.VISIBLE);
@@ -74,7 +128,6 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-
-
 }
+
+*/
