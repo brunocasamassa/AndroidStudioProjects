@@ -1,6 +1,7 @@
 package studio.brunocasamassa.superchat.activities;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -9,23 +10,24 @@ import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.github.rtoshiro.util.format.SimpleMaskFormatter;
 import com.github.rtoshiro.util.format.text.MaskTextWatcher;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
 import java.util.Random;
 
 import studio.brunocasamassa.superchat.R;
+import studio.brunocasamassa.superchat.helper.FirebaseConfig;
 import studio.brunocasamassa.superchat.helper.Permissao;
 import studio.brunocasamassa.superchat.helper.Preferences;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private DatabaseReference referenciaFirebase = FirebaseDatabase.getInstance().getReference();
+
     private EditText telefone;
     private EditText ddi;
     private EditText ddd;
@@ -42,15 +44,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Permissao.validaPermissoes(1,this, permissoesNecessarias);
+        Permissao.validaPermissoes(1, this, permissoesNecessarias);
 
-        referenciaFirebase.child("pontos").setValue(100);
 
-        nome = (EditText) findViewById(R.id.nome);
+
+        nome = (EditText) findViewById(R.id.login_email);
         telefone = (EditText) findViewById(R.id.edit_telefone);
         ddi = (EditText) findViewById(R.id.DDI);
         ddd = (EditText) findViewById(R.id.DDD);
-        botao = (Button) findViewById(R.id.button);
+        botao = (Button) findViewById(R.id.entrar);
 
         /*UI MASKS*/
         SimpleMaskFormatter simpleMaskTelephone = new SimpleMaskFormatter("NNNNN-NNNN");
@@ -90,9 +92,21 @@ public class MainActivity extends AppCompatActivity {
                 Preferences preferencias = new Preferences(MainActivity.this);
                 preferencias.saveUserPreferences(user, telefoneFormatado, token);
 
+                String phoneNumber = "+5511994896047";
                 //SENDING SMS
-               // telefoneFormatado = "5554";
-                sendSMS("+" + telefoneFormatado, message);
+                // telefoneFormatado = "5554";
+                /*Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + phoneNumber));
+                intent.putExtra("huehuebr", message);
+                startActivity(intent);*/
+                boolean smsIsValid = sendSMS("+" + telefoneFormatado, message);
+
+                if (smsIsValid) {
+                    Intent intent = new Intent(MainActivity.this, ValidadorActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(MainActivity.this , "Problema ao enviar o SMS, tente novamente!!", Toast.LENGTH_LONG).show();
+                }
 
                 //HashMap<String, String> usuario = preferencias.getUserData();
                 //System.out.println("TOKEN " + "T: " + usuario.get("token"));
@@ -104,30 +118,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void sendSMS(String telefone, String mensagem) {
-
+    private boolean sendSMS(String telefone, String mensagem) {
 
 
         try {
             SmsManager smsManager = SmsManager.getDefault();
             System.out.println(smsManager);
             smsManager.sendTextMessage(telefone, null, mensagem, null, null);
-            System.out.println("FONE : "+ telefone + " MESSAGE: "+ mensagem);
-            return;
+            System.out.println("FONE : " + telefone + " MESSAGE: " + mensagem);
+            return true;
 
         } catch (Exception e) {
             e.printStackTrace();
-            return;
+            return false;
         }
 
     }
+
     //Permission Negated
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        for( int resultado : grantResults ){
+        for (int resultado : grantResults) {
 
-            if( resultado == PackageManager.PERMISSION_DENIED){
+            if (resultado == PackageManager.PERMISSION_DENIED) {
                 alertaValidacaoPermissao();
             }
 
@@ -135,9 +149,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void alertaValidacaoPermissao(){
+    private void alertaValidacaoPermissao() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder( this );
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Permissões negadas");
         builder.setMessage("Para utilizar esse app, é necessário aceitar as permissões");
 
