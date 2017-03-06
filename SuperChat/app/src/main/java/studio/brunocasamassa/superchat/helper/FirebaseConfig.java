@@ -5,6 +5,7 @@ package studio.brunocasamassa.superchat.helper;
  */
 
 import com.google.firebase.*;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 //static for no instantiation
@@ -12,6 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class FirebaseConfig {
 
     private static DatabaseReference referenciaFirebase;
+    private static FirebaseAuth autenticacao;
 
     public static DatabaseReference getFireBase() {
 
@@ -20,6 +22,13 @@ public class FirebaseConfig {
         }
 
         return referenciaFirebase;
+    }
+
+    public static FirebaseAuth getFirebaseAuthentication(){
+        if(autenticacao != null){
+            autenticacao  = FirebaseAuth.getInstance();
+        }
+        return autenticacao;
     }
 
 

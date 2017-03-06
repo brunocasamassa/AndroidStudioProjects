@@ -29,11 +29,10 @@ public class LoginActivity extends AppCompatActivity {
 
         referenciaFirebase = FirebaseConfig.getFireBase();
         referenciaFirebase.child("pontos").setValue("800");
+        referenciaFirebase.child("pontos1").setValue("500");
+
         cadastro = (TextView) findViewById(R.id.textView3);
         entrar = (Button) findViewById(R.id.entrar);
-
-
-         //cadastro.callOnClick();
 
     }
 
