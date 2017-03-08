@@ -17,6 +17,11 @@
         android:layout_below="@+id/cadastro_email"
         android:layout_alignStart="@+id/cadastro_email" />
 
+
+   <!-- <include android:id="@+id/toolbar"
+       layout="@layout/activity_hello">
+   </include> -->
+
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

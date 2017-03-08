@@ -25,7 +25,7 @@ public class FirebaseConfig {
     }
 
     public static FirebaseAuth getFirebaseAuthentication(){
-        if(autenticacao != null){
+        if(autenticacao == null){
             autenticacao  = FirebaseAuth.getInstance();
         }
         return autenticacao;

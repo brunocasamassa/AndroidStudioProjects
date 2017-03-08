@@ -12,6 +12,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
 
 import studio.brunocasamassa.superchat.R;
 import studio.brunocasamassa.superchat.helper.FirebaseConfig;
@@ -48,7 +51,7 @@ public class CadastroActivity extends AppCompatActivity {
                 usuario.setNome(nome.getText().toString());
                 usuario.setEmail(email.getText().toString());
                 usuario.setSenha(senha.getText().toString());
-                System.out.println("EMAIL: "+ usuario.getEmail() + "SENHA: "+ usuario.getSenha());
+                System.out.println("EMAIL: " + usuario.getEmail() + "SENHA: " + usuario.getSenha());
                 cadastrarUsuario();
 
             }
@@ -60,20 +63,42 @@ public class CadastroActivity extends AppCompatActivity {
     private void cadastrarUsuario() {
 
         autenticacao = FirebaseConfig.getFirebaseAuthentication();
-        System.out.println("EMAIL: "+ usuario.getEmail() + "SENHA: "+ usuario.getSenha());
-        autenticacao.createUserWithEmailAndPassword(usuario.getEmail(),usuario.getSenha()
+        System.out.println("EMAIL: " + usuario.getEmail() + "  SENHA: " + usuario.getSenha());
+        autenticacao.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha()
         ).addOnCompleteListener(CadastroActivity.this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    Toast.makeText(CadastroActivity.this , "Usuario cadastrado com sucesso", Toast.LENGTH_LONG).show();
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(CadastroActivity.this, "Usuario cadastrado com sucesso", Toast.LENGTH_LONG).show();
 
-                } else {
-                    Toast.makeText(CadastroActivity.this , "Erro ao cadastrar usuario", Toast.LENGTH_LONG).show();
+                            FirebaseUser usuarioFireBase = task.getResult().getUser();
+                            usuario.setId(usuarioFireBase.getUid());
+                            usuario.save();
+
+                            autenticacao.signOut(); 
+                            finish();
+
+                        } else {
+
+                            try {
+                                throw task.getException();
+
+                            } catch (FirebaseAuthWeakPasswordException e) {
+                                Toast.makeText(CadastroActivity.this,"Senha invalida, favor escolher outra senha para autenticacao", Toast.LENGTH_LONG).show();
+                            } catch (FirebaseAuthInvalidCredentialsException e) {
+                                Toast.makeText(CadastroActivity.this, "e-mail invalido, verifique os valores digitados", Toast.LENGTH_LONG).show();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+
                 }
 
-            }
-        });
+        );
 
     }
 }
+
+

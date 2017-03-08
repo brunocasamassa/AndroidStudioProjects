@@ -17,6 +17,7 @@
         <activity android:name=".activities.CadastroActivity"></activity>
         <activity android:name=".activities.MainActivity"></activity>
         <activity android:name=".activities.ValidadorActivity"></activity>
+        <activity android:name=".activities.HelloActivity"></activity>
         <activity android:name=".activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

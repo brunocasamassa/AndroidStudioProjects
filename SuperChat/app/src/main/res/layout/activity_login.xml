@@ -69,6 +69,6 @@
         android:layout_alignTop="@+id/entrar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="53dp"
-        android:onClick="abrirCadastro" />
+        android:onClick="openRegisterActivity" />
 
 </RelativeLayout>

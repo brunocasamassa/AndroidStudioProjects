@@ -1,17 +1,26 @@
 package studio.brunocasamassa.superchat.helper;
 
+import com.google.firebase.database.DatabaseReference;
+
 /**
  * Created by bruno on 01/03/2017.
  */
 
 public class User {
 
-    private String id;
     private String nome;
     private String senha;
     private String email;
+    private String id;
 
     public User(){
+    }
+
+    public void save (){
+
+        DatabaseReference referenciaFirebase =  FirebaseConfig.getFireBase();
+        referenciaFirebase.child("usuarios").setValue(this);
+
     }
 
     public String getId() {
