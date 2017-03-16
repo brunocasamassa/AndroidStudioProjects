@@ -1,12 +1,15 @@
 package studio.brunocasamassa.superchat.helper;
 
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+
+import java.util.Map;
 
 /**
  * Created by bruno on 01/03/2017.
  */
 
-public class User {
+public class User implements DatabaseReference.CompletionListener {
 
     private String nome;
     private String senha;
@@ -19,7 +22,7 @@ public class User {
     public void save (){
 
         DatabaseReference referenciaFirebase =  FirebaseConfig.getFireBase();
-        referenciaFirebase.child("usuarios").setValue(this);
+        referenciaFirebase.child("usuarios").child( getId() ).setValue( this );
 
     }
 
@@ -53,5 +56,10 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
     }
 }

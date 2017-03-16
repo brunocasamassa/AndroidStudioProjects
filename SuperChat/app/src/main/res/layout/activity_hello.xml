@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,20 +10,29 @@
     <android.support.v7.widget.Toolbar
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:id="@+id/toolbar_principal"
         android:background="@color/colorPrimary"
-        android:elevation="5dp"/>
+        app:titleTextColor="@android:color/black" ></android.support.v7.widget.Toolbar>
 
 
-    <Button
-        android:text="Exit"
-        android:layout_width="100dp"
-        android:id="@+id/loggout"
-        android:layout_height="50dp"
+    <studio.brunocasamassa.superchat.helper.SlidingTabLayout
+        android:id="@+id/stl_tabs"
+        android:layout_width="match_parent"
+        app:titleTextColor="@android:color/white"
         android:background="@color/colorPrimary"
-        android:theme="@style/AppTheme"
-        tools:ignore="HardcodedText"
+        android:layout_below="@+id/vp_pagina"
+        android:layout_alignParentStart="true"
+        android:layout_height="46dp"></studio.brunocasamassa.superchat.helper.SlidingTabLayout>
+
+    <android.support.v4.view.ViewPager android:id="@+id/vp_pagina"
+        android:layout_width="wrap_content"
+        android:layout_height="400dp"
+        android:layout_weight="1"
+        android:background="@color/colorPrimaryDark"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
-</RelativeLayout>
+        android:layout_alignParentStart="true"
+        ></android.support.v4.view.ViewPager>
+
+
+</LinearLayout>

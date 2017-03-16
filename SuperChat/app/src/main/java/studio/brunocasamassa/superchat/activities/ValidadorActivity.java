@@ -40,7 +40,7 @@ public class ValidadorActivity extends AppCompatActivity {
 
         token.addTextChangedListener(mascaraCodigoValidacao);
 
-        botaoValidar.setOnClickListener(new View.OnClickListener() {
+        /*botaoValidar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Preferences preferences = new Preferences(ValidadorActivity.this);
@@ -53,7 +53,7 @@ public class ValidadorActivity extends AppCompatActivity {
                     startActivity(intent);
                 }else Toast.makeText(ValidadorActivity.this,"TOKEN NAO VALIDADO OU JA DESATIVADO", Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
     }
 }
 

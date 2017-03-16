@@ -88,9 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 String token = String.valueOf(randomicNumber);
                 String message = "SuperChat confirmation TOKEN" + token;
 
-                //SAVE DATA FOR VALIDATION
-                Preferences preferencias = new Preferences(MainActivity.this);
-                preferencias.saveUserPreferences(user, telefoneFormatado, token);
+
 
                 String phoneNumber = "+5511994896047";
                 //SENDING SMS

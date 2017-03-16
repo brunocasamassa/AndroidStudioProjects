@@ -11,8 +11,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".helper.FirebaseConfig"></activity>
+        <activity android:name=".helper.SlidingTabLayout"></activity>
+        <activity android:name=".helper.SlidingTabStrip"></activity>
         <activity android:name=".helper.Permissao"></activity>
+        <activity android:name=".adapter.TabAdapter"></activity>
         <activity android:name=".helper.Preferences"></activity>
         <activity android:name=".activities.CadastroActivity"></activity>
         <activity android:name=".activities.MainActivity"></activity>

@@ -19,9 +19,7 @@ public class Preferences {
     private int MODE = 0;
     private SharedPreferences.Editor editor;
 
-    private String CHAVE_NOME = "nome";
-    private String CHAVE_TELEFONE = "telefone";
-    private String CHAVE_TOKEN = "token";
+    private String CHAVE_ID = "idUser";
 
 
 
@@ -31,24 +29,16 @@ public class Preferences {
         editor = preferences.edit();
     }
 
-    public void saveUserPreferences(String nome , String telefone , String token) {
-        editor.putString(CHAVE_NOME, nome);
-        editor.putString(CHAVE_TELEFONE, telefone);
-        editor.putString(CHAVE_TOKEN, token);
+    public void saveData(String idUser) {
+        editor.putString(CHAVE_ID, idUser);
         editor.commit();
 
     }
 
-    public HashMap <String, String> getUserData(){
-        HashMap<String, String> userData = new HashMap<>();
-
-        userData.put(CHAVE_NOME,preferences.getString(CHAVE_NOME,null));
-        userData.put(CHAVE_TELEFONE,preferences.getString(CHAVE_TELEFONE,null));
-        userData.put(CHAVE_TOKEN,preferences.getString(CHAVE_TOKEN,null));
-
-        return userData;
-
+    public String getIdentifier(){
+        return preferences.getString(CHAVE_ID,null);
     }
+
 
 
 }

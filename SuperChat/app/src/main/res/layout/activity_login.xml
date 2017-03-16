@@ -51,21 +51,21 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
         android:ems="10"
         android:layout_below="@+id/login_email"
         android:layout_alignParentStart="true"
         android:layout_marginTop="15dp"
         android:id="@+id/login_senha"
         android:layout_alignParentEnd="true"
-        android:hint="Digite sua senha" />
+        android:hint="Digite sua senha"
+        android:inputType="textPassword" />
 
     <TextView
         android:text="Nao tem conta? Cadastre-se"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView3"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:layout_alignTop="@+id/entrar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="53dp"

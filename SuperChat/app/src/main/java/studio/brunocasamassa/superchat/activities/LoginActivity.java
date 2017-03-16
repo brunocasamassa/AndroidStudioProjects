@@ -17,7 +17,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
 import studio.brunocasamassa.superchat.R;
+import studio.brunocasamassa.superchat.helper.Base64Decoder;
 import studio.brunocasamassa.superchat.helper.FirebaseConfig;
+import studio.brunocasamassa.superchat.helper.Preferences;
 import studio.brunocasamassa.superchat.helper.User;
 
 /**
@@ -30,9 +32,11 @@ public class LoginActivity extends AppCompatActivity {
     private EditText email;
     private EditText senha;
     private Button entrar;
+    private Base64Decoder decoder;
     private DatabaseReference referenciaFirebase;
     private FirebaseAuth autenticator;
     private User usuario;
+
 
 
     @Override
@@ -60,6 +64,9 @@ public class LoginActivity extends AppCompatActivity {
                 usuario = new User();
                 usuario.setEmail(email.getText().toString());
                 usuario.setSenha(senha.getText().toString());
+
+                Preferences preferences = new Preferences(LoginActivity.this);
+                preferences.saveData(decoder.encoderBase64(usuario.getEmail()).toString());
                 login();
             }
         });

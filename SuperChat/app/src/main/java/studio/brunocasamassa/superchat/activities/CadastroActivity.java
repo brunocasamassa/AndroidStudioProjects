@@ -3,6 +3,7 @@ package studio.brunocasamassa.superchat.activities;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,9 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
 import studio.brunocasamassa.superchat.R;
+import studio.brunocasamassa.superchat.helper.Base64Decoder;
 import studio.brunocasamassa.superchat.helper.FirebaseConfig;
+import studio.brunocasamassa.superchat.helper.Preferences;
 import studio.brunocasamassa.superchat.helper.User;
 
 /**
@@ -71,11 +74,16 @@ public class CadastroActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(CadastroActivity.this, "Usuario cadastrado com sucesso", Toast.LENGTH_LONG).show();
 
-                            FirebaseUser usuarioFireBase = task.getResult().getUser();
-                            usuario.setId(usuarioFireBase.getUid());
+                            //FirebaseUser usuarioFireBase = task.getResult().getUser();
+                            String idUser = Base64Decoder.encoderBase64(usuario.getEmail());
+                            usuario.setId(idUser);
                             usuario.save();
 
-                            autenticacao.signOut(); 
+                            Preferences preferences = new Preferences(CadastroActivity.this);
+
+                            preferences.saveData(idUser);
+
+                            /*autenticacao.signOut();*/
                             finish();
 
                         } else {
