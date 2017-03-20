@@ -48,6 +48,7 @@ public class HelloActivity extends AppCompatActivity {
     private SlidingTabLayout slidingTabLayout;
     private ViewPager viewPager;
     private String idContact;
+    private String contactName = "noise";
     private Base64Decoder decoder;
 
 
@@ -141,9 +142,8 @@ public class HelloActivity extends AppCompatActivity {
 
                                 Toast.makeText(HelloActivity.this, "user existente", Toast.LENGTH_LONG).show();
                                 //Recuperar dados do contato
-                                User usuarioContato = dataSnapshot.getValue(User.class);
-                                System.out.println(usuarioContato);
-
+                                Iterable<DataSnapshot> d = dataSnapshot.child("usuarios").child(idContact).getChildren();
+                                System.out.println(d);
 
                                 //Recuperar identificador
                                 Preferences preferences = new Preferences(HelloActivity.this);
@@ -155,15 +155,14 @@ public class HelloActivity extends AppCompatActivity {
                                 Contato contato = new Contato();
                                 contato.setidUser(idContact);
                                 contato.setEmail(emailContact);
-                                contato.setNome(usuarioContato.getNome());
+                                contato.setNome(contactName);
 
                                 ContatosFragment contact = new ContatosFragment();
-                                contact.insertContact(usuarioContato.getNome());
-                                System.out.println("nome usuario: "+usuarioContato.getNome());
+                                System.out.println("nome usuario: "+contato.getNome());
+                                contact.insertContact(contato.getNome());
+
 
                                 firebaseDatabase.setValue(contato);
-
-
 
 
 

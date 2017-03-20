@@ -1,6 +1,7 @@
 package studio.brunocasamassa.superchat.fragments;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,8 +29,9 @@ public class ContatosFragment extends Fragment {
 
     private ListView listview_nomes;
     private ArrayList<String> arraylist_nomes;
-    private ArrayAdapter<String> adapter_nomes = null;
+    private ArrayAdapter<String> adapter_nomes;
     private DatabaseReference firebaseDatabase;
+    private String contactName = "teste";
 
 
     public ContatosFragment() {
@@ -38,13 +40,23 @@ public class ContatosFragment extends Fragment {
 
 
     public String insertContact(String nomeContato) {
+
+
+        contactName = nomeContato;
+
         arraylist_nomes = new ArrayList<String>();
-        arraylist_nomes.add(nomeContato);
-        adapter_nomes = new ArrayAdapter<String>(getContext(),
+
+        arraylist_nomes.add(contactName);
+        System.out.println("nomes_array: " + arraylist_nomes);
+        adapter_nomes = new ArrayAdapter<String>(
+                getActivity().getApplicationContext(),
                 android.R.layout.simple_list_item_2,
                 android.R.id.text2,
                 arraylist_nomes);
-        return nomeContato;
+
+        listview_nomes.setAdapter(adapter_nomes);
+
+        return contactName;
     }
 
 
@@ -53,19 +65,24 @@ public class ContatosFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        if (adapter_nomes == null) {
-            insertContact("teste");
-        }
+        View v = inflater.inflate(R.layout.fragment_contatos, container, false);
 
-        listview_nomes = (ListView) getActivity().findViewById(R.id.ListContatos);
-        System.out.println(adapter_nomes);
-        listview_nomes.setAdapter(adapter_nomes);
+
+
+
+
+
+        listview_nomes = (ListView) v.findViewById(R.id.ListContatos);
+
+
 
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_contatos, container, false);
+        return v;
 
     }
+
+
 
 
 }
