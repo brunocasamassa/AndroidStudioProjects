@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             nascimento.setText(pessoa.getNascimento());
             telefone.setText(pessoa.getTelefone());
             foto.setImageBitmap(pessoa.getFoto());
-            load.dismiss();
+            //load.dismiss();
         }
     }
 }

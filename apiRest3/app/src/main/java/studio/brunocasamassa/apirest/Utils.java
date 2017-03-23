@@ -55,8 +55,8 @@ public class Utils {
             System.out.println("SENHA CARAIO: "+ pessoa.getSenha());
             pessoa.setTelefone(obj.getString("phone"));
             System.out.println("PHONE CARAIO: "+ pessoa.getTelefone());
-            data = new Date(obj.getLong("dob")*1000);
-            pessoa.setNascimento(sdf.format(data));
+            pessoa.setNascimento(obj.getString("dob"));
+            System.out.println("NASCIMENTO CARAIO: "+ pessoa.getNascimento());
 
             //Nome da pessoa é um objeto, instancia um novo JSONObject
             JSONObject nome = obj.getJSONObject("name");
@@ -75,6 +75,7 @@ public class Utils {
 
             return pessoa;
         }catch (JSONException e){
+            System.out.println("JSON EXCEPTION CARAIO:" +e);
             e.printStackTrace();
             return null;
         }
