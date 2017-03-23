@@ -14,8 +14,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,6 +26,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 import studio.brunocasamassa.superchat.R;
 import studio.brunocasamassa.superchat.adapter.TabAdapter;
@@ -41,13 +45,17 @@ import studio.brunocasamassa.superchat.helper.User;
 
 public class HelloActivity extends AppCompatActivity {
 
+
+    private ListView listview_nomes  ;
+    private ArrayAdapter<String> adapter_nomes;
+    private ArrayList<String> arraylist_nomes = new ArrayList<>();
     private Button logout;
     private FirebaseAuth autenticator;
     private Toolbar toolbar;
     private DatabaseReference firebaseDatabase;
     private SlidingTabLayout slidingTabLayout;
     private ViewPager viewPager;
-    private String idContact;
+    private static String idContact;
     private String contactName = "noise";
     private Base64Decoder decoder;
 
@@ -68,7 +76,9 @@ public class HelloActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
+        listview_nomes = (ListView) findViewById(R.id.ListContatos);
         viewPager = (ViewPager) findViewById(R.id.vp_pagina);
+        System.out.println("DISPLAY CARAIO: "+listview_nomes);
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.stl_tabs);
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setSelectedIndicatorColors(ContextCompat.getColor(this, R.color.colorAccent));
@@ -157,14 +167,27 @@ public class HelloActivity extends AppCompatActivity {
                                 contato.setEmail(emailContact);
                                 contato.setNome(contactName);
 
-                                ContatosFragment contact = new ContatosFragment();
-                                System.out.println("nome usuario: "+contato.getNome());
-                                contact.insertContact(contato.getNome());
+
 
 
                                 firebaseDatabase.setValue(contato);
 
+                                arraylist_nomes.add(emailContact);
 
+                                adapter_nomes = new ArrayAdapter<String>(
+                                        getApplication().getBaseContext(),
+                                        android.R.layout.simple_list_item_2,
+                                        android.R.id.text2,
+                                        arraylist_nomes);
+
+
+
+                                System.out.println("Adapter nomes CARAIO 2 :  " + adapter_nomes);
+                                System.out.println("listview CARAIO 2:  " + listview_nomes);
+
+                                ContatosFragment contact = new ContatosFragment();
+                                contact.insertContact(adapter_nomes);
+                                System.out.println("contatinho CARAIO: "+ contact);
 
                             } else {
 
@@ -202,5 +225,28 @@ public class HelloActivity extends AppCompatActivity {
         Intent intent = new Intent(HelloActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public static String getName() {
+        if (idContact == null) {
+            idContact = "semID";
+        }
+
+        return idContact;
+
+    }
+
+
+    public String insertContact(String nomeContato) {
+
+
+        contactName = nomeContato;
+
+        //arraylist_nomes.add(contactName);
+
+        System.out.println("nomes_array: " + arraylist_nomes);
+
+
+        return contactName;
     }
 }

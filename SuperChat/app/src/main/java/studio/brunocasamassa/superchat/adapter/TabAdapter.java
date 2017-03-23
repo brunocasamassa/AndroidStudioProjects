@@ -2,9 +2,11 @@ package studio.brunocasamassa.superchat.adapter;
 
 
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.widget.ArrayAdapter;
 
 import studio.brunocasamassa.superchat.fragments.ContatosFragment;
 import studio.brunocasamassa.superchat.fragments.ConversaFragment;
@@ -23,18 +25,20 @@ public class TabAdapter extends FragmentStatePagerAdapter {
 
         Fragment fragment = null;
 
-        switch (position){
+        switch (position) {
             case 0:
                 fragment = new ConversaFragment();
                 break;
             case 1:
                 fragment = new ContatosFragment();
+                notifyDataSetChanged();
                 break;
         }
 
         return fragment;
 
     }
+
 
     @Override
     public int getCount() {
@@ -45,4 +49,10 @@ public class TabAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         return tituloAbas[position];
     }
+
+
+
+
+
+
 }
