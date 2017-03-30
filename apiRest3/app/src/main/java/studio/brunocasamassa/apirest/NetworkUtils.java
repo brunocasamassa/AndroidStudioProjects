@@ -3,6 +3,7 @@ package studio.brunocasamassa.apirest;
 /**
  * Created by bruno on 22/03/2017.
  */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,12 +21,12 @@ public class NetworkUtils {
     public static String getJSONFromAPI(String url){
         String retorno = "";
         try {
-            URL apiEnd = new URL(url);
+            URL resourceUrl = new URL(url);
             int codigoResposta;
             HttpURLConnection conexao;
             InputStream is;
 
-            conexao = (HttpURLConnection) apiEnd.openConnection();
+            conexao = (HttpURLConnection) resourceUrl.openConnection();
             conexao.setRequestMethod("GET");
             conexao.setReadTimeout(15000);
             conexao.setConnectTimeout(15000);
@@ -47,7 +48,7 @@ public class NetworkUtils {
             System.out.println("EXCEPTION CARAIO1: "+ e);
         }catch (IOException e){
             e.printStackTrace();
-            System.out.println("EXCEPTION CARAIO22: "+ e);
+            System.out.println("EXCEPTION CARAIO2: "+ e);
         }catch (Exception e){
             e.printStackTrace();
             System.out.println("EXCEPTION CARAIO3: "+ e);

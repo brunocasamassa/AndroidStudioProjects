@@ -27,30 +27,31 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         GetJson download = new GetJson();
 
-        nome = (TextView) findViewById(R.id.textView5);
-        sobrenome = (TextView) findViewById(R.id.textView11);
-        email = (TextView) findViewById(R.id.textView8);
-        endereco = (TextView) findViewById(R.id.textView7);
-        cidade = (TextView) findViewById(R.id.textView4);
-        estado = (TextView) findViewById(R.id.textView3);
-        username = (TextView) findViewById(R.id.textView2);
-        senha = (TextView) findViewById(R.id.textView10);
-        nascimento = (TextView) findViewById(R.id.textView9);
-        telefone = (TextView) findViewById(R.id.textView12);
-        foto = (ImageView) findViewById(R.id.imageView);
+        nome = (TextView) findViewById(R.id.nome);
+        sobrenome = (TextView) findViewById(R.id.sobrenome);
+        email = (TextView) findViewById(R.id.email);
+        endereco = (TextView) findViewById(R.id.endereco);
+        cidade = (TextView) findViewById(R.id.cidade);
+        estado = (TextView) findViewById(R.id.estado);
+        username = (TextView) findViewById(R.id.username);
+        senha = (TextView) findViewById(R.id.senha);
+        nascimento = (TextView) findViewById(R.id.nascimento);
+        telefone = (TextView) findViewById(R.id.telefone);
+        foto = (ImageView) findViewById(R.id.foto);
 
         //Chama Async Task
         download.execute();
-
     }
 
     private class GetJson extends AsyncTask<Void, Void, PessoaObj> {
 
+
         @Override
         protected void onPreExecute() {
-            //load = ProgressDialog.show(MainActivity.this, "Por favor Aguarde ...", "Recuperando Informações do Servidor...");
+            load = ProgressDialog.show(MainActivity.this, "Por favor Aguarde ...", "Recuperando Informações do Servidor...");
 
 
         }
@@ -75,7 +76,8 @@ public class MainActivity extends AppCompatActivity {
             nascimento.setText(pessoa.getNascimento());
             telefone.setText(pessoa.getTelefone());
             foto.setImageBitmap(pessoa.getFoto());
-            //load.dismiss();
+            load.dismiss();
+
         }
     }
 }
