@@ -12,9 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * Created by allanromanato on 11/4/15.
- */
+
 public class NetworkUtils {
 
     //Responsavel por carregar o Objeto JSON

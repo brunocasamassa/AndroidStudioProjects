@@ -16,9 +16,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by allanromanato on 11/4/15.
- */
+
 public class Utils {
 
     public PessoaObj getInformacao(String repoUrl){
@@ -47,8 +45,10 @@ public class Utils {
             JSONObject obj = objArray;//.getJSONObject("user");
 
             //Atribui os objetos que estão nas camadas mais altas
+
             pessoa.setEmail(obj.getString("email"));
             System.out.println("EMAIL CARAIO: "+ pessoa.getEmail());
+            pessoa.setGenero(obj.getString("gender"));
             pessoa.setUsername(obj.getJSONObject("login").getString("username"));
             System.out.println("USERNAME CARAIO: "+ pessoa.getUsername());
             pessoa.setSenha(obj.getJSONObject("login").getString("password"));

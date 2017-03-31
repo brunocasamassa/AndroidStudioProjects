@@ -4,11 +4,9 @@ package studio.brunocasamassa.apirest;
  * Created by bruno on 22/03/2017.
  */
 
-         import android.graphics.Bitmap;
+import android.graphics.Bitmap;
 
-/**
- * Created by allanromanato on 11/4/15.
- */
+
 public class PessoaObj {
     private String nome;
     private String sobrenome;
@@ -21,6 +19,16 @@ public class PessoaObj {
     private String nascimento;
     private String telefone;
     private Bitmap foto;
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
+    }
+
+    private String genero;
 
     public String getNome() {
         return nome;

@@ -3,7 +3,9 @@ package studio.brunocasamassa.apirest;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView telefone;
     private ImageView foto;
     private ProgressDialog load;
+    public String gender;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         GetJson download = new GetJson();
+
 
         nome = (TextView) findViewById(R.id.nome);
         sobrenome = (TextView) findViewById(R.id.sobrenome);
@@ -44,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Chama Async Task
         download.execute();
+
+
     }
 
     private class GetJson extends AsyncTask<Void, Void, PessoaObj> {
@@ -59,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected PessoaObj doInBackground(Void... params) {
             Utils util = new Utils();
-            String url ="https://randomuser.me/api/";
+            String url = "https://randomuser.me/api/";
             return util.getInformacao(url);
         }
 
@@ -77,7 +84,21 @@ public class MainActivity extends AppCompatActivity {
             telefone.setText(pessoa.getTelefone());
             foto.setImageBitmap(pessoa.getFoto());
             load.dismiss();
+            gender = pessoa.getGenero();
+            verifyGender();
+
 
         }
+    }
+
+    private void verifyGender() {
+        View v = findViewById(R.id.mainLayout);
+
+        System.out.println("GENERO CARAIO: " + gender);
+        if (gender.equals("female")) {
+            v.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorAccent));
+        } else
+            v.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+
     }
 }
