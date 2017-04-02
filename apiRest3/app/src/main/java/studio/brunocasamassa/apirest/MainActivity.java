@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         //Chama Async Task
         download.execute();
 
-
     }
 
     private class GetJson extends AsyncTask<Void, Void, PessoaObj> {
@@ -87,18 +86,17 @@ public class MainActivity extends AppCompatActivity {
             gender = pessoa.getGenero();
             verifyGender();
 
-
         }
-    }
 
-    private void verifyGender() {
-        View v = findViewById(R.id.mainLayout);
+        private void verifyGender() {
+            View v = findViewById(R.id.mainLayout);
+            System.out.println("GENERO CARAIO: " + gender);
 
-        System.out.println("GENERO CARAIO: " + gender);
-        if (gender.equals("female")) {
-            v.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorAccent));
-        } else
-            v.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+            if (gender.equals("female")) {
+                v.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorAccent));
+            } else
+                v.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+        }
 
     }
 }
