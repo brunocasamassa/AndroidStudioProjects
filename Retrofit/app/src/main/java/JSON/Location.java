@@ -4,7 +4,7 @@ package JSON;
  * Created by bruno on 06/04/2017.
  */
 
-class Location {
+public class Location {
 
     public String street;
     public String city;
@@ -33,16 +33,16 @@ class Location {
         this.state = state;
     }
 
-    public String getPostcode() {
+    public Integer getPostcode() {
         return postcode;
     }
 
-    public void setPostcode(String postcode) {
+    public void setPostcode(Integer postcode) {
         this.postcode = postcode;
     }
 
     public String state;
-    public String postcode;
+    public Integer postcode;
 
 
 

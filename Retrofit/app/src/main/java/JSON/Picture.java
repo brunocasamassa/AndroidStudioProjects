@@ -1,20 +1,37 @@
 package JSON;
 
-import java.net.URL;
-
 /**
  * Created by bruno on 06/04/2017.
  */
 
-class Picture {
+public class Picture {
 
-    public URL large;
+    private String large;
+    private String medium;
+    private String thumbnail;
 
-    public URL getLarge() {
+    public String getLarge() {
         return large;
     }
 
-    public void setLarge(URL large) {
+    public void setLarge(String large) {
         this.large = large;
     }
+
+    public String getMedium() {
+        return medium;
+    }
+
+    public void setMedium(String medium) {
+        this.medium = medium;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
 }

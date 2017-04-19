@@ -37,8 +37,7 @@ import android.widget.TextView;
         username = (TextView) findViewById(R.id.username);
         senha = (TextView) findViewById(R.id.senha);
         nascimento = (TextView) findViewById(R.id.nascimento);
-        telefone = (TextView) findViewById(R.id.telefone);
-        foto = (ImageView) findViewById(R.id.foto);
+        telefone = (TextView) findViewById(R.id.telefone);        foto = (ImageView) findViewById(R.id.foto);
 
 
     }

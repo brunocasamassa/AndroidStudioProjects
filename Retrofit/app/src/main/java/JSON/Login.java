@@ -4,7 +4,7 @@ package JSON;
  * Created by bruno on 06/04/2017.
  */
 
-class Login {
+public  class Login {
 
     public String username;
     public String password;

@@ -2,10 +2,6 @@ package studio.brunocasamassa.superchat.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.Preference;
-import android.support.v4.content.ContextCompat;
-
-import java.util.HashMap;
 
 /**
  * Created by bruno on 21/02/2017.
@@ -34,6 +30,7 @@ public class Preferences {
         editor.commit();
 
     }
+
 
     public String getIdentifier(){
         return preferences.getString(CHAVE_ID,null);

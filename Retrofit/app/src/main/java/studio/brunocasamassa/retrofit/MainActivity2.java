@@ -2,12 +2,16 @@ package studio.brunocasamassa.retrofit;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import JSON.Results;
+import com.squareup.picasso.Picasso;
+
+import JSON.Result;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,7 +31,7 @@ public class MainActivity2 extends AppCompatActivity {
     private ImageView foto;
     private ProgressDialog load;
     public String gender;
-    public Results results;
+    public Result results;
     public static final String BASE_URL = "https://randomuser.me/";
 
     @Override
@@ -63,17 +67,30 @@ public class MainActivity2 extends AppCompatActivity {
                     progress.show();
                     User r = response.body();
 
+                    results = r.getResults().get(0);
+                    System.out.println("NOME: " + results.getName().getFirst() + " " + results.getName().getLast());
 
-                    String name = r.getResults().getClass().getName();
-                    System.out.println("NOME CARAIO: "+ nome);
 
                     if (r != null) {
 
-                        System.out.println();
 
-                       // r.setGender(results.getGender());
+                        // r.setGender(results.getGender());
 
-                        //nome.setText((CharSequence) results.setName(r.getName()));
+                        nome.setText(results.getName().getFirst());
+                        sobrenome.setText(results.getName().getLast());
+                        email.setText(results.getEmail());
+                        // endereco.setText(results.getLocation());
+                        // cidade.setText(results.getLocation().);
+                        // estado.setText();
+                        username.setText(results.getLogin().getUsername());
+                        senha.setText(results.getLogin().getPassword());
+                        nascimento.setText(results.getDob());
+                        telefone.setText(results.getCell());
+                        System.out.println("URI " + results.getPicture().getLarge());
+                        Picasso.with(getBaseContext()).load(results.getPicture().getLarge()).into(foto);
+                        gender = results.getGender();
+                        verifyGender(gender);
+
 
                         //System.out.println("USER 2: " + response.raw() );
 
@@ -82,26 +99,40 @@ public class MainActivity2 extends AppCompatActivity {
                         //Results r = new Results();
 
 
-
                         progress.dismiss();
 
-                      //  nome.setText(results.gender.toString());
+                        //nome.setText(results.gender.toString());
 
 
-                        // System.out.println("random user: CARAIO  " + user.random);
-                           //nome.setText((CharSequence) r.gender);
+                        //System.out.println("random user: CARAIO  " + user.random);
+                        //nome.setText((CharSequence) r.gender);
 
 
-                    } else Toast.makeText(MainActivity2.this,"ERROR IN GET JSON",Toast.LENGTH_LONG).show();
+                    } else
+                        Toast.makeText(MainActivity2.this, "ERROR IN GET JSON", Toast.LENGTH_LONG).show();
                 }
 
-                }
+            }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-
+                System.out.println("HTTP ERROR:  + " + t.getCause().toString());
             }
+
+
         });
 
+
+    }
+
+    private void verifyGender(String gender) {
+
+        View v = findViewById(R.id.mainLayout);
+        System.out.println("GENERO CARAIO: " + gender);
+
+        if (gender.equals("female")) {
+            v.setBackgroundColor(ContextCompat.getColor(MainActivity2.this, R.color.colorAccent));
+        } else
+            v.setBackgroundColor(ContextCompat.getColor(MainActivity2.this, R.color.colorPrimary));
     }
 }
