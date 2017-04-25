@@ -1,16 +1,13 @@
-package studio.brunocasamassa.superchat.adapter;
+package studio.brunocasamassa.ajudaaqui.fragments;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import studio.brunocasamassa.superchat.fragments.ContatosFragment;
-import studio.brunocasamassa.superchat.fragments.ConversaFragment;
-
 
 public class TabAdapter extends FragmentStatePagerAdapter {
 
-    private String[] tituloAbas = {"CONVERSAS", "CONTATOS"};
+    private String[] tituloAbas = {"DISPONIVEIS", "ESCOLHIDOS", "MEUS PEDIDOS"};
 
     public TabAdapter(FragmentManager fm) {
         super(fm);
@@ -23,10 +20,15 @@ public class TabAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                fragment = new ConversaFragment();
+                fragment = new PedidosDisponiveisFragment();
                 break;
             case 1:
-                fragment = new ContatosFragment();
+                fragment = new PedidosEscolhidosFragment();
+                notifyDataSetChanged();
+                break;
+
+            case 2:
+                fragment = new PedidosMeusPedidosFragment();
                 notifyDataSetChanged();
                 break;
         }

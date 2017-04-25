@@ -18,7 +18,6 @@ public class Preferences {
     private String CHAVE_ID = "idUser";
 
 
-
     public Preferences (Context contextoParametro){
         contexto =contextoParametro;
         preferences = contexto.getSharedPreferences(NOME_ARQUIVO,MODE);

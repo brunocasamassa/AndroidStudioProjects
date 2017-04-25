@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">AjudaAqui</string>
+    <string name="menu_pedidos">Pedidos</string>
+    <string name="menu_chats">Conversas</string>
+    <string name="menu_grupos">Grupos</string>
+    <string name="menu_perfil">Perfil</string>
+    <string name="menu_configuracoes">Configuracoes</string>
+    <string name="menu_sobre">Sobre</string>
+    <string name="action_settings">Settings</string>
+    <string name="exit">Exit</string>
+    <string name="title_activity_navigation">Navigation</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+</resources>

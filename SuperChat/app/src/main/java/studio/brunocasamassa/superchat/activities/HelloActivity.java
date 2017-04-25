@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,7 +23,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -37,7 +35,6 @@ import studio.brunocasamassa.superchat.helper.Contato;
 import studio.brunocasamassa.superchat.helper.FirebaseConfig;
 import studio.brunocasamassa.superchat.helper.Preferences;
 import studio.brunocasamassa.superchat.helper.SlidingTabLayout;
-import studio.brunocasamassa.superchat.helper.User;
 
 /**
  * Created by bruno on 08/03/2017.
