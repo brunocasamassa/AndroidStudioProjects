@@ -44,7 +44,7 @@ public class NavigationDrawer extends AppCompatActivity{
         PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_configuracoes);
         PrimaryDrawerItem item6 = new PrimaryDrawerItem().withIdentifier(6).withName(R.string.menu_sobre);
 
-        // Create the AccountHeader
+        // Create the Navigation Drawer AccountHeader
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(classe)
                 .withHeaderBackground(R.color.colorPrimary)
@@ -59,7 +59,7 @@ public class NavigationDrawer extends AppCompatActivity{
                 })
                 .build();
 
-        //Definição do Drawer
+        //Definition Drawer
         Drawer drawer = new DrawerBuilder()
                 .withActivity(classe)
                 .withToolbar(toolbar)
@@ -85,16 +85,16 @@ public class NavigationDrawer extends AppCompatActivity{
                         if (position == 1){
                             startActivity(new Intent(NavigationDrawer.this,PedidosActivity.class));
                         }
-                        if (position == 2){
+                        if (position == 3){
                             startActivity(new Intent(NavigationDrawer.this,ChatActivity.class));
                         }
-                        if (position == 4){
+                        if (position == 5){
                             startActivity(new Intent(NavigationDrawer.this,GruposActivity.class));
                         }
-                        if (position == 5){
+                        if (position == 7){
                             startActivity(new Intent(NavigationDrawer.this,ConfiguracoesActivity.class));
                         }
-                        if (position == 6){
+                        if (position == 9){
                             startActivity(new Intent(NavigationDrawer.this,SobreActivity.class));
                         }
                         return false;

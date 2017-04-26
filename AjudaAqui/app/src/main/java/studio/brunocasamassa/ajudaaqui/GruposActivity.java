@@ -63,7 +63,6 @@ public class GruposActivity extends AppCompatActivity {
 
         slidingTabLayout.setViewPager(viewPager);
 
-        System.out.println("");
 
         //TODO navigator.createDrawer(PedidosActivity.this, toolbar);
 
@@ -116,28 +115,16 @@ public class GruposActivity extends AppCompatActivity {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                  posicao = position;
+                        mudatela(position);
                         return false;
                     }
                 })
                 .withSelectedItemByPosition(0)
                 .build();
-        if (posicao == 1){
-            System.out.println("position: "+posicao);
-            startActivity(new Intent(GruposActivity.this,PedidosActivity.class));
-        }
-        if (posicao == 3){
-            System.out.println("position: "+posicao);
-            startActivity(new Intent(GruposActivity.this,ChatActivity.class));
-        }
-        if (posicao == 7){
-            System.out.println("position: "+posicao);
-            startActivity(new Intent(GruposActivity.this,PerfilActivity.class));
-        }
-        if (posicao == 9){
-            System.out.println("position: "+posicao);
-            startActivity(new Intent(GruposActivity.this,SobreActivity.class));
-        }
+
     }
+
+
     //END NAVIGATION DRAWER -----------------------------------
 
 
@@ -163,4 +150,31 @@ public class GruposActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
 
-    }}
+    }
+
+
+    private void mudatela(int posicao) {
+
+        if (posicao == 1){
+            System.out.println("position: "+posicao);
+            startActivity(new Intent(GruposActivity.this,PedidosActivity.class));
+            return;
+        }
+        if (posicao == 3){
+            System.out.println("position: "+posicao);
+            startActivity(new Intent(GruposActivity.this,ChatActivity.class));
+            return;
+        }
+        if (posicao == 7){
+            System.out.println("position: "+posicao);
+            startActivity(new Intent(GruposActivity.this,PerfilActivity.class));
+            return;
+        }
+        if (posicao == 9){
+            System.out.println("position: "+posicao);
+            startActivity(new Intent(GruposActivity.this,SobreActivity.class));
+            return;
+        }
+
+    }
+}

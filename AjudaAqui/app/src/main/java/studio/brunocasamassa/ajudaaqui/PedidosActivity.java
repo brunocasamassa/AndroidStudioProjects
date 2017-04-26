@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
+import com.facebook.Profile;
+import com.facebook.login.LoginResult;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -26,6 +28,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import studio.brunocasamassa.ajudaaqui.helper.PedidosTabAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
+import studio.brunocasamassa.ajudaaqui.helper.User;
 
 /**
  * Created by bruno on 24/04/2017.
@@ -37,6 +40,9 @@ public class PedidosActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
     public int posicao;
+    private LoginResult loginResult;
+    private User user;
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -50,6 +56,15 @@ public class PedidosActivity extends AppCompatActivity {
         toolbar.setTitle(getResources().getString(R.string.menu_pedidos));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
+
+        /*
+        loginResult = MainActivity.lr;
+        Profile profile = Profile.getCurrentProfile();
+        System.out.println("PROFILE: "+ profile);
+
+        String userid = loginResult.getAccessToken().getUserId();
+        String name = message(profile);
+        user.setName(name);*/
 
 
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
@@ -75,12 +90,13 @@ public class PedidosActivity extends AppCompatActivity {
         PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.menu_perfil);
         PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_sobre);
 
+
         // Create the AccountHeader
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.color.colorPrimary)
                 .addProfiles(
-                        new ProfileDrawerItem().withName("User").withEmail("user@example.com").withIcon(getResources().getDrawable(R.drawable.logo))
+                        new ProfileDrawerItem().withName(user.getName()).withEmail("user@example.com").withIcon(user.getProfileImageURL())
                 )
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
@@ -120,11 +136,19 @@ public class PedidosActivity extends AppCompatActivity {
                 .withSelectedItemByPosition(0)
                 .build();}
 
-        private void mudatela(int posicao){
+    private String message(Profile profile) {
+        StringBuilder stringBuffer = new StringBuilder();
+        stringBuffer.append(profile.getName());
+        System.out.println(stringBuffer);
+
+        return stringBuffer.toString();
+    }
+
+    private void mudatela(int posicao){
         if (posicao == 3) {
             System.out.println("position: " + posicao);
             startActivity(new Intent(PedidosActivity.this, ChatActivity.class));
-            return ; 
+            return ;
         }
         if (posicao == 5) {
             System.out.println("position: " + posicao);

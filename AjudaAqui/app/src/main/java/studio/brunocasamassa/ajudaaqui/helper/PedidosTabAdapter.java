@@ -28,12 +28,12 @@ public class PedidosTabAdapter extends FragmentStatePagerAdapter {
                 break;
             case 1:
                 fragment = new PedidosEscolhidosFragment();
-                notifyDataSetChanged();
+                //notifyDataSetChanged();
                 break;
 
             case 2:
                 fragment = new PedidosMeusPedidosFragment();
-                notifyDataSetChanged();
+                //notifyDataSetChanged();
                 break;
         }
 

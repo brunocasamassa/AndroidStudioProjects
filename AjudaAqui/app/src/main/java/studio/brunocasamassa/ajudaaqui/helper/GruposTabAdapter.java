@@ -28,7 +28,7 @@ public class GruposTabAdapter extends FragmentStatePagerAdapter {
                 break;
             case 1:
                 fragment = new GruposTodosgruposFragment();
-                notifyDataSetChanged();
+               //notifyDataSetChanged();
                 break;
 
 

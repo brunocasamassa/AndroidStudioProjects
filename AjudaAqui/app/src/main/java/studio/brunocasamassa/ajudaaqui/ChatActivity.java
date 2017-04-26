@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -30,7 +29,7 @@ import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
  * Created by bruno on 24/04/2017.
  */
 
-public class ChatActivity extends AppCompatActivity{
+public class ChatActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private ListView listview_nomes;
@@ -101,31 +100,23 @@ public class ChatActivity extends AppCompatActivity{
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        System.out.println("position: "+position +"View: "+view+ "IDRAWER: "+drawerItem);
+                        System.out.println("position: " + position + "View: " + view + "IDRAWER: " + drawerItem);
                         posicao = position;
-                        return false;
+                        mudatela(position);
+                        return true;
+
                     }
                 })
                 .withSelectedItemByPosition(0)
                 .build();
-        if (posicao == 1){
-            System.out.println("position: "+posicao );
-            startActivity(new Intent(ChatActivity.this,PedidosActivity.class));
+
         }
-        if (posicao == 5){
-            System.out.println("position: "+posicao );
-            startActivity(new Intent(ChatActivity.this,GruposActivity.class));
-        }
-        if (posicao == 7){
-            System.out.println("position: "+posicao );
-            startActivity(new Intent(ChatActivity.this,SobreActivity.class));
-        }
-        if (posicao == 9 ){
-            System.out.println("position: "+posicao );
-            startActivity(new Intent(ChatActivity.this,SobreActivity.class));
-        }
-    }
+
+
+
+
     //END NAVIGATION DRAWER -----------------------------------
+
 
 
 
@@ -154,5 +145,26 @@ public class ChatActivity extends AppCompatActivity{
     }
 
 
-
+    private void mudatela(int posicao) {
+        if (posicao == 1) {
+            System.out.println("position: " + posicao);
+            startActivity(new Intent(ChatActivity.this, PedidosActivity.class));
+            return;
+        }
+        if (posicao == 5) {
+            System.out.println("position: " + posicao);
+            startActivity(new Intent(ChatActivity.this, GruposActivity.class));
+            return;
+        }
+        if (posicao == 7) {
+            System.out.println("position: " + posicao);
+            startActivity(new Intent(ChatActivity.this, PerfilActivity.class));
+            return;
+        }
+        if (posicao == 9) {
+            System.out.println("position: " + posicao);
+            startActivity(new Intent(ChatActivity.this, SobreActivity.class));
+            return;
+        }
+    }
 }

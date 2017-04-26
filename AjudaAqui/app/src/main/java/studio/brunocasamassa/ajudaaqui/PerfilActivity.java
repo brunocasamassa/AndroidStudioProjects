@@ -45,7 +45,7 @@ public class PerfilActivity extends AppCompatActivity{
 
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
-        toolbar.setTitle(getResources().getString(R.string.menu_chats));
+        toolbar.setTitle(getResources().getString(R.string.menu_perfil));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
 
@@ -101,26 +101,37 @@ public class PerfilActivity extends AppCompatActivity{
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         System.out.println("position: "+position +"View: "+view+ "IDRAWER: "+drawerItem);
                        posicao = position;
+                        mudatela(position);
                         return false;
                     }
+
+
                 })
                 .withSelectedItemByPosition(0)
                 .build();
+
+    }
+
+    private void mudatela(int posicao) {
         if (posicao == 1){
             System.out.println("position: "+posicao +"View: ");
             startActivity(new Intent(PerfilActivity.this,PedidosActivity.class));
+            return;
         }
         if (posicao == 3){
             System.out.println("position: "+posicao +"View: ");
             startActivity(new Intent(PerfilActivity.this,ChatActivity.class));
+            return;
         }
         if (posicao == 5){
             System.out.println("position: "+posicao );
             startActivity(new Intent(PerfilActivity.this,GruposActivity.class));
+            return;
         }
         if (posicao == 9 ){
             System.out.println("position: "+posicao );
             startActivity(new Intent(PerfilActivity.this,SobreActivity.class));
+            return;
         }
     }
     //END NAVIGATION DRAWER -----------------------------------
