@@ -5,20 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
 
-
-    <item
-        android:title="Add"
-        android:id="@+id/item_add"
-        android:icon="@drawable/ic_person_add"
-        android:orderInCategory="301"
-        app:showAsAction="always"
-        tools:ignore="HardcodedText" />
-
-    <item android:id="@+id/item_search" android:title="Search"
-        android:orderInCategory="302" app:showAsAction="always"
-        android:icon="@drawable/ic_search"
-        tools:ignore="AlwaysShowAction,HardcodedText" />
-
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never"/>

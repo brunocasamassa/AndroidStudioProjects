@@ -12,13 +12,13 @@ import studio.brunocasamassa.ajudaaqui.R;
 /**
  * A simple {@link Fragment} subclass.
  */
+
 public class ChatConversaFragment extends Fragment {
 
 
     public ChatConversaFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

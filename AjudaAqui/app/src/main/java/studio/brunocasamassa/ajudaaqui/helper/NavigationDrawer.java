@@ -19,7 +19,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.ConfiguracoesActivity;
-import studio.brunocasamassa.ajudaaqui.ConversaActivity;
+import studio.brunocasamassa.ajudaaqui.ChatActivity;
 import studio.brunocasamassa.ajudaaqui.GruposActivity;
 import studio.brunocasamassa.ajudaaqui.PedidosActivity;
 import studio.brunocasamassa.ajudaaqui.SobreActivity;
@@ -86,7 +86,7 @@ public class NavigationDrawer extends AppCompatActivity{
                             startActivity(new Intent(NavigationDrawer.this,PedidosActivity.class));
                         }
                         if (position == 2){
-                            startActivity(new Intent(NavigationDrawer.this,ConversaActivity.class));
+                            startActivity(new Intent(NavigationDrawer.this,ChatActivity.class));
                         }
                         if (position == 4){
                             startActivity(new Intent(NavigationDrawer.this,GruposActivity.class));

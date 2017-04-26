@@ -1,15 +1,19 @@
-package studio.brunocasamassa.ajudaaqui.fragments;
+package studio.brunocasamassa.ajudaaqui.helper;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import studio.brunocasamassa.ajudaaqui.fragments.GruposMeusgruposFragment;
+import studio.brunocasamassa.ajudaaqui.fragments.GruposTodosgruposFragment;
 
-public class TabAdapter extends FragmentStatePagerAdapter {
 
-    private String[] tituloAbas = {"DISPONIVEIS", "ESCOLHIDOS", "MEUS PEDIDOS"};
 
-    public TabAdapter(FragmentManager fm) {
+public class GruposTabAdapter extends FragmentStatePagerAdapter {
+
+    private String[] tituloAbas = {"MEUS GRUPOS", "TODOS OS GRUPOS"};
+
+    public GruposTabAdapter(FragmentManager fm) {
         super(fm);
     }
 
@@ -20,17 +24,14 @@ public class TabAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                fragment = new PedidosDisponiveisFragment();
+                fragment = new GruposMeusgruposFragment();
                 break;
             case 1:
-                fragment = new PedidosEscolhidosFragment();
+                fragment = new GruposTodosgruposFragment();
                 notifyDataSetChanged();
                 break;
 
-            case 2:
-                fragment = new PedidosMeusPedidosFragment();
-                notifyDataSetChanged();
-                break;
+
         }
 
         return fragment;

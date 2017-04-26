@@ -16,7 +16,7 @@
         <activity android:name=".ConfiguracoesActivity"></activity>
         <activity android:name=".GruposActivity"></activity>
         <activity android:name=".SobreActivity"></activity>
-        <activity android:name=".ConversaActivity"></activity>
+        <activity android:name=".ChatActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

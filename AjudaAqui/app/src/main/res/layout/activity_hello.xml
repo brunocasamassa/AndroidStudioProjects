@@ -20,11 +20,11 @@
     <studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout
         android:id="@+id/stl_tabs"
         android:layout_width="match_parent"
-        app:titleTextColor="@android:color/white"
-        android:background="@color/colorBackground"
-        android:layout_below="@+id/vp_pagina"
+        android:layout_height="46dp"
         android:layout_alignParentStart="true"
-        android:layout_height="46dp"></studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout>
+        android:layout_below="@+id/vp_pagina"
+        android:background="@color/colorBackground"
+        app:titleTextColor="@android:color/white"></studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout>
 
     <android.support.v4.view.ViewPager android:id="@+id/vp_pagina"
         android:layout_width="wrap_content"
