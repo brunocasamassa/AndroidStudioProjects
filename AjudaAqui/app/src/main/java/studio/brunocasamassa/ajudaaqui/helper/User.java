@@ -10,8 +10,38 @@ import java.util.List;
 
 public class User {
 
-    public List<Grupo> grupos;
+    public String pontos ;
 
+    public String pedidosAtendidos ;
+
+    public String pedidosFeitos ;
+
+    public String getPontos() {
+        return pontos;
+    }
+
+    public void setPontos(String pontos) {
+        this.pontos = pontos;
+    }
+
+    public String getPedidosAtendidos() {
+
+        return pedidosAtendidos;
+    }
+
+    public void setPedidosAtendidos(String pedidosAtendidos) {
+        this.pedidosAtendidos = pedidosAtendidos;
+    }
+
+    public String getPedidosFeitos() {
+        return pedidosFeitos;
+    }
+
+    public void setPedidosFeitos(String pedidosFeitos) {
+        this.pedidosFeitos = pedidosFeitos;
+    }
+
+    public List<Grupo> grupos;
 
     public List<Grupo> getGrupos() {
         return grupos;
@@ -21,6 +51,15 @@ public class User {
         this.grupos = grupos;
     }
 
+    public String getProfileImg() {
+        return profileImg;
+    }
+
+    public void setProfileImg(String profileImg) {
+        this.profileImg = profileImg;
+    }
+
+    public String profileImg;
 
     private Uri profileImageURL;
 
@@ -51,4 +90,5 @@ public class User {
     private String name;
 
     private String email;
+
 }

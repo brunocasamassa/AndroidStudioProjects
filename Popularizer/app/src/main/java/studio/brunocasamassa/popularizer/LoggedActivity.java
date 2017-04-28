@@ -48,7 +48,7 @@ public class LoggedActivity extends AppCompatActivity {
         System.out.println("ID USER: "+userId);
         String accessToken = loginResult.getAccessToken().getToken();
 
-        String profileImgUrl = "https://graph.facebook.com/" + userId + "/picture?type=large";
+            String profileImgUrl = "https://graph.facebook.com/" + userId + "/picture?type=large";
 
         Glide.with(LoggedActivity.this).load(profileImgUrl).into(profileImage);
     }

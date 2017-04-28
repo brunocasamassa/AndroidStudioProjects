@@ -31,11 +31,13 @@ import studio.brunocasamassa.ajudaaqui.SobreActivity;
 public class NavigationDrawer extends AppCompatActivity{
 
 
+
     //NAVIGATION DRAWER
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    Activity setClasse = new Activity();
 
-
-    public void createDrawer(Activity classe , android.support.v7.widget.Toolbar toolbar){
+    public void createDrawer(Activity classe, android.support.v7.widget.Toolbar toolbar){
+        setClasse = classe;
         //Itens do Drawer
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos);
         PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.menu_chats);
@@ -83,10 +85,10 @@ public class NavigationDrawer extends AppCompatActivity{
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         if (position == 1){
-                            startActivity(new Intent(NavigationDrawer.this,PedidosActivity.class));
+                            startActivity(new Intent(setClasse.getParent(),PedidosActivity.class));
                         }
                         if (position == 3){
-                            startActivity(new Intent(NavigationDrawer.this,ChatActivity.class));
+                            startActivity(new Intent(setClasse.getParent(),ChatActivity.class));
                         }
                         if (position == 5){
                             startActivity(new Intent(NavigationDrawer.this,GruposActivity.class));

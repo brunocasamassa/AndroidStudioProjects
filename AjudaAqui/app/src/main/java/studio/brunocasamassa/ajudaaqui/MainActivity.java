@@ -25,8 +25,10 @@ public class MainActivity extends AppCompatActivity {
     private Button cadastrar;
     private Button login;
     private LoginButton btnLogin;
+    public static User user;
     public CallbackManager callbackManager;
     public static LoginResult lr;
+    private static String userId;
 
 
     @Override
@@ -64,40 +66,43 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
             @Override
-            public void onSuccess(LoginResult loginResult) {
+            public void onSuccess(final LoginResult loginResult) {
 
-                    if(Profile.getCurrentProfile() == null) {
-                        mProfileTracker = new ProfileTracker() {
-                            @Override
-                            protected void onCurrentProfileChanged(Profile profile, Profile profile2) {
-                                // profile2 is the new profile
-                                System.out.println("facebook - profile" + profile2.getLastName());
-                                User user = new User();
-                                user.setName(profile2.getName());
-                                user.setProfileImageURL(profile2.getProfilePictureUri(50,50));
-                                mProfileTracker.stopTracking();
-                                startActivity(new Intent(MainActivity.this, PedidosActivity.class));
+                if (Profile.getCurrentProfile() == null) {
+                    mProfileTracker = new ProfileTracker() {
+                        @Override
+                        protected void onCurrentProfileChanged(Profile profile, Profile profile2) {
+                            //profile2 is the new profile
+                            //System.out.println("facebook - profile" + profile2.getLastName());
+                            user = new User();
+                            user.setName(profile2.getFirstName()+" "+profile2.getLastName());
+                            user.setProfileImageURL(profile2.getProfilePictureUri(50, 50));
+                            mProfileTracker.stopTracking();
+                            lr = loginResult;
+                            String userId = loginResult.getAccessToken().getUserId();
+                            System.out.println("LOGIN RESULT: "+ userId);
+                            String profileImgUrl = "https://graph.facebook.com/" + userId + "/picture?type=large";
+                            user.setProfileImg(profileImgUrl);
+                            returnLoginResult(lr);
+                            startActivity(new Intent(MainActivity.this, PedidosActivity.class));
 
-                            }
-                        };
-                        // no need to call startTracking() on mProfileTracker
-                        // because it is called by its constructor, internally.
-                    }
-                    else {
-                        Profile profile = Profile.getCurrentProfile();
-                        System.out.println(("facebook - profile" + profile.getMiddleName()));
+
+                        }
+                    };
+                } else {
+                    Profile profile = Profile.getCurrentProfile();
+                    System.out.println(("facebook - profile" + profile.getMiddleName()));
                     System.out.println("LOGIN COM SUCESSO");
                     Toast.makeText(getApplicationContext(), "Logado com Sucesso", Toast.LENGTH_SHORT).show();
                     lr = loginResult;
-                    returnLoginResult(lr);
                     startActivity(new Intent(MainActivity.this, PedidosActivity.class));
 
 
 
+                }
+
+
             }
-
-
-        }
 
             @Override
             public void onCancel() {
@@ -107,12 +112,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onError(FacebookException error) {
 
-            };
-
-    })
+            }
 
 
-;}
+        })
+
+
+        ;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -121,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static LoginResult returnLoginResult(LoginResult result) {
 
+        result = lr;
         return result;
     }
 

@@ -12,7 +12,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -23,7 +25,9 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
+import studio.brunocasamassa.ajudaaqui.helper.User;
 
 /**
  * Created by bruno on 24/04/2017.
@@ -35,16 +39,39 @@ public class PerfilActivity extends AppCompatActivity{
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
     private int posicao;
+    private CircleImageView profileImg;
+    private TextView profileName;
+    private TextView pontosConquistados;
+    private TextView pedidosFeitos;
+    private TextView pedidosAtendidos;
+    private MainActivity main;
+    private User usuario = main.user;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hello); //// TODO: 25/04/2017 criar layout de cada fragment
+        setContentView(R.layout.activity_perfil);
 
-
+        profileImg = (CircleImageView) findViewById(R.id.profileImg);
+        profileName = (TextView) findViewById(R.id.profileName);
+        pedidosAtendidos = (TextView) findViewById(R.id.perfilPedidosAtendidos);
+        pedidosFeitos = (TextView) findViewById(R.id.perfilPedidosFeitos);
+        pontosConquistados = (TextView) findViewById(R.id.perfilPontosConquistados);
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
+
+        Glide.with(PerfilActivity.this).load(usuario.getProfileImg()).into(profileImg);
+
+        profileName.setText(usuario.getName());
+
+        usuario.setPedidosAtendidos("20");
+        usuario.setPedidosFeitos("420");
+        usuario.setPontos("5");
+        pedidosAtendidos.setText(usuario.getPedidosAtendidos());
+        pedidosFeitos.setText(usuario.getPedidosFeitos());
+        pontosConquistados.setText(usuario.getPontos());
+
         toolbar.setTitle(getResources().getString(R.string.menu_perfil));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
@@ -52,9 +79,8 @@ public class PerfilActivity extends AppCompatActivity{
 
         //TODO navigator.createDrawer(PedidosActivity.this, toolbar);
 
-        //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
-        //START NAVIGATION DRAWER -----------------------------------
+       //---------------------------------START NAVIGATION DRAWER------------------------------------
 
         //Itens do Drawer
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos);
@@ -134,7 +160,7 @@ public class PerfilActivity extends AppCompatActivity{
             return;
         }
     }
-    //END NAVIGATION DRAWER -----------------------------------
+    //---------------------------------END NAVIGATION DRAWER------------------------------------
 
 
 
