@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private Button cadastrar;
     private Button login;
     private LoginButton btnLogin;
-    public static User user;
+    public static User user = new User();
     public CallbackManager callbackManager;
     public static LoginResult lr;
     private static String userId;
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+            setContentView(R.layout.activity_main);
 
 
         cadastrar = (Button) findViewById(R.id.entrar);
@@ -63,6 +63,14 @@ public class MainActivity extends AppCompatActivity {
 
         callbackManager = CallbackManager.Factory.create();
 
+        Profile facebookProfile ;
+
+        if ( Profile.getCurrentProfile() != null ){
+            facebookProfile = Profile.getCurrentProfile();
+            user.setName(facebookProfile.getFirstName()+" "+facebookProfile.getLastName());
+            user.setProfileImageURL(facebookProfile.getProfilePictureUri(50, 50));
+            startActivity(new Intent(MainActivity.this, PerfilActivity.class));
+        }
         btnLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
             @Override
@@ -72,11 +80,12 @@ public class MainActivity extends AppCompatActivity {
                     mProfileTracker = new ProfileTracker() {
                         @Override
                         protected void onCurrentProfileChanged(Profile profile, Profile profile2) {
+
                             //profile2 is the new profile
                             //System.out.println("facebook - profile" + profile2.getLastName());
-                            user = new User();
                             user.setName(profile2.getFirstName()+" "+profile2.getLastName());
                             user.setProfileImageURL(profile2.getProfilePictureUri(50, 50));
+                            Profile.setCurrentProfile(profile2);
                             mProfileTracker.stopTracking();
                             lr = loginResult;
                             String userId = loginResult.getAccessToken().getUserId();
@@ -84,21 +93,11 @@ public class MainActivity extends AppCompatActivity {
                             String profileImgUrl = "https://graph.facebook.com/" + userId + "/picture?type=large";
                             user.setProfileImg(profileImgUrl);
                             returnLoginResult(lr);
-                            startActivity(new Intent(MainActivity.this, PedidosActivity.class));
+                            startActivity(new Intent(MainActivity.this, PerfilActivity.class));
 
 
                         }
                     };
-                } else {
-                    Profile profile = Profile.getCurrentProfile();
-                    System.out.println(("facebook - profile" + profile.getMiddleName()));
-                    System.out.println("LOGIN COM SUCESSO");
-                    Toast.makeText(getApplicationContext(), "Logado com Sucesso", Toast.LENGTH_SHORT).show();
-                    lr = loginResult;
-                    startActivity(new Intent(MainActivity.this, PedidosActivity.class));
-
-
-
                 }
 
 

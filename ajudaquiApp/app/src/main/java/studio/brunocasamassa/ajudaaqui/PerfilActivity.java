@@ -61,7 +61,7 @@ public class PerfilActivity extends AppCompatActivity{
         pontosConquistados = (TextView) findViewById(R.id.perfilPontosConquistados);
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
 
-        Glide.with(PerfilActivity.this).load(usuario.getProfileImg()).into(profileImg);
+        Glide.with(PerfilActivity.this).load(usuario.getProfileImageURL()).into(profileImg);
 
         profileName.setText(usuario.getName());
 

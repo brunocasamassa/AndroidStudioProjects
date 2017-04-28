@@ -32,6 +32,7 @@ public class PedidosActivity extends AppCompatActivity {
     private LoginResult loginResult;
     private MainActivity main;
     private User usuario;
+    private static NavigationDrawer navigator = new NavigationDrawer();
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -72,9 +73,8 @@ public class PedidosActivity extends AppCompatActivity {
 
         slidingTabLayout.setViewPager(viewPager);
 
-        NavigationDrawer navigator = new NavigationDrawer();
 
-       navigator.createDrawer(PedidosActivity.this, toolbar);
+        navigator.createDrawer(PedidosActivity.this, toolbar);
 
 
     }

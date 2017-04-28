@@ -25,6 +25,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import studio.brunocasamassa.ajudaaqui.helper.GruposTabAdapter;
+import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
 
 /**
@@ -64,7 +65,8 @@ public class GruposActivity extends AppCompatActivity {
         slidingTabLayout.setViewPager(viewPager);
 
 
-        //TODO navigator.createDrawer(PedidosActivity.this, toolbar);
+        NavigationDrawer navigator = new NavigationDrawer();
+        navigator.createDrawer(GruposActivity.this, toolbar);
 
         //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
