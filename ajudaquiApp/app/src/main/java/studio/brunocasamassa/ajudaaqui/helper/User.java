@@ -2,6 +2,8 @@ package studio.brunocasamassa.ajudaaqui.helper;
 
 import android.net.Uri;
 
+import com.google.firebase.database.DatabaseReference;
+
 import java.util.List;
 
 /**
@@ -9,12 +11,22 @@ import java.util.List;
  */
 
 public class User {
+    public String getSenha() {
+        return senha;
+    }
 
-    public String pontos ;
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
 
-    public String pedidosAtendidos ;
+    private String senha;
+    private String id;
 
-    public String pedidosFeitos ;
+    public String pontos;
+
+    public String pedidosAtendidos;
+
+    public String pedidosFeitos;
 
     public String getPontos() {
         return pontos;
@@ -22,6 +34,14 @@ public class User {
 
     public void setPontos(String pontos) {
         this.pontos = pontos;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPedidosAtendidos() {
@@ -90,5 +110,14 @@ public class User {
     private String name;
 
     private String email;
+
+
+    public void save() {
+
+        DatabaseReference referenciaFirebase = FirebaseConfig.getFireBase();
+        referenciaFirebase.child("usuarios").child(getId()).setValue(this);
+
+    }
+
 
 }

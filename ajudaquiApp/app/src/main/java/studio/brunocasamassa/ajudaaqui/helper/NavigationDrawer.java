@@ -33,24 +33,26 @@ import studio.brunocasamassa.ajudaaqui.SobreActivity;
  * Created by bruno on 24/04/2017.
  */
 
-public class NavigationDrawer extends MainActivity {
-
+public class NavigationDrawer {
 
 
     //NAVIGATION DRAWER
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private static Activity setClasse = new Activity();
+    //private static Activity setClasse = new Activity();
     private static MainActivity main;
     private static User usuario = main.user;
-    public void createDrawer(Activity classe, Toolbar toolbar){
-        setClasse = classe;
+    public int pivotPosition;
+    public Activity pivotClass;
+
+
+    public void createDrawer(final Activity classe, Toolbar toolbar) {
+        //setClasse = classe;
         //Itens do Drawer
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos);
         PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.menu_chats);
         PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.menu_grupos);
         PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.menu_perfil);
-        PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_configuracoes);
-        PrimaryDrawerItem item6 = new PrimaryDrawerItem().withIdentifier(6).withName(R.string.menu_sobre);
+        PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_sobre);
 
         // Create the Navigation Drawer AccountHeader
         AccountHeader headerResult = new AccountHeaderBuilder()
@@ -62,7 +64,7 @@ public class NavigationDrawer extends MainActivity {
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                            return false;
+                        return false;
                     }
                 })
                 .build();
@@ -72,6 +74,7 @@ public class NavigationDrawer extends MainActivity {
                 .withActivity(classe)
                 .withToolbar(toolbar)
                 .withAccountHeader(headerResult)
+                .withSelectedItemByPosition(pivotPosition)
                 .addDrawerItems(
                         item1,
                         new DividerDrawerItem(),//Divisor
@@ -82,37 +85,42 @@ public class NavigationDrawer extends MainActivity {
                         new DividerDrawerItem(),//Divisor
                         item4,
                         new DividerDrawerItem(),//Divisor
-                        item5,
-                        new DividerDrawerItem(),//Divisor
-                        item6
+                        item5
                         //Divisor
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        if (position == 1){
-                            // HERE I AM TRYING USING DIFFERENT FORMS TO START THE ACTITIVIES
-                            startActivity(new Intent(setClasse.getParent(),PedidosActivity.class));
-                        }
-                        if (position == 3){
-                            startActivity(new Intent(setClasse.getParent(),ChatActivity.class));
-                        }
-                        if (position == 5){
-                            startActivity(new Intent(NavigationDrawer.this,GruposActivity.class));
-                        }
-                        if (position == 7){
-                            startActivity(new Intent(setClasse,PerfilActivity.class));
-                        }
-                        if (position == 9){
-                            startActivity(new Intent(NavigationDrawer.this,SobreActivity.class));
-                        }
+                       pivotClass = classe;
+                      pivotPosition = position;
+                      verifyActivity(pivotClass, pivotPosition);
+
                         return false;
                     }
                 })
-                .withSelectedItemByPosition(0)
                 .build();
+
+
     }
 
+            private void verifyActivity(Activity classe, int position) {
+                if (position == 1) {
+                    // HERE I AM TRYING USING DIFFERENT FORMS TO START THE ACTITIVIES
+                    classe.startActivity(new Intent(classe, PedidosActivity.class));
+                }
+                if (position == 3) {
+                    classe.startActivity(new Intent(classe, ChatActivity.class));
+                }
+                if (position == 5) {
+                    classe.startActivity(new Intent(classe, GruposActivity.class));
+                }
+                if (position == 7) {
+                    classe.startActivity(new Intent(classe, PerfilActivity.class));
+                }
+                if (position == 9) {
+                    classe.startActivity(new Intent(classe, SobreActivity.class));
+                }
+    }
 
 
 }

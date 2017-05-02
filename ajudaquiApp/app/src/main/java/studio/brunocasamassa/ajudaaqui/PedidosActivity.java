@@ -1,5 +1,7 @@
 package studio.brunocasamassa.ajudaaqui;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -12,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
@@ -77,7 +80,9 @@ public class PedidosActivity extends AppCompatActivity {
         navigator.createDrawer(PedidosActivity.this, toolbar);
 
 
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -92,6 +97,8 @@ public class PedidosActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_exit:
                 //logoutUser();
+                LoginManager.getInstance().logOut();
+                startActivity(new Intent(PedidosActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
                 return true;

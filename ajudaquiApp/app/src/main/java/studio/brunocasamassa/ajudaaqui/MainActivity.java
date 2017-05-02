@@ -12,6 +12,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
             user.setProfileImageURL(facebookProfile.getProfilePictureUri(50, 50));
             startActivity(new Intent(MainActivity.this, PerfilActivity.class));
         }
+
         btnLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
             @Override
@@ -94,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                             user.setProfileImg(profileImgUrl);
                             returnLoginResult(lr);
                             startActivity(new Intent(MainActivity.this, PerfilActivity.class));
+
 
 
                         }
@@ -131,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
         result = lr;
         return result;
     }
+
 
 
 }

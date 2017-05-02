@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "860538768104",
+    "firebase_url": "https://ajudaqui-d58a0.firebaseio.com",
+    "project_id": "ajudaqui-d58a0",
+    "storage_bucket": "ajudaqui-d58a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:860538768104:android:69bdd8f77aaa7233",
+        "android_client_info": {
+          "package_name": "studio.brunocasamassa.ajudaaqui"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "860538768104-f1n0mv3mms5ph06pp2me646l7sjsiokk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwB363WJRz5L-JqgjmKwLfP5hlHfPn0Ko"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
