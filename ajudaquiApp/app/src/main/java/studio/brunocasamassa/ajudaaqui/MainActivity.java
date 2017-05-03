@@ -15,9 +15,12 @@ import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.Arrays;
 
+import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.User;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
     public CallbackManager callbackManager;
     public static LoginResult lr;
     private static String userId;
-
+    private static FirebaseAuth autenticacao;
+    private static DatabaseReference firebaseDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +59,9 @@ public class MainActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
+
             }
         });
 
@@ -82,9 +88,8 @@ public class MainActivity extends AppCompatActivity {
                     mProfileTracker = new ProfileTracker() {
                         @Override
                         protected void onCurrentProfileChanged(Profile profile, Profile profile2) {
-
+                            autenticacao = FirebaseConfig.getFirebaseAuthentication();
                             //profile2 is the new profile
-                            //System.out.println("facebook - profile" + profile2.getLastName());
                             user.setName(profile2.getFirstName()+" "+profile2.getLastName());
                             user.setProfileImageURL(profile2.getProfilePictureUri(50, 50));
                             Profile.setCurrentProfile(profile2);

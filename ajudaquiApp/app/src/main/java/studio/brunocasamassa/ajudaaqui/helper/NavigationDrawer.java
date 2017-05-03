@@ -93,12 +93,13 @@ public class NavigationDrawer {
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                        pivotClass = classe;
                       pivotPosition = position;
-                      verifyActivity(pivotClass, pivotPosition);
-
+                        verifyActivity(pivotClass, pivotPosition);
                         return false;
                     }
                 })
                 .build();
+
+
 
 
     }

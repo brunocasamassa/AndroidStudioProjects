@@ -2,6 +2,7 @@ package studio.brunocasamassa.ajudaaqui.helper;
 
 import android.net.Uri;
 
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;
@@ -10,9 +11,15 @@ import java.util.List;
  * Created by bruno on 26/04/2017.
  */
 
-public class User {
+public class User implements DatabaseReference.CompletionListener{
+
     public String getSenha() {
         return senha;
+    }
+
+
+    public User() {
+
     }
 
     public void setSenha(String senha) {
@@ -120,4 +127,8 @@ public class User {
     }
 
 
+    @Override
+    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
+    }
 }

@@ -15,6 +15,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.database.DatabaseReference;
 
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
@@ -32,7 +33,10 @@ public class CadastroActivity extends AppCompatActivity {
     private EditText senha;
     private EditText senhaConfirm;
     private FirebaseAuth autenticacao;
+    private DatabaseReference firebaseDatabase;
     public User usuario;
+    private Base64Decoder decoder;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,18 +74,25 @@ public class CadastroActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(CadastroActivity.this, "Usuario cadastrado com sucesso", Toast.LENGTH_LONG).show();
 
                             //FirebaseUser usuarioFireBase = task.getResult().getUser();
-                            String idUser = Base64Decoder.encoderBase64(usuario.getEmail());
+                            String idUser = Base64Decoder.encoderBase64(email.getText().toString());
                             usuario.setId(idUser);
                             usuario.save();
+
+                            firebaseDatabase = FirebaseConfig.getFireBase();
+
+                            firebaseDatabase.child("usuarios").setValue(idUser);
+
+                            
 
                             Preferences preferences = new Preferences(CadastroActivity.this);
 
                             preferences.saveData(idUser);
 
                             /*autenticacao.signOut();*/
+                            Toast.makeText(CadastroActivity.this, "Usuario cadastrado com sucesso", Toast.LENGTH_LONG).show();
+
                             finish();
 
                         } else {
