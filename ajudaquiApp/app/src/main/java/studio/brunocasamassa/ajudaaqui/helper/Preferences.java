@@ -11,7 +11,7 @@ public class Preferences {
 
     private Context contexto;
     private SharedPreferences preferences;
-    private String NOME_ARQUIVO = "superchat.preferences";
+    private String NOME_ARQUIVO = "ajudaaqui.preferences";
     private int MODE = 0;
     private SharedPreferences.Editor editor;
 

@@ -68,23 +68,26 @@ public class CadastroActivity extends AppCompatActivity {
     private void cadastrarUsuario() {
 
         autenticacao = FirebaseConfig.getFirebaseAuthentication();
+
         System.out.println("EMAIL: " + usuario.getEmail() + "  SENHA: " + usuario.getSenha());
+
         autenticacao.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha()
-        ).addOnCompleteListener(CadastroActivity.this, new OnCompleteListener<AuthResult>() {
+        );
+        autenticacao.signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha()).addOnCompleteListener(CadastroActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
 
                             //FirebaseUser usuarioFireBase = task.getResult().getUser();
-                            String idUser = Base64Decoder.encoderBase64(email.getText().toString());
+                            String idUser = Base64Decoder.encoderBase64(usuario.getEmail());
+                            System.out.println("BASE64 ENCODER: " + idUser);
                             usuario.setId(idUser);
                             usuario.save();
 
-                            firebaseDatabase = FirebaseConfig.getFireBase();
+                            /*firebaseDatabase = FirebaseConfig.getFireBase();
 
-                            firebaseDatabase.child("usuarios").setValue(idUser);
+                            firebaseDatabase.child("usuarios").setValue(idUser);*/
 
-                            
 
                             Preferences preferences = new Preferences(CadastroActivity.this);
 
@@ -98,14 +101,17 @@ public class CadastroActivity extends AppCompatActivity {
                         } else {
 
                             try {
+
+                                System.out.println("TASK ERROR CARAIO " + task.getException().toString());
                                 throw task.getException();
 
                             } catch (FirebaseAuthWeakPasswordException e) {
-                                Toast.makeText(CadastroActivity.this,"Senha invalida, favor escolher outra senha para autenticacao", Toast.LENGTH_LONG).show();
+                                Toast.makeText(CadastroActivity.this, "Senha invalida, favor escolher outra senha para autenticacao", Toast.LENGTH_LONG).show();
                             } catch (FirebaseAuthInvalidCredentialsException e) {
                                 Toast.makeText(CadastroActivity.this, "e-mail invalido, verifique os valores digitados", Toast.LENGTH_LONG).show();
                             } catch (Exception e) {
                                 e.printStackTrace();
+                                System.out.println("ERROR CARAIO " + e);
                             }
                         }
 

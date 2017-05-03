@@ -59,7 +59,7 @@ public class PedidosActivity extends AppCompatActivity {
         String name = message(profile);
         user.setName(name);*/
 
-        usuario = main.user;
+
         System.out.println("USER: " + usuario.getName());
         String username = usuario.getName();
         loginResult=main.lr;

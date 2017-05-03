@@ -2,6 +2,9 @@ package studio.brunocasamassa.ajudaaqui.helper;
 
 import android.net.Uri;
 
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
@@ -11,29 +14,40 @@ import java.util.List;
  * Created by bruno on 26/04/2017.
  */
 
-public class User implements DatabaseReference.CompletionListener{
+public class User implements DatabaseReference.CompletionListener {
+
+    private String id;
+
+    private String pontos;
+
+    private String pedidosAtendidos;
+
+    private String pedidosFeitos;
+
+    private String senha;
+
+    private List<Grupo> grupos;
+
+    private String profileImg;
+
+    private Uri profileImageURL;
+
+    private String name;
+
+    private String email;
 
     public String getSenha() {
         return senha;
     }
 
-
     public User() {
 
     }
 
+
     public void setSenha(String senha) {
         this.senha = senha;
     }
-
-    private String senha;
-    private String id;
-
-    public String pontos;
-
-    public String pedidosAtendidos;
-
-    public String pedidosFeitos;
 
     public String getPontos() {
         return pontos;
@@ -68,8 +82,6 @@ public class User implements DatabaseReference.CompletionListener{
         this.pedidosFeitos = pedidosFeitos;
     }
 
-    public List<Grupo> grupos;
-
     public List<Grupo> getGrupos() {
         return grupos;
     }
@@ -85,10 +97,6 @@ public class User implements DatabaseReference.CompletionListener{
     public void setProfileImg(String profileImg) {
         this.profileImg = profileImg;
     }
-
-    public String profileImg;
-
-    private Uri profileImageURL;
 
     public Uri getProfileImageURL() {
         return profileImageURL;
@@ -114,18 +122,14 @@ public class User implements DatabaseReference.CompletionListener{
         this.email = email;
     }
 
-    private String name;
-
-    private String email;
-
 
     public void save() {
-
+        FirebaseAuth auth = FirebaseConfig.getFirebaseAuthentication();
+        auth.signInWithEmailAndPassword(email, senha);
+        System.out.println("status login: "+ auth.getCurrentUser());
         DatabaseReference referenciaFirebase = FirebaseConfig.getFireBase();
         referenciaFirebase.child("usuarios").child(getId()).setValue(this);
-
     }
-
 
     @Override
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
