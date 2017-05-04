@@ -2,8 +2,6 @@ package studio.brunocasamassa.ajudaaqui.helper;
 
 import android.net.Uri;
 
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,7 +22,7 @@ public class User implements DatabaseReference.CompletionListener {
 
     private String pedidosFeitos;
 
-    private String senha;
+    public String senha;
 
     private List<Grupo> grupos;
 
@@ -32,9 +30,15 @@ public class User implements DatabaseReference.CompletionListener {
 
     private Uri profileImageURL;
 
-    private String name;
+    public String name;
 
-    private String email;
+    public String email;
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User user;
 
     public String getSenha() {
         return senha;

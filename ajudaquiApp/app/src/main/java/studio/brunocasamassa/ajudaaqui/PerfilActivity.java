@@ -10,21 +10,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
-import com.mikepenz.materialdrawer.AccountHeader;
-import com.mikepenz.materialdrawer.AccountHeaderBuilder;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
@@ -47,7 +37,9 @@ public class PerfilActivity extends AppCompatActivity{
     private TextView pedidosFeitos;
     private TextView pedidosAtendidos;
     private MainActivity main;
-    private User usuario = main.user;
+    private CadastroActivity cdrst;
+    private User usuario;
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -55,6 +47,8 @@ public class PerfilActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
+
+
 
         profileImg = (CircleImageView) findViewById(R.id.profileImg);
         profileName = (TextView) findViewById(R.id.profileName);

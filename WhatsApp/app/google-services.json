@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "860538768104",
-    "firebase_url": "https://ajudaqui-d58a0.firebaseio.com",
-    "project_id": "ajudaqui-d58a0",
-    "storage_bucket": "ajudaqui-d58a0.appspot.com"
+    "project_number": "694037656922",
+    "firebase_url": "https://whatsapp-ca021.firebaseio.com",
+    "project_id": "whatsapp-ca021",
+    "storage_bucket": "whatsapp-ca021.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:860538768104:android:69bdd8f77aaa7233",
+        "mobilesdk_app_id": "1:694037656922:android:7d8af483cc33d8c3",
         "android_client_info": {
-          "package_name": "studio.brunocasamassa.ajudaaqui"
+          "package_name": "whatsapp.cursoandroid.com.whatsapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "860538768104-f1n0mv3mms5ph06pp2me646l7sjsiokk.apps.googleusercontent.com",
+          "client_id": "694037656922-0k6tvqnok4ga6fau55ei6vf8gn0prpfk.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAwB363WJRz5L-JqgjmKwLfP5hlHfPn0Ko"
+          "current_key": "AIzaSyDanESZdzlHjDwKc1XzISmiB82F8cycESQ"
         }
       ],
       "services": {

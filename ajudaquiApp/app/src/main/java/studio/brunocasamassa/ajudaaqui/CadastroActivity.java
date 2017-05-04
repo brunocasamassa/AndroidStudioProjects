@@ -15,6 +15,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
@@ -72,13 +73,12 @@ public class CadastroActivity extends AppCompatActivity {
         System.out.println("EMAIL: " + usuario.getEmail() + "  SENHA: " + usuario.getSenha());
 
         autenticacao.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha()
-        );
-        autenticacao.signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha()).addOnCompleteListener(CadastroActivity.this, new OnCompleteListener<AuthResult>() {
+        ).addOnCompleteListener(CadastroActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
 
-                            //FirebaseUser usuarioFireBase = task.getResult().getUser();
+                           // FirebaseUser usuarioFireBase = task.getResult().getUser();
                             String idUser = Base64Decoder.encoderBase64(usuario.getEmail());
                             System.out.println("BASE64 ENCODER: " + idUser);
                             usuario.setId(idUser);
@@ -88,6 +88,12 @@ public class CadastroActivity extends AppCompatActivity {
 
                             firebaseDatabase.child("usuarios").setValue(idUser);*/
 
+
+                            firebaseDatabase = FirebaseConfig.getFireBase();
+                            firebaseDatabase.child("pontos").setValue("300");
+
+                            FirebaseUser usuarioFirebase = task.getResult().getUser();
+                            usuario.setId( usuarioFirebase.getUid() );
 
                             Preferences preferences = new Preferences(CadastroActivity.this);
 

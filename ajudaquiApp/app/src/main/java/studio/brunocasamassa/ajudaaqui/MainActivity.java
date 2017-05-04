@@ -5,14 +5,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         btnLogin = (LoginButton) findViewById(R.id.login_button);
 
         btnLogin.setReadPermissions(Arrays.asList("public_profile", "email", "user_birthday"));
+
 
 
         cadastrar.setOnClickListener(new View.OnClickListener() {
