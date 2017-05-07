@@ -17,6 +17,7 @@ public class Preferences {
 
 
     private String CHAVE_ID = "idUser";
+    private String CHAVE_NOME = "nameUser";
 
 
     public Preferences(Context contextoParametro){
@@ -25,8 +26,9 @@ public class Preferences {
         editor = preferences.edit();
     }
 
-    public void saveData(String idUser) {
+    public void saveData(String idUser, String nameUser) {
         editor.putString(CHAVE_ID, idUser);
+        editor.putString(CHAVE_NOME, nameUser);
         editor.commit();
 
     }

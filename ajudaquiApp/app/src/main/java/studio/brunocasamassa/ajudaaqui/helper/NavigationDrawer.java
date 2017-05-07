@@ -91,7 +91,7 @@ public class NavigationDrawer {
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                       pivotClass = classe;
+                      pivotClass = classe;
                       pivotPosition = position;
                         verifyActivity(pivotClass, pivotPosition);
                         return false;

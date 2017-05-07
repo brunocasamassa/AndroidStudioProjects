@@ -9,12 +9,17 @@ import android.widget.Button;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -39,13 +44,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
 
+        firebaseDatabase = FirebaseConfig.getFireBase();
+        firebaseDatabase.child("pontos").setValue("300");
 
         cadastrar = (Button) findViewById(R.id.entrar);
         login = (Button) findViewById(R.id.loginButton);
         btnLogin = (LoginButton) findViewById(R.id.login_button);
 
         btnLogin.setReadPermissions(Arrays.asList("public_profile", "email", "user_birthday"));
-
 
 
         cadastrar.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         if ( Profile.getCurrentProfile() != null ){
             facebookProfile = Profile.getCurrentProfile();
+
             user.setName(facebookProfile.getFirstName()+" "+facebookProfile.getLastName());
             user.setProfileImageURL(facebookProfile.getProfilePictureUri(50, 50));
             startActivity(new Intent(MainActivity.this, PerfilActivity.class));
@@ -84,6 +91,24 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(final LoginResult loginResult) {
 
                 if (Profile.getCurrentProfile() == null) {
+
+                    GraphRequest request = GraphRequest.newMeRequest(
+                            loginResult.getAccessToken(),
+                            new GraphRequest.GraphJSONObjectCallback() {
+                                @Override
+                                public void onCompleted(JSONObject object, GraphResponse response) {
+                                    System.out.println("LoginActivity"+ response.toString());
+
+                                    // Application code
+                                    try {
+                                        String email = object.getString("email");
+                                        System.out.println("email: "+ email);
+                                        String birthday = object.getString("birthday");
+                                        System.out.println("birthday: "+ birthday);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }}});
+
                     mProfileTracker = new ProfileTracker() {
                         @Override
                         protected void onCurrentProfileChanged(Profile profile, Profile profile2) {
@@ -100,8 +125,6 @@ public class MainActivity extends AppCompatActivity {
                             user.setProfileImg(profileImgUrl);
                             returnLoginResult(lr);
                             startActivity(new Intent(MainActivity.this, PerfilActivity.class));
-
-
 
                         }
                     };

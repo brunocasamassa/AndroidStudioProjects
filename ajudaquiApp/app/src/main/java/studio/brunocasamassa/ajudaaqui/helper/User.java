@@ -5,7 +5,9 @@ import android.net.Uri;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,13 +18,15 @@ public class User implements DatabaseReference.CompletionListener {
 
     private String id;
 
+    private ArrayList<Integer> medalhas;
+
     private String pontos;
 
     private String pedidosAtendidos;
 
     private String pedidosFeitos;
 
-    public String senha;
+    private String senha;
 
     private List<Grupo> grupos;
 
@@ -32,26 +36,32 @@ public class User implements DatabaseReference.CompletionListener {
 
     public String name;
 
-    public String email;
+    private String email;
 
-    public void setUser(User user) {
-        this.user = user;
-    }
 
-    public User user;
-
-    public String getSenha() {
-        return senha;
-    }
 
     public User() {
 
     }
 
 
+    public ArrayList<Integer> getMedalhas() {
+        return medalhas;
+    }
+
+    public void setMedalhas(ArrayList<Integer> medalhas) {
+        this.medalhas = medalhas;
+    }
+
+    @Exclude
+    public String getSenha() {
+        return senha;
+    }
+
     public void setSenha(String senha) {
         this.senha = senha;
     }
+
 
     public String getPontos() {
         return pontos;
@@ -61,6 +71,8 @@ public class User implements DatabaseReference.CompletionListener {
         this.pontos = pontos;
     }
 
+
+    @Exclude
     public String getId() {
         return id;
     }
@@ -68,6 +80,8 @@ public class User implements DatabaseReference.CompletionListener {
     public void setId(String id) {
         this.id = id;
     }
+
+
 
     public String getPedidosAtendidos() {
 
@@ -78,6 +92,8 @@ public class User implements DatabaseReference.CompletionListener {
         this.pedidosAtendidos = pedidosAtendidos;
     }
 
+
+
     public String getPedidosFeitos() {
         return pedidosFeitos;
     }
@@ -85,6 +101,8 @@ public class User implements DatabaseReference.CompletionListener {
     public void setPedidosFeitos(String pedidosFeitos) {
         this.pedidosFeitos = pedidosFeitos;
     }
+
+
 
     public List<Grupo> getGrupos() {
         return grupos;
@@ -94,6 +112,8 @@ public class User implements DatabaseReference.CompletionListener {
         this.grupos = grupos;
     }
 
+
+
     public String getProfileImg() {
         return profileImg;
     }
@@ -101,6 +121,8 @@ public class User implements DatabaseReference.CompletionListener {
     public void setProfileImg(String profileImg) {
         this.profileImg = profileImg;
     }
+
+
 
     public Uri getProfileImageURL() {
         return profileImageURL;
@@ -110,6 +132,8 @@ public class User implements DatabaseReference.CompletionListener {
         this.profileImageURL = profileImageURL;
     }
 
+
+
     public String getName() {
         return name;
     }
@@ -117,6 +141,8 @@ public class User implements DatabaseReference.CompletionListener {
     public void setName(String name) {
         this.name = name;
     }
+
+
 
     public String getEmail() {
         return email;
@@ -127,10 +153,8 @@ public class User implements DatabaseReference.CompletionListener {
     }
 
 
+
     public void save() {
-        FirebaseAuth auth = FirebaseConfig.getFirebaseAuthentication();
-        auth.signInWithEmailAndPassword(email, senha);
-        System.out.println("status login: "+ auth.getCurrentUser());
         DatabaseReference referenciaFirebase = FirebaseConfig.getFireBase();
         referenciaFirebase.child("usuarios").child(getId()).setValue(this);
     }
