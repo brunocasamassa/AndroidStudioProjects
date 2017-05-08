@@ -9,8 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -33,6 +35,7 @@ import studio.brunocasamassa.ajudaaqui.helper.User;
 
 public class CadastroActivity extends AppCompatActivity {
     private Button cadastrar;
+    private ImageButton backButton;
     private EditText email;
     private EditText nome;
     private EditText senha;
@@ -40,6 +43,7 @@ public class CadastroActivity extends AppCompatActivity {
     private FirebaseAuth autenticacao;
     private DatabaseReference firebaseDatabase;
     public User usuario;
+    public static String idUser;
     private Base64Decoder decoder;
     private ArrayList<Integer> badgesList = new ArrayList<>();
 
@@ -51,10 +55,21 @@ public class CadastroActivity extends AppCompatActivity {
         badgesList.add(0,2);
 
 
+        LoginManager.getInstance().logOut();
+
+        backButton = (ImageButton) findViewById(R.id.backButton);
         nome = (EditText) findViewById(R.id.cadastro_nome);
         email = (EditText) findViewById(R.id.cadastro_email);
         senha = (EditText) findViewById(R.id.cadastro_senha);
         senhaConfirm = (EditText) findViewById(R.id.cadastro_senhaConfirm);
+
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(CadastroActivity.this, MainActivity.class));
+            }
+        });
 
         cadastrar = (Button) findViewById(R.id.buttonValidarCadstro);
 
@@ -85,7 +100,7 @@ public class CadastroActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(CadastroActivity.this, "Usuario cadastrado com sucesso", Toast.LENGTH_LONG).show();
 
-                            String idUser = Base64Decoder.encoderBase64(usuario.getEmail());
+                            idUser = Base64Decoder.encoderBase64(usuario.getEmail());
                             System.out.println("BASE64 ENCODER: " + idUser);
                             usuario.setId(idUser);
                             usuario.setMedalhas(badgesList);

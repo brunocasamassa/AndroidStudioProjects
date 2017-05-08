@@ -20,7 +20,7 @@
         <activity android:name=".GruposActivity"></activity>
         <activity android:name=".SobreActivity"></activity>
         <activity android:name=".ChatActivity"></activity>
-        <activity android:name=".CadastroActivity">
+        <activity android:name=".GrupoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

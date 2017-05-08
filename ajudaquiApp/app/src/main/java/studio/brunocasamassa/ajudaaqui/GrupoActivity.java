@@ -1,6 +1,7 @@
 package studio.brunocasamassa.ajudaaqui;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -10,20 +11,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
-import com.mikepenz.materialdrawer.AccountHeader;
-import com.mikepenz.materialdrawer.AccountHeaderBuilder;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
+import studio.brunocasamassa.ajudaaqui.helper.Grupo;
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
 
@@ -31,38 +25,49 @@ import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
  * Created by bruno on 24/04/2017.
  */
 
-public class ChatActivity extends AppCompatActivity {
-
-
+public class GrupoActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private ListView listview_nomes;
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
-    private int posicao;
+    private TextView qtqMembros;
+    private TextView groupName;
+    private TextView descricao;
+    private ImageView groupImg;
+    private Grupo grupo;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hello); //// TODO: 25/04/2017 criar layout de cada fragment
+        setContentView(R.layout.activity_grupo);
 
+        qtqMembros = (TextView) findViewById(R.id.qtqMembros);
+        groupName = (TextView) findViewById(R.id.groupName);
+        descricao = (TextView) findViewById(R.id.grupoDescricao);
+        groupImg = (ImageView) findViewById(R.id.groupImg);
+
+        grupo = new Grupo();
+        grupo.setNome("GROUP EXAMPLE");
+        groupName.setText(grupo.getNome()   );
+       // groupImg.setImageURI();
+        groupImg.setImageBitmap(BitmapFactory.decodeResource(
+                getResources(), R.drawable.logo));
+        descricao.setText("Description Text jdiejkdepfae kdeniem 11eek  dlll d ldl,  !wl,l !!");
+
+        //grupo.setGrupoImg(groupImg);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
-        toolbar.setTitle(getResources().getString(R.string.menu_chats));
+        toolbar.setTitle(R.string.menu_grupos);
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
 
-
-
         NavigationDrawer navigator = new NavigationDrawer();
-        navigator.createDrawer(ChatActivity.this, toolbar);
+        navigator.createDrawer(GrupoActivity.this, toolbar);
 
-        //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
     }
-
-
 
 
     @Override
@@ -80,7 +85,7 @@ public class ChatActivity extends AppCompatActivity {
             case R.id.action_exit:
                 //logoutUser();
                 LoginManager.getInstance().logOut();
-                startActivity(new Intent(ChatActivity.this, MainActivity.class));
+                startActivity(new Intent(GrupoActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
                 return true;

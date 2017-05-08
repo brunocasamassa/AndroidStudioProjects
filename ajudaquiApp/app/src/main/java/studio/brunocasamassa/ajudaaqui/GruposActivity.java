@@ -1,6 +1,6 @@
 package studio.brunocasamassa.ajudaaqui;
 
-import android.content.Intent;
+import  android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -30,7 +30,9 @@ import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
 
 /**
+ *
  * Created by bruno on 24/04/2017.
+ *
  */
 
 public class GruposActivity extends AppCompatActivity {

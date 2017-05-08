@@ -37,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText senha;
     private FirebaseAuth autenticacao;
     private DatabaseReference firebase;
-    private String idUser;
+    public static String idUser;
     private ValueEventListener valueEventListenerUsuario;
 
 
@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void validarLogin() {
 
-        System.out.println("0000USER EMAIL: " + usuario.getEmail() + " USER SENHA: " + usuario.getSenha());
+        System.out.println("USER EMAIL: " + usuario.getEmail() + " USER SENHA: " + usuario.getSenha());
 
         autenticacao = FirebaseConfig.getFirebaseAuthentication();
         autenticacao.signInWithEmailAndPassword(
@@ -82,7 +82,6 @@ public class LoginActivity extends AppCompatActivity {
 
                     idUser = Base64Decoder.encoderBase64(usuario.getEmail());
 
-
                     firebase = FirebaseConfig.getFireBase()
                             .child("usuarios")
                             .child(idUser);
@@ -91,7 +90,6 @@ public class LoginActivity extends AppCompatActivity {
                     valueEventListenerUsuario = new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-
 
                             User usuarioRecuperado = dataSnapshot.getValue(User.class);
                             System.out.println("Data Changed " + usuarioRecuperado);
@@ -102,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-                            System.out.println("CANELADO " + databaseError);
+                            System.out.println("CANCELADO " + databaseError);
                         }
                     };
 
@@ -111,12 +109,14 @@ public class LoginActivity extends AppCompatActivity {
                     abrirTelaPrincipal();
                     Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_LONG).show();
                 }
-                ;
 
-                /*else{
+
+                else{
 
                     Toast.makeText(LoginActivity.this, "Erro ao fazer login!", Toast.LENGTH_LONG ).show();
-                }*/
+                    System.out.println("TASK EXCEPTION"+ task.getException());
+
+                }
 
             }
         });

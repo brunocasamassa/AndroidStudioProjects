@@ -31,9 +31,7 @@ public class PedidosActivity extends AppCompatActivity {
     private ListView listview_nomes;
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
-    public int posicao;
-    private LoginResult loginResult;
-    private MainActivity main;
+
     private User usuario;
     private static NavigationDrawer navigator = new NavigationDrawer();
 
@@ -59,11 +57,6 @@ public class PedidosActivity extends AppCompatActivity {
         String name = message(profile);
         user.setName(name);*/
 
-
-        System.out.println("USER: " + usuario.getName());
-        String username = usuario.getName();
-        loginResult=main.lr;
-        String userImg = usuario.getProfileImg();
 
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
         viewPager = (ViewPager) findViewById(R.id.vp_pagina);

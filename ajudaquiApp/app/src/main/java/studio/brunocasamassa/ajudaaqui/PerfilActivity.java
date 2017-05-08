@@ -65,7 +65,6 @@ public class PerfilActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
 
-
         LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
         profileImg = (CircleImageView) findViewById(R.id.profileImg);
         profileName = (TextView) findViewById(R.id.profileName);

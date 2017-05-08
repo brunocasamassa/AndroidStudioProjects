@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_light">
+
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="340dp"
+        android:layout_height="190dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolbar_principal"
+        app:srcCompat="@color/colorBackground" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_principal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorBackground"
+        app:titleTextColor="@android:color/black"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"></android.support.v7.widget.Toolbar>
+
+
+    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/groupImg"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@mipmap/ic_launcher"
+        app:civ_border_color= "@android:color/transparent"
+        app:civ_border_width="2dp"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/groupName"
+        android:layout_centerHorizontal="true" />
+    <TextView
+        android:id="@+id/groupName"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Android User"
+        android:textAlignment="center"
+        android:textColor="@color/cardview_light_background"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        tools:text="Android User"
+        android:layout_below="@+id/toolbar_principal"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/grupoDescricao"
+        android:layout_width="350dp"
+        android:layout_height="80dp"
+        android:text="TextView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/qtqMembros"
+        android:layout_width="50dp"
+        android:layout_height="25dp"
+        android:text="1000"
+        android:textAlignment="viewEnd"
+        android:textColor="@color/md_light_statusbar"
+        android:layout_below="@+id/groupImg"
+        android:layout_alignLeft="@+id/textView6"
+        android:layout_alignStart="@+id/textView6"
+        android:layout_marginLeft="50dp"
+        android:layout_marginStart="50dp" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="65dp"
+        android:layout_height="25dp"
+        android:layout_below="@+id/groupImg"
+        android:layout_toEndOf="@+id/qtqMembros"
+        android:layout_toRightOf="@+id/qtqMembros"
+        android:text="membros"
+        android:textAlignment="textEnd"
+        android:textColor="@color/md_light_statusbar"
+        tools:text="membros" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        app:srcCompat="@drawable/lockedgroup"
+        android:layout_marginBottom="29dp"
+        android:layout_above="@+id/textView3"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Este é um grupo fechado. Você pode pedir sa solicitação para o administrador do grupo"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        tools:text="Este é um grupo fechado. Você pode pedir sa solicitação para o administrador do grupo"
+        android:layout_above="@+id/textView6"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="42dp" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SOLICITAR PARTICIPAÇÃO"
+        android:textSize="20dp"
+        android:textColor="@color/colorBackground"
+        tools:text="SOLICITAR PARTICIPAÇÃO"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp" />
+
+
+</RelativeLayout>
+
