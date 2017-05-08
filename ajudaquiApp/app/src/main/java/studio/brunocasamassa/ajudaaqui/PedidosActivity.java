@@ -73,7 +73,6 @@ public class PedidosActivity extends AppCompatActivity {
         navigator.createDrawer(PedidosActivity.this, toolbar);
 
 
-
     }
 
 

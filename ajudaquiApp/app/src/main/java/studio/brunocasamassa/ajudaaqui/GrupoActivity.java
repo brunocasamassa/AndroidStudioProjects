@@ -50,11 +50,12 @@ public class GrupoActivity extends AppCompatActivity {
 
         grupo = new Grupo();
         grupo.setNome("GROUP EXAMPLE");
-        groupName.setText(grupo.getNome()   );
+        groupName.setText(grupo.getNome());
        // groupImg.setImageURI();
         groupImg.setImageBitmap(BitmapFactory.decodeResource(
                 getResources(), R.drawable.logo));
         descricao.setText("Description Text jdiejkdepfae kdeniem 11eek  dlll d ldl,  !wl,l !!");
+        grupo.save();
 
         //grupo.setGrupoImg(groupImg);
 

@@ -1,15 +1,10 @@
 package studio.brunocasamassa.ajudaaqui.helper;
 
-import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 
-import java.util.List;
+import com.google.firebase.database.DatabaseReference;
 
-import studio.brunocasamassa.ajudaaqui.R;
+import java.util.List;
 
 /**
  * Created by bruno on 26/04/2017.
@@ -22,48 +17,42 @@ public class Grupo {
     public ImageView grupoImg;
     public int qtdMembros;
     public String descricao;
-    public List<Pedidos> trocas;
+    public List<Pedido> trocas;
+    public List<Pedido> emprestimos;
+    public List<Pedido> servicos;
+    public List<Pedido> doacoes;
 
-    public Grupo(){
-
-    }
-
-    public List<Pedidos> getTrocas() {
+    public List<Pedido> getTrocas() {
         return trocas;
     }
 
-    public void setTrocas(List<Pedidos> trocas) {
+    public void setTrocas(List<Pedido> trocas) {
         this.trocas = trocas;
     }
 
-    public List<Pedidos> getEmprestimos() {
+    public List<Pedido> getEmprestimos() {
         return emprestimos;
     }
 
-    public void setEmprestimos(List<Pedidos> emprestimos) {
+    public void setEmprestimos(List<Pedido> emprestimos) {
         this.emprestimos = emprestimos;
     }
 
-    public List<Pedidos> getServicos() {
+    public List<Pedido> getServicos() {
         return servicos;
     }
 
-    public void setServicos(List<Pedidos> servicos) {
+    public void setServicos(List<Pedido> servicos) {
         this.servicos = servicos;
     }
 
-    public List<Pedidos> getDoacoes() {
+    public List<Pedido> getDoacoes() {
         return doacoes;
     }
 
-    public void setDoacoes(List<Pedidos> doacoes) {
+    public void setDoacoes(List<Pedido> doacoes) {
         this.doacoes = doacoes;
     }
-
-    public List<Pedidos> emprestimos;
-    public List<Pedidos> servicos;
-    public List<Pedidos> doacoes;
-
 
     public String getNome() {
         return nome;
@@ -98,7 +87,8 @@ public class Grupo {
     }
 
 
-
-
-
+    public void save() {
+        DatabaseReference referenciaFirebase = FirebaseConfig.getFireBase();
+        referenciaFirebase.child("grupos").child(getNome()).setValue(this);
+    }
 }
