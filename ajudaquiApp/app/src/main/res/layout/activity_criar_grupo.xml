@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolar_create_group"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorBackground"
+        android:visibility="visible"
+        app:titleTextColor="@android:color/black"></android.support.v7.widget.Toolbar>
+
+
+    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/import_group_img"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_below="@+id/toolar_create_group"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="33dp"
+        android:src="@mipmap/ic_launcher_round"
+        app:civ_border_color="#ffffff"
+        app:civ_border_width="2dp" />
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:text="Insira uma foto"
+        android:layout_below="@+id/import_group_img"
+        android:layout_alignLeft="@+id/import_group_img"
+        android:layout_alignStart="@+id/import_group_img"
+        android:id="@+id/textView4" />
+
+    <EditText
+        android:id="@+id/create_group_name"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textView4"
+        android:layout_marginEnd="27dp"
+        android:layout_marginRight="27dp"
+        android:layout_marginTop="71dp"
+        android:hint="Nome do Grupo" />
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@mipmap/lock_black"
+        android:layout_marginRight="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_alignTop="@+id/editText"
+        android:layout_toLeftOf="@+id/editText"
+        android:layout_toStartOf="@+id/editText" />
+
+
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_below="@+id/create_group_name"
+        android:layout_alignLeft="@+id/create_group_name"
+        android:layout_alignStart="@+id/create_group_name"
+        android:layout_marginTop="55dp"
+        android:hint=""
+        android:id="@+id/editText" />
+
+
+</RelativeLayout>

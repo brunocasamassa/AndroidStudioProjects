@@ -33,8 +33,6 @@ import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
 
 public class ChatActivity extends AppCompatActivity {
 
-
-
     private Toolbar toolbar;
     private ListView listview_nomes;
     private ViewPager viewPager;
@@ -46,18 +44,15 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hello); //// TODO: 25/04/2017 criar layout de cada fragment
-
+        setContentView(R.layout.activity_conversas);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
         toolbar.setTitle(getResources().getString(R.string.menu_chats));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
 
-
-
         NavigationDrawer navigator = new NavigationDrawer();
-        navigator.createDrawer(ChatActivity.this, toolbar);
+        navigator.createDrawer(ChatActivity.this, toolbar  );
 
         //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     }

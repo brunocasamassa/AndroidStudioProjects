@@ -2,15 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="studio.brunocasamassa.ajudaaqui.fragments.ChatConversaFragment">
+    tools:context="studio.brunocasamassa.ajudaaqui.fragments.PedidosMeusPedidosFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
-    <TextView
-        android:text="Conversas"
+    <GridView
+
+        android:layout_marginTop="90dp"
+        android:id="@+id/mygroups_list"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView4"
-        android:textColor="@color/colorPrimary"
-        />
+        android:layout_height="414dp" />
+
 </FrameLayout>

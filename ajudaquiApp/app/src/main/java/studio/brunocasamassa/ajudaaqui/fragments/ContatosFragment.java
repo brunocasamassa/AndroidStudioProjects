@@ -40,7 +40,7 @@ public class ContatosFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        View v = inflater.inflate(R.layout.fragment_contatos, container, false);
+        View v = inflater.inflate(R.layout.activity_conversas, container, false);
 
 
         listview_nomes = (ListView) v.findViewById(R.id.ListContatos);

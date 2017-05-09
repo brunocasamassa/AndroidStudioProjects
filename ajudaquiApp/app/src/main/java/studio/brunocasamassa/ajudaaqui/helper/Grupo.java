@@ -12,7 +12,6 @@ import java.util.List;
 
 public class Grupo {
 
-
     public String nome;
     public ImageView grupoImg;
     public int qtdMembros;
@@ -85,7 +84,6 @@ public class Grupo {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
-
 
     public void save() {
         DatabaseReference referenciaFirebase = FirebaseConfig.getFireBase();

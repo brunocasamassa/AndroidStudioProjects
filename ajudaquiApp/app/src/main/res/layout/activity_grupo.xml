@@ -38,63 +38,52 @@
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/groupImg"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:src="@mipmap/ic_launcher"
         app:civ_border_color= "@android:color/transparent"
         app:civ_border_width="2dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:layout_below="@+id/groupName"
         android:layout_centerHorizontal="true" />
+
     <TextView
         android:id="@+id/groupName"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar_principal"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="6dp"
-        android:text="Android User"
+        android:text="group example"
         android:textAlignment="center"
         android:textColor="@color/cardview_light_background"
         android:textSize="24sp"
         android:textStyle="bold"
-        tools:text="Android User"
-        android:layout_below="@+id/toolbar_principal"
-        android:layout_centerHorizontal="true" />
+        tools:text="GROUP NAME" />
 
     <TextView
         android:id="@+id/grupoDescricao"
         android:layout_width="350dp"
         android:layout_height="80dp"
         android:text="TextView"
+        android:textAlignment="center"
         android:textSize="15sp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:id="@+id/qtqMembros"
-        android:layout_width="50dp"
-        android:layout_height="25dp"
-        android:layout_alignLeft="@+id/textView6"
-        android:layout_alignStart="@+id/textView6"
-        android:layout_below="@+id/groupImg"
-        android:layout_marginLeft="50dp"
-        android:layout_marginStart="50dp"
-        android:text="1000"
-        android:textAlignment="viewEnd"
-        android:textColor="@color/md_light_statusbar"
-        android:textStyle="bold" />
-
-    <TextView
         android:id="@+id/textView9"
         android:layout_width="65dp"
         android:layout_height="25dp"
-        android:layout_below="@+id/groupImg"
-        android:layout_toEndOf="@+id/qtqMembros"
-        android:layout_toRightOf="@+id/qtqMembros"
         android:text="membros"
         android:textAlignment="textEnd"
-        android:textColor="@color/md_light_statusbar"
+        android:textColor="@color/cardview_light_background"
         android:textStyle="bold"
-        tools:text="membros" />
+        tools:text="membros"
+        android:layout_below="@+id/groupImg"
+        android:layout_toRightOf="@+id/qtdMembros"
+        android:layout_toEndOf="@+id/qtdMembros"
+        android:layout_marginTop="7dp" />
 
     <ImageView
         android:id="@+id/imageView5"
@@ -130,6 +119,18 @@
         android:textSize="20dp"
         android:textStyle="bold"
         tools:text="SOLICITAR PARTICIPAÇÃO" />
+
+    <TextView
+        android:id="@+id/qtdMembros"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1000"
+        android:textColor="@android:color/background_light"
+        android:textStyle="bold"
+        android:layout_alignBaseline="@+id/textView9"
+        android:layout_alignBottom="@+id/textView9"
+        android:layout_alignLeft="@+id/groupImg"
+        android:layout_alignStart="@+id/groupImg" />
 
 
 </RelativeLayout>

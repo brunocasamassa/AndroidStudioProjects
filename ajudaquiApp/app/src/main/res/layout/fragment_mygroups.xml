@@ -2,13 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="studio.brunocasamassa.ajudaaqui.fragments.ContatosFragment">
+    tools:context="studio.brunocasamassa.ajudaaqui.fragments.GruposMeusgruposFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="490dp"
-        android:id="@+id/ListContatos"/>
+    <GridView
+
+        android:layout_marginTop="90dp"
+        android:id="@+id/mygroups_list"
+        android:layout_width="wrap_content"
+        android:layout_height="414dp" />
 
 </FrameLayout>

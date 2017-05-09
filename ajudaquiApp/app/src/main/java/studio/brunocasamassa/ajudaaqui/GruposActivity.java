@@ -58,6 +58,7 @@ public class GruposActivity extends AppCompatActivity {
 
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
         viewPager = (ViewPager) findViewById(R.id.vp_pagina);
+
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.stl_tabs);
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setSelectedIndicatorColors(ContextCompat.getColor(this, R.color.colorAccent));

@@ -30,7 +30,7 @@ public class GrupoActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
-    private TextView qtqMembros;
+    private TextView qtdMembros;
     private TextView groupName;
     private TextView descricao;
     private ImageView groupImg;
@@ -43,18 +43,20 @@ public class GrupoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grupo);
 
-        qtqMembros = (TextView) findViewById(R.id.qtqMembros);
+        qtdMembros = (TextView) findViewById(R.id.qtdMembros);
         groupName = (TextView) findViewById(R.id.groupName);
         descricao = (TextView) findViewById(R.id.grupoDescricao);
         groupImg = (ImageView) findViewById(R.id.groupImg);
 
         grupo = new Grupo();
         grupo.setNome("GROUP EXAMPLE");
+        grupo.setQtdMembros(59);
         groupName.setText(grupo.getNome());
+        qtdMembros.setText(String.valueOf(grupo.getQtdMembros()));
        // groupImg.setImageURI();
         groupImg.setImageBitmap(BitmapFactory.decodeResource(
                 getResources(), R.drawable.logo));
-        descricao.setText("Description Text jdiejkdepfae kdeniem 11eek  dlll d ldl,  !wl,l !!");
+        descricao.setText("Descricao exemplo");
         grupo.save();
 
         //grupo.setGrupoImg(groupImg);
@@ -67,12 +69,9 @@ public class GrupoActivity extends AppCompatActivity {
         NavigationDrawer navigator = new NavigationDrawer();
         navigator.createDrawer(GrupoActivity.this, toolbar);
 
-
     }
 
-
     @Override
-
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
