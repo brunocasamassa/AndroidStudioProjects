@@ -22,10 +22,11 @@ public class CriaGrupoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_criar_grupo);
 
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_create_group);
         toolbar.setTitle( "Criar Grupo" );
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
         setSupportActionBar(toolbar);
+
 
 
 

@@ -26,6 +26,7 @@ import studio.brunocasamassa.ajudaaqui.adapters.AllGroupsAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Grupo;
 
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -60,7 +61,7 @@ public class GruposTodosgruposFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_allgroups, container, false);
+            View view = inflater.inflate(R.layout.fragment_allgroups, container, false);
         grupos = new ArrayList<>();
 
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
@@ -72,7 +73,7 @@ public class GruposTodosgruposFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent (getActivity(),CriaGrupoActivity.class));
+                startActivity(new Intent (getActivity(), CriaGrupoActivity.class));
             }
         });
 

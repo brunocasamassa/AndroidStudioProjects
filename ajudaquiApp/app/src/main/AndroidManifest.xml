@@ -15,9 +15,11 @@
         <activity android:name=".LoginActivity"></activity>
         <activity android:name=".PedidosActivity"></activity>
         <activity android:name=".MainActivity"></activity>
+        <fragment android:name=".GruposTodosgruposFragment"></fragment>
         <activity android:name=".PerfilActivity"></activity>
         <activity android:name=".ConfiguracoesActivity"></activity>
         <activity android:name=".GruposActivity"></activity>
+        <activity android:name=".CriaGrupoActivity"></activity>
         <activity android:name=".SobreActivity"></activity>
         <activity android:name=".ChatActivity"></activity>
         <activity android:name=".GrupoActivity">

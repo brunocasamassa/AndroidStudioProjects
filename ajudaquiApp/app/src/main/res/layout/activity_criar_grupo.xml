@@ -5,7 +5,7 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolar_create_group"
+        android:id="@+id/toolbar_create_group"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"
@@ -19,12 +19,11 @@
         android:id="@+id/import_group_img"
         android:layout_width="96dp"
         android:layout_height="96dp"
-        android:layout_below="@+id/toolar_create_group"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="33dp"
-        android:src="@mipmap/ic_launcher_round"
-        app:civ_border_color="#ffffff"
-        app:civ_border_width="2dp" />
+        android:src="@mipmap/insert_photo"
+        app:civ_border_color="@color/md_white_1000"
+        app:civ_border_width="2dp"
+        android:layout_below="@+id/toolbar_create_group"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="100dp"
@@ -37,58 +36,37 @@
 
     <EditText
         android:id="@+id/create_group_name"
-        android:layout_width="300dp"
-        android:layout_height="30dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="36dp"
+        android:hint="Nome do Grupo"
         android:layout_below="@+id/textView4"
-        android:layout_marginEnd="27dp"
-        android:layout_marginRight="27dp"
-        android:layout_marginTop="71dp"
-        android:hint="Nome do Grupo" />
-
-    <ImageView
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:src="@mipmap/lock_black"
-        android:layout_marginRight="12dp"
-        android:layout_marginEnd="12dp"
-        android:layout_alignTop="@+id/editText"
-        android:layout_toLeftOf="@+id/editText"
-        android:layout_toStartOf="@+id/editText"
-        android:id="@+id/imageView3" />
+        android:layout_toRightOf="@+id/imageView7"
+        android:layout_toEndOf="@+id/imageView7" />
 
 
     <EditText
-        android:layout_width="300dp"
-        android:layout_height="30dp"
-        android:layout_below="@+id/create_group_name"
-        android:layout_alignLeft="@+id/create_group_name"
-        android:layout_alignStart="@+id/create_group_name"
-        android:layout_marginTop="55dp"
-        android:hint=""
         android:id="@+id/editText"
-        android:layout_alignRight="@+id/textView4"
-        android:layout_alignEnd="@+id/textView4" />
+        android:layout_width="250dp"
+        android:hint="Descricao do Grupo"
+        android:layout_height="120dp"
+        android:layout_marginTop="36dp"
+        android:layout_below="@+id/create_group_name"
+        android:layout_alignLeft="@+id/imageView7"
+        android:layout_alignStart="@+id/imageView7"
+        android:layout_alignRight="@+id/create_group_name"
+        android:layout_alignEnd="@+id/create_group_name" />
 
     <ImageView
         android:id="@+id/imageView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         app:srcCompat="@mipmap/add_groups"
-        android:layout_alignTop="@+id/create_group_name"
-        android:layout_toLeftOf="@+id/create_group_name"
-        android:layout_toStartOf="@+id/create_group_name" />
-
-    <SeekBar
-        android:id="@+id/seekBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/editText"
-        android:layout_alignEnd="@+id/create_group_name"
-        android:layout_alignRight="@+id/create_group_name"
-        android:layout_marginEnd="31dp"
-        android:layout_marginRight="31dp" />
+        android:layout_above="@+id/editText"
+        android:layout_toLeftOf="@+id/textView10"
+        android:layout_toStartOf="@+id/textView10"
+        android:layout_marginRight="35dp"
+        android:layout_marginEnd="35dp" />
 
     <ImageView
         android:id="@+id/imageView8"
