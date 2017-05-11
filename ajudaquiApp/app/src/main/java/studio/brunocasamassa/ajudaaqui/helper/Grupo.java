@@ -12,8 +12,10 @@ import java.util.List;
 
 public class Grupo {
 
+
+    public String id;
     public String nome;
-    public ImageView grupoImg;
+    public String grupoImg;
     public int qtdMembros;
     public String descricao;
     public List<Pedido> trocas;
@@ -61,11 +63,11 @@ public class Grupo {
         this.nome = nome;
     }
 
-    public ImageView getGrupoImg() {
+    public String getGrupoImg() {
         return grupoImg;
     }
 
-    public void setGrupoImg(ImageView grupoImg) {
+    public void setGrupoImg(String grupoImg) {
         this.grupoImg = grupoImg;
     }
 
@@ -87,6 +89,15 @@ public class Grupo {
 
     public void save() {
         DatabaseReference referenciaFirebase = FirebaseConfig.getFireBase();
-        referenciaFirebase.child("grupos").child(getNome()).setValue(this);
+       // referenciaFirebase.child("gruposId").setValue(getId());
+        referenciaFirebase.child("grupos").child(getId()).setValue(this);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String Id) {
+        this.id = Id;
     }
 }

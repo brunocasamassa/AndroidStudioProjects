@@ -123,7 +123,7 @@ public class GruposTodosgruposFragment extends Fragment {
 
                 // enviando dados para grupo activity
                 intent.putExtra("nome", grupo.getNome() );
-                intent.putExtra("qtdmembros", grupo.getQtdMembros() );
+                intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()) );
 
                 startActivity(intent);
 

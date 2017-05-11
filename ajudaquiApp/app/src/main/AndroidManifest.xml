@@ -16,13 +16,13 @@
         <activity android:name=".PedidosActivity"></activity>
         <activity android:name=".MainActivity"></activity>
         <fragment android:name=".GruposTodosgruposFragment"></fragment>
-        <activity android:name=".PerfilActivity"></activity>
+        <activity android:name=".GrupoActivity"></activity>
         <activity android:name=".ConfiguracoesActivity"></activity>
         <activity android:name=".GruposActivity"></activity>
         <activity android:name=".CriaGrupoActivity"></activity>
         <activity android:name=".SobreActivity"></activity>
         <activity android:name=".ChatActivity"></activity>
-        <activity android:name=".GrupoActivity">
+        <activity android:name=".PerfilActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

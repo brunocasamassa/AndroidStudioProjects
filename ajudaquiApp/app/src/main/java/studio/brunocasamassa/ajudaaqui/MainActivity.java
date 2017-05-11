@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
         btnLogin.setReadPermissions(Arrays.asList("public_profile", "email", "user_birthday"));
 
-
         cadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

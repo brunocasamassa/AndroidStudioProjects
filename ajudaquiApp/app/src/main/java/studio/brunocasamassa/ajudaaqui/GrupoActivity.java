@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
 
+import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.Grupo;
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
@@ -35,6 +36,7 @@ public class GrupoActivity extends AppCompatActivity {
     private TextView descricao;
     private ImageView groupImg;
     private Grupo grupo;
+    private Bundle itens;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -43,17 +45,26 @@ public class GrupoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grupo);
 
+
         qtdMembros = (TextView) findViewById(R.id.qtdMembros);
         groupName = (TextView) findViewById(R.id.groupName);
         descricao = (TextView) findViewById(R.id.grupoDescricao);
         groupImg = (ImageView) findViewById(R.id.groupImg);
 
+
         grupo = new Grupo();
-        grupo.setNome("GROUP EXAMPLE");
-        grupo.setQtdMembros(59);
+
+        Bundle extra = getIntent().getExtras();
+        if (extra != null) {
+
+            grupo.setNome(extra.getString("nome"));
+            grupo.setQtdMembros(Integer.valueOf(extra.getString("qtdmembros")));
+
+        }
+        grupo.setId(Base64Decoder.encoderBase64(grupo.getNome()));
         groupName.setText(grupo.getNome());
         qtdMembros.setText(String.valueOf(grupo.getQtdMembros()));
-       // groupImg.setImageURI();
+        // groupImg.setImageURI();
         groupImg.setImageBitmap(BitmapFactory.decodeResource(
                 getResources(), R.drawable.logo));
         descricao.setText("Descricao exemplo");
