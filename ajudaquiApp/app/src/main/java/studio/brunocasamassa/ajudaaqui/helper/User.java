@@ -27,7 +27,7 @@ public class User implements DatabaseReference.CompletionListener {
 
     private String senha;
 
-    private List<Grupo> grupos;
+    private ArrayList<String> grupos;
 
     private String profileImg;
 
@@ -37,12 +37,20 @@ public class User implements DatabaseReference.CompletionListener {
 
     private String email;
 
+    public ArrayList<String> getSolicitacoes() {
+        return solicitacoes;
+    }
+
+    public void setSolicitacoes(ArrayList<String> solicitacoes) {
+        this.solicitacoes = solicitacoes;
+    }
+
+    private ArrayList<String> solicitacoes;
 
 
     public User() {
 
     }
-
 
     public ArrayList<Integer> getMedalhas() {
         return medalhas;
@@ -103,11 +111,11 @@ public class User implements DatabaseReference.CompletionListener {
 
 
 
-    public List<Grupo> getGrupos() {
+    public ArrayList<String> getGrupos() {
         return grupos;
     }
 
-    public void setGrupos(List<Grupo> grupos) {
+    public void setGrupos(ArrayList<String> grupos) {
         this.grupos = grupos;
     }
 

@@ -14,16 +14,17 @@
         style="@style/Animation.Design.BottomSheetDialog"
         android:layout_width="340dp"
         android:layout_height="190dp"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/toolbar_principal"
         android:baseline="@dimen/activity_vertical_margin"
         android:elevation="0dp"
         android:fadingEdge="vertical"
         android:requiresFadingEdge="vertical"
-        app:srcCompat="@color/colorBackground" />
+        app:srcCompat="@color/colorBackground"
+        android:layout_alignBottom="@+id/qtdMembros"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_principal"
@@ -43,7 +44,6 @@
         android:src="@mipmap/ic_launcher"
         app:civ_border_color= "@android:color/transparent"
         app:civ_border_width="2dp"
-        android:layout_marginTop="10dp"
         android:layout_below="@+id/groupName"
         android:layout_centerHorizontal="true" />
 
@@ -82,10 +82,10 @@
         android:textColor="@color/cardview_light_background"
         android:textStyle="bold"
         tools:text="membros"
-        android:layout_below="@+id/groupImg"
+        android:layout_alignBaseline="@+id/qtdMembros"
+        android:layout_alignBottom="@+id/qtdMembros"
         android:layout_toRightOf="@+id/qtdMembros"
-        android:layout_toEndOf="@+id/qtdMembros"
-        android:layout_marginTop="7dp" />
+        android:layout_toEndOf="@+id/qtdMembros" />
 
     <ImageView
         android:id="@+id/imageView5"
@@ -106,20 +106,24 @@
         tools:text="Este é um grupo fechado. Você pode pedir sa solicitação para o administrador do grupo"
         android:layout_below="@+id/imageView5"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="17dp" />
 
-    <TextView
-        android:id="@+id/textView6"
+    <Button
+        android:id="@+id/botaoSolicitar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="13dp"
         android:text="SOLICITAR PARTICIPAÇÃO"
         android:textColor="@color/colorBackground"
         android:textSize="20dp"
+        android:background="@color/md_white_1000"
         android:textStyle="bold"
         tools:text="SOLICITAR PARTICIPAÇÃO"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/qtdMembros"
@@ -128,10 +132,9 @@
         android:text="1000"
         android:textColor="@android:color/background_light"
         android:textStyle="bold"
-        android:layout_alignBaseline="@+id/textView9"
-        android:layout_alignBottom="@+id/textView9"
         android:layout_alignLeft="@+id/groupImg"
-        android:layout_alignStart="@+id/groupImg" />
+        android:layout_alignStart="@+id/groupImg"
+        android:layout_below="@+id/groupImg" />
 
 
 </RelativeLayout>

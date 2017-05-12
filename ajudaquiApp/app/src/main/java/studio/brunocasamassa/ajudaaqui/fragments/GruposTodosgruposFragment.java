@@ -57,7 +57,6 @@ public class GruposTodosgruposFragment extends Fragment {
         firebase.removeEventListener( valueEventListenerAllGroups );
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -82,6 +81,7 @@ public class GruposTodosgruposFragment extends Fragment {
 
         //Listener para recuperar contatos
         valueEventListenerAllGroups = new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -89,7 +89,8 @@ public class GruposTodosgruposFragment extends Fragment {
                 grupos.clear();
 
                 //Listar contatos
-                for (DataSnapshot dados: dataSnapshot.getChildren() ){
+                for (DataSnapshot dados: dataSnapshot.getChildren()){
+                    System.out.println("get children allgroups" + dados);
 
                     Grupo grupo = dados.getValue( Grupo.class );
                     System.out.println("grupo "+ grupo.getNome());
@@ -115,7 +116,7 @@ public class GruposTodosgruposFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+            try{
                 Intent intent = new Intent(getActivity(), GrupoActivity.class);
 
                 // recupera dados a serem passados
@@ -125,7 +126,10 @@ public class GruposTodosgruposFragment extends Fragment {
                 intent.putExtra("nome", grupo.getNome() );
                 intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()) );
 
-                startActivity(intent);
+                startActivity(intent);}
+                catch (Exception e){
+                    System.out.println("Exception grupos "+ e);
+                }
 
             }
         });

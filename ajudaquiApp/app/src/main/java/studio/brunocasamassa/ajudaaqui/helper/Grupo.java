@@ -4,6 +4,7 @@ import android.widget.ImageView;
 
 import com.google.firebase.database.DatabaseReference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,10 +19,20 @@ public class Grupo {
     public String grupoImg;
     public int qtdMembros;
     public String descricao;
+    public ArrayList<String> idAdms;
     public List<Pedido> trocas;
     public List<Pedido> emprestimos;
     public List<Pedido> servicos;
     public List<Pedido> doacoes;
+
+
+    public ArrayList<String> getIdAdms() {
+        return idAdms;
+    }
+
+    public void setIdAdms(ArrayList<String> idAdms) {
+        this.idAdms = idAdms;
+    }
 
     public List<Pedido> getTrocas() {
         return trocas;

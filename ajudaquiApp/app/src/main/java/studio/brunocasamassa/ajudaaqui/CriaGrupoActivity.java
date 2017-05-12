@@ -1,5 +1,6 @@
 package studio.brunocasamassa.ajudaaqui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -28,6 +29,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -48,9 +50,13 @@ public class CriaGrupoActivity extends AppCompatActivity {
     private EditText descricao;
     private DatabaseReference database;
     private Grupo grupo;
+    private String groupId;
     private Button createButton;
     private StorageReference storage;
     private boolean validatedName = true;
+    private ArrayList<String> adms = new ArrayList<>();
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -72,37 +78,38 @@ public class CriaGrupoActivity extends AppCompatActivity {
         img = (CircleImageView) findViewById(R.id.import_group_img);
         createButton = (Button) findViewById(R.id.create_group_button);
 
-
-
-
-
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 grupo = new Grupo();
-                String groupId = Base64Decoder.encoderBase64(groupName.getText().toString());
+                groupId = Base64Decoder.encoderBase64(groupName.getText().toString());
                 grupo.setNome(groupName.getText().toString());
                 grupo.setDescricao(descricao.getText().toString());
                 grupo.setId(groupId);
 
+                FirebaseAuth autenticacao = FirebaseConfig.getFirebaseAuthentication();
+                String uId = autenticacao.getCurrentUser().getUid();
+                System.out.println("AUTH "+ uId);
+                adms.add(0,uId);
+                grupo.setQtdMembros(1);
+                grupo.setIdAdms(adms);
+
                 //EVENTO DE LEITURA
 
-                database.addValueEventListener(new ValueEventListener() {
+                database.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //verifica ID dos grupos e valida ID
-                        for (DataSnapshot dados : dataSnapshot.getChildren()) {
+                            System.out.println("datasnapshot BRUTO: "+ dataSnapshot);
                             System.out.println("ID MEU GRUPO "+grupo.getId());
-                            System.out.println("ID DADOS "+dados.getKey());
-                            if (dados.getKey() == grupo.getId()) {      //TODO CORRIGIR BUG VALIDAÇÃO
-                                validatedName = false;
+                            if (dataSnapshot.child("grupos").child(groupId).exists()) {   //TODO CORRIGIR BUG VALIDAÇÃO
+                                Toast.makeText(getApplicationContext(), "Nome de grupo Já utilizado", Toast.LENGTH_LONG).show();
                                 System.out.println("validador> "+ validatedName);
                             }
 
-                        }
-                        System.out.println("validadorrr > "+validatedName);
-                        if (validatedName == true) {
+                            else  {
+                            Toast.makeText(getApplicationContext(), "Grupo Criado com sucesso", Toast.LENGTH_LONG).show();
                             StorageReference imgRef = storage.child(groupName.getText()+".jpg");
                             img.setDrawingCacheEnabled(true);
                             img.buildDrawingCache();
@@ -125,9 +132,9 @@ public class CriaGrupoActivity extends AppCompatActivity {
                                 }
                             });
                             grupo.save();
-                            Toast.makeText(getApplicationContext(), "Grupo Criado com sucesso", Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(CriaGrupoActivity.this, GruposActivity.class));
-                        } else Toast.makeText(getApplicationContext(), "Nome de grupo Já utilizado", Toast.LENGTH_LONG).show();
+                            finish();
+
+                        }
                     }
 
                     @Override
