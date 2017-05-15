@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@drawable/background_mainactivity">
+
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/cadastro_senhaConfirm"
+        android:hint="Confirme sua senha:"
+        android:layout_below="@+id/cadastro_senha"
+        android:layout_alignStart="@+id/cadastro_senha"
+        android:layout_marginTop="16dp" />
+
+
+    <!-- <include android:id="@+id/toolbar"
+        layout="@layout/activity_hello">
+    </include> -->
+
+    <EditText
+        android:id="@+id/cadastro_senha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:hint="Digite sua senha:"
+        android:inputType="textPassword"
+        android:layout_below="@+id/cadastro_email"
+        android:layout_alignStart="@+id/cadastro_email" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/cadastro_email"
+        android:hint="Digite seu e-mail:"
+        android:layout_marginTop="23dp"
+        android:layout_below="@+id/cadastro_nome"
+        android:layout_alignStart="@+id/cadastro_nome" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_marginStart="14dp"
+        android:id="@+id/cadastro_nome"
+        android:hint="Digite seu nome:"
+        android:layout_marginTop="27dp"
+        android:layout_below="@+id/imageView2"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="250dp"
+        android:layout_height="150dp"
+        app:srcCompat="@drawable/adduserlogo"
+        android:id="@+id/imageView2"
+        android:layout_marginTop="14dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/buttonValidarCadstro"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/background_light"
+        android:text="CADASTRAR"
+        android:textStyle="bold"
+        android:textSize="30dp"
+        android:textColor="@color/colorBackground"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignLeft="@+id/cadastro_nome"
+        android:layout_alignStart="@+id/cadastro_nome"
+        android:layout_alignTop="@+id/imageView2"
+        android:background="@color/cardview_shadow_end_color"
+        app:srcCompat="?attr/actionModeCloseDrawable"
+        android:layout_toLeftOf="@+id/imageView2"
+        android:layout_toStartOf="@+id/imageView2" />
+
+</RelativeLayout>

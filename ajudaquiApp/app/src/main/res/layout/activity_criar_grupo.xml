@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_create_group"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorBackground"
+        android:visibility="visible"
+        app:titleTextColor="@android:color/black"></android.support.v7.widget.Toolbar>
+
+    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/import_group_img"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:src="@drawable/adduserlogo"
+        app:civ_border_color="@color/md_white_1000"
+        app:civ_border_width="2dp"
+        android:layout_marginTop="13dp"
+        android:layout_below="@+id/toolbar_create_group"
+        android:layout_centerHorizontal="true"
+
+    />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:elevation="-10dp"
+        app:srcCompat="@mipmap/add_groups"
+        android:layout_above="@+id/create_group_description"
+        android:layout_alignLeft="@+id/create_group_description"
+        android:layout_alignStart="@+id/create_group_description"
+        android:layout_toLeftOf="@+id/create_group_name"
+        android:layout_toStartOf="@+id/create_group_name" />
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:text="Insira uma foto"
+        android:layout_below="@+id/import_group_img"
+        android:layout_alignLeft="@+id/import_group_img"
+        android:layout_alignStart="@+id/import_group_img"
+        android:id="@+id/textView4" />
+
+    <EditText
+        android:id="@+id/create_group_name"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:hint="Nome do Grupo"
+        android:layout_below="@+id/textView4"
+        android:layout_alignRight="@+id/create_group_description"
+        android:layout_alignEnd="@+id/create_group_description"
+        android:layout_marginTop="39dp" />
+
+
+    <EditText
+        android:id="@+id/create_group_description"
+        android:layout_width="320dp"
+        android:layout_height="120dp"
+        android:hint="Descricao do Grupo"
+        android:layout_below="@+id/create_group_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="19dp" />
+
+
+    <Button
+        android:id="@+id/create_group_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CRIAR GRUPO"
+        android:background="@color/colorBackground"
+        android:textColor="@color/cardview_light_background"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="CRIAR GRUPO"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true" />
+
+
+</RelativeLayout>
