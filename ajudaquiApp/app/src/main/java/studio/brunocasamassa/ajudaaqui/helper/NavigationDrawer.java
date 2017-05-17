@@ -54,7 +54,6 @@ public class NavigationDrawer {
 
         FirebaseUser authentication = FirebaseConfig.getFirebaseAuthentication().getCurrentUser();
 
-
         final String emailUser = authentication.getEmail();
         System.out.println("email user " + emailUser);
         idUser = Base64Decoder.encoderBase64(emailUser);
@@ -71,11 +70,11 @@ public class NavigationDrawer {
                                                    nomeUser = user.getName().toString();
                                                    usuario = user;
 
-                                                   PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos);
-                                                   PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.menu_chats);
-                                                   PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.menu_grupos);
-                                                   PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.menu_perfil);
-                                                   PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_sobre);
+                                                   PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos).withIcon(R.mipmap.pedidos_icon);
+                                                   PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.menu_chats).withIcon(R.mipmap.chat_icon);
+                                                   PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.menu_grupos).withIcon(R.mipmap.groups_icon);
+                                                   PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.menu_perfil).withIcon(R.mipmap.profile_icon);
+                                                   PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_sobre).withIcon(R.mipmap.sobre_icon);
 
                                                    // Create the Navigation Drawer AccountHeader
                                                    AccountHeader headerResult = new AccountHeaderBuilder()

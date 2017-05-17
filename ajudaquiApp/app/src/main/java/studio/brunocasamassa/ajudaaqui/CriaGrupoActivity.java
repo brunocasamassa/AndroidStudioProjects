@@ -1,5 +1,6 @@
 package studio.brunocasamassa.ajudaaqui;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -47,7 +48,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
     private Grupo grupo;
     private String groupId;
     private Button createButton;
-    private User usuario = new User();
+    private static User usuario = new User();
     private ArrayList<String> gruposUserLogado = new ArrayList<String>();
     private StorageReference storage;
     private boolean validatedName = true;
@@ -64,6 +65,13 @@ public class CriaGrupoActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar_create_group);
         toolbar.setTitle("Criar Grupo");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {   //TODO FIX BACK BUG
+                startActivity(new Intent(CriaGrupoActivity.this, GruposActivity.class));
+                Toast.makeText(getApplicationContext(), "voltei", Toast.LENGTH_LONG).show();
+            }
+        });
         setSupportActionBar(toolbar);
 
         databaseGroups = FirebaseConfig.getFireBase().child("grupos");
@@ -78,6 +86,18 @@ public class CriaGrupoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                if(groupName.getText().toString().equals("") ){
+                    Toast.makeText(getApplicationContext(), "Insira um nome para o grupo", Toast.LENGTH_LONG).show();
+                    return ;
+                }
+                else if( descricao.getText().toString().equals("") ){
+                    Toast.makeText(getApplicationContext(), "Insira uma descricao para o grupo", Toast.LENGTH_LONG).show();
+                    return;
+                } else if(img.equals(null)){
+                    Toast.makeText(getApplicationContext(), "Insira uma imagem para o grupo", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                else{
                 grupo = new Grupo();
                 groupId = Base64Decoder.encoderBase64(groupName.getText().toString());
                 grupo.setNome(groupName.getText().toString());
@@ -88,7 +108,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
 
                 String userKey = Base64Decoder.encoderBase64(autenticacao.getCurrentUser().getEmail());
                 databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
-                System.out.println("AUTH " + userKey);
+                System.out.println("AUTH caraio" + userKey);
 
                 adms.add(0, userKey);
                 grupo.setQtdMembros(1);
@@ -98,8 +118,9 @@ public class CriaGrupoActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User user= dataSnapshot.getValue(User.class);
-                        System.out.println("Email user " + usuario.getEmail() + "nOME USER: " + usuario.getName());
+                        System.out.println("caraio Email user " + usuario.getEmail() + "nOME USER: " + usuario.getName());
                         usuario = user;
+
 
                     }
 
@@ -111,7 +132,8 @@ public class CriaGrupoActivity extends AppCompatActivity {
 
                 if (usuario.getGrupos() != null){
                 gruposUserLogado.addAll(usuario.getGrupos()) ;
-                gruposUserLogado.add(gruposUserLogado.size() + 1, grupo.getId());
+                gruposUserLogado.add(gruposUserLogado.size(), grupo.getId());
+                System.out.println("grupos caraio "+ gruposUserLogado);
                 } else {
                     gruposUserLogado.add(0, grupo.getId());
                 }
@@ -125,21 +147,22 @@ public class CriaGrupoActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //verifica ID dos grupos e valida ID
-                        System.out.println("datasnapshot BRUTO: " + dataSnapshot);
-                        System.out.println("ID MEU GRUPO " + grupo.getId());
-                        if (dataSnapshot.child("grupos").child(groupId).exists()) {   //TODO CORRIGIR BUG VALIDAÇÃO
+                        System.out.println("datasnapshot caraio BRUTO: " + dataSnapshot);
+                        System.out.println("ID MEU caraio GRUPO " + grupo.getId());
+                        if (dataSnapshot.child("grupos").child(groupId).exists()) {
                             Toast.makeText(getApplicationContext(), "Nome de grupo Já utilizado", Toast.LENGTH_LONG).show();
-                            System.out.println("validador> " + validatedName);
+                            System.out.println("caraio validador> " + validatedName);
+                            return;
                         } else {
                             Toast.makeText(getApplicationContext(), "Grupo Criado com sucesso", Toast.LENGTH_LONG).show();
                             StorageReference imgRef = storage.child(groupName.getText() + ".jpg");
+                            //download img source
                             img.setDrawingCacheEnabled(true);
                             img.buildDrawingCache();
                             Bitmap bitmap = img.getDrawingCache();
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                             byte[] data = baos.toByteArray();
-
                             UploadTask uploadTask = imgRef.putBytes(data);
                             uploadTask.addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -165,8 +188,10 @@ public class CriaGrupoActivity extends AppCompatActivity {
                     }
                 });
 
-            }
+            }}
         });
 
     }
+
+
 }

@@ -90,20 +90,17 @@ public class GruposTodosgruposFragment extends Fragment {
 
                 //Listar contatos
                 for (DataSnapshot dados: dataSnapshot.getChildren()){
-                    System.out.println("get children allgroups" + dados);
+                    System.out.println("get children allgroups " + dados);
 
                     Grupo grupo = dados.getValue( Grupo.class );
                     System.out.println("grupo "+ grupo.getNome());
                     grupos.add( grupo );
-
 
                 }
 
                 adapter.notifyDataSetChanged();
 
             }
-
-
 
             @Override
             public void onCancelled(DatabaseError databaseError) {

@@ -79,7 +79,6 @@ try{
                 if (task.isSuccessful()) {
                     Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_LONG ).show();
 
-
                     System.out.println("111USER EMAIL: " + usuario.getEmail() + "USER SENHA: " + usuario.getSenha());
 
                     idUser = Base64Decoder.encoderBase64(usuario.getEmail());
