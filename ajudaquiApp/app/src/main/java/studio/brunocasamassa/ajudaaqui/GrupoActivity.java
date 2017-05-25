@@ -102,7 +102,7 @@ public class GrupoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         NavigationDrawer navigator = new NavigationDrawer();
-        navigator.createDrawer(GrupoActivity.this, toolbar);
+        navigator.createDrawer(GrupoActivity.this, toolbar,5);
 
     }
 

@@ -1,14 +1,20 @@
 package studio.brunocasamassa.ajudaaqui;
 
 import android.content.Intent;
+import android.graphics.Path;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.Profile;
@@ -16,15 +22,32 @@ import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Scanner;
 
+import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
+import studio.brunocasamassa.ajudaaqui.helper.Preferences;
 import studio.brunocasamassa.ajudaaqui.helper.User;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,11 +57,29 @@ public class MainActivity extends AppCompatActivity {
     private Button login;
     private LoginButton btnLogin;
     public static User user = new User();
-    public CallbackManager callbackManager;
+    private CallbackManager callbackManager;
     public static LoginResult lr;
     private static String userId;
     private static FirebaseAuth autenticacao;
-    private static DatabaseReference firebaseDatabase;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private DatabaseReference firebaseDatabase;
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        autenticacao.addAuthStateListener(mAuthListener);
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            autenticacao.removeAuthStateListener(mAuthListener);
+        }
+    }
+    // ...
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,20 +87,53 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        LoginManager.getInstance().logOut();
+        Categoria categorias = new Categoria();
+        ArrayList<String> tags = new ArrayList<String>();
 
-        firebaseDatabase = FirebaseConfig.getFireBase();
-        autenticacao = FirebaseConfig.getFirebaseAuthentication();
-        if (autenticacao.getCurrentUser() != null){
-
-            startActivity(new Intent(MainActivity.this, PerfilActivity.class));
+        /*Scanner scan = null;          //TODO FILE READER TAGS
+        try {
+            scan = new Scanner(new FileInputStream("C:\\Users\\bruno\\Documents\\BitBucket\\ajudaqui\\ajudaquiApp\\app\\tags.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
+        int i = 0;
+        while (scan.hasNext()) {
+            String s = scan.nextLine();
+            tags.add(i, s);
+            i++;
+        }*/
+
+        tags.add(0, "tag1");
+        tags.add(1, "tag2");
+        tags.add(2, "tag3");
+        categorias.setCategorias(tags);
+        categorias.save();
+
+        firebaseDatabase = FirebaseConfig.getFireBase().child("usuarios");
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                System.out.println("usuario conectado: " + firebaseAuth.getCurrentUser());
+                if (user != null) {
+                    // User is signed in
+                    startActivity(new Intent(MainActivity.this, PerfilActivity.class));
+                    Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d("OUT", "onAuthStateChanged:signed_out");
+                }
+                // ...
+            }
+        };
+
+
+        autenticacao = FirebaseConfig.getFirebaseAuthentication();
+
 
         cadastrar = (Button) findViewById(R.id.entrar);
         login = (Button) findViewById(R.id.loginButton);
-        btnLogin = (LoginButton) findViewById(R.id.login_button);
-
-        btnLogin.setReadPermissions(Arrays.asList("public_profile", "email", "user_birthday"));
 
         cadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,68 +152,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        //FACEBOOK INTEGRATION
-
         callbackManager = CallbackManager.Factory.create();
 
 
-        // Profile facebookProfile ;
-        Profile facebookProfile = Profile.getCurrentProfile();
-        if (facebookProfile != null) {
+        btnLogin = (LoginButton) findViewById(R.id.login_button);
 
-            user.setName(facebookProfile.getFirstName() + " " + facebookProfile.getLastName());
-            user.setProfileImageURL(facebookProfile.getProfilePictureUri(50, 50));
-            startActivity(new Intent(MainActivity.this, PerfilActivity.class));
-        }
+        btnLogin.setReadPermissions(Arrays.asList("public_profile", "email", "user_birthday"));
 
 
+        //FACEBOOK INTEGRATION
 
         btnLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
             @Override
             public void onSuccess(final LoginResult loginResult) {
-
-                if (Profile.getCurrentProfile() == null) {
-
-                    GraphRequest request = GraphRequest.newMeRequest(
-                            loginResult.getAccessToken(),
-                            new GraphRequest.GraphJSONObjectCallback() {
-                                @Override
-                                public void onCompleted(JSONObject object, GraphResponse response) {
-                                    System.out.println("LoginActivity" + response.toString());
-
-                                    // Application code
-                                    try {
-                                        String email = object.getString("email");
-                                        System.out.println("email: " + email);
-                                        String birthday = object.getString("birthday");
-                                        System.out.println("birthday: " + birthday);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
-
-                    mProfileTracker = new ProfileTracker() {
-                        @Override
-                        protected void onCurrentProfileChanged(Profile profile, Profile profile2) {
-                            autenticacao = FirebaseConfig.getFirebaseAuthentication();
-                            //profile2 is the new profile
-                            user.setName(profile2.getFirstName() + " " + profile2.getLastName());
-                            user.setProfileImageURL(profile2.getProfilePictureUri(50, 50));
-                            Profile.setCurrentProfile(profile2);
-                            mProfileTracker.stopTracking();
-                            lr = loginResult;
-                            String userId = loginResult.getAccessToken().getUserId();
-                            System.out.println("LOGIN RESULT: " + userId);
-                            String profileImgUrl = "https://graph.facebook.com/" + userId + "/picture?type=large";
-                            user.setProfileImg(profileImgUrl);
-                            returnLoginResult(lr);
-                            startActivity(new Intent(MainActivity.this, PerfilActivity.class));
-
-                        }
-                    };
-                }
+                System.out.println("MESSAGE Sucesso no callback, integrando com o firebase, login result >>>>  " + loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
 
 
             }
@@ -151,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException error) {
-
+                System.out.println("erro no callback" + error);
             }
 
 
@@ -161,18 +189,75 @@ public class MainActivity extends AppCompatActivity {
         ;
     }
 
+
+    private void handleFacebookAccessToken(AccessToken token) {
+        System.out.println("handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken()); //firebase-facebook bound-line
+        autenticacao.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        System.out.println("login no firebase " + task.isSuccessful());
+                        Toast.makeText(MainActivity.this, "Sucesso em fazer login, ola " + task.getResult().getUser().getDisplayName().toString(), Toast.LENGTH_LONG).show();
+                        String encodedFacebookEmailUser = Base64Decoder.encoderBase64(task.getResult().getUser().getEmail());
+                        User usuario = new User();
+                        usuario.setName(task.getResult().getUser().getDisplayName());
+                        usuario.setProfileImageURL(task.getResult().getUser().getPhotoUrl());
+                        usuario.setEmail(task.getResult().getUser().getEmail());
+                        usuario.setId(encodedFacebookEmailUser);
+                        ArrayList<Integer> badgesList = new ArrayList<Integer>();
+                        usuario.setMedalhas(badgesList);
+                        usuario.save();
+
+                        Preferences preferences = new Preferences(MainActivity.this);
+                        preferences.saveData(encodedFacebookEmailUser, usuario.getName());
+                        //verifyLoggedUser(task);
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            System.out.println("erro login firebase" + task.getException());
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        // ...
+                    }
+                });
+    }
+
+    private void verifyLoggedUser(final Task<AuthResult> task) {
+
+
+
+    /*    firebaseDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println("datasnapshot 2"+ dataSnapshot);
+
+                if(!dataSnapshot.child(encodedFacebookEmailUser).exists()){
+                    System.out.println("CRIANDO USUARIO NO DATABASSE");
+                    // FirebaseUser usuarioFireBase = task.getResult().getUser();
+                    usuario.save();
+
+                    Preferences preferences = new Preferences(MainActivity.this);
+                    preferences.saveData(encodedFacebookEmailUser, usuario.getName() );
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
-
-    public static LoginResult returnLoginResult(LoginResult result) {
-
-        result = lr;
-        return result;
-    }
-
-
 }
 

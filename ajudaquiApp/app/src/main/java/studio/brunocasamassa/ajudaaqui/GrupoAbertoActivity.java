@@ -1,6 +1,6 @@
 package studio.brunocasamassa.ajudaaqui;
 
-import  android.content.Intent;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -16,16 +16,15 @@ import android.widget.ListView;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
-import com.mikepenz.materialdrawer.AccountHeader;
-import com.mikepenz.materialdrawer.AccountHeaderBuilder;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
+import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
+import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
+import studio.brunocasamassa.ajudaaqui.helper.Grupo;
+import studio.brunocasamassa.ajudaaqui.helper.GrupoAbertoTabAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.GruposTabAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
@@ -36,12 +35,14 @@ import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
  *
  */
 
-public class GruposActivity extends AppCompatActivity {
+public class GrupoAbertoActivity extends AppCompatActivity {
+    private DatabaseReference firebase;
     private Toolbar toolbar;
     private ListView listview_nomes;
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
     private int posicao;
+    private static Grupo grupo = new Grupo();
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -50,12 +51,41 @@ public class GruposActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hello);
 
+        Bundle extra = getIntent().getExtras();
+
+        String groupKey = Base64Decoder.encoderBase64(extra.getString("nome").toString());
+        System.out.println("group Name bundleded "+ extra.getString("nome").toString());
+
+        String titulo =  extra.getString("nome").toString();
+        firebase = FirebaseConfig.getFireBase().child("grupos").child(groupKey);
+
+        firebase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Grupo aux = dataSnapshot.getValue(Grupo.class);
+                grupo.setNome(aux.getNome());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
-        toolbar.setTitle(getResources().getString(R.string.menu_grupos));
+        toolbar.setTitle(titulo);
+        System.out.println("nome grupo "+ grupo.getNome());
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(GrupoAbertoActivity.this, GruposActivity.class));
+            }
+        });
+
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
-
 
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
         viewPager = (ViewPager) findViewById(R.id.vp_pagina);
@@ -64,14 +94,13 @@ public class GruposActivity extends AppCompatActivity {
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setSelectedIndicatorColors(ContextCompat.getColor(this, R.color.colorAccent));
 
-        GruposTabAdapter gruposTabAdapter = new GruposTabAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(gruposTabAdapter);
+        GrupoAbertoTabAdapter grupoAbertoTabAdapter = new GrupoAbertoTabAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(grupoAbertoTabAdapter);
 
         slidingTabLayout.setViewPager(viewPager);
 
-
-        NavigationDrawer navigator = new NavigationDrawer();
-        navigator.createDrawer(GruposActivity.this, toolbar,5);
+        //NavigationDrawer navigator = new NavigationDrawer();
+        //navigator.createDrawer(GrupoAbertoActivity.this, toolbar);
 
         //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -95,7 +124,7 @@ public class GruposActivity extends AppCompatActivity {
                 //logoutUser();
                 LoginManager.getInstance().logOut();
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(GruposActivity.this, MainActivity.class));
+                startActivity(new Intent(GrupoAbertoActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
                 return true;

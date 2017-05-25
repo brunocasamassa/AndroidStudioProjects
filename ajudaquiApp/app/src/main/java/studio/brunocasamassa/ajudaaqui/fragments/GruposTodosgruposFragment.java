@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,6 +46,7 @@ public class GruposTodosgruposFragment extends Fragment {
     }
 
 
+
     @Override
     public void onStart() {
         super.onStart();
@@ -60,7 +62,7 @@ public class GruposTodosgruposFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-            View view = inflater.inflate(R.layout.fragment_allgroups, container, false);
+        View view = inflater.inflate(R.layout.fragment_allgroups, container, false);
         grupos = new ArrayList<>();
 
         fab = (FloatingActionButton) view.findViewById(R.id.fab);

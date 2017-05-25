@@ -42,7 +42,7 @@ public class SobreActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hello); //// TODO: 25/04/2017 criar layout de cada fragment
+        setContentView(R.layout.activity_hello);
 
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
@@ -54,7 +54,7 @@ public class SobreActivity extends AppCompatActivity{
 
         NavigationDrawer navigator = new NavigationDrawer();
 
-       navigator.createDrawer(SobreActivity.this, toolbar);
+       navigator.createDrawer(SobreActivity.this, toolbar,9);
 
         //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 

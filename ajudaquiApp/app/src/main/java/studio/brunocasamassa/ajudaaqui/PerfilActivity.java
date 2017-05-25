@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -91,13 +92,16 @@ public class PerfilActivity extends AppCompatActivity {
             layout.addView(imageView);
         }
 
-        //Glide.with(PerfilActivity.this).load(usuario.getProfileImageURL()).into(profileImg);
+        Glide.with(PerfilActivity.this).load(usuario.getProfileImageURL()).into(profileImg);
 
-//        profileName.setText(usuario.getName());
 
         usuario.setPedidosAtendidos("20");
         usuario.setPedidosFeitos("420");
         usuario.setPontos("5");
+        if(usuario.getProfileImageURL() != null){
+            profileImg.setImageURI(usuario.getProfileImageURL());
+        }
+
         profileName.setText(usuario.getName());
         pedidosAtendidos.setText(usuario.getPedidosAtendidos());
         pedidosFeitos.setText(usuario.getPedidosFeitos());
@@ -107,9 +111,9 @@ public class PerfilActivity extends AppCompatActivity {
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
 
-        NavigationDrawer navigator = new NavigationDrawer();
+       NavigationDrawer navigator = new NavigationDrawer();
 
-        navigator.createDrawer(PerfilActivity.this, toolbar);
+        navigator.createDrawer(PerfilActivity.this, toolbar,7);
 
     }
 

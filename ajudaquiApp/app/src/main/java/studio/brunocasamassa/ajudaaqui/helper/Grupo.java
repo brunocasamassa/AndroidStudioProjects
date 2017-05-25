@@ -26,6 +26,24 @@ public class Grupo {
     public List<Pedido> doacoes;
 
 
+    public Grupo getGrupo() {
+        return grupo;
+    }
+
+    public void setGrupo(Grupo grupo) {
+        this.id = grupo.getId();
+        this.nome = grupo.getNome();
+        this.grupoImg = grupo.getGrupoImg();
+        this.qtdMembros = grupo.getQtdMembros();
+        this.descricao = grupo.getDescricao();
+        this.idAdms = grupo.getIdAdms();
+        this.trocas = grupo.getTrocas();
+        this.emprestimos = grupo.getEmprestimos();
+        this.servicos = grupo.getServicos();
+        this.doacoes = grupo.getDoacoes();
+    }
+
+    private Grupo grupo;
     public ArrayList<String> getIdAdms() {
         return idAdms;
     }

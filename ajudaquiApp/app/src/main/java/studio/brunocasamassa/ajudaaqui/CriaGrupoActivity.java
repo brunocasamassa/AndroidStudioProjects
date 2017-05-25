@@ -58,7 +58,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_criar_grupo);
 
@@ -68,7 +68,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {   //TODO FIX BACK BUG
-                startActivity(new Intent(CriaGrupoActivity.this, GruposActivity.class));
+                startActivityForResult(new Intent(CriaGrupoActivity.this, GruposActivity.class), getChangingConfigurations());
                 Toast.makeText(getApplicationContext(), "voltei", Toast.LENGTH_LONG).show();
             }
         });
@@ -82,113 +82,125 @@ public class CriaGrupoActivity extends AppCompatActivity {
         img = (CircleImageView) findViewById(R.id.import_group_img);
         createButton = (Button) findViewById(R.id.create_group_button);
 
+
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                        "content://media/internal/images/media"));
+
+
+            }
+        });
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(groupName.getText().toString().equals("") ){
+                if (groupName.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Insira um nome para o grupo", Toast.LENGTH_LONG).show();
-                    return ;
-                }
-                else if( descricao.getText().toString().equals("") ){
+                    return;
+                } else if (descricao.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Insira uma descricao para o grupo", Toast.LENGTH_LONG).show();
                     return;
-                } else if(img.equals(null)){
+                } else if (img.equals(null)) {
                     Toast.makeText(getApplicationContext(), "Insira uma imagem para o grupo", Toast.LENGTH_LONG).show();
                     return;
-                }
-                else{
-                grupo = new Grupo();
-                groupId = Base64Decoder.encoderBase64(groupName.getText().toString());
-                grupo.setNome(groupName.getText().toString());
-                grupo.setDescricao(descricao.getText().toString());
-                grupo.setId(groupId);
-
-                FirebaseAuth autenticacao = FirebaseConfig.getFirebaseAuthentication();
-
-                String userKey = Base64Decoder.encoderBase64(autenticacao.getCurrentUser().getEmail());
-                databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
-                System.out.println("AUTH caraio" + userKey);
-
-                adms.add(0, userKey);
-                grupo.setQtdMembros(1);
-                grupo.setIdAdms(adms);
-
-                databaseUsers.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        User user= dataSnapshot.getValue(User.class);
-                        System.out.println("caraio Email user " + usuario.getEmail() + "nOME USER: " + usuario.getName());
-                        usuario = user;
-
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-                if (usuario.getGrupos() != null){
-                gruposUserLogado.addAll(usuario.getGrupos()) ;
-                gruposUserLogado.add(gruposUserLogado.size(), grupo.getId());
-                System.out.println("grupos caraio "+ gruposUserLogado);
                 } else {
-                    gruposUserLogado.add(0, grupo.getId());
-                }
-                usuario.setGrupos(gruposUserLogado);
-                usuario.setId(userKey);
-                databaseUsers.getRef().child("grupos").setValue(gruposUserLogado);
+                    grupo = new Grupo();
+                    groupId = Base64Decoder.encoderBase64(groupName.getText().toString());
+                    grupo.setNome(groupName.getText().toString());
+                    grupo.setDescricao(descricao.getText().toString());
+                    grupo.setId(groupId);
 
-                //EVENTO DE LEITURA
+                    FirebaseAuth autenticacao = FirebaseConfig.getFirebaseAuthentication();
 
-                databaseGroups.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        //verifica ID dos grupos e valida ID
-                        System.out.println("datasnapshot caraio BRUTO: " + dataSnapshot);
-                        System.out.println("ID MEU caraio GRUPO " + grupo.getId());
-                        if (dataSnapshot.child("grupos").child(groupId).exists()) {
-                            Toast.makeText(getApplicationContext(), "Nome de grupo Já utilizado", Toast.LENGTH_LONG).show();
-                            System.out.println("caraio validador> " + validatedName);
-                            return;
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Grupo Criado com sucesso", Toast.LENGTH_LONG).show();
-                            StorageReference imgRef = storage.child(groupName.getText() + ".jpg");
-                            //download img source
-                            img.setDrawingCacheEnabled(true);
-                            img.buildDrawingCache();
-                            Bitmap bitmap = img.getDrawingCache();
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                            byte[] data = baos.toByteArray();
-                            UploadTask uploadTask = imgRef.putBytes(data);
-                            uploadTask.addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    // Handle unsuccessful uploads
-                                }
-                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                }
-                            });
-                            grupo.save();
-                            finish();
+                    String userKey = Base64Decoder.encoderBase64(autenticacao.getCurrentUser().getEmail());
+                    databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
+                    System.out.println("AUTH caraio" + userKey);
+
+                    adms.add(0, userKey);
+                    grupo.setQtdMembros(1);
+                    grupo.setIdAdms(adms);
+
+                    databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User user = dataSnapshot.getValue(User.class);
+                            if (user.getGrupos() != null) {  //populate groups
+                                gruposUserLogado.addAll(usuario.getGrupos());
+                                System.out.println("grupos user logado qtd " + gruposUserLogado.size());
+                                gruposUserLogado.add(gruposUserLogado.size(), grupo.getId());
+                                System.out.println("grupos caraio " + gruposUserLogado);
+                            }else {
+                                gruposUserLogado.add(0, grupo.getId());
+                            }
+
+                            usuario.setEmail(user.getEmail());   //TODO se aumentar qtd itens no OBJETO USER, setar tudo aqui
+                            usuario.setName(user.getName());
+                            System.out.println("caraio Email user " + usuario.getEmail() + "nOME USER: " + usuario.getName());
+                            usuario.setGrupos(gruposUserLogado);
+                            usuario.setId(Base64Decoder.encoderBase64(user.getEmail()));
+                            System.out.println("refs2 usuario "+usuario.getGrupos());
+                            usuario.save();
 
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
+                        }
+                    });
 
-            }}
+
+                    //EVENTO DE LEITURA de IMAGEM
+
+                    databaseGroups.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            //verifica ID dos grupos e valida ID
+                            System.out.println("datasnapshot caraio BRUTO: " + dataSnapshot);
+                            System.out.println("ID MEU caraio GRUPO " + grupo.getId());
+                            if (dataSnapshot.child(groupId).exists()) {
+                                Toast.makeText(getApplicationContext(), "Nome de grupo Já utilizado", Toast.LENGTH_LONG).show();
+                                System.out.println("caraio validador> " + validatedName);
+                                return;
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Grupo Criado com sucesso", Toast.LENGTH_LONG).show();
+                                StorageReference imgRef = storage.child(groupName.getText() + ".jpg");
+                                //download img source
+                                img.setDrawingCacheEnabled(true);
+                                img.buildDrawingCache();
+                                Bitmap bitmap = img.getDrawingCache();
+                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                                byte[] data = baos.toByteArray();
+                                UploadTask uploadTask = imgRef.putBytes(data);
+                                uploadTask.addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        // Handle unsuccessful uploads
+                                    }
+                                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                    }
+                                });
+                                grupo.save();
+                                finish();
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+                }
+            }
         });
 
     }

@@ -3,7 +3,6 @@ package studio.brunocasamassa.ajudaaqui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,9 +20,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import studio.brunocasamassa.ajudaaqui.CriaGrupoActivity;
-import studio.brunocasamassa.ajudaaqui.GrupoActivity;
+import studio.brunocasamassa.ajudaaqui.GrupoAbertoActivity;
 import studio.brunocasamassa.ajudaaqui.R;
-import studio.brunocasamassa.ajudaaqui.adapters.AllGroupsAdapter;
 import studio.brunocasamassa.ajudaaqui.adapters.MyGroupsAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
@@ -38,11 +36,12 @@ public class GruposMeusgruposFragment extends Fragment {
     private FloatingActionButton fab;
     private DatabaseReference firebase;
     private DatabaseReference dbGroups;
-    private ValueEventListener valueEventListenerAllContacts;
+    private ValueEventListener valueEventListenerAll;
     private ArrayAdapter adapter;
     private ArrayList<Grupo> grupos;
     private ListView listView;
     private ValueEventListener valueEventListenerAllGroups;
+
     private static User usuario = new User();
 
     public GruposMeusgruposFragment() {
@@ -52,7 +51,7 @@ public class GruposMeusgruposFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        firebase.addListenerForSingleValueEvent(valueEventListenerAllContacts);
+        firebase.addListenerForSingleValueEvent(valueEventListenerAll);
 
 //       dbGroups.addListenerForSingleValueEvent(valueEventListenerAllGroups);
 
@@ -62,8 +61,8 @@ public class GruposMeusgruposFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        firebase.removeEventListener(valueEventListenerAllContacts);
-        //      dbGroups.removeEventListener(valueEventListenerAllGroups);
+        firebase.removeEventListener(valueEventListenerAll);
+        //dbGroups.removeEventListener(valueEventListenerAllGroups);
     }
 
 
@@ -79,9 +78,9 @@ public class GruposMeusgruposFragment extends Fragment {
 
         listView = (ListView) view.findViewById(R.id.mygroups_list);
 
+
         adapter = new MyGroupsAdapter(getActivity(), grupos);
         listView.setAdapter(adapter);
-
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,51 +111,11 @@ public class GruposMeusgruposFragment extends Fragment {
                 .child("grupos");
 
         //Listener para recuperar grupos do usuario
-        valueEventListenerAllContacts = new ValueEventListener() {
+        valueEventListenerAll = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-/*
-                //Limpar lista
-                //grupos.clear();  //maybe not needed
 
-                usuario = dataSnapshot.getValue(User.class);
-
-                //adapter.notifyDataSetChanged();
-
-                if (usuario.getGrupos() != null) {
-                    for (String grupoId : usuario.getGrupos()) {
-                        System.out.println("grupos usuario jumanji" + usuario.getGrupos());
-                        System.out.println("qtd grupos "+ usuario.getGrupos().size());
-
-                        dbGroups = FirebaseConfig.getFireBase()
-                                .child("grupos").child(grupoId);
-
-
-                        dbGroups.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                //Limpar lista
-                                grupos.clear();
-
-                                //Listar contatos
-
-                                Grupo grupo = dataSnapshot.getValue(Grupo.class);
-                                System.out.println("meu grupo populado jumanji" + grupo.getNome());
-                                grupos.add(grupo);
-                                //return;
-
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }}
-*/
-                //grupos.clear();
-
+                grupos.clear();
 
                 //Listar contatos
                 for (DataSnapshot dados : dataSnapshot.getChildren()) {
@@ -164,8 +123,8 @@ public class GruposMeusgruposFragment extends Fragment {
 
                     Grupo grupo = dados.getValue(Grupo.class);
                     System.out.println("grupo " + grupo.getNome());
-                    if (usuario.getGrupos().contains(grupo.getId())) {
-                        if (!grupos.contains(grupo)) {
+                    if (usuario.getGrupos() != null ) {
+                        if (!grupos.contains(grupo) && usuario.getGrupos().contains(grupo.getId())) {
                             grupos.add(grupo);
                         }
                     }
@@ -178,6 +137,7 @@ public class GruposMeusgruposFragment extends Fragment {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                grupos.clear();
 
             }
         };
@@ -189,7 +149,7 @@ public class GruposMeusgruposFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Intent intent = new Intent(getActivity(), GrupoActivity.class);
+                Intent intent = new Intent(getActivity(), GrupoAbertoActivity.class);
 
                 // recupera dados a serem passados
                 Grupo grupo = grupos.get(position);

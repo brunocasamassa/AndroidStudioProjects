@@ -16,6 +16,15 @@ public class User implements DatabaseReference.CompletionListener {
 
     private String id;
 
+    public int getPremiumUser() {
+        return premiumUser;
+    }
+
+    public void setPremiumUser(int premiumUser) {
+        this.premiumUser = premiumUser;
+    }
+
+    private int premiumUser;
     private ArrayList<Integer> medalhas;
 
     private String pontos;

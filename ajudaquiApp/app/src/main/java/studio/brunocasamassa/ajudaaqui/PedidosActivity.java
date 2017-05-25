@@ -33,6 +33,7 @@ public class PedidosActivity extends AppCompatActivity {
     private SlidingTabLayout slidingTabLayout;
 
     private User usuario;
+
     private static NavigationDrawer navigator = new NavigationDrawer();
 
 
@@ -70,7 +71,7 @@ public class PedidosActivity extends AppCompatActivity {
         slidingTabLayout.setViewPager(viewPager);
 
 
-        navigator.createDrawer(PedidosActivity.this, toolbar);
+        navigator.createDrawer(PedidosActivity.this, toolbar ,0);
 
 
     }

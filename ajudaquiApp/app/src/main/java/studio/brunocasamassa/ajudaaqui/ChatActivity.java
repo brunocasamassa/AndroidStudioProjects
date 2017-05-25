@@ -52,7 +52,7 @@ public class ChatActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         NavigationDrawer navigator = new NavigationDrawer();
-        navigator.createDrawer(ChatActivity.this, toolbar  );
+        navigator.createDrawer(ChatActivity.this, toolbar ,3 );
 
         //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     }

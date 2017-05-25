@@ -13,7 +13,9 @@
         android:theme="@style/AppTheme">
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".TagsList"></activity>
         <activity android:name=".PedidosActivity"></activity>
+        <activity android:name=".MainActivity"></activity>
         <activity android:name=".PerfilActivity"></activity>
         <activity android:name=".CadastroActivity"></activity>
         <fragment android:name=".GruposTodosgruposFragment"></fragment>
@@ -21,10 +23,11 @@
         <activity android:name=".GrupoActivity"></activity>
         <activity android:name=".ConfiguracoesActivity"></activity>
         <activity android:name=".GruposActivity"></activity>
+        <activity android:name=".GrupoAbertoActivity"></activity>
         <activity android:name=".CriaGrupoActivity"></activity>
         <activity android:name=".SobreActivity"></activity>
         <activity android:name=".ChatActivity"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".CriaPedidoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

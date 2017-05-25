@@ -48,11 +48,12 @@ public class NavigationDrawer {
     private static String idUser;
 
 
-    public void createDrawer(final Activity classe, final Toolbar toolbar) {
+    public void createDrawer(final Activity classe, final Toolbar toolbar, final int posicao) {
         //setClasse = classe;
         //Itens do Drawer
 
         FirebaseUser authentication = FirebaseConfig.getFirebaseAuthentication().getCurrentUser();
+        System.out.println("usuario no drawer: "+ authentication);
 
         final String emailUser = authentication.getEmail();
         System.out.println("email user " + emailUser);
@@ -117,7 +118,7 @@ public class NavigationDrawer {
                                                                    verifyActivity(pivotClass, pivotPosition);
                                                                    return false;
                                                                }
-                                                           }).withSelectedItemByPosition(0)
+                                                           }).withSelectedItemByPosition(posicao)
                                                            .build();
 
 
@@ -139,7 +140,7 @@ public class NavigationDrawer {
 
     private void verifyActivity(Activity classe, int position) {
         if (position == 1) {
-            // HERE I AM TRYING USING DIFFERENT FORMS TO START THE ACTITIVIES
+
             classe.startActivity(new Intent(classe, PedidosActivity.class));
         }
         if (position == 3) {
