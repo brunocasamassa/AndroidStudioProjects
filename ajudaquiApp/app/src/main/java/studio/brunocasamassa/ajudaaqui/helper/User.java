@@ -24,14 +24,17 @@ public class User implements DatabaseReference.CompletionListener {
         this.premiumUser = premiumUser;
     }
 
-    private int premiumUser;
+    private int premiumUser;  //0==free , 1==premium
+
     private ArrayList<Integer> medalhas;
+
+    private int creditos =3;
 
     private String pontos;
 
     private String pedidosAtendidos;
 
-    private String pedidosFeitos;
+    private ArrayList<String> pedidosFeitos;
 
     private String senha;
 
@@ -97,7 +100,6 @@ public class User implements DatabaseReference.CompletionListener {
     }
 
 
-
     public String getPedidosAtendidos() {
 
         return pedidosAtendidos;
@@ -108,15 +110,13 @@ public class User implements DatabaseReference.CompletionListener {
     }
 
 
-
-    public String getPedidosFeitos() {
+    public ArrayList<String> getPedidosFeitos() {
         return pedidosFeitos;
     }
 
-    public void setPedidosFeitos(String pedidosFeitos) {
+    public void setPedidosFeitos(ArrayList<String> pedidosFeitos) {
         this.pedidosFeitos = pedidosFeitos;
     }
-
 
 
     public ArrayList<String> getGrupos() {
@@ -128,7 +128,6 @@ public class User implements DatabaseReference.CompletionListener {
     }
 
 
-
     public String getProfileImg() {
         return profileImg;
     }
@@ -136,7 +135,6 @@ public class User implements DatabaseReference.CompletionListener {
     public void setProfileImg(String profileImg) {
         this.profileImg = profileImg;
     }
-
 
 
     public Uri getProfileImageURL() {
@@ -148,7 +146,6 @@ public class User implements DatabaseReference.CompletionListener {
     }
 
 
-
     public String getName() {
         return name;
     }
@@ -158,7 +155,6 @@ public class User implements DatabaseReference.CompletionListener {
     }
 
 
-
     public String getEmail() {
         return email;
     }
@@ -166,7 +162,6 @@ public class User implements DatabaseReference.CompletionListener {
     public void setEmail(String email) {
         this.email = email;
     }
-
 
 
     public void save() {
@@ -183,4 +178,14 @@ public class User implements DatabaseReference.CompletionListener {
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
 
     }
+
+    public int getCreditos() {
+        return creditos;
+    }
+
+    public void setCreditos(int creditos) {
+        this.creditos = creditos;
+    }
+
+
 }

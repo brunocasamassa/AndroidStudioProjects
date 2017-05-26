@@ -86,29 +86,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        Categoria categorias = new Categoria();
-        ArrayList<String> tags = new ArrayList<String>();
-
-        /*Scanner scan = null;          //TODO FILE READER TAGS
-        try {
-            scan = new Scanner(new FileInputStream("C:\\Users\\bruno\\Documents\\BitBucket\\ajudaqui\\ajudaquiApp\\app\\tags.txt"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        int i = 0;
-        while (scan.hasNext()) {
-            String s = scan.nextLine();
-            tags.add(i, s);
-            i++;
-        }*/
-
-        tags.add(0, "tag1");
-        tags.add(1, "tag2");
-        tags.add(2, "tag3");
-        categorias.setCategorias(tags);
-        categorias.save();
-
         firebaseDatabase = FirebaseConfig.getFireBase().child("usuarios");
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {

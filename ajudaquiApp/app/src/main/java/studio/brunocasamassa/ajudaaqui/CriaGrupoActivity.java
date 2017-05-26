@@ -49,7 +49,6 @@ public class CriaGrupoActivity extends AppCompatActivity {
     private String groupId;
     private Button createButton;
     private static User usuario = new User();
-    private ArrayList<String> gruposUserLogado = new ArrayList<String>();
     private StorageReference storage;
     private boolean validatedName = true;
     private ArrayList<String> adms = new ArrayList<>();
@@ -122,36 +121,6 @@ public class CriaGrupoActivity extends AppCompatActivity {
                     grupo.setQtdMembros(1);
                     grupo.setIdAdms(adms);
 
-                    databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            User user = dataSnapshot.getValue(User.class);
-                            if (user.getGrupos() != null) {  //populate groups
-                                gruposUserLogado.addAll(usuario.getGrupos());
-                                System.out.println("grupos user logado qtd " + gruposUserLogado.size());
-                                gruposUserLogado.add(gruposUserLogado.size(), grupo.getId());
-                                System.out.println("grupos caraio " + gruposUserLogado);
-                            }else {
-                                gruposUserLogado.add(0, grupo.getId());
-                            }
-
-                            usuario.setEmail(user.getEmail());   //TODO se aumentar qtd itens no OBJETO USER, setar tudo aqui
-                            usuario.setName(user.getName());
-                            System.out.println("caraio Email user " + usuario.getEmail() + "nOME USER: " + usuario.getName());
-                            usuario.setGrupos(gruposUserLogado);
-                            usuario.setId(Base64Decoder.encoderBase64(user.getEmail()));
-                            System.out.println("refs2 usuario "+usuario.getGrupos());
-                            usuario.save();
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-
                     //EVENTO DE LEITURA de IMAGEM
 
                     databaseGroups.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -163,7 +132,6 @@ public class CriaGrupoActivity extends AppCompatActivity {
                             if (dataSnapshot.child(groupId).exists()) {
                                 Toast.makeText(getApplicationContext(), "Nome de grupo Já utilizado", Toast.LENGTH_LONG).show();
                                 System.out.println("caraio validador> " + validatedName);
-                                return;
                             } else {
                                 Toast.makeText(getApplicationContext(), "Grupo Criado com sucesso", Toast.LENGTH_LONG).show();
                                 StorageReference imgRef = storage.child(groupName.getText() + ".jpg");
@@ -188,7 +156,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
                                     }
                                 });
                                 grupo.save();
-                                finish();
+                                groupSaveIntoUser(true);
 
                             }
                         }
@@ -199,9 +167,46 @@ public class CriaGrupoActivity extends AppCompatActivity {
                         }
                     });
 
+
                 }
             }
         });
+
+    }
+
+    private void groupSaveIntoUser(boolean b) {
+        if (b) {
+            databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    ArrayList<String> gruposUserLogado = new ArrayList<String>();
+                    if (user.getGrupos() != null) {  //populate groups
+                        gruposUserLogado.addAll(user.getGrupos());
+                        System.out.println("grupos user logado qtd " + gruposUserLogado.size());
+                        gruposUserLogado.add(gruposUserLogado.size(), grupo.getId());
+                        System.out.println("grupos caraio " + gruposUserLogado);
+                    } else {
+                        gruposUserLogado.add(0, grupo.getId());
+                    }
+                    System.out.println("caraio Email user " + user.getEmail() + "nOME USER: " + user.getName());
+                    user.setGrupos(gruposUserLogado);
+                    System.out.println("refs2 usuario " + user.getGrupos());
+                    user.setId(Base64Decoder.encoderBase64(user.getEmail()));
+                    System.out.println("grupos do usuario que irão ser salvos" + user.getGrupos());
+                    user.save();
+                    finish();
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+
+            });
+
+        }
 
     }
 

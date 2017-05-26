@@ -14,7 +14,7 @@ import studio.brunocasamassa.ajudaaqui.fragments.GruposTrocasFragment;
 
 public class GrupoAbertoTabAdapter extends FragmentStatePagerAdapter {
 
-    private String[] tituloAbas = {"TROCA", "EMPRESTIMOS","SERVIÇOS","DOAÇÕES"};
+    private String[] tituloAbas = {"TROCA", "EMPRESTIMOS","SERVIÇOS", "DOAÇÕES"};
 
     public GrupoAbertoTabAdapter(FragmentManager fm) {
         super(fm);

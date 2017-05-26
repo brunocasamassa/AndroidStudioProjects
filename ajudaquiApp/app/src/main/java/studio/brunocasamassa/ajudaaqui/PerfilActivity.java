@@ -21,10 +21,16 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
+import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
 import studio.brunocasamassa.ajudaaqui.helper.User;
@@ -50,7 +56,6 @@ public class PerfilActivity extends AppCompatActivity {
     private CadastroActivity cdrst;
     private ArrayAdapter<String> adapter;
     private ArrayList<Integer> badgesList = new ArrayList<>();
-    private User usuario;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -72,10 +77,44 @@ public class PerfilActivity extends AppCompatActivity {
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         badgesList.add(1,"hue");*/
 
+        final String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
-        usuario = new User() ;
+        DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
 
-        badgesList.add(0,2);
+        databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User usuario = dataSnapshot.getValue(User.class);
+                System.out.println("recebe usuario NAME: " + usuario.getName());
+                System.out.println("recebe usuario DATA: " + dataSnapshot.getValue());
+                if (usuario.getProfileImageURL() != null) {
+                    profileImg.setImageURI(usuario.getProfileImageURL());
+                }
+
+
+                profileName.setText(usuario.getName());
+                if (usuario.getPedidosAtendidos() != null) {
+                    pedidosAtendidos.setText(usuario.getPedidosAtendidos());
+                } else pedidosAtendidos.setText(""+0);
+                if (usuario.getPedidosFeitos() != null) {
+                    pedidosFeitos.setText(""+usuario.getPedidosFeitos().size());
+                } else pedidosFeitos.setText(""+0);
+                pontosConquistados.setText(usuario.getPontos());
+                if (usuario.getProfileImageURL() != null) {
+                    Glide.with(PerfilActivity.this).load(usuario.getProfileImageURL()).into(profileImg);
+                }
+                usuario.setId(userKey);
+                usuario.save();
+                return;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+       /* badgesList.add(0,2);    //TODO MEDALHAS
 
         usuario.setMedalhas(badgesList);
 
@@ -91,29 +130,16 @@ public class PerfilActivity extends AppCompatActivity {
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             layout.addView(imageView);
         }
+*/
 
-        Glide.with(PerfilActivity.this).load(usuario.getProfileImageURL()).into(profileImg);
-
-
-        usuario.setPedidosAtendidos("20");
-        usuario.setPedidosFeitos("420");
-        usuario.setPontos("5");
-        if(usuario.getProfileImageURL() != null){
-            profileImg.setImageURI(usuario.getProfileImageURL());
-        }
-
-        profileName.setText(usuario.getName());
-        pedidosAtendidos.setText(usuario.getPedidosAtendidos());
-        pedidosFeitos.setText(usuario.getPedidosFeitos());
-        pontosConquistados.setText(usuario.getPontos());
 
         toolbar.setTitle(getResources().getString(R.string.menu_perfil));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
 
-       NavigationDrawer navigator = new NavigationDrawer();
+        NavigationDrawer navigator = new NavigationDrawer();
 
-        navigator.createDrawer(PerfilActivity.this, toolbar,7);
+        navigator.createDrawer(PerfilActivity.this, toolbar, 7);
 
     }
 
