@@ -83,16 +83,19 @@ try{
 
                     idUser = Base64Decoder.encoderBase64(usuario.getEmail());
 
+                    System.out.println("LA: decoder 64 "+ idUser);
                     firebase = FirebaseConfig.getFireBase()
                             .child("usuarios")
                             .child(idUser);
 
-                    System.out.println("TASK SUCESSFULL");
-                    valueEventListenerUsuario = new ValueEventListener() {
+                    System.out.println("LA: FIREBASE "+ firebase);
+
+                    firebase.addValueEventListener(new ValueEventListener() {
                         @Override
+
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             User usuarioRecuperado = dataSnapshot.getValue(User.class);
-                            System.out.println("Data Changed " + usuarioRecuperado);
+                            System.out.println("LA: Data Changed " + usuarioRecuperado);
                             Preferences preferencias = new Preferences(LoginActivity.this);
                             preferencias.saveData(idUser, usuarioRecuperado.getName());
 
@@ -102,9 +105,8 @@ try{
                         public void onCancelled(DatabaseError databaseError) {
                             System.out.println("CANCELADO " + databaseError);
                         }
-                    };
+                    });
 
-                    firebase.addListenerForSingleValueEvent(valueEventListenerUsuario);
 
                     abrirTelaPrincipal();
                     Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_LONG).show();

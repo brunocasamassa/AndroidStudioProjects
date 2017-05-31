@@ -26,6 +26,7 @@ import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.adapters.AllGroupsAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Grupo;
+import studio.brunocasamassa.ajudaaqui.helper.User;
 
 
 /**
@@ -40,6 +41,7 @@ public class GruposTodosgruposFragment extends Fragment {
     private DatabaseReference firebase;
     private ValueEventListener valueEventListenerAllGroups;
     private FloatingActionButton fab;
+    private User usuario = new User();
 
     public GruposTodosgruposFragment() {
         // Required empty public constructor
@@ -64,6 +66,9 @@ public class GruposTodosgruposFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_allgroups, container, false);
         grupos = new ArrayList<>();
+
+        usuario.setGrupos(GruposMeusgruposFragment.usuario.getGrupos());
+        System.out.println("grupos do usuario: "+ usuario.getGrupos());
 
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
         listView = (ListView) view.findViewById(R.id.allgroups_list);
@@ -96,7 +101,11 @@ public class GruposTodosgruposFragment extends Fragment {
 
                     Grupo grupo = dados.getValue( Grupo.class );
                     System.out.println("grupo "+ grupo.getNome());
-                    grupos.add( grupo );
+                    //remove user groups
+                    if(usuario.getGrupos()==null || !usuario.getGrupos().contains(grupo.getId())) {
+                        grupos.add( grupo );
+                    }
+
 
                 }
 
@@ -122,8 +131,12 @@ public class GruposTodosgruposFragment extends Fragment {
                 Grupo grupo = grupos.get(position);
 
                 // enviando dados para grupo activity
+                if(grupo.getIdAdms() != null) {
+                    intent.putExtra("idAdmins", grupo.getIdAdms());
+                }
                 intent.putExtra("nome", grupo.getNome() );
                 intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()) );
+                intent.putExtra("descricao", grupo.getDescricao() );
 
                 startActivity(intent);}
                 catch (Exception e){

@@ -77,12 +77,13 @@ public class CadastroActivity extends AppCompatActivity {
         cadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                usuario = new User();
-                usuario.setName(nome.getText().toString());
-                usuario.setEmail(email.getText().toString());
-                usuario.setSenha(senha.getText().toString());
-                cadastrarUsuario();
-
+                if(senha.getText().toString().equals(senhaConfirm.getText().toString())){
+                    usuario = new User();
+                    usuario.setName(nome.getText().toString());
+                    usuario.setEmail(email.getText().toString());
+                    usuario.setSenha(senha.getText().toString());
+                    cadastrarUsuario();
+                } else Toast.makeText(getApplicationContext(),"Senha e confirmação devem ser iguais", Toast.LENGTH_LONG).show();
             }
         });
 

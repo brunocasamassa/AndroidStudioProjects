@@ -76,16 +76,15 @@
         android:id="@+id/textView9"
         android:layout_width="65dp"
         android:layout_height="25dp"
-        android:text="membros"
+        android:text="Membros:"
         android:layout_gravity="end"
         android:textAlignment="textEnd"
         android:textColor="@color/cardview_light_background"
         android:textStyle="bold"
-        tools:text="membros"
-        android:layout_alignBaseline="@+id/qtdMembros"
-        android:layout_alignBottom="@+id/qtdMembros"
-        android:layout_toRightOf="@+id/qtdMembros"
-        android:layout_toEndOf="@+id/qtdMembros" />
+        tools:text="Membros: "
+        android:layout_below="@+id/groupImg"
+        android:layout_alignLeft="@+id/groupImg"
+        android:layout_alignStart="@+id/groupImg" />
 
     <ImageView
         android:id="@+id/imageView5"
@@ -93,8 +92,8 @@
         android:layout_height="80dp"
         app:srcCompat="@drawable/lockedgroup"
         android:layout_below="@+id/grupoDescricao"
-        android:layout_alignLeft="@+id/qtdMembros"
-        android:layout_alignStart="@+id/qtdMembros" />
+        android:layout_alignLeft="@+id/textView9"
+        android:layout_alignStart="@+id/textView9" />
 
     <TextView
         android:id="@+id/textView3"
@@ -132,9 +131,9 @@
         android:text="1000"
         android:textColor="@android:color/background_light"
         android:textStyle="bold"
-        android:layout_alignLeft="@+id/groupImg"
-        android:layout_alignStart="@+id/groupImg"
-        android:layout_below="@+id/groupImg" />
+        android:layout_below="@+id/groupImg"
+        android:layout_alignRight="@+id/groupImg"
+        android:layout_alignEnd="@+id/groupImg" />
 
 
 </RelativeLayout>

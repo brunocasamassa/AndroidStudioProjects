@@ -34,7 +34,7 @@ public class FirebaseConfig {
     public static StorageReference getFirebaseStorage(){
 
         if(storage == null){
-            storage = FirebaseStorage.getInstance().getReferenceFromUrl("gs://ajudaqui-d58a0.appspot.com");
+            storage = FirebaseStorage.getInstance().getReferenceFromUrl("gs://ajudaqui-d58a0.appspot.com/");
 
         }
         return storage;

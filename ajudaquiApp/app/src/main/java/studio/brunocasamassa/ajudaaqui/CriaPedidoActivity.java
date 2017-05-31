@@ -59,7 +59,10 @@ public class CriaPedidoActivity extends AppCompatActivity {
         super.onStart();
         System.out.println("vamos ver " + tagCaptured);
         categorias.setTags(tagsCaptured);
+        if(groupCaptured!= null)
+            {
         grupos.setTags(groupCaptured);
+        }
         System.out.println("vamos ver " + groupCaptured);
 
     }

@@ -7,6 +7,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by bruno on 26/04/2017.
@@ -48,15 +49,9 @@ public class User implements DatabaseReference.CompletionListener {
 
     private String email;
 
-    public ArrayList<String> getSolicitacoes() {
-        return solicitacoes;
-    }
 
-    public void setSolicitacoes(ArrayList<String> solicitacoes) {
-        this.solicitacoes = solicitacoes;
-    }
+    private ArrayList<String> msgSolicitacoes;
 
-    private ArrayList<String> solicitacoes;
 
 
     public User() {
@@ -187,5 +182,13 @@ public class User implements DatabaseReference.CompletionListener {
         this.creditos = creditos;
     }
 
+
+    public ArrayList<String> getMsgSolicitacoes() {
+        return msgSolicitacoes;
+    }
+
+    public void setMsgSolicitacoes(ArrayList<String> msgSolicitacoes) {
+        this.msgSolicitacoes = msgSolicitacoes;
+    }
 
 }

@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -67,7 +68,6 @@ public class PedidosActivity extends AppCompatActivity {
 
         PedidosTabAdapter pedidosTabAdapter = new PedidosTabAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pedidosTabAdapter);
-
         slidingTabLayout.setViewPager(viewPager);
 
 
@@ -94,6 +94,8 @@ public class PedidosActivity extends AppCompatActivity {
                 startActivity(new Intent(PedidosActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
+
+                Toast.makeText(PedidosActivity.this, "Em criação", Toast.LENGTH_LONG).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

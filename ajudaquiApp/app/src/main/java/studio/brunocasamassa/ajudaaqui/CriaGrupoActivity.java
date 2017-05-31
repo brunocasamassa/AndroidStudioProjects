@@ -122,7 +122,6 @@ public class CriaGrupoActivity extends AppCompatActivity {
                     grupo.setIdAdms(adms);
 
                     //EVENTO DE LEITURA de IMAGEM
-
                     databaseGroups.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -155,6 +154,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
                                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
                                     }
                                 });
+
                                 grupo.save();
                                 groupSaveIntoUser(true);
 

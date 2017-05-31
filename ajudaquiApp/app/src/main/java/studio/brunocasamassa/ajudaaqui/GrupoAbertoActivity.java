@@ -99,10 +99,6 @@ public class GrupoAbertoActivity extends AppCompatActivity {
 
         slidingTabLayout.setViewPager(viewPager);
 
-        //NavigationDrawer navigator = new NavigationDrawer();
-        //navigator.createDrawer(GrupoAbertoActivity.this, toolbar);
-
-        //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
     }
 

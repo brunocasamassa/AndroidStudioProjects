@@ -14,8 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorBackground"
-        app:titleTextColor="@android:color/black"></android.support.v7.widget.Toolbar>
-
+        app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
 
     <studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout
         android:id="@+id/stl_tabs"
@@ -25,6 +24,7 @@
         android:layout_below="@+id/vp_pagina"
         android:background="@color/colorBackground"
         app:titleTextColor="@android:color/white"></studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout>
+
 
     <android.support.v4.view.ViewPager android:id="@+id/vp_pagina"
         android:layout_width="wrap_content"

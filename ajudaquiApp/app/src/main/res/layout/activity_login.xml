@@ -24,9 +24,9 @@
         android:layout_width="350dp"
         android:layout_height="50dp"
         android:ems="10"
+        android:inputType="textPassword"
         android:textColor="@android:color/background_light"
         android:hint="Senha"
-        android:inputType="textEmailAddress"
         android:layout_marginTop="25dp"
         android:layout_below="@+id/email"
         android:layout_alignStart="@+id/email" />

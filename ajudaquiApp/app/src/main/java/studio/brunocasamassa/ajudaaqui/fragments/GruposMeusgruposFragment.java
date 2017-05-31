@@ -42,7 +42,7 @@ public class GruposMeusgruposFragment extends Fragment {
     private ListView listView;
     private ValueEventListener valueEventListenerAllGroups;
 
-    private static User usuario = new User();
+    public static User usuario = new User();
 
     public GruposMeusgruposFragment() {
         // Required empty public constructor

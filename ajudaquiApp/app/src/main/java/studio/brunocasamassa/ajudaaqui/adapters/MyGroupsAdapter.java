@@ -59,12 +59,14 @@ public class MyGroupsAdapter extends ArrayAdapter<Grupo> {
 
             Grupo grupo = grupos.get( position );
             nomeGrupo.setText( grupo.getNome());
-            qtdMmebros.setText( String.valueOf(grupo.getQtdMembros()) + " membros");
+            qtdMmebros.setText( "Membros: "+String.valueOf(grupo.getQtdMembros()));
             // DOWNLOAD GROUP IMG FROM STORAGE
             storage.child(grupo.getNome()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
                 public void onSuccess(Uri uri) {
-                    imgGrupo.setImageURI(uri);
+
+                    imgGrupo.setImageURI(Uri.parse(uri.toString()));
+                    System.out.println("my groups lets seee2"+ uri);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -72,6 +74,7 @@ public class MyGroupsAdapter extends ArrayAdapter<Grupo> {
 
                 }
             });
+
 
 
         }

@@ -10,6 +10,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,11 +23,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.prefs.Preferences;
 
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
@@ -49,12 +53,16 @@ public class GrupoActivity extends AppCompatActivity {
     private TextView groupName;
     private TextView descricao;
     private ImageView groupImg;
+    private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
     private Grupo grupo;
     private Bundle itens;
     private Button botaoSolicitar;
     private DatabaseReference firebase;
+    private ValueEventListener valueEventSolicita;
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,6 +90,8 @@ public class GrupoActivity extends AppCompatActivity {
         Bundle extra = getIntent().getExtras();
         if (extra != null) {
 
+            grupo.setIdAdms(extra.getStringArrayList("idAdmins"));
+            grupo.setDescricao(extra.getString("descricao"));
             grupo.setNome(extra.getString("nome"));
             grupo.setQtdMembros(Integer.valueOf(extra.getString("qtdmembros")));
 
@@ -102,21 +112,28 @@ public class GrupoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         NavigationDrawer navigator = new NavigationDrawer();
-        navigator.createDrawer(GrupoActivity.this, toolbar,5);
+        navigator.createDrawer(GrupoActivity.this, toolbar, 5);
 
     }
 
     private void geraSolicitacao() {
 
+        Log.i("Gera Solicitação", "entrei");
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(GrupoActivity.this);
 
         alertDialog.setTitle("Solicitar Participação");
         alertDialog.setMessage("Escreva uma mensagem para os administradores");
         alertDialog.setCancelable(false);
 
-
         final EditText editText = new EditText(GrupoActivity.this);
         alertDialog.setView(editText);
+
+        alertDialog.setNegativeButton("Cancelar:", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
 
         alertDialog.setPositiveButton("Solicitar", new DialogInterface.OnClickListener() {
             @Override
@@ -125,44 +142,46 @@ public class GrupoActivity extends AppCompatActivity {
                 final String mensagemSolicitacao = editText.getText().toString();
                 String grupoNome = groupName.getText().toString();
 
-                //Validate e-mail contact
+                //Validate message to contact
                 if (mensagemSolicitacao.isEmpty()) {
                     Toast.makeText(GrupoActivity.this, "Preencha o campo de mensagem", Toast.LENGTH_LONG).show();
                 } else {
 
-                    firebase = FirebaseConfig.getFireBase();
-                    firebase.child("grupos").child(grupo.getId()).child("idAdms");
+                    firebase = FirebaseConfig.getFireBase().child("grupos").child(grupo.getId());
 
-                    ValueEventListener valueEventSolicita = new ValueEventListener() {
+                    Log.i("Gera Solicitação", "antes do evento de leitura");
+
+                    firebase.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            for (DataSnapshot dados : dataSnapshot.getChildren()){
 
-                                System.out.println("id adms: "+ dados.getValue());
-                               String idAdm = dados.getValue().toString();
-
+                            Log.i("Gera Solicitação", " admins" + dataSnapshot.getValue());
+                            Grupo grupo = dataSnapshot.getValue(Grupo.class);
+                            Log.i("Gera Solicitação", " rgupo populado" + grupo.getIdAdms());
+                            ArrayList idAdms = (ArrayList) grupo.getIdAdms();
+                            for (int i = 0; i < idAdms.size(); i++) {
+                                String idAdm = (String) idAdms.get(i);
                                 User user = new User();
-
                                 DatabaseReference userData = FirebaseConfig.getFireBase();
-                                userData.child("usuarios").child(idAdm).child("solicitacoes").setValue(mensagemSolicitacao);
-
-
+                                //salva hashmaps para o admin, um com o grupo e outro com a mensagem
+                                ArrayList<String> msgSolicitacoes =new ArrayList();
+                                msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO: "+grupo.getNome() + ":USUARIO: "+ userKey + " :MENSAGEM: "+ mensagemSolicitacao );
+                                userData.child("usuarios").child(idAdm).child("msgSolicitacoes").setValue(msgSolicitacoes);
+                                Toast.makeText(GrupoActivity.this, "Solicitação enviada", Toast.LENGTH_LONG).show();
+                                finish();
                             }
-
-
                         }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
 
                         }
-                    };
-
+                    });
 
 
                 }
             }
-        });
+        }).create().show();
     }
 
     @Override
@@ -189,5 +208,5 @@ public class GrupoActivity extends AppCompatActivity {
         }
 
     }
-
 }
+

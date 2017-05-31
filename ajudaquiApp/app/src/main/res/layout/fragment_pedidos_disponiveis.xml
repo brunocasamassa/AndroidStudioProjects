@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,23 +7,32 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <GridView
-
-        android:layout_marginTop="90dp"
-        android:id="@+id/mygroups_list"
-        android:layout_width="wrap_content"
-        android:layout_height="414dp" />
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
-        android:layout_width="90dp"
+        android:layout_width="88dp"
         android:layout_height="88dp"
         android:layout_gravity="bottom|start"
-        android:layout_marginBottom="40dp"
-        android:layout_marginLeft="270dp"
         android:clickable="true"
-        android:elevation="5dp"
-        android:src="@mipmap/button_plus"
-        app:backgroundTint="@color/md_white_1000" />
+        android:elevation="12dp"
+        android:src="@drawable/button_plus"
+        app:backgroundTint="@color/colorAccent"
+        android:layout_marginRight="40dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="40dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintHorizontal_bias="0.898" />
 
-</FrameLayout>
+
+<android.support.v7.widget.RecyclerView
+        android:id="@+id/allpedidos_list"
+        android:layout_width="410dp"
+        android:layout_height="599dp"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="0dp" />
+
+
+
+
+</android.support.constraint.ConstraintLayout>

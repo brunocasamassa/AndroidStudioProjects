@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -80,6 +81,8 @@ public class SobreActivity extends AppCompatActivity{
                 //logoutUser();
                 return true;
             case R.id.action_settings:
+
+                Toast.makeText(SobreActivity.this, "Em criação", Toast.LENGTH_LONG).show();
                 return true;
 
             default:

@@ -78,6 +78,7 @@ public class NavigationDrawer {
                                                    PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_sobre).withIcon(R.mipmap.sobre_icon);
 
                                                    // Create the Navigation Drawer AccountHeader
+
                                                    AccountHeader headerResult = new AccountHeaderBuilder()
                                                            .withActivity(classe)
                                                            .withHeaderBackground(R.color.colorPrimary)

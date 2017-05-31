@@ -29,8 +29,6 @@ public class PedidosEscolhidosFragment extends Fragment {
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
 
-
-
     private FloatingActionButton fab;
 
 

@@ -147,8 +147,9 @@
         android:id="@+id/horizontal_scroll"
         android:layout_width="400dp"
         android:layout_height="50dp"
-        android:layout_below="@+id/textView5"
-        android:layout_marginTop="12dp">
+        android:layout_below="@+id/textView11"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
     <LinearLayout
         android:id="@+id/linear"
@@ -157,19 +158,34 @@
         android:orientation="horizontal" >
     </LinearLayout>
     </HorizontalScrollView>
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="22dp"
+        android:textSize="20dp"
+        android:text="Medalhas"
+        tools:text="Medalhas"
+        android:id="@+id/textView11"
+        android:layout_below="@+id/textView5"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="11dp" />
 
-    <ImageButton
-        android:id="@+id/premiumButton"
-        android:layout_width="30dp"
-        android:layout_height="50dp"
-        android:layout_alignEnd="@+id/perfilPedidosFeitos"
-        android:layout_alignLeft="@+id/perfilPedidosFeitos"
-        android:layout_alignRight="@+id/perfilPedidosFeitos"
-        android:layout_alignStart="@+id/perfilPedidosFeitos"
-        android:layout_alignTop="@+id/profileImg"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        app:srcCompat="@android:drawable/ic_notification_overlay" />
+    <TextView
+        android:layout_width="120dp"
+        android:layout_height="22dp"
+        android:textSize="20dp"
+        android:text="Notificações"
+        tools:text="Notificações"
+        android:id="@+id/textView12"
+        android:layout_below="@+id/horizontal_scroll" />
+
+    <ListView
+        android:id="@+id/perfil_notificacoes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView12"></ListView>
 
 
 </RelativeLayout>
