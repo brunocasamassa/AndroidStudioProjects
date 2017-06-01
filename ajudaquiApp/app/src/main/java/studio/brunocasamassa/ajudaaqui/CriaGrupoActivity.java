@@ -5,13 +5,16 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -25,6 +28,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -40,6 +44,7 @@ import studio.brunocasamassa.ajudaaqui.helper.User;
 public class CriaGrupoActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
+    private int PICK_IMAGE_REQUEST = 1;
     private CircleImageView img;
     private EditText groupName;
     private EditText descricao;
@@ -78,19 +83,24 @@ public class CriaGrupoActivity extends AppCompatActivity {
 
         groupName = (EditText) findViewById(R.id.create_group_name);
         descricao = (EditText) findViewById(R.id.create_group_description);
-        img = (CircleImageView) findViewById(R.id.import_group_img);
         createButton = (Button) findViewById(R.id.create_group_button);
+        img = (CircleImageView) findViewById(R.id.import_group_img);
 
 
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                        "content://media/internal/images/media"));
+                Intent intent = new Intent();
+        // Show only images, no videos or anything else
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+        // Always show the chooser (if there are multiple options available)
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
 
 
             }
         });
+
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,16 +152,12 @@ public class CriaGrupoActivity extends AppCompatActivity {
                                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                                 byte[] data = baos.toByteArray();
                                 UploadTask uploadTask = imgRef.putBytes(data);
-                                uploadTask.addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception exception) {
-                                        // Handle unsuccessful uploads
-                                    }
-                                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                     @Override
                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                        Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
+                                        System.out.println("huehuebrjava "+ downloadUrl);
                                     }
                                 });
 
@@ -171,7 +177,6 @@ public class CriaGrupoActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     private void groupSaveIntoUser(boolean b) {
@@ -210,5 +215,23 @@ public class CriaGrupoActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+
+            Uri uri = data.getData();
+
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                Log.d("image", String.valueOf(bitmap));
+
+                img.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                e.printStackTrace();
+                Log.e("error in get image ", e.toString());
+            }
+        }
+    }
 }

@@ -2,8 +2,13 @@ package studio.brunocasamassa.ajudaaqui;
 
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -23,11 +28,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,6 +62,7 @@ public class PerfilActivity extends AppCompatActivity {
     private CircleImageView profileImg;
     private TextView profileName;
     private RecyclerView badges;
+    private StorageReference storage;
     private TextView pontosConquistados;
     private TextView pedidosFeitos;
     private TextView pedidosAtendidos;
@@ -71,8 +80,6 @@ public class PerfilActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
 
-        badgesList.add(0,2);
-
         final ListView notificacoes = (ListView) findViewById(R.id.perfil_notificacoes);
         LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
         profileImg = (CircleImageView) findViewById(R.id.profileImg);
@@ -86,6 +93,22 @@ public class PerfilActivity extends AppCompatActivity {
 
         final String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
+        storage = FirebaseConfig.getFirebaseStorage().child("userImages");
+
+        storage.child(userKey+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+
+                Glide.with(PerfilActivity.this).load(uri).override(68,68).into(profileImg);
+                System.out.println("my groups lets seee2 "+ uri);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+
+            }
+        });
+
         DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
 
         databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -95,9 +118,8 @@ public class PerfilActivity extends AppCompatActivity {
                 user.setMedalhas(badgesList); //usuario.getMedalhas()
                 System.out.println("recebe usuario NAME: " + usuario.getName());
                 System.out.println("recebe usuario DATA: " + dataSnapshot.getValue());
-                if (usuario.getProfileImageURL() != null) {
-                    profileImg.setImageURI(usuario.getProfileImageURL());
-                }
+
+
                 if(usuario.getMsgSolicitacoes() != null){
                     ArrayList<String> msgSolicita = usuario.getMsgSolicitacoes();
                     for(int i=0; i< msgSolicita.size();i++) {
@@ -156,7 +178,6 @@ public class PerfilActivity extends AppCompatActivity {
             for (int i = 0; i < 10; i++) {
                 ImageView imageView = new ImageView(PerfilActivity.this);
                 imageView.setId(i);
-                imageView.setPadding(2, 2, 2, 2);
                 imageView.setImageBitmap(BitmapFactory.decodeResource(
                         getResources(), R.drawable.logo));
                 if (!user.getMedalhas().contains(i)) {
@@ -196,7 +217,7 @@ public class PerfilActivity extends AppCompatActivity {
                 startActivity(new Intent(PerfilActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
-                Toast.makeText(PerfilActivity.this, "Em criação", Toast.LENGTH_LONG).show();
+                Toast.makeText(PerfilActivity.this, "Em Produção", Toast.LENGTH_LONG).show();
                 return true;
 
             default:

@@ -82,7 +82,7 @@ public class SobreActivity extends AppCompatActivity{
                 return true;
             case R.id.action_settings:
 
-                Toast.makeText(SobreActivity.this, "Em criação", Toast.LENGTH_LONG).show();
+                Toast.makeText(SobreActivity.this, "Em Produção", Toast.LENGTH_LONG).show();
                 return true;
 
             default:

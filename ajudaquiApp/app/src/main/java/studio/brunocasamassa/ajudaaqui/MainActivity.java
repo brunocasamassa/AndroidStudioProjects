@@ -23,6 +23,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -177,42 +178,41 @@ public class MainActivity extends AppCompatActivity {
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken()); //firebase-facebook bound-line
         autenticacao.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                .addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
+                    public void onSuccess(AuthResult authResult) {
+                        System.out.println("login no firebase " + authResult);
+                        Toast.makeText(MainActivity.this, "Sucesso em fazer login, ola " + authResult.getUser().getDisplayName().toString(), Toast.LENGTH_LONG).show();
+                        String encodedFacebookEmailUser = Base64Decoder.encoderBase64(authResult.getUser().getEmail());
+                        User usuario = new User();
+                        usuario.setName(authResult.getUser().getDisplayName());
+                        System.out.println("user name1 "+user.getName());
+                        user.setName(usuario.getName());
+                        usuario.setProfileImageURL(authResult.getUser().getPhotoUrl());
+                        user.setProfileImageURL(usuario.getProfileImageURL());
+                        usuario.setEmail(authResult.getUser().getEmail());
+                        user.setEmail(usuario.getEmail());
+                        usuario.setId(encodedFacebookEmailUser);
+                        user.setId(usuario.getId());
+                        ArrayList<Integer> badgesList = new ArrayList<Integer>();
+                        usuario.setMedalhas(badgesList);
+                        user.setMedalhas(usuario.getMedalhas());
+                        user.save();
 
-                            System.out.println("login no firebase " + task.isSuccessful());
-                            Toast.makeText(MainActivity.this, "Sucesso em fazer login, ola " + task.getResult().getUser().getDisplayName().toString(), Toast.LENGTH_LONG).show();
-                            String encodedFacebookEmailUser = Base64Decoder.encoderBase64(task.getResult().getUser().getEmail());
-                            User usuario = new User();
-                            usuario.setName(task.getResult().getUser().getDisplayName());
-                            System.out.println("user name1 "+user.getName());
-                            user.setName(usuario.getName());
-                            usuario.setProfileImageURL(task.getResult().getUser().getPhotoUrl());
-                            user.setProfileImageURL(usuario.getProfileImageURL());
-                            usuario.setEmail(task.getResult().getUser().getEmail());
-                            user.setEmail(usuario.getEmail());
-                            usuario.setId(encodedFacebookEmailUser);
-                            user.setId(usuario.getId());
-                            ArrayList<Integer> badgesList = new ArrayList<Integer>();
-                            usuario.setMedalhas(badgesList);
-                            user.setMedalhas(usuario.getMedalhas());
-                            user.save();
+                        Preferences preferences = new Preferences(MainActivity.this);
+                        preferences.saveData(encodedFacebookEmailUser, user.getName());
+                        //verifyLoggedUser(task);
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!authResult.getUser().isEmailVerified()) {
+                            System.out.println("erro login firebase");
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
 
-                            Preferences preferences = new Preferences(MainActivity.this);
-                            preferences.saveData(encodedFacebookEmailUser, user.getName());
-                            //verifyLoggedUser(task);
-                            // If sign in fails, display a message to the user. If sign in succeeds
-                            // the auth state listener will be notified and logic to handle the
-                            // signed in user can be handled in the listener.
-                            if (!task.isSuccessful()) {
-                                System.out.println("erro login firebase" + task.getException());
-                                Toast.makeText(MainActivity.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-
-                        // ...
                     }
+
                 });
 
     }

@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
@@ -39,6 +40,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 
@@ -59,15 +61,15 @@ public class AllGroupsAdapter extends ArrayAdapter<Grupo> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        FirebaseOptions opts = FirebaseApp.getInstance().getOptions();
-        Log.i("bucket", "Bucket = " + opts.getStorageBucket());
+        //FirebaseOptions opts = FirebaseApp.getInstance().getOptions();
+        //Log.i("tag", "Bucket = " + opts.getStorageBucket());
         storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
         View view = null;
 
         // Verifica se a lista está vazia
         if( grupos != null ){
 
-            // inicializar objeto para montagem da view
+                // inicializar objeto para montagem da view
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
 
             // Monta view a partir do xml
@@ -76,33 +78,28 @@ public class AllGroupsAdapter extends ArrayAdapter<Grupo> {
             // recupera elemento para exibição
             TextView nomeGrupo = (TextView) view.findViewById(R.id.nomeGrupo);
             TextView qtdMmebros = (TextView) view.findViewById(R.id.qtd_membros);
-            final ImageView imgGrupo = (ImageView) view.findViewById(R.id.groupImg);
+            final CircleImageView imgGrupo = (CircleImageView) view.findViewById(R.id.groupImg);
 
             Grupo grupo = grupos.get( position );
             nomeGrupo.setText( grupo.getNome());
             qtdMmebros.setText( "Membros: "+String.valueOf(grupo.getQtdMembros()));
             // DOWNLOAD GROUP IMG FROM STORAGE
 
-            storage.child(grupo.getNome()+".jpeg");
-            final long ONE_MEGABYTE = 1024 * 1024;
 
-            storage.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            storage.child(grupo.getNome()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
-                public void onSuccess(byte[] bytes) {
-                    // Data for "images/island.jpg" is returns, use this as needed
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                    System.out.println("bitmap venha "+bitmap);
-                    imgGrupo.setImageBitmap(bitmap);
+                public void onSuccess(Uri uri) {
 
+                    Glide.with(getContext()).load(uri).override(68,68).into(imgGrupo);
+                    System.out.println("my groups lets seee2 "+ uri);
                 }
-
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                    System.out.println("allgroups excessao "+exception);
+
                 }
             });
+
 
 
         }

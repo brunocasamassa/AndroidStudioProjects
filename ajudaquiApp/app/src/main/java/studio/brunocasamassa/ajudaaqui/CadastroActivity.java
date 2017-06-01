@@ -1,7 +1,10 @@
 package studio.brunocasamassa.ajudaaqui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,6 +17,7 @@ import android.widget.Toast;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -23,9 +27,14 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Preferences;
@@ -39,15 +48,18 @@ public class CadastroActivity extends AppCompatActivity {
     private Button cadastrar;
     private ImageButton backButton;
     private EditText email;
+    private int PICK_IMAGE_REQUEST = 1;
     private EditText nome;
     private EditText senha;
     private EditText senhaConfirm;
     private FirebaseAuth autenticacao;
     private DatabaseReference firebaseDatabase;
     public User usuario;
+    private StorageReference storage;
     public static String idUser;
     private Base64Decoder decoder;
     private ArrayList<Integer> badgesList = new ArrayList<>();
+    private CircleImageView userImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +68,27 @@ public class CadastroActivity extends AppCompatActivity {
 
         //badgesList.add(0,2);
 
-
         LoginManager.getInstance().logOut();
+        storage = FirebaseConfig.getFirebaseStorage().child("userImages");
 
         backButton = (ImageButton) findViewById(R.id.backButton);
         nome = (EditText) findViewById(R.id.cadastro_nome);
         email = (EditText) findViewById(R.id.cadastro_email);
         senha = (EditText) findViewById(R.id.cadastro_senha);
         senhaConfirm = (EditText) findViewById(R.id.cadastro_senhaConfirm);
+        userImg = (CircleImageView) findViewById(R.id.cadastro_img);
+
+        userImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                // Show only images, no videos or anything else
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                // Always show the chooser (if there are multiple options available)
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+            }
+        });
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,13 +102,14 @@ public class CadastroActivity extends AppCompatActivity {
         cadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(senha.getText().toString().equals(senhaConfirm.getText().toString())){
+                if (senha.getText().toString().equals(senhaConfirm.getText().toString())) {
                     usuario = new User();
                     usuario.setName(nome.getText().toString());
                     usuario.setEmail(email.getText().toString());
                     usuario.setSenha(senha.getText().toString());
                     cadastrarUsuario();
-                } else Toast.makeText(getApplicationContext(),"Senha e confirmação devem ser iguais", Toast.LENGTH_LONG).show();
+                } else
+                    Toast.makeText(getApplicationContext(), "Senha e confirmação devem ser iguais", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -92,61 +118,103 @@ public class CadastroActivity extends AppCompatActivity {
     private void cadastrarUsuario() {
 
         autenticacao = FirebaseConfig.getFirebaseAuthentication();
-
         autenticacao.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
                 .addOnCompleteListener(CadastroActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(CadastroActivity.this, "Usuario cadastrado com sucesso", Toast.LENGTH_LONG).show();
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(CadastroActivity.this, "Usuario cadastrado com sucesso", Toast.LENGTH_LONG).show();
 
-                            idUser = Base64Decoder.encoderBase64(usuario.getEmail());
-                            System.out.println("BASE64 ENCODER: " + idUser);
-                            usuario.setId(idUser);
-                            usuario.setMedalhas(badgesList);
-                            // FirebaseUser usuarioFireBase = task.getResult().getUser();
-                            usuario.save();
+                                    idUser = Base64Decoder.encoderBase64(usuario.getEmail());
+                                    System.out.println("BASE64 ENCODER: " + idUser);
+                                    usuario.setId(idUser);
+                                    usuario.setMedalhas(badgesList);
+                                    // FirebaseUser usuarioFireBase = task.getResult().getUser();
+                                    usuario.save();
 
-                            Preferences preferences = new Preferences(CadastroActivity.this);
-                            preferences.saveData(idUser, usuario.getName() );
+                                    Preferences preferences = new Preferences(CadastroActivity.this);
+                                    preferences.saveData(idUser, usuario.getName());
 
-                            openProfieUser();
+                                    uploadImages();
 
-                        } else {
 
-                            String erro = "";
-                            try {
-                                throw task.getException();
-                            } catch (FirebaseAuthWeakPasswordException e) {
-                                erro = "Escolha uma senha que contenha, letras e números.";
-                            } catch (FirebaseAuthInvalidCredentialsException e) {
-                                erro = "Email indicado não é válido.";
-                            } catch (FirebaseAuthUserCollisionException e) {
-                                erro = "Já existe uma conta com esse e-mail.";
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                                } else {
+
+                                    String erro = "";
+                                    try {
+                                        throw task.getException();
+                                    } catch (FirebaseAuthWeakPasswordException e) {
+                                        erro = "Escolha uma senha que contenha, letras e números.";
+                                    } catch (FirebaseAuthInvalidCredentialsException e) {
+                                        erro = "Email indicado não é válido.";
+                                    } catch (FirebaseAuthUserCollisionException e) {
+                                        erro = "Já existe uma conta com esse e-mail.";
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    Toast.makeText(CadastroActivity.this, "Erro ao cadastrar usuário: " + erro, Toast.LENGTH_LONG).show();
+                                }
+
                             }
-
-                            Toast.makeText(CadastroActivity.this, "Erro ao cadastrar usuário: " + erro, Toast.LENGTH_LONG).show();
                         }
 
-                    }
-                }
 
-
-        );
+                );
 
     }
 
 
-
     private void openProfieUser() {
         String nomeUser = usuario.getName().toString();
-        Toast.makeText(CadastroActivity.this, "Olá "+nomeUser+", bem vindo ao app Ajudaqui " , Toast.LENGTH_LONG).show();
+        Toast.makeText(CadastroActivity.this, "Olá " + nomeUser + ", bem vindo ao app Ajudaqui ", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(CadastroActivity.this, PerfilActivity.class);
         startActivity(intent);
         finish();
     }
 
+    private void uploadImages() {
+        StorageReference imgRef = storage.child(idUser + ".jpg");
+       System.out.println("lei lei "+idUser);
+        //download img source
+        userImg.setDrawingCacheEnabled(true);
+        userImg.buildDrawingCache();
+        Bitmap bitmap = userImg.getDrawingCache();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        UploadTask uploadTask = imgRef.putBytes(data);
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
+                System.out.println("huehuebrjava " + downloadUrl);
+            }
+        });
+
+        openProfieUser();
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+
+            Uri uri = data.getData();
+
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                Log.d("image", String.valueOf(bitmap));
+
+                userImg.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e("error in get image ", e.toString());
+            }
+        }
+    }
 
 }

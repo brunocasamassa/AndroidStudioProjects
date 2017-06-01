@@ -3,9 +3,10 @@ package studio.brunocasamassa.ajudaaqui;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -17,22 +18,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.prefs.Preferences;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Grupo;
@@ -52,17 +54,37 @@ public class GrupoActivity extends AppCompatActivity {
     private TextView qtdMembros;
     private TextView groupName;
     private TextView descricao;
-    private ImageView groupImg;
-    private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+    private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private Grupo grupo;
     private Bundle itens;
     private Button botaoSolicitar;
     private DatabaseReference firebase;
     private ValueEventListener valueEventSolicita;
+    private CircleImageView groupImg;
+    private DatabaseReference userData;
+    private ValueEventListener valueEventListenerUser;
+    private User user = new User();
+    private String idAdmin;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        userData.addListenerForSingleValueEvent(valueEventListenerUser);
+
+//       dbGroups.addListenerForSingleValueEvent(valueEventListenerAllGroups);
+
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        firebase.removeEventListener(valueEventListenerUser);
+        //dbGroups.removeEventListener(valueEventListenerAllGroups);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +95,7 @@ public class GrupoActivity extends AppCompatActivity {
         qtdMembros = (TextView) findViewById(R.id.qtdMembros);
         groupName = (TextView) findViewById(R.id.groupName);
         descricao = (TextView) findViewById(R.id.grupoDescricao);
-        groupImg = (ImageView) findViewById(R.id.groupImg);
+        groupImg = (CircleImageView) findViewById(R.id.groupImg);
         botaoSolicitar = (Button) findViewById(R.id.botaoSolicitar);
 
 
@@ -96,6 +118,21 @@ public class GrupoActivity extends AppCompatActivity {
             grupo.setQtdMembros(Integer.valueOf(extra.getString("qtdmembros")));
 
         }
+
+        StorageReference storage = FirebaseConfig.getFirebaseStorage().child("groupImage");
+        storage.child(grupo.getNome()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+
+                Glide.with(GrupoActivity.this).load(uri).override(68,68).into(groupImg);
+                System.out.println("my groups lets seee2"+ uri);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+
+            }
+        });
         grupo.setId(Base64Decoder.encoderBase64(grupo.getNome()));
         groupName.setText(grupo.getNome());
         qtdMembros.setText(String.valueOf(grupo.getQtdMembros()));
@@ -156,18 +193,40 @@ public class GrupoActivity extends AppCompatActivity {
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
                             Log.i("Gera Solicitação", " admins" + dataSnapshot.getValue());
-                            Grupo grupo = dataSnapshot.getValue(Grupo.class);
-                            Log.i("Gera Solicitação", " rgupo populado" + grupo.getIdAdms());
-                            ArrayList idAdms = (ArrayList) grupo.getIdAdms();
+                            Grupo dataGrupo = dataSnapshot.getValue(Grupo.class);
+                            grupo.setNome(dataGrupo.getNome());
+                            Log.i("Gera Solicitação", " grupo populado" + dataGrupo.getIdAdms());
+                            ArrayList idAdms = (ArrayList) dataGrupo.getIdAdms();
                             for (int i = 0; i < idAdms.size(); i++) {
-                                String idAdm = (String) idAdms.get(i);
-                                User user = new User();
-                                DatabaseReference userData = FirebaseConfig.getFireBase();
-                                //salva hashmaps para o admin, um com o grupo e outro com a mensagem
-                                ArrayList<String> msgSolicitacoes =new ArrayList();
-                                msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO: "+grupo.getNome() + ":USUARIO: "+ userKey + " :MENSAGEM: "+ mensagemSolicitacao );
-                                userData.child("usuarios").child(idAdm).child("msgSolicitacoes").setValue(msgSolicitacoes);
-                                Toast.makeText(GrupoActivity.this, "Solicitação enviada", Toast.LENGTH_LONG).show();
+                                String dataIdAdm = (String) idAdms.get(i);
+                                idAdmin = dataIdAdm;
+                                userData = FirebaseConfig.getFireBase().child("usuarios").child(dataIdAdm);
+                                valueEventListenerUser = new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        User dataUser = dataSnapshot.getValue(User.class);
+                                        ArrayList<String> msgSolicitacoes = new ArrayList();
+                                        if(dataUser.getMsgSolicitacoes() != null){
+                                         user.setMsgSolicitacoes(dataUser.getMsgSolicitacoes());
+                                        msgSolicitacoes.addAll(user.getMsgSolicitacoes());
+                                            //padrao de mensagem na db
+                                        msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO: "+grupo.getNome() + ":USUARIO: "+ userKey + " :MENSAGEM: "+ mensagemSolicitacao );
+
+                                        }else{
+                                            //padrao de mensagem na db
+                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO: "+grupo.getNome() + ":USUARIO: "+ userKey + " :MENSAGEM: "+ mensagemSolicitacao );
+                                        }
+
+                                        userData.child("usuarios").child(idAdmin).child("msgSolicitacoes").setValue(msgSolicitacoes);
+                                        Toast.makeText(GrupoActivity.this, "Solicitação enviada", Toast.LENGTH_LONG).show();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                };
+
                                 finish();
                             }
                         }

@@ -14,12 +14,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import studio.brunocasamassa.ajudaaqui.PerfilActivity;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Grupo;
@@ -55,7 +58,7 @@ public class MyGroupsAdapter extends ArrayAdapter<Grupo> {
             // recupera elemento para exibição
             TextView nomeGrupo = (TextView) view.findViewById(R.id.nomeGrupo);
             TextView qtdMmebros = (TextView) view.findViewById(R.id.qtd_membros);
-            final ImageView imgGrupo = (ImageView) view.findViewById(R.id.groupImg);
+            final CircleImageView imgGrupo = (CircleImageView) view.findViewById(R.id.groupImg);
 
             Grupo grupo = grupos.get( position );
             nomeGrupo.setText( grupo.getNome());
@@ -65,7 +68,7 @@ public class MyGroupsAdapter extends ArrayAdapter<Grupo> {
                 @Override
                 public void onSuccess(Uri uri) {
 
-                    imgGrupo.setImageURI(Uri.parse(uri.toString()));
+                    Glide.with(getContext()).load(uri).override(68,68).into(imgGrupo);
                     System.out.println("my groups lets seee2"+ uri);
                 }
             }).addOnFailureListener(new OnFailureListener() {

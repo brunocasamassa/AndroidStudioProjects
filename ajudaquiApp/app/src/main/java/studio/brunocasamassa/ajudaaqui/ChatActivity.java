@@ -79,7 +79,7 @@ public class ChatActivity extends AppCompatActivity {
                 startActivity(new Intent(ChatActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
-                Toast.makeText(ChatActivity.this, "Em criação", Toast.LENGTH_LONG).show();
+                Toast.makeText(ChatActivity.this, "Em Produção", Toast.LENGTH_LONG).show();
                 return true;
 
             default:

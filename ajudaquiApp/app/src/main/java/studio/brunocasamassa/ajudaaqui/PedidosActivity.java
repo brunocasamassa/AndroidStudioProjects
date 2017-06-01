@@ -95,7 +95,7 @@ public class PedidosActivity extends AppCompatActivity {
                 return true;
             case R.id.action_settings:
 
-                Toast.makeText(PedidosActivity.this, "Em criação", Toast.LENGTH_LONG).show();
+                Toast.makeText(PedidosActivity.this, "Em Produção", Toast.LENGTH_LONG).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

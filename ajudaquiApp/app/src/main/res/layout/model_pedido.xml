@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="200dp"
 android:layout_width="match_parent"
 android:orientation="vertical"
 xmlns:android="http://schemas.android.com/apk/res/android"
     android:weightSum="1">
-
 
 <android.support.v7.widget.CardView
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -28,7 +26,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     <TextView
         android:id="@+id/nomePedido"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="44dp"
         android:layout_gravity="top"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
