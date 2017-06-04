@@ -1,8 +1,11 @@
 package studio.brunocasamassa.ajudaaqui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Path;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -23,6 +26,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -34,13 +38,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -63,14 +71,9 @@ public class MainActivity extends AppCompatActivity {
     private static FirebaseAuth autenticacao;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference firebaseDatabase;
-    private static User user = new User();
+    private static User usuario = new User();
+    private StorageReference storage;
 
-
-    // ****URI TO BITMAP****
-    /*Uri imageUri = intent.getData();
-    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),imageUri);
-    Imageview my_img_view = (Imageview ) findViewById (R.id.my_img_view);
-    my_img_view.setImageBitmap(bitmap);*/
 
     @Override
     public void onStart() {
@@ -93,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        autenticacao = FirebaseConfig.getFirebaseAuthentication();
+
+        storage = FirebaseConfig.getFirebaseStorage().child("userImages");
+
         firebaseDatabase = FirebaseConfig.getFireBase().child("usuarios");
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -101,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 System.out.println("usuario conectado: " + firebaseAuth.getCurrentUser());
                 if (user != null) {
-                    // User is signed in
+                    Toast.makeText(getApplicationContext(), "signed in " + user.getDisplayName(), Toast.LENGTH_LONG).show();
                     startActivity(new Intent(MainActivity.this, PerfilActivity.class));
                     Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
                 } else {
@@ -111,9 +118,6 @@ public class MainActivity extends AppCompatActivity {
                 // ...
             }
         };
-
-
-        autenticacao = FirebaseConfig.getFirebaseAuthentication();
 
 
         cadastrar = (Button) findViewById(R.id.entrar);
@@ -143,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
 
         btnLogin.setReadPermissions(Arrays.asList("public_profile", "email", "user_birthday"));
 
-
         //FACEBOOK INTEGRATION
 
         btnLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -152,17 +155,18 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(final LoginResult loginResult) {
                 System.out.println("MESSAGE Sucesso no callback, integrando com o firebase, login result >>>>  " + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
-                //user.save (i tried to save here)
+
             }
 
             @Override
             public void onCancel() {
-
+                System.out.println("cancelede");
             }
 
             @Override
             public void onError(FacebookException error) {
                 System.out.println("erro no callback" + error);
+
             }
 
 
@@ -172,40 +176,52 @@ public class MainActivity extends AppCompatActivity {
         ;
     }
 
-
     private void handleFacebookAccessToken(AccessToken token) {
         System.out.println("handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken()); //firebase-facebook bound-line
         autenticacao.signInWithCredential(credential)
-                .addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onSuccess(AuthResult authResult) {
-                        System.out.println("login no firebase " + authResult);
-                        Toast.makeText(MainActivity.this, "Sucesso em fazer login, ola " + authResult.getUser().getDisplayName().toString(), Toast.LENGTH_LONG).show();
-                        String encodedFacebookEmailUser = Base64Decoder.encoderBase64(authResult.getUser().getEmail());
-                        User usuario = new User();
-                        usuario.setName(authResult.getUser().getDisplayName());
-                        System.out.println("user name1 "+user.getName());
-                        user.setName(usuario.getName());
-                        usuario.setProfileImageURL(authResult.getUser().getPhotoUrl());
-                        user.setProfileImageURL(usuario.getProfileImageURL());
-                        usuario.setEmail(authResult.getUser().getEmail());
-                        user.setEmail(usuario.getEmail());
-                        usuario.setId(encodedFacebookEmailUser);
-                        user.setId(usuario.getId());
-                        ArrayList<Integer> badgesList = new ArrayList<Integer>();
-                        usuario.setMedalhas(badgesList);
-                        user.setMedalhas(usuario.getMedalhas());
-                        user.save();
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        DatabaseReference users = FirebaseConfig.getFireBase().child("usuarios");
+                        users.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        Preferences preferences = new Preferences(MainActivity.this);
-                        preferences.saveData(encodedFacebookEmailUser, user.getName());
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                        try {
+                            System.out.println("login no firebase " + task);
+                            Toast.makeText(MainActivity.this, "Sucesso em fazer login, ola " + task.getResult().getUser().getDisplayName().toString(), Toast.LENGTH_LONG).show();
+                            String encodedFacebookEmailUser = Base64Decoder.encoderBase64(task.getResult().getUser().getEmail());
+                            String email = task.getResult().getUser().getEmail();
+                            String name = task.getResult().getUser().getDisplayName();
+                            Uri photo = task.getResult().getUser().getPhotoUrl();
+                            usuario.setName(name);
+                            usuario.setProfileImg(photo.toString());
+                            usuario.setEmail(email);
+                            usuario.setId(encodedFacebookEmailUser);
+                            ArrayList<Integer> badgesList = new ArrayList<Integer>();
+                            usuario.setMedalhas(badgesList);
+                            System.out.println("user name1 " + usuario.getName());
+                            usuario.save();
+                        } catch (Exception e) {
+                            System.out.println("EXCESSAO " + e);
+                        }
+
+                        /*Preferences preferences = new Preferences(MainActivity.this);
+                        preferences.saveData(encodedFacebookEmailUser, user.getName());*/
                         //verifyLoggedUser(task);
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
-                        if (!authResult.getUser().isEmailVerified()) {
+                        if (!task.isSuccessful()) {
                             System.out.println("erro login firebase");
                             Toast.makeText(MainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
@@ -218,7 +234,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void verifyLoggedUser(final Task<AuthResult> task) {
-
 
 
     /*    firebaseDatabase.addValueEventListener(new ValueEventListener() {
@@ -249,7 +264,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
-
 
     }
 }

@@ -12,12 +12,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -62,7 +64,6 @@ public class NavigationDrawer {
     private Uri userUri;
 
 
-
     public void createDrawer(final Activity classe, final Toolbar toolbar, final int posicao) {
         //setClasse = classe;
         //Itens do Drawer
@@ -70,15 +71,15 @@ public class NavigationDrawer {
         storage = FirebaseConfig.getFirebaseStorage().child("userImages");
 
 
-        storage.child(idUser+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        storage.child(idUser + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
 
                 userUri = uri;
-                System.out.println("URI USER no storage "+ userUri);
+                System.out.println("URI USER no storage " + userUri);
 
                 //Glide.with(classe).load(uri).override(68, 68).into(image);
-                System.out.println("my groups lets seee2 "+ uri);
+                System.out.println("my groups lets seee2 " + uri);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -88,89 +89,97 @@ public class NavigationDrawer {
         });
 
         FirebaseUser authentication = FirebaseConfig.getFirebaseAuthentication().getCurrentUser();
-        System.out.println("usuario no drawer: "+ authentication);
+        System.out.println("usuario no drawer: " + authentication);
 
         final String emailUser = authentication.getEmail();
         System.out.println("email user " + emailUser);
         idUser = Base64Decoder.encoderBase64(emailUser);
-        System.out.println("URI USER "+ userUri);
-        firebaseData = FirebaseConfig.getFireBase().child("usuarios").child(idUser);
-        firebaseData.addValueEventListener(new ValueEventListener() {
+        System.out.println("URI USER " + userUri);
+        try {
+            firebaseData = FirebaseConfig.getFireBase().child("usuarios").child(idUser);
+            firebaseData.addValueEventListener(new ValueEventListener() {
 
 
-                                               @Override
-                                               public void onDataChange(DataSnapshot dataSnapshot) {
-                                                   System.out.println("DATASNAPSHOT " + dataSnapshot);
-                                                   User user = dataSnapshot.getValue(User.class);
-                                                   System.out.println("MAIL " + user.getEmail());
-                                                   System.out.println("NAME " + user.getName());
-                                                   nomeUser = user.getName().toString();
-                                                   usuario = user;
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    System.out.println("DATASNAPSHOT " + dataSnapshot);
+                    User user = dataSnapshot.getValue(User.class);
+                    System.out.println("MAIL " + user.getEmail());
+                    System.out.println("NAME " + user.getName());
+                    nomeUser = user.getName().toString();
+                    usuario = user;
 
-                                                   PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos).withIcon(R.mipmap.pedidos_icon);
-                                                   PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.menu_chats).withIcon(R.mipmap.chat_icon);
-                                                   PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.menu_grupos).withIcon(R.mipmap.groups_icon);
-                                                   PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.menu_perfil).withIcon(R.mipmap.profile_icon);
-                                                   PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_sobre).withIcon(R.mipmap.sobre_icon);
+                    PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos).withIcon(R.drawable.pedidos_icon);
+                    PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.menu_chats).withIcon(R.drawable.chat_icon);
+                    PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.menu_grupos).withIcon(R.drawable.groups_icon);
+                    PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.menu_perfil).withIcon(R.drawable.profile_icon);
+                    PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_sobre).withIcon(R.drawable.sobre_icon);
 
-                                                   // Create the Navigation Drawer AccountHeader
+                    // Create the Navigation Drawer AccountHeader
 
-                                                   AccountHeader headerResult = new AccountHeaderBuilder()
-                                                           .withActivity(classe)
-                                                           .withHeaderBackground(R.color.colorPrimary)
-                                                           .addProfiles(
-                                                                   new ProfileDrawerItem().withName(nomeUser).withEmail(emailUser).withIcon(R.drawable.logo)
-                                                           )
-                                                           .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                                                               @Override
-                                                               public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                                                                   return false;
-                                                               }
-                                                           })
-                                                           .build();
+                    AccountHeader headerResult = new AccountHeaderBuilder()
+                            .withActivity(classe)
+                            .withHeaderBackground(R.color.colorPrimary)
+                            .addProfiles(
+                                    new ProfileDrawerItem().withName(nomeUser).withEmail(emailUser).withIcon(R.drawable.logo)
+                            )
+                            .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                                @Override
+                                public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                                    return false;
+                                }
+                            })
+                            .build();
 
-                                                   //Definition Drawer
-                                                   Drawer drawer = new DrawerBuilder()
-                                                           .withActivity(classe)
-                                                           .withToolbar(toolbar)
-                                                           .withAccountHeader(headerResult)
-                                                           .addDrawerItems(
-                                                                   item1,
-                                                                   new DividerDrawerItem(),//Divisor
-                                                                   item2,
-                                                                   new DividerDrawerItem(),//Divisor
+                    //Definition Drawer
+                    Drawer drawer = new DrawerBuilder()
+                            .withActivity(classe)
+                            .withToolbar(toolbar)
+                            .withAccountHeader(headerResult)
+                            .addDrawerItems(
+                                    item1,
+                                    new DividerDrawerItem(),//Divisor
+                                    item2,
+                                    new DividerDrawerItem(),//Divisor
                         /*DIVISAO COM MENSAGEM new SectionDrawerItem().withName(R.string.section),//Seção*/
-                                                                   item3,
-                                                                   new DividerDrawerItem(),//Divisor
-                                                                   item4,
-                                                                   new DividerDrawerItem(),//Divisor
-                                                                   item5
-                                                                   //Divisor
-                                                           )
-                                                           .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                                                               @Override
-                                                               public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                                                   pivotClass = classe;
-                                                                   pivotPosition = position;
-                                                                   verifyActivity(pivotClass, pivotPosition);
-                                                                   return false;
-                                                               }
-                                                           }).withSelectedItemByPosition(posicao)
-                                                           .build();
+                                    item3,
+                                    new DividerDrawerItem(),//Divisor
+                                    item4,
+                                    new DividerDrawerItem(),//Divisor
+                                    item5
+                                    //Divisor
+                            )
+                            .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                                @Override
+                                public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                    pivotClass = classe;
+                                    pivotPosition = position;
+                                    verifyActivity(pivotClass, pivotPosition);
+                                    return false;
+                                }
+                            }).withSelectedItemByPosition(posicao)
+                            .build();
 
 
-                                               }
+                }
 
-                                               @Override
-                                               public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                                               }
-
-
-                                           }
+                }
 
 
-        );
+            });
+        } catch (Exception e) {
+
+            System.out.println("exception " + e);
+            FirebaseAuth.getInstance().signOut();
+
+
+        }
+
+
+
 
 
     }
@@ -181,7 +190,8 @@ public class NavigationDrawer {
             classe.startActivity(new Intent(classe, PedidosActivity.class));
         }
         if (position == 3) {
-            classe.startActivity(new Intent(classe, ChatActivity.class));
+            Toast.makeText(classe, "Em Breve!", Toast.LENGTH_SHORT).show();
+            //classe.startActivity(new Intent(classe, ChatActivity.class));
         }
         if (position == 5) {
             classe.startActivity(new Intent(classe, GruposActivity.class));
@@ -190,7 +200,8 @@ public class NavigationDrawer {
             classe.startActivity(new Intent(classe, PerfilActivity.class));
         }
         if (position == 9) {
-            classe.startActivity(new Intent(classe, SobreActivity.class));
+            Toast.makeText(classe, "Em Breve!", Toast.LENGTH_SHORT).show();
+            //classe.startActivity(new Intent(classe, SobreActivity.class));
         }
     }
 

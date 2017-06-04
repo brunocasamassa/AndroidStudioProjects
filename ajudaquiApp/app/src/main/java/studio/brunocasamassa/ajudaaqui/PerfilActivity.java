@@ -95,19 +95,7 @@ public class PerfilActivity extends AppCompatActivity {
 
         storage = FirebaseConfig.getFirebaseStorage().child("userImages");
 
-        storage.child(userKey+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
 
-                Glide.with(PerfilActivity.this).load(uri).override(68,68).into(profileImg);
-                System.out.println("my groups lets seee2 "+ uri);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-
-            }
-        });
 
         DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
 
@@ -157,10 +145,21 @@ public class PerfilActivity extends AppCompatActivity {
                 if (usuario.getPedidosFeitos() != null) {
                     pedidosFeitos.setText(""+usuario.getPedidosFeitos().size());
                 } else pedidosFeitos.setText(""+0);
-                pontosConquistados.setText(usuario.getPontos());
-                if (usuario.getProfileImageURL() != null) {
-                    Glide.with(PerfilActivity.this).load(usuario.getProfileImageURL()).into(profileImg);
-                }
+                //pontosConquistados.setText(usuario.getPontos());
+                if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
+                    Glide.with(PerfilActivity.this).load(usuario.getProfileImg()).into(profileImg);
+                } else{ storage.child(userKey+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(PerfilActivity.this).load(uri).override(68,68).into(profileImg);
+                        System.out.println("my groups lets seee2 "+ uri);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+
+                    }
+                });}
                 usuario.setId(userKey);
                 usuario.save();
                 return;
@@ -178,16 +177,64 @@ public class PerfilActivity extends AppCompatActivity {
             for (int i = 0; i < 10; i++) {
                 ImageView imageView = new ImageView(PerfilActivity.this);
                 imageView.setId(i);
-                imageView.setImageBitmap(BitmapFactory.decodeResource(
-                        getResources(), R.drawable.logo));
+                imageView.setPadding(0,0,0,0);
+                if(i==0) {
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(
+                            getResources(), R.drawable.badge1));
+                    imageView.setScaleX((float) 0.5);
+                    imageView.setScaleY((float) 1);
+                }if(i==1) {
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(
+                            getResources(), R.drawable.badge2));
+                    imageView.setScaleX((float) 0.5);
+                    imageView.setScaleY((float) 1);
+                }if(i==2) {
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(
+                            getResources(), R.drawable.badge3));
+                    imageView.setScaleX((float) 0.5);
+                    imageView.setScaleY((float) 1);
+                }if(i==3) {
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(
+                            getResources(), R.drawable.badge4));
+                    imageView.setScaleX((float) 0.5);
+                    imageView.setScaleY((float) 1);
+                }if(i==4) {
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(
+                            getResources(), R.layout.model_group));
+                    imageView.setScaleX((float) 0.5);
+                    imageView.setScaleY((float) 1);
+                }if(i==5) {
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(
+                            getResources(), R.drawable.badge6));
+                    imageView.setScaleX((float) 0.5);
+                    imageView.setScaleY((float) 1);
+                }if(i==6) {
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(
+                            getResources(), R.drawable.badge7));
+                    imageView.setScaleX((float) 0.5);
+                    imageView.setScaleY((float) 1);
+                }if(i==7) {
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(
+                            getResources(), R.drawable.badge3));
+                    imageView.setScaleX((float) 0.5);
+                    imageView.setScaleY((float) 1);
+                }if(i==8) {
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(
+                            getResources(), R.drawable.badge4));
+                    imageView.setScaleX((float) 0.5);
+                    imageView.setScaleY((float) 1);
+                }if(i==9) {
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(
+                            getResources(), R.drawable.badge5));
+                    imageView.setScaleX((float) 0.5);
+                    imageView.setScaleY((float) 1);
+                }
                 if (!user.getMedalhas().contains(i)) {
-                    imageView.setColorFilter(R.color.cardview_shadow_end_color);
+                    //imageView.setColorFilter(R.color.cardview_shadow_end_color);
                 }
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 layout.addView(imageView);
             }}
-
-
 
         toolbar.setTitle(getResources().getString(R.string.menu_perfil));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));

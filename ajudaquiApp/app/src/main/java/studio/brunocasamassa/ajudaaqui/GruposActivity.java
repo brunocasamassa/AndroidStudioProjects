@@ -99,7 +99,7 @@ public class GruposActivity extends AppCompatActivity {
                 startActivity(new Intent(GruposActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
-                Toast.makeText(GruposActivity.this, "Em Produção", Toast.LENGTH_LONG).show();
+                Toast.makeText(GruposActivity.this, "Em Breve", Toast.LENGTH_LONG).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

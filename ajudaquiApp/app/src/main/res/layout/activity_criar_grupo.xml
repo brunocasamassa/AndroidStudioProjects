@@ -33,7 +33,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:elevation="-10dp"
-        app:srcCompat="@mipmap/add_groups"
+        app:srcCompat="@drawable/addgroups_icon"
         android:layout_above="@+id/create_group_description"
         android:layout_alignLeft="@+id/create_group_description"
         android:layout_alignStart="@+id/create_group_description"

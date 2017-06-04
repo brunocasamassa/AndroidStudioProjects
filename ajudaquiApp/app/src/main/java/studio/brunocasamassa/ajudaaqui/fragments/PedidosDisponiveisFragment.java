@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import studio.brunocasamassa.ajudaaqui.CriaPedidoActivity;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.adapters.PedidosAdapter;
-import studio.brunocasamassa.ajudaaqui.adapters.RecyclerAdapterPedidos;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Pedido;
@@ -39,10 +38,8 @@ public class PedidosDisponiveisFragment extends Fragment {
     private int premium;
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private ArrayList<Pedido> pedidos;
-    private ArrayAdapter pedidoArrayAdapter;
-    private RecyclerView.LayoutManager pedidosLayout;
-    private RecyclerView.Adapter pedidoRecyclerAdapter;
-    private RecyclerView todosPedidos;
+    private ArrayAdapter pedidosArrayAdapter;
+    private ListView todosPedidos;
     private DatabaseReference databasePedidos;
     private ValueEventListener valueEventListenerPedidos;
     private User usuario = new User();
@@ -76,7 +73,7 @@ public class PedidosDisponiveisFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pedidos_disponiveis, container, false);
         pedidos = new ArrayList<>();
-        todosPedidos = (RecyclerView) view.findViewById(R.id.allpedidos_list);
+        todosPedidos = (ListView) view.findViewById(R.id.allpedidos_list);
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,14 +87,10 @@ public class PedidosDisponiveisFragment extends Fragment {
             }
         });
 
-        pedidoRecyclerAdapter = new RecyclerAdapterPedidos(getContext(), pedidos);
+        pedidosArrayAdapter = new PedidosAdapter(getContext(), pedidos);
 
-        todosPedidos.setAdapter(pedidoRecyclerAdapter);
+        todosPedidos.setAdapter(pedidosArrayAdapter);
 
-        RecyclerView.LayoutManager layout = new LinearLayoutManager(getContext(),
-                LinearLayoutManager.VERTICAL, false);
-
-        todosPedidos.setLayoutManager(layout);
 
         DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
 
@@ -138,7 +131,7 @@ public class PedidosDisponiveisFragment extends Fragment {
 
                 }
 
-                pedidoRecyclerAdapter.notifyDataSetChanged();
+                pedidosArrayAdapter.notifyDataSetChanged();
 
 
             }

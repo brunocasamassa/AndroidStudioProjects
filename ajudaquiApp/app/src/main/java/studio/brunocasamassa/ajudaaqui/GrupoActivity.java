@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -66,23 +68,20 @@ public class GrupoActivity extends AppCompatActivity {
     private User user = new User();
     private String idAdmin;
 
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
     @Override
     public void onStart() {
         super.onStart();
-        userData.addListenerForSingleValueEvent(valueEventListenerUser);
-
-//       dbGroups.addListenerForSingleValueEvent(valueEventListenerAllGroups);
-
+        //userData.addListenerForSingleValueEvent(valueEventListenerUser);
+        //dbGroups.addListenerForSingleValueEvent(valueEventListenerAllGroups);
 
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        firebase.removeEventListener(valueEventListenerUser);
+        //firebase.removeEventListener(valueEventListenerUser);
         //dbGroups.removeEventListener(valueEventListenerAllGroups);
     }
 
@@ -91,13 +90,11 @@ public class GrupoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grupo);
 
-
         qtdMembros = (TextView) findViewById(R.id.qtdMembros);
         groupName = (TextView) findViewById(R.id.groupName);
         descricao = (TextView) findViewById(R.id.grupoDescricao);
         groupImg = (CircleImageView) findViewById(R.id.groupImg);
         botaoSolicitar = (Button) findViewById(R.id.botaoSolicitar);
-
 
         botaoSolicitar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,12 +116,13 @@ public class GrupoActivity extends AppCompatActivity {
 
         }
 
+        final File[] imgFile = new File[1];
         StorageReference storage = FirebaseConfig.getFirebaseStorage().child("groupImage");
-        storage.child(grupo.getNome()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        Task<Uri> uri2 = storage.child(grupo.getNome()+".jpg").getDownloadUrl();/*.addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-
-                Glide.with(GrupoActivity.this).load(uri).override(68,68).into(groupImg);
+                //imgFile[0] = new File(uri.toString());
+                grupo.setGrupoImg(uri.toString());
                 System.out.println("my groups lets seee2"+ uri);
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -132,14 +130,16 @@ public class GrupoActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception exception) {
 
             }
-        });
+        });*/
+
         grupo.setId(Base64Decoder.encoderBase64(grupo.getNome()));
         groupName.setText(grupo.getNome());
         qtdMembros.setText(String.valueOf(grupo.getQtdMembros()));
         // groupImg.setImageURI();
-        // groupImg.setImageURI();
+       // Glide.with(GrupoActivity.this).load(uri2.getResult()).override(68,68).into(groupImg);
+        System.out.println("group URI "+grupo.getGrupoImg());
         descricao.setText(grupo.getDescricao());
-        grupo.save();
+        //grupo.save();
 
         //grupo.setGrupoImg(groupImg);
 
@@ -188,10 +188,9 @@ public class GrupoActivity extends AppCompatActivity {
 
                     Log.i("Gera Solicitação", "antes do evento de leitura");
 
-                    firebase.addValueEventListener(new ValueEventListener() {
+                    firebase.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-
                             Log.i("Gera Solicitação", " admins" + dataSnapshot.getValue());
                             Grupo dataGrupo = dataSnapshot.getValue(Grupo.class);
                             grupo.setNome(dataGrupo.getNome());
@@ -200,8 +199,8 @@ public class GrupoActivity extends AppCompatActivity {
                             for (int i = 0; i < idAdms.size(); i++) {
                                 String dataIdAdm = (String) idAdms.get(i);
                                 idAdmin = dataIdAdm;
-                                userData = FirebaseConfig.getFireBase().child("usuarios").child(dataIdAdm);
-                                valueEventListenerUser = new ValueEventListener() {
+                                userData = FirebaseConfig.getFireBase().child("usuarios").child(idAdmin);
+                                userData.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         User dataUser = dataSnapshot.getValue(User.class);
@@ -225,7 +224,7 @@ public class GrupoActivity extends AppCompatActivity {
                                     public void onCancelled(DatabaseError databaseError) {
 
                                     }
-                                };
+                                });
 
                                 finish();
                             }

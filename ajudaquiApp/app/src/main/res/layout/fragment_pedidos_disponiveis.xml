@@ -25,14 +25,12 @@
         app:layout_constraintHorizontal_bias="0.898" />
 
 
-<android.support.v7.widget.RecyclerView
+    <ListView
         android:id="@+id/allpedidos_list"
-        android:layout_width="410dp"
-        android:layout_height="599dp"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="0dp" />
-
-
+        android:layout_width="402dp"
+        android:layout_height="614dp"
+        tools:layout_editor_absoluteX="4dp"
+        tools:layout_editor_absoluteY="3dp" />
 
 
 </android.support.constraint.ConstraintLayout>

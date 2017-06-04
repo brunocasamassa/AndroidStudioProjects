@@ -25,7 +25,6 @@
         app:layout_constraintHorizontal_bias="0.956" />
 
     <GridView
-
         android:id="@+id/mygroups_list"
         android:layout_width="422dp"
         android:layout_height="617dp"

@@ -1,10 +1,11 @@
 package studio.brunocasamassa.ajudaaqui.fragments;
 
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import studio.brunocasamassa.ajudaaqui.CriaGrupoActivity;
 import studio.brunocasamassa.ajudaaqui.GrupoActivity;
 import studio.brunocasamassa.ajudaaqui.R;
-import studio.brunocasamassa.ajudaaqui.adapters.AllGroupsAdapter;
+import studio.brunocasamassa.ajudaaqui.adapters.MyGroupsAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Grupo;
 import studio.brunocasamassa.ajudaaqui.helper.User;
@@ -73,8 +73,9 @@ public class GruposTodosgruposFragment extends Fragment {
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
         listView = (ListView) view.findViewById(R.id.allgroups_list);
 
-        adapter = new AllGroupsAdapter(getActivity(), grupos );
-        listView.setAdapter( adapter );
+        adapter = new MyGroupsAdapter(getContext(), grupos);
+        //adapter = new AllGroupsAdapter(getActivity(), grupos );
+        listView.setAdapter( adapter);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,7 +107,6 @@ public class GruposTodosgruposFragment extends Fragment {
                         grupos.add( grupo );
                     }
 
-
                 }
 
                 adapter.notifyDataSetChanged();
@@ -118,8 +118,6 @@ public class GruposTodosgruposFragment extends Fragment {
 
             }
         };
-
-
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -138,7 +136,8 @@ public class GruposTodosgruposFragment extends Fragment {
                 intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()) );
                 intent.putExtra("descricao", grupo.getDescricao() );
 
-                startActivity(intent);}
+                startActivity(intent);
+            }
                 catch (Exception e){
                     System.out.println("Exception grupos "+ e);
                 }
