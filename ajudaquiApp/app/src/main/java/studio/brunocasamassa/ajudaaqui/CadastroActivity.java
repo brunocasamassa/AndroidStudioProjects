@@ -1,5 +1,7 @@
 package studio.brunocasamassa.ajudaaqui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -102,6 +104,39 @@ public class CadastroActivity extends AppCompatActivity {
         cadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CadastroActivity.this);
+
+                alertDialog.setTitle("Voce possui cpf ou cnpj?");
+
+
+                alertDialog.setPositiveButton("CPF", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        alertDialog.setMessage("Digite seu cpf");
+                        EditText editText = new EditText(CadastroActivity.this);
+                        alertDialog.setView(editText);
+                        String cpf = editText.getText().toString();
+                        usuario.setCpf_cnpj(cpf);
+
+                    }
+
+                });
+
+
+                alertDialog.setPositiveButton("CNPJ", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        alertDialog.setMessage("Digite seu cnpj");
+                        EditText editText = new EditText(CadastroActivity.this);
+                        alertDialog.setView(editText);
+                        String cnpj = editText.getText().toString();
+                        usuario.setCpf_cnpj(cnpj);
+
+                    }
+                }).create().show();
+
                 if (senha.getText().toString().equals(senhaConfirm.getText().toString())) {
                     usuario = new User();
                     usuario.setName(nome.getText().toString());

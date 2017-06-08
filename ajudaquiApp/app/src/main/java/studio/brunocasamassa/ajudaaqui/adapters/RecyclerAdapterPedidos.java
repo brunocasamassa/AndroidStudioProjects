@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -50,7 +49,7 @@ public class RecyclerAdapterPedidos extends RecyclerView.Adapter {
 
                 pedidosHolder.nomePedido.setText(pedido.getTitulo());
                 pedidosHolder.descricao.setText(pedido.getDescricao());
-                pedidosHolder.tags.setTags(pedido.getTags());
+                pedidosHolder.tags.setTags(pedido.getTagsCategoria());
     }
 
     @Override

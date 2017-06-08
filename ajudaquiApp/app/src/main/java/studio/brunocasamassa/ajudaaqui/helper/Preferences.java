@@ -18,6 +18,7 @@ public class Preferences {
 
     private String CHAVE_ID = "idUser";
     private String CHAVE_NOME = "nameUser";
+    private String FACEBOOK_PHOTO = "facebook_photo";
 
 
     public Preferences(Context contextoParametro){
@@ -33,9 +34,16 @@ public class Preferences {
 
     }
 
+    public void saveDataImgFacebook(String idUser, String nameUser, String facebookPhoto) {
+        editor.putString(FACEBOOK_PHOTO , facebookPhoto);
+        editor.putString(CHAVE_ID, idUser);
+        editor.putString(CHAVE_NOME, nameUser);
+        editor.commit();
 
-    public String getIdentifier(){
-        return preferences.getString(CHAVE_ID,null);
+    }
+
+    public String getFACEBOOK_PHOTO(){
+        return preferences.getString(FACEBOOK_PHOTO,null);
     }
 
 

@@ -30,6 +30,7 @@ import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Grupo;
 import studio.brunocasamassa.ajudaaqui.helper.Pedido;
+import studio.brunocasamassa.ajudaaqui.helper.PedidoAtendidoActivity;
 import studio.brunocasamassa.ajudaaqui.helper.User;
 /**
  * A simple {@link Fragment} subclass.
@@ -66,6 +67,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
         databasePedidos.removeEventListener(valueEventListenerPedidos);
         //dbGroups.removeEventListener(valueEventListenerAllGroups);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -149,14 +151,22 @@ public class PedidosMeusPedidosFragment extends Fragment {
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        Intent intent = new Intent(getActivity(), GrupoAbertoActivity.class);
+            Intent intent = new Intent(getActivity(), PedidoAtendidoActivity.class);
 
         // recupera dados a serem passados
         Pedido selectedPedido = pedidos.get(position);
 
         // enviando dados para grupo activity
-        intent.putExtra("nome", selectedPedido.getTitulo());
+        // enviando dados para pedido activity
+        intent.putExtra("status", selectedPedido.getStatus());
+        intent.putExtra("titulo", selectedPedido.getTitulo());
+        intent.putExtra("tagsCategoria", selectedPedido.getTagsCategoria());
+        intent.putExtra("idPedido", selectedPedido.getIdPedido());
+        intent.putExtra("criadorId", selectedPedido.getCriadorId());
         intent.putExtra("tipo", selectedPedido.getTipo());
+        if (selectedPedido.getGrupo() != null) {
+            intent.putExtra("tagsGrupo", selectedPedido.getGrupo());
+        }
         intent.putExtra("descricao", selectedPedido.getDescricao());
 
         startActivity(intent);

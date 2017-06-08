@@ -72,7 +72,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {   //TODO FIX BACK BUG
-                startActivityForResult(new Intent(CriaGrupoActivity.this, GruposActivity.class), getChangingConfigurations());
+                finish();
                 Toast.makeText(getApplicationContext(), "voltei", Toast.LENGTH_LONG).show();
             }
         });

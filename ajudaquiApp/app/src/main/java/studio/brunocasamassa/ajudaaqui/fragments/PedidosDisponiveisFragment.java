@@ -5,11 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -27,11 +26,13 @@ import studio.brunocasamassa.ajudaaqui.adapters.PedidosAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Pedido;
+import studio.brunocasamassa.ajudaaqui.helper.PedidoActivity;
 import studio.brunocasamassa.ajudaaqui.helper.User;
 
 /**
  * A simple {@link Fragment} subclass.
  */
+
 public class PedidosDisponiveisFragment extends Fragment {
 
     private FloatingActionButton fab;
@@ -39,7 +40,7 @@ public class PedidosDisponiveisFragment extends Fragment {
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private ArrayList<Pedido> pedidos;
     private ArrayAdapter pedidosArrayAdapter;
-    private ListView todosPedidos;
+    private ListView pedidosView;
     private DatabaseReference databasePedidos;
     private ValueEventListener valueEventListenerPedidos;
     private User usuario = new User();
@@ -73,15 +74,15 @@ public class PedidosDisponiveisFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pedidos_disponiveis, container, false);
         pedidos = new ArrayList<>();
-        todosPedidos = (ListView) view.findViewById(R.id.allpedidos_list);
+        pedidosView = (ListView) view.findViewById(R.id.allpedidos_list);
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 Intent intent = new Intent(getActivity(), CriaPedidoActivity.class);
-                intent.putExtra("premium",premium);
-                System.out.println("PREMIUM FRAGMENT "+premium);
+                intent.putExtra("premium", premium);
+                System.out.println("PREMIUM FRAGMENT " + premium);
                 startActivity(intent);
 
             }
@@ -89,10 +90,10 @@ public class PedidosDisponiveisFragment extends Fragment {
 
         pedidosArrayAdapter = new PedidosAdapter(getContext(), pedidos);
 
-        todosPedidos.setAdapter(pedidosArrayAdapter);
+        pedidosView.setAdapter(pedidosArrayAdapter);
 
 
-        DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
+        final DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
 
         databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -104,7 +105,7 @@ public class PedidosDisponiveisFragment extends Fragment {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                System.out.println("ERROR GET PEDIDOS USER STRINGS: "+ databaseError);
+                System.out.println("ERROR GET PEDIDOS USER STRINGS: " + databaseError);
 
             }
         });
@@ -122,17 +123,22 @@ public class PedidosDisponiveisFragment extends Fragment {
 
                     Pedido pedido = dados.getValue(Pedido.class);
 
-                    if(usuario.getPedidosFeitos()==null || !usuario.getPedidosFeitos().contains(pedido.getIdPedido())) {
-                        System.out.println("pedido " + pedido);
+                    if (pedido.getStatus() == 0) {
                         pedidos.add(pedido);
+                        if (usuario.getPedidosFeitos() != null) {
+                            if (usuario.getPedidosFeitos().contains(pedido.getIdPedido())) {
+                                System.out.println("pedido " + pedido);
+                                pedidos.remove(pedido);
+                            }
+                        }
                     }
                     //remover pedidos do usuario na lista de pedidos geral
-                    System.out.println("PMPF: pilha pedidos na view "+ pedidos);
+                    System.out.println("PMPF: pilha pedidos na view " + pedidos);
 
                 }
 
-                pedidosArrayAdapter.notifyDataSetChanged();
 
+                pedidosArrayAdapter.notifyDataSetChanged();
 
             }
 
@@ -145,7 +151,35 @@ public class PedidosDisponiveisFragment extends Fragment {
         };
 
 
+        pedidosView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    Intent intent = new Intent(getActivity(), PedidoActivity.class);
 
+                    // recupera dados a serem passados
+                    Pedido pedido = pedidos.get(position);
+
+                    // enviando dados para pedido activity
+                    intent.putExtra("status", pedido.getStatus());
+                    intent.putExtra("titulo", pedido.getTitulo());
+                    intent.putExtra("tagsCategoria", pedido.getTagsCategoria());
+                    intent.putExtra("idPedido", pedido.getIdPedido());
+                    intent.putExtra("criadorId", pedido.getCriadorId());
+                    intent.putExtra("tipo", pedido.getTipo());
+                    if (pedido.getGrupo() != null) {
+                        intent.putExtra("tagsGrupo", pedido.getGrupo());
+                    }
+                    intent.putExtra("descricao", pedido.getDescricao());
+
+                    System.out.println("titulo " + pedido.getTitulo() + "\n" + "grupo " + pedido.getGrupo() + "\n" + "desxcricao " + pedido.getDescricao() + "\n");
+                    startActivity(intent);
+                } catch (Exception e) {
+                    System.out.println("Exception grupos " + e);
+                }
+
+            }
+        });
 
 
         return view;

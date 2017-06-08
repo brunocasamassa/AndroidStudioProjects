@@ -12,7 +12,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="54dp"
-        app:srcCompat="@drawable/logo"
+        app:srcCompat="@drawable/logo_big"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -30,18 +30,14 @@
         android:textColor="@color/com_facebook_button_background_color_focused"
         tools:ignore="UnusedAttribute" />
 
-    <TextView
+        <ImageView
         android:id="@+id/textView"
         android:layout_width="270dp"
+        android:src="@drawable/tiulo_logo"
         android:layout_height="80dp"
-        android:text="ajudaqui"
-        android:textColor="@android:color/background_light"
-        android:textSize="60dp"
-        android:textStyle="bold"
-        android:layout_marginTop="36dp"
-        android:layout_below="@+id/imageView"
-        android:layout_alignStart="@+id/login_button"
-        android:layout_marginStart="36dp" />
+        android:layout_marginTop="37dp"
+            android:layout_below="@+id/imageView"
+            android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/entrar"

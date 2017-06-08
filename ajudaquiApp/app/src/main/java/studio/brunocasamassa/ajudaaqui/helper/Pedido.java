@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 public class Pedido {
 
+    private String atendenteId;
+
     public String getIdPedido() {
         return idPedido;
     }
@@ -36,12 +38,12 @@ public class Pedido {
         Descricao = descricao;
     }
 
-    public ArrayList<String> getTags() {
-        return tags;
+    public ArrayList<String> getTagsCategoria() {
+        return tagsCategoria;
     }
 
-    public void setTags(ArrayList<String> tags) {
-        this.tags = tags;
+    public void setTagsCategoria(ArrayList<String> tagsCategoria) {
+        this.tagsCategoria = tagsCategoria;
     }
 
     public int getStatus() {
@@ -62,8 +64,20 @@ public class Pedido {
 
     private String Titulo;
     private String Descricao;
-    private ArrayList<String> tags = new ArrayList<String>();
-    private int status;
+    private ArrayList<String> tagsCategoria = new ArrayList<String>();
+
+    public String getCriadorId() {
+        return criadorId;
+    }
+
+    public void setCriadorId(String criadorId) {
+        this.criadorId = criadorId;
+    }
+
+    private String criadorId;
+
+
+     int status;
     private String grupo;
 
     public String getTipo() {
@@ -80,6 +94,14 @@ public class Pedido {
     public void save() {
         DatabaseReference referenciaFirebase = FirebaseConfig.getFireBase();
         referenciaFirebase.child("Pedidos").child(getIdPedido()).setValue(this);
+    }
+
+    public String getAtendenteId() {
+        return atendenteId;
+    }
+
+    public void setAtendenteId(String atendenteId) {
+        this.atendenteId = atendenteId;
     }
 
 

@@ -53,10 +53,7 @@ public class GruposMeusgruposFragment extends Fragment {
     public void onStart() {
         super.onStart();
         firebase.addListenerForSingleValueEvent(valueEventListenerAll);
-
 //       dbGroups.addListenerForSingleValueEvent(valueEventListenerAllGroups);
-
-
     }
 
     @Override

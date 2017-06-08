@@ -5,7 +5,7 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_create_pedido"
+        android:id="@+id/toolbar_pedido_atendido"
         android:layout_width="420dp"
         android:layout_height="54dp"
         android:layout_alignParentLeft="true"
@@ -22,7 +22,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintHorizontal_bias="0.0"></android.support.v7.widget.Toolbar>
 
-
    <TextView
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
@@ -33,35 +32,27 @@
        android:layout_marginLeft="32dp"
        app:layout_constraintLeft_toLeftOf="parent"
        android:layout_marginStart="32dp"
-       android:id="@+id/nome_pedido_feito"
+       android:id="@+id/nome_pedido_atendido"
        android:layout_marginTop="20dp"
-       app:layout_constraintTop_toBottomOf="@+id/toolbar_create_pedido"
+       app:layout_constraintTop_toBottomOf="@+id/toolbar_pedido_atendido"
        android:layout_marginRight="8dp"
        app:layout_constraintRight_toRightOf="parent"
        app:layout_constraintHorizontal_bias="0.0" />
 
     <TextView
-        android:layout_width="294dp"
-        android:layout_height="167dp"
+        android:layout_width="291dp"
+        android:layout_height="157dp"
         android:textColor="@android:color/black"
         android:text="Atmos prothos darthus redmis def akbhar let sharmut aire feik prostagma rulamé Atmos prothos darthus redmis def akbhar let sharmut aire feik prostagma rulamé Atmos prothos darthus redmis def akbhar let sharmut aire feik prostagma rulamé"
         tools:text="Atmos prothos darthus redmis def akbhar let sharmut aire feik prostagma rulamé Atmos prothos darthus redmis def akbhar let sharmut aire feik prostagma rulamé Atmos prothos darthus redmis def akbhar let sharmut aire feik prostagma rulamé"
-        android:id="@+id/descricao_pedido_feito"
+        android:id="@+id/descricao_pedido_atendido"
         android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@+id/nome_pedido_feito"
+        app:layout_constraintTop_toBottomOf="@+id/nome_pedido_atendido"
         android:layout_marginLeft="0dp"
-        app:layout_constraintLeft_toLeftOf="@+id/nome_pedido_feito"
+        app:layout_constraintLeft_toLeftOf="@+id/nome_pedido_atendido"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.0" />
-    <View
-        android:layout_width="450dp"
-        android:layout_height="2dp"
-        android:background="#c0c0c0"
-        android:id="@+id/view2"
-        tools:layout_editor_absoluteX="-20dp"
-        android:layout_marginBottom="239dp"
-        app:layout_constraintBottom_toTopOf="@+id/atender_pedido_button" />
 
     <TextView
         android:layout_width="70dp"
@@ -69,36 +60,76 @@
         android:textColor="#c0c0c0"
         tools:text="TAGS"
         android:text="TAGS"
-        android:textSize="20dp"
-        android:layout_marginTop="15dp"
-        app:layout_constraintTop_toBottomOf="@+id/view2"
+        android:textSize="15dp"
         android:layout_marginLeft="32dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:id="@+id/textView14" />
+        android:id="@+id/textView14"
+        android:layout_marginTop="13dp"
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+    <View
+        android:layout_width="450dp"
+        android:layout_height="2dp"
+        android:background="#c0c0c0"
+        android:id="@+id/view2"
+        tools:layout_editor_absoluteX="-30dp"
+        android:layout_marginTop="82dp"
+        app:layout_constraintTop_toBottomOf="@+id/descricao_pedido_atendido" />
+
+    <TextView
+        android:layout_width="70dp"
+        android:layout_height="27dp"
+        android:textColor="#c0c0c0"
+        tools:text="STATUS"
+        android:text="STATUS"
+        android:textSize="15dp"
+        android:id="@+id/textView14"
+        android:layout_marginTop="11dp"
+        app:layout_constraintTop_toBottomOf="@+id/descricao_pedido_atendido"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/descricao_pedido_atendido" />
+
+    <ImageView
+        android:layout_width="147dp"
+        android:layout_height="25dp"
+        android:id="@+id/status_image"
+        android:src="@drawable/tag_aberto"
+        android:layout_marginRight="248dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/view2"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/textView14"
+        app:layout_constraintVertical_bias="1.0"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/textView14"
+        app:layout_constraintHorizontal_bias="0.437" />
 
     <me.gujun.android.taggroup.TagGroup
         android:layout_width="329dp"
         android:layout_height="50dp"
-        android:id="@+id/tags_pedido_categoria"
-        android:layout_marginLeft="0dp"
-        app:layout_constraintLeft_toLeftOf="@+id/tags_pedido_grupo"
+        android:id="@+id/tags_pedido_categoria_atendido"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"
         app:atg_backgroundColor="@color/colorBackground"
         app:atg_textColor="@android:color/white"
         app:atg_textSize="15dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="53dp"
+        app:layout_constraintHorizontal_bias="0.363"
+        android:layout_marginTop="38dp"
         app:layout_constraintTop_toBottomOf="@+id/view2"
-        app:layout_constraintHorizontal_bias="0.0"></me.gujun.android.taggroup.TagGroup>
+        app:layout_constraintBottom_toBottomOf="@+id/view3"
+        android:layout_marginBottom="8dp"></me.gujun.android.taggroup.TagGroup>
 
     <View
         android:layout_width="450dp"
         android:layout_height="2dp"
         android:background="#c0c0c0"
         android:id="@+id/view3"
-        tools:layout_editor_absoluteX="-34dp"
+        tools:layout_editor_absoluteX="-20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="174dp" />
+        android:layout_marginBottom="141dp" />
 
     <TextView
         android:layout_width="70dp"
@@ -106,8 +137,8 @@
         android:textColor="#c0c0c0"
         tools:text="GRUPO"
         android:text="GRUPO"
-        android:textSize="20dp"
-        android:layout_marginTop="14dp"
+        android:textSize="15dp"
+        android:layout_marginTop="13dp"
         app:layout_constraintTop_toBottomOf="@+id/view3"
         android:layout_marginLeft="32dp"
         app:layout_constraintLeft_toLeftOf="parent" />
@@ -115,10 +146,10 @@
     <me.gujun.android.taggroup.TagGroup
         android:layout_width="329dp"
         android:layout_height="50dp"
-        android:id="@+id/tags_pedido_grupo"
+        android:id="@+id/tags_pedido_grupo_atendido"
         android:layout_marginLeft="32dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="49dp"
+        android:layout_marginTop="39dp"
         app:atg_backgroundColor="@color/colorBackground"
         app:atg_textColor="@android:color/white"
         app:atg_textSize="15dp"
@@ -128,16 +159,16 @@
         app:layout_constraintHorizontal_bias="0.0"></me.gujun.android.taggroup.TagGroup>
 
     <Button
-        android:id="@+id/atender_pedido_button"
+        android:id="@+id/finalizar_pedido_button"
         android:layout_width="415dp"
         android:layout_height="48dp"
-        android:text="ATENDER PEDIDO"
+        android:text="FINALIZAR PEDIDO"
         android:background="@color/colorBackground"
         android:textColor="@color/cardview_light_background"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textAlignment="center"
-        tools:text="ATENDER PEDIDO"
+        tools:text="FINALIZAR PEDIDO"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"

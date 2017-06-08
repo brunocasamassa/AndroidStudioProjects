@@ -1,5 +1,7 @@
 package studio.brunocasamassa.ajudaaqui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Path;
@@ -11,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -56,6 +59,7 @@ import java.util.Scanner;
 
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
+import studio.brunocasamassa.ajudaaqui.helper.PedidoActivity;
 import studio.brunocasamassa.ajudaaqui.helper.Preferences;
 import studio.brunocasamassa.ajudaaqui.helper.User;
 
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference firebaseDatabase;
     private static User usuario = new User();
     private StorageReference storage;
+    public String facebookImg;
 
 
     @Override
@@ -95,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         autenticacao = FirebaseConfig.getFirebaseAuthentication();
 
@@ -199,18 +205,71 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             System.out.println("login no firebase " + task);
                             Toast.makeText(MainActivity.this, "Sucesso em fazer login, ola " + task.getResult().getUser().getDisplayName().toString(), Toast.LENGTH_LONG).show();
-                            String encodedFacebookEmailUser = Base64Decoder.encoderBase64(task.getResult().getUser().getEmail());
-                            String email = task.getResult().getUser().getEmail();
-                            String name = task.getResult().getUser().getDisplayName();
-                            Uri photo = task.getResult().getUser().getPhotoUrl();
-                            usuario.setName(name);
-                            usuario.setProfileImg(photo.toString());
-                            usuario.setEmail(email);
-                            usuario.setId(encodedFacebookEmailUser);
-                            ArrayList<Integer> badgesList = new ArrayList<Integer>();
-                            usuario.setMedalhas(badgesList);
-                            System.out.println("user name1 " + usuario.getName());
-                            usuario.save();
+                            final String encodedFacebookEmailUser = Base64Decoder.encoderBase64(task.getResult().getUser().getEmail());
+                            final String email = task.getResult().getUser().getEmail();
+                            final String name = task.getResult().getUser().getDisplayName();
+                            final Uri photo = task.getResult().getUser().getPhotoUrl();
+                            firebaseDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    System.out.println("datasnapshot 2" + dataSnapshot);
+
+                                    if (!dataSnapshot.child(encodedFacebookEmailUser).exists()) {
+                                        System.out.println("CRIANDO USUARIO NO DATABASSE");
+                                        // FirebaseUser usuarioFireBase = task.getResult().getUser();
+                                        usuario.setName(name);
+                                        usuario.setProfileImg(photo.toString());
+                                        usuario.setEmail(email);
+                                        usuario.setId(encodedFacebookEmailUser);
+                                        ArrayList<Integer> badgesList = new ArrayList<Integer>();
+                                        usuario.setMedalhas(badgesList);
+                                        System.out.println("user name1 " + usuario.getName());
+                                        Preferences preferences = new Preferences(MainActivity.this);
+                                        preferences.saveDataImgFacebook(usuario.getId(), usuario.getName(), usuario.getProfileImg());
+                                        facebookImg = usuario.getProfileImg();
+
+                                        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+
+                                        alertDialog.setTitle("Voce possui cpf ou cnpj?");
+
+
+                                        alertDialog.setPositiveButton("CPF", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                alertDialog.setMessage("Digite seu cpf");
+                                                EditText editText = new EditText(MainActivity.this);
+                                                alertDialog.setView(editText);
+
+                                                String cpf = editText.getText().toString();
+                                                usuario.setCpf_cnpj(cpf);
+                                            }
+
+
+                                        });
+
+                                        alertDialog.setPositiveButton("CNPJ", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                alertDialog.setMessage("Digite seu cnpj");
+                                                EditText editText = new EditText(MainActivity.this);
+                                                alertDialog.setView(editText);
+                                                String cnpj = editText.getText().toString();
+                                                usuario.setCpf_cnpj(cnpj);
+
+                                            }
+                                        }).create().show();
+                                    }
+
+                                    usuario.save();
+                                }
+
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
                         } catch (Exception e) {
                             System.out.println("EXCESSAO " + e);
                         }

@@ -83,7 +83,6 @@ public class TagsList extends AppCompatActivity {
                             android.R.id.text1,
                             tags);
 
-
                     tagView.setAdapter(tagAdapter);
 
                     System.out.println("TAG VIEW " + tagView);

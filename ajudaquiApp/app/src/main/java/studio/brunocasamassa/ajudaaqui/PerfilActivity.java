@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -95,8 +96,6 @@ public class PerfilActivity extends AppCompatActivity {
 
         storage = FirebaseConfig.getFirebaseStorage().child("userImages");
 
-
-
         DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
 
         databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -106,13 +105,13 @@ public class PerfilActivity extends AppCompatActivity {
                 user.setMedalhas(badgesList); //usuario.getMedalhas()
                 System.out.println("recebe usuario NAME: " + usuario.getName());
                 System.out.println("recebe usuario DATA: " + dataSnapshot.getValue());
-
-
+                
                 if(usuario.getMsgSolicitacoes() != null){
                     ArrayList<String> msgSolicita = usuario.getMsgSolicitacoes();
                     for(int i=0; i< msgSolicita.size();i++) {
                         String msgCompleta = null;
                         String[] msg = msgSolicita.get(i).split(":");
+
                         //GRUPO: vamos ver: usuario: dGVzdGVAdGVzdGUuY29t :mensagem: osmanu"
                           for(String sentence : msg){
                                 if (sentence.equals("GRUPO")){ //TODO alterar padrao de mensagem  (FULANO desej entrar no grupo TAL)
@@ -140,7 +139,7 @@ public class PerfilActivity extends AppCompatActivity {
 
                 profileName.setText(usuario.getName());
                 if (usuario.getPedidosAtendidos() != null) {
-                    pedidosAtendidos.setText(usuario.getPedidosAtendidos());
+                    pedidosAtendidos.setText(""+usuario.getPedidosAtendidos().size());
                 } else pedidosAtendidos.setText(""+0);
                 if (usuario.getPedidosFeitos() != null) {
                     pedidosFeitos.setText(""+usuario.getPedidosFeitos().size());
@@ -173,64 +172,82 @@ public class PerfilActivity extends AppCompatActivity {
 
         if(user.getMedalhas() != null){
 
-            System.out.println("entrei no laço imagens");
+            System.out.println("laço de imagens");
             for (int i = 0; i < 10; i++) {
                 ImageView imageView = new ImageView(PerfilActivity.this);
                 imageView.setId(i);
                 imageView.setPadding(0,0,0,0);
+                imageView.setPaddingRelative(View.TEXT_ALIGNMENT_TEXT_START, View.SCROLL_INDICATOR_TOP,0,0);
+                imageView.isOpaque();
                 if(i==0) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
-                            getResources(), R.drawable.badge1));
+                            getResources(), R.drawable.badge_back));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
+
                 }if(i==1) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
                             getResources(), R.drawable.badge2));
                     imageView.setScaleX((float) 0.5);
-                    imageView.setScaleY((float) 1);
+                        imageView.setScaleY((float) 1);
+
                 }if(i==2) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
                             getResources(), R.drawable.badge3));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
+
                 }if(i==3) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
                             getResources(), R.drawable.badge4));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
+
                 }if(i==4) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
                             getResources(), R.layout.model_group));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
+
+
                 }if(i==5) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
                             getResources(), R.drawable.badge6));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
+
                 }if(i==6) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
                             getResources(), R.drawable.badge7));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
+
+
                 }if(i==7) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
                             getResources(), R.drawable.badge3));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
+
+
                 }if(i==8) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
                             getResources(), R.drawable.badge4));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
+
                 }if(i==9) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
                             getResources(), R.drawable.badge5));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
+
                 }
                 if (!user.getMedalhas().contains(i)) {
-                    //imageView.setColorFilter(R.color.cardview_shadow_end_color);
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(
+                            getResources(), R.drawable.badge_back));
+                    imageView.setScaleX((float) 0.5);
+                    imageView.setScaleY((float) 1);
                 }
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 layout.addView(imageView);

@@ -16,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import me.gujun.android.taggroup.TagGroup;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
-import studio.brunocasamassa.ajudaaqui.helper.Grupo;
 import studio.brunocasamassa.ajudaaqui.helper.Pedido;
 import studio.brunocasamassa.ajudaaqui.helper.User;
 
@@ -42,7 +40,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
     private EditText descricao;
     private Button createButton;
     private String tagCaptured;
-    private ArrayList<String> tagsCaptured = new ArrayList<String>();
+     ArrayList<String> tagsCaptured = new ArrayList<String>();
     private TagGroup categorias;
     private TagGroup grupos;
     private Pedido pedido;
@@ -102,7 +100,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
         addGroupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(premium==0){
+                if(premium==1){
                     Toast.makeText(getApplicationContext(),"Conteudo exclusivo para usuarios Premium, adquira uma conta para utilizar o recurso de grupos", Toast.LENGTH_LONG).show();
                 } else startActivityForResult(new Intent(CriaPedidoActivity.this, PedidoAddGroupsList.class), 2); //TODO FAZER LISTA DE GRUPOS no pedido
 
@@ -182,7 +180,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
 
         pedido = new Pedido();
         System.out.println("tipo de pedido: " + tipoPedido);
-        pedido.setTags(tagsCaptured);
+        pedido.setTagsCategoria(tagsCaptured);
         pedido.setTipo(tipoPedido);
         if(groupCaptured != null){
             pedido.setGrupo(groupCaptured);
@@ -190,7 +188,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
         pedido.setDescricao(descricao.getText().toString());
         pedido.setTitulo(pedidoName.getText().toString());
         pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo()));
-
+        pedido.setCriadorId(userKey);
 
         System.out.println("user id key " + userKey);
 

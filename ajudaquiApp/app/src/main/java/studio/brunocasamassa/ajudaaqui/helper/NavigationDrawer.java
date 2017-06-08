@@ -121,7 +121,7 @@ public class NavigationDrawer {
                             .withActivity(classe)
                             .withHeaderBackground(R.color.colorPrimary)
                             .addProfiles(
-                                    new ProfileDrawerItem().withName(nomeUser).withEmail(emailUser).withIcon(R.drawable.logo)
+                                    new ProfileDrawerItem().withName(nomeUser).withEmail(emailUser).withIcon(R.drawable.logo_big)
                             )
                             .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                                 @Override

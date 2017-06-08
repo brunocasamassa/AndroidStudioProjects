@@ -206,7 +206,9 @@ public class GrupoActivity extends AppCompatActivity {
                                         User dataUser = dataSnapshot.getValue(User.class);
                                         ArrayList<String> msgSolicitacoes = new ArrayList();
                                         if(dataUser.getMsgSolicitacoes() != null){
+                                            System.out.println("mensagens solicitação usuario: "+ dataUser.getMsgSolicitacoes());
                                          user.setMsgSolicitacoes(dataUser.getMsgSolicitacoes());
+                                            System.out.println("mensagens solicitação usuario: "+ user.getMsgSolicitacoes());
                                         msgSolicitacoes.addAll(user.getMsgSolicitacoes());
                                             //padrao de mensagem na db
                                         msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO: "+grupo.getNome() + ":USUARIO: "+ userKey + " :MENSAGEM: "+ mensagemSolicitacao );

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/imageView8"
@@ -13,11 +14,11 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/toolbar_create_group"
-        app:srcCompat="@color/colorBackground"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_create_group"
+        android:layout_marginEnd="1539dp"
         android:layout_marginRight="1539dp"
         app:layout_constraintRight_toRightOf="@+id/toolbar_create_group"
-        android:layout_marginEnd="1539dp" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_create_group"
+        app:srcCompat="@color/colorBackground" />
 
 
     <android.support.v7.widget.Toolbar
@@ -29,41 +30,41 @@
         android:layout_alignParentTop="true"
         android:background="@color/colorBackground"
         android:visibility="visible"
+        app:layout_constraintLeft_toLeftOf="@+id/imageView8"
         app:titleTextColor="@android:color/white"
-        tools:layout_editor_absoluteY="0dp"
-        app:layout_constraintLeft_toLeftOf="@+id/imageView8"></android.support.v7.widget.Toolbar>
+        tools:layout_editor_absoluteY="0dp"></android.support.v7.widget.Toolbar>
 
     <me.gujun.android.taggroup.TagGroup
-        android:layout_width="293dp"
-        android:layout_height="46dp"
-        android:layout_below="@+id/textView6"
         android:id="@+id/tagGroupCategoria"
-        tools:ignore="MissingConstraints"
+        android:layout_width="294dp"
+        android:layout_height="59dp"
+        android:layout_below="@+id/textView6"
         android:layout_marginLeft="59dp"
+        android:layout_marginStart="59dp"
+        android:layout_marginTop="49dp"
         app:atg_backgroundColor="@color/colorBackground"
         app:atg_textColor="@android:color/white"
         app:atg_textSize="18dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="52dp"
         app:layout_constraintTop_toBottomOf="@+id/create_pedido_description"
-        android:layout_marginStart="59dp"></me.gujun.android.taggroup.TagGroup>
+        tools:ignore="MissingConstraints"></me.gujun.android.taggroup.TagGroup>
 
     <me.gujun.android.taggroup.TagGroup
         android:id="@+id/tagGroupGrupos"
         android:layout_width="290dp"
         android:layout_height="47dp"
         android:layout_below="@+id/textView6"
-        tools:ignore="MissingConstraints"
+        android:layout_marginStart="75dp"
+        android:layout_marginLeft="59dp"
+        android:layout_marginTop="8dp"
         app:atg_backgroundColor="@color/colorBackground"
         app:atg_textColor="@android:color/white"
         app:atg_textSize="15dp"
         app:layout_constraintBottom_toTopOf="@+id/create_pedido_button"
-        android:layout_marginLeft="75dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/tagGroupCategoria"
-        app:layout_constraintVertical_bias="0.7"
-        android:layout_marginStart="75dp"></me.gujun.android.taggroup.TagGroup>
+        app:layout_constraintVertical_bias="0.85"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="60dp"></me.gujun.android.taggroup.TagGroup>
 
     <EditText
         android:id="@+id/create_pedido_name"
@@ -86,135 +87,136 @@
         android:layout_height="173dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:textSize="20dp"
         android:layout_below="@+id/imageView8"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="21dp"
         android:hint="Descricao do pedido"
         android:textAlignment="viewStart"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="21dp"
-        app:layout_constraintTop_toBottomOf="@+id/create_pedido_name"
+        android:textSize="20dp"
         app:layout_constraintLeft_toRightOf="@+id/imageView11"
-        android:layout_marginStart="8dp" />
+        app:layout_constraintTop_toBottomOf="@+id/create_pedido_name" />
 
 
     <Button
         android:id="@+id/create_pedido_button"
         android:layout_width="415dp"
         android:layout_height="48dp"
-        android:text="CRIAR PEDIDO"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="-4dp"
+        android:layout_marginRight="-2dp"
         android:background="@color/colorBackground"
+        android:text="CRIAR PEDIDO"
+        android:textAlignment="center"
         android:textColor="@color/cardview_light_background"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textAlignment="center"
-        tools:text="CRIAR PEDIDO"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginRight="-2dp"
-        android:layout_marginBottom="-4dp" />
+        tools:text="CRIAR PEDIDO" />
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
-        android:textSize="20dp"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/create_group_description"
         android:layout_alignStart="@+id/create_group_description"
         android:layout_below="@+id/create_group_description"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
         android:text="Categorias"
         android:textAlignment="viewStart"
-        android:layout_marginBottom="8dp"
+        android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@+id/tagGroupCategoria"
-        android:layout_marginLeft="10dp"
         app:layout_constraintLeft_toRightOf="@+id/imageView12"
-        android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/create_pedido_description"
-        app:layout_constraintVertical_bias="1.0"
-        android:layout_marginStart="10dp" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/textView00"
         android:layout_width="67dp"
-        android:textSize="20dp"
         android:layout_height="28dp"
         android:layout_alignLeft="@+id/create_group_description"
         android:layout_alignStart="@+id/create_group_description"
         android:layout_below="@+id/create_group_description"
-        android:text="Grupos"
-        android:layout_marginLeft="12dp"
-        app:layout_constraintLeft_toRightOf="@+id/imageView10"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/tagGroupCategoria"
         android:layout_marginBottom="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:text="Grupos"
+        android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@+id/tagGroupGrupos"
-        app:layout_constraintVertical_bias="0.526"
-        android:layout_marginStart="12dp" />
+        app:layout_constraintLeft_toRightOf="@+id/imageView10"
+        app:layout_constraintTop_toBottomOf="@+id/tagGroupCategoria"
+        app:layout_constraintVertical_bias="0.526" />
 
     <ImageView
         android:id="@+id/imageView10"
         android:layout_width="32dp"
         android:layout_height="35dp"
-        app:srcCompat="@drawable/groups_icon"
         android:layout_marginLeft="31dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/textView00"
+        android:layout_marginStart="31dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView00"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView12"
         app:layout_constraintVertical_bias="1.0"
-        android:layout_marginStart="31dp" />
+        app:srcCompat="@drawable/groups_icon" />
 
     <ImageView
         android:id="@+id/imageView12"
         android:layout_width="34dp"
         android:layout_height="38dp"
+        android:layout_marginLeft="26dp"
+        android:layout_marginStart="25dp"
         android:adjustViewBounds="false"
         android:cropToPadding="false"
-        app:srcCompat="@drawable/label_icon"
-        android:layout_marginLeft="25dp"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="@+id/textView6"
-        android:layout_marginStart="25dp" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:srcCompat="@drawable/label_icon"
+        android:layout_marginBottom="-38dp" />
 
     <ImageView
         android:id="@+id/imageView11"
         android:layout_width="30dp"
         android:layout_height="35dp"
-        app:srcCompat="@drawable/pedidos_icon"
-        android:layout_marginLeft="31dp"
-        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginBottom="54dp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView12"
+        android:layout_marginLeft="31dp"
+        android:layout_marginStart="31dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView12"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView8"
-        app:layout_constraintVertical_bias="0.75"
-        android:layout_marginStart="31dp" />
+        app:layout_constraintVertical_bias="0.679"
+        app:srcCompat="@drawable/pedidos_icon" />
 
     <ImageButton
         android:id="@+id/add_tag_button"
         android:layout_width="12dp"
         android:layout_height="12dp"
-        app:srcCompat="@drawable/button_plus_dark"
-        android:background="@android:color/transparent"
-        app:layout_constraintLeft_toRightOf="@+id/textView6"
         android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/tagGroupCategoria" />
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@+id/tagGroupCategoria"
+        app:layout_constraintLeft_toRightOf="@+id/textView6"
+        app:srcCompat="@drawable/button_plus_dark" />
 
 
     <ImageButton
         android:id="@+id/addGroup_tag_button"
         android:layout_width="11dp"
         android:layout_height="12dp"
-        app:srcCompat="@drawable/button_plus_dark"
+        android:layout_marginBottom="39dp"
+        android:layout_marginLeft="0dp"
         android:background="@android:color/transparent"
-        app:layout_constraintLeft_toRightOf="@+id/textView00"
-        android:layout_marginBottom="33dp"
         app:layout_constraintBottom_toTopOf="@+id/tagGroupGrupos"
-        android:layout_marginLeft="0dp" />
+        app:layout_constraintLeft_toRightOf="@+id/textView00"
+        app:srcCompat="@drawable/button_plus_dark" />
 
 
 </android.support.constraint.ConstraintLayout>

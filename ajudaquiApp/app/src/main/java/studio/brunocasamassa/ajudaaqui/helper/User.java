@@ -33,7 +33,7 @@ public class User implements DatabaseReference.CompletionListener {
 
     private String pontos;
 
-    private String pedidosAtendidos;
+    private ArrayList<String> pedidosAtendidos;
 
     private ArrayList<String> pedidosFeitos;
 
@@ -52,11 +52,22 @@ public class User implements DatabaseReference.CompletionListener {
 
     private ArrayList<String> msgSolicitacoes;
 
+    public String getCpf_cnpj() {
+        return cpf_cnpj;
+    }
+
+    public void setCpf_cnpj(String cpf_cnpj) {
+        this.cpf_cnpj = cpf_cnpj;
+    }
+
+    public String cpf_cnpj;
 
 
     public User() {
 
     }
+
+
 
     public ArrayList<Integer> getMedalhas() {
         return medalhas;
@@ -95,12 +106,12 @@ public class User implements DatabaseReference.CompletionListener {
     }
 
 
-    public String getPedidosAtendidos() {
+    public ArrayList<String> getPedidosAtendidos() {
 
         return pedidosAtendidos;
     }
 
-    public void setPedidosAtendidos(String pedidosAtendidos) {
+    public void setPedidosAtendidos(ArrayList<String> pedidosAtendidos) {
         this.pedidosAtendidos = pedidosAtendidos;
     }
 
