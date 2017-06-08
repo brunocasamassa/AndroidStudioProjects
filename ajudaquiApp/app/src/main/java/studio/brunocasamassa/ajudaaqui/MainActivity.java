@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private static FirebaseAuth autenticacao;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference firebaseDatabase;
-    private static User usuario = new User();
+    public static User usuario = new User();
     private StorageReference storage;
     public String facebookImg;
 
@@ -100,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         autenticacao = FirebaseConfig.getFirebaseAuthentication();
 
@@ -233,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
                                         alertDialog.setTitle("Voce possui cpf ou cnpj?");
 
 
-                                        alertDialog.setPositiveButton("CPF", new DialogInterface.OnClickListener() {
+                                        alertDialog.setNegativeButton("CPF", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 alertDialog.setMessage("Digite seu cpf");
@@ -258,9 +257,9 @@ public class MainActivity extends AppCompatActivity {
 
                                             }
                                         }).create().show();
+                                        usuario.save();
                                     }
 
-                                    usuario.save();
                                 }
 
 

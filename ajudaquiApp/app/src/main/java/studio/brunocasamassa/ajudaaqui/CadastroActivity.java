@@ -123,7 +123,6 @@ public class CadastroActivity extends AppCompatActivity {
 
                 });
 
-
                 alertDialog.setPositiveButton("CNPJ", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

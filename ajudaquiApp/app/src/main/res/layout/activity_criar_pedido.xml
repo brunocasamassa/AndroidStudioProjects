@@ -38,7 +38,7 @@
         android:id="@+id/tagGroupCategoria"
         android:layout_width="294dp"
         android:layout_height="59dp"
-        android:layout_below="@+id/textView6"
+        android:layout_below="@+id/word_add_tags"
         android:layout_marginLeft="59dp"
         android:layout_marginStart="59dp"
         android:layout_marginTop="49dp"
@@ -53,7 +53,7 @@
         android:id="@+id/tagGroupGrupos"
         android:layout_width="290dp"
         android:layout_height="47dp"
-        android:layout_below="@+id/textView6"
+        android:layout_below="@+id/word_add_tags"
         android:layout_marginStart="75dp"
         android:layout_marginLeft="59dp"
         android:layout_marginTop="8dp"
@@ -120,7 +120,7 @@
         tools:text="CRIAR PEDIDO" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/word_add_tags"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/create_group_description"
@@ -139,7 +139,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <TextView
-        android:id="@+id/textView00"
+        android:id="@+id/word_add_groups"
         android:layout_width="67dp"
         android:layout_height="28dp"
         android:layout_alignLeft="@+id/create_group_description"
@@ -163,7 +163,7 @@
         android:layout_marginLeft="31dp"
         android:layout_marginStart="31dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView00"
+        app:layout_constraintBottom_toBottomOf="@+id/word_add_groups"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView12"
         app:layout_constraintVertical_bias="1.0"
@@ -177,7 +177,7 @@
         android:layout_marginStart="25dp"
         android:adjustViewBounds="false"
         android:cropToPadding="false"
-        app:layout_constraintBottom_toBottomOf="@+id/textView6"
+        app:layout_constraintBottom_toBottomOf="@+id/word_add_tags"
         app:layout_constraintLeft_toLeftOf="parent"
         app:srcCompat="@drawable/label_icon"
         android:layout_marginBottom="-38dp" />
@@ -203,7 +203,7 @@
         android:layout_marginBottom="20dp"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toTopOf="@+id/tagGroupCategoria"
-        app:layout_constraintLeft_toRightOf="@+id/textView6"
+        app:layout_constraintLeft_toRightOf="@+id/word_add_tags"
         app:srcCompat="@drawable/button_plus_dark" />
 
 
@@ -215,7 +215,7 @@
         android:layout_marginLeft="0dp"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toTopOf="@+id/tagGroupGrupos"
-        app:layout_constraintLeft_toRightOf="@+id/textView00"
+        app:layout_constraintLeft_toRightOf="@+id/word_add_groups"
         app:srcCompat="@drawable/button_plus_dark" />
 
 

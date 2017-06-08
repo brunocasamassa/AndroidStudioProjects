@@ -29,7 +29,7 @@
         <fragment android:name=".GruposTodosgruposFragment"></fragment>
         <fragment android:name=".GruposMeusgruposFragment"></fragment>
 
-        <activity android:name=".GrupoActivity"></activity>
+        <activity android:name=".GrupoFechadoActivity"></activity>
         <activity android:name=".ConfiguracoesActivity"></activity>
         <activity android:name=".GruposActivity"></activity>
         <activity android:name=".PedidoAddGroupsList"></activity>

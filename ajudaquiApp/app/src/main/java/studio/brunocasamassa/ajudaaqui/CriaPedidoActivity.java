@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,9 +41,11 @@ public class CriaPedidoActivity extends AppCompatActivity {
     private EditText descricao;
     private Button createButton;
     private String tagCaptured;
-     ArrayList<String> tagsCaptured = new ArrayList<String>();
+    ArrayList<String> tagsCaptured = new ArrayList<String>();
     private TagGroup categorias;
     private TagGroup grupos;
+    private TextView add_grupos;
+    private TextView add_tags;
     private Pedido pedido;
     private int premium;
     private ImageButton addTagButton;
@@ -57,9 +60,8 @@ public class CriaPedidoActivity extends AppCompatActivity {
         super.onStart();
         System.out.println("vamos ver " + tagCaptured);
         categorias.setTags(tagsCaptured);
-        if(groupCaptured!= null)
-            {
-        grupos.setTags(groupCaptured);
+        if (groupCaptured != null) {
+            grupos.setTags(groupCaptured);
         }
         System.out.println("vamos ver " + groupCaptured);
 
@@ -73,16 +75,16 @@ public class CriaPedidoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_criar_pedido);
         Bundle extras = new Bundle();
         premium = (extras.getInt("premium")); //TODO =0 EVEN FIREBASE =1
-        System.out.println("PREMIUMM "+ premium);
+        System.out.println("PREMIUMM " + premium);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_create_group);
         toolbar.setTitle("Criar Pedido");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {   //TODO FIX BACK BUG
-                startActivity(new Intent(CriaPedidoActivity.this, GruposActivity.class));
-                Toast.makeText(getApplicationContext(), "voltei", Toast.LENGTH_LONG).show();
+            public void onClick(View v) {
+                finish();
             }
         });
         setSupportActionBar(toolbar);
@@ -91,22 +93,43 @@ public class CriaPedidoActivity extends AppCompatActivity {
         grupos = (TagGroup) findViewById(R.id.tagGroupGrupos);
 
 
+        add_grupos = (TextView) findViewById(R.id.word_add_groups);
+        add_tags = (TextView) findViewById(R.id.word_add_tags);
         pedidoName = (EditText) findViewById(R.id.create_pedido_name);
         descricao = (EditText) findViewById(R.id.create_pedido_description);
         createButton = (Button) findViewById(R.id.create_pedido_button);
         addTagButton = (ImageButton) findViewById((R.id.add_tag_button));
         addGroupButton = (ImageButton) findViewById((R.id.addGroup_tag_button));
 
-        addGroupButton.setOnClickListener(new View.OnClickListener() {
+        add_grupos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(premium==1){
-                    Toast.makeText(getApplicationContext(),"Conteudo exclusivo para usuarios Premium, adquira uma conta para utilizar o recurso de grupos", Toast.LENGTH_LONG).show();
-                } else startActivityForResult(new Intent(CriaPedidoActivity.this, PedidoAddGroupsList.class), 2); //TODO FAZER LISTA DE GRUPOS no pedido
+                if (premium == 1) {
+                    Toast.makeText(getApplicationContext(), "Conteudo exclusivo para usuarios Premium, adquira uma conta para utilizar o recurso de grupos", Toast.LENGTH_LONG).show();
+                } else
+                    startActivityForResult(new Intent(CriaPedidoActivity.this, PedidoAddGroupsList.class), 2);
 
             }
         });
 
+        addGroupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (premium == 1) {
+                    Toast.makeText(getApplicationContext(), "Conteudo exclusivo para usuarios Premium, adquira uma conta para utilizar o recurso de grupos", Toast.LENGTH_LONG).show();
+                } else
+                    startActivityForResult(new Intent(CriaPedidoActivity.this, PedidoAddGroupsList.class), 2);
+
+            }
+        });
+
+        add_tags.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(CriaPedidoActivity.this, TagsList.class), 1);
+
+            }
+        });
         addTagButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,7 +205,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
         System.out.println("tipo de pedido: " + tipoPedido);
         pedido.setTagsCategoria(tagsCaptured);
         pedido.setTipo(tipoPedido);
-        if(groupCaptured != null){
+        if (groupCaptured != null) {
             pedido.setGrupo(groupCaptured);
         }
         pedido.setDescricao(descricao.getText().toString());

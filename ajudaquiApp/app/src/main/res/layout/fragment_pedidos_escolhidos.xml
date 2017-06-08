@@ -24,8 +24,8 @@
         android:layout_marginBottom="28dp"
         app:layout_constraintHorizontal_bias="1.0" />
 
-    <GridView
-        android:id="@+id/mygroups_list"
+    <ListView
+        android:id="@+id/pedidos_escolhidos_list"
         android:layout_width="422dp"
         android:layout_height="617dp"
         tools:layout_editor_absoluteX="-6dp"

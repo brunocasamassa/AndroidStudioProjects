@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -21,10 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -48,7 +44,7 @@ import studio.brunocasamassa.ajudaaqui.helper.User;
  * Created by bruno on 24/04/2017.
  */
 
-public class GrupoActivity extends AppCompatActivity {
+public class GrupoFechadoActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private ViewPager viewPager;
@@ -67,6 +63,8 @@ public class GrupoActivity extends AppCompatActivity {
     private ValueEventListener valueEventListenerUser;
     private User user = new User();
     private String idAdmin;
+    private String userName = new String();
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -108,6 +106,9 @@ public class GrupoActivity extends AppCompatActivity {
 
         Bundle extra = getIntent().getExtras();
         if (extra != null) {
+            userName = extra.getString("userName");
+
+            System.out.println("userName "+userName);
 
             grupo.setIdAdms(extra.getStringArrayList("idAdmins"));
             grupo.setDescricao(extra.getString("descricao"));
@@ -136,7 +137,7 @@ public class GrupoActivity extends AppCompatActivity {
         groupName.setText(grupo.getNome());
         qtdMembros.setText(String.valueOf(grupo.getQtdMembros()));
         // groupImg.setImageURI();
-       // Glide.with(GrupoActivity.this).load(uri2.getResult()).override(68,68).into(groupImg);
+       // Glide.with(GrupoFechadoActivity.this).load(uri2.getResult()).override(68,68).into(groupImg);
         System.out.println("group URI "+grupo.getGrupoImg());
         descricao.setText(grupo.getDescricao());
         //grupo.save();
@@ -149,23 +150,23 @@ public class GrupoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         NavigationDrawer navigator = new NavigationDrawer();
-        navigator.createDrawer(GrupoActivity.this, toolbar, 5);
+        navigator.createDrawer(GrupoFechadoActivity.this, toolbar, 5);
 
     }
 
     private void geraSolicitacao() {
 
         Log.i("Gera Solicitação", "entrei");
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(GrupoActivity.this);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(GrupoFechadoActivity.this);
 
         alertDialog.setTitle("Solicitar Participação");
         alertDialog.setMessage("Escreva uma mensagem para os administradores");
         alertDialog.setCancelable(false);
 
-        final EditText editText = new EditText(GrupoActivity.this);
+        final EditText editText = new EditText(GrupoFechadoActivity.this);
         alertDialog.setView(editText);
 
-        alertDialog.setNegativeButton("Cancelar:", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -181,7 +182,7 @@ public class GrupoActivity extends AppCompatActivity {
 
                 //Validate message to contact
                 if (mensagemSolicitacao.isEmpty()) {
-                    Toast.makeText(GrupoActivity.this, "Preencha o campo de mensagem", Toast.LENGTH_LONG).show();
+                    Toast.makeText(GrupoFechadoActivity.this, "Preencha o campo de mensagem", Toast.LENGTH_LONG).show();
                 } else {
 
                     firebase = FirebaseConfig.getFireBase().child("grupos").child(grupo.getId());
@@ -211,15 +212,39 @@ public class GrupoActivity extends AppCompatActivity {
                                             System.out.println("mensagens solicitação usuario: "+ user.getMsgSolicitacoes());
                                         msgSolicitacoes.addAll(user.getMsgSolicitacoes());
                                             //padrao de mensagem na db
-                                        msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO: "+grupo.getNome() + ":USUARIO: "+ userKey + " :MENSAGEM: "+ mensagemSolicitacao );
+                                        msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO: "+grupo.getNome() + ":USUARIO: "+ userName + " :MENSAGEM: "+ mensagemSolicitacao +":USERKEY:"+userKey);
 
                                         }else{
                                             //padrao de mensagem na db
-                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO: "+grupo.getNome() + ":USUARIO: "+ userKey + " :MENSAGEM: "+ mensagemSolicitacao );
+                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO: "+grupo.getNome() + ":USUARIO: "+ userName + " :MENSAGEM: "+ mensagemSolicitacao +":USERKEY: "+userKey);
                                         }
 
-                                        userData.child("usuarios").child(idAdmin).child("msgSolicitacoes").setValue(msgSolicitacoes);
-                                        Toast.makeText(GrupoActivity.this, "Solicitação enviada", Toast.LENGTH_LONG).show();
+                                        if(dataUser.getMedalhas() != null){
+                                            user.setMedalhas(dataUser.getMedalhas());}
+                                            user.setMsgSolicitacoes(msgSolicitacoes);
+                                        if(dataUser.getGrupos() != null){
+                                            user.setGrupos(dataUser.getGrupos());}
+                                        user.setCreditos(dataUser.getCreditos());
+                                        if(dataUser.getEmail() != null){
+                                            user.setEmail(dataUser.getEmail());}
+                                        if(dataUser.getName() != null){
+                                            user.setName(dataUser.getName());}
+                                        user.setPremiumUser(dataUser.getPremiumUser());
+                                        if(dataUser.getProfileImageURL() != null){
+                                            user.setProfileImageURL(dataUser.getProfileImageURL());}
+                                        if(dataUser.getProfileImg() != null){
+                                            user.setProfileImg(dataUser.getProfileImg());}
+                                        if(dataUser.getPedidosFeitos() != null){
+                                            user.setPedidosFeitos(dataUser.getPedidosFeitos());}
+                                        if(dataUser.getPedidosAtendidos() != null){
+                                            user.setPedidosAtendidos(dataUser.getPedidosAtendidos());}
+                                        if(dataUser.getPontos() != null){
+                                            user.setPontos(dataUser.getPontos());}
+                                        System.out.println("userName "+userName);
+                                        user.setId(Base64Decoder.encoderBase64(user.getEmail()));
+                                        user.save();
+
+                                        Toast.makeText(GrupoFechadoActivity.this, "Solicitação enviada", Toast.LENGTH_LONG).show();
                                     }
 
                                     @Override
@@ -258,7 +283,7 @@ public class GrupoActivity extends AppCompatActivity {
             case R.id.action_exit:
                 //logoutUser();
                 LoginManager.getInstance().logOut();
-                startActivity(new Intent(GrupoActivity.this, MainActivity.class));
+                startActivity(new Intent(GrupoFechadoActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
                 return true;

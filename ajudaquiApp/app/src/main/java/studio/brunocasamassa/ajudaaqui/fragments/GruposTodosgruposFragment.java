@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +20,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import studio.brunocasamassa.ajudaaqui.CriaGrupoActivity;
-import studio.brunocasamassa.ajudaaqui.GrupoActivity;
+import studio.brunocasamassa.ajudaaqui.GrupoFechadoActivity;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.adapters.MyGroupsAdapter;
+import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Grupo;
 import studio.brunocasamassa.ajudaaqui.helper.User;
@@ -37,11 +37,13 @@ import studio.brunocasamassa.ajudaaqui.helper.User;
 public class GruposTodosgruposFragment extends Fragment {
     private ListView listView;
     private ArrayAdapter adapter;
+    private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
     private ArrayList<Grupo> grupos;
     private DatabaseReference firebase;
     private ValueEventListener valueEventListenerAllGroups;
     private FloatingActionButton fab;
     private User usuario = new User();
+    private String userName = new String();
 
     public GruposTodosgruposFragment() {
         // Required empty public constructor
@@ -68,7 +70,9 @@ public class GruposTodosgruposFragment extends Fragment {
         grupos = new ArrayList<>();
 
         usuario.setGrupos(GruposMeusgruposFragment.usuario.getGrupos());
+        usuario.setName(GruposMeusgruposFragment.usuario.getName());
         System.out.println("grupos do usuario: "+ usuario.getGrupos());
+        System.out.println("Nome do usuario2: "+ usuario.getName());
 
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
         listView = (ListView) view.findViewById(R.id.allgroups_list);
@@ -103,8 +107,9 @@ public class GruposTodosgruposFragment extends Fragment {
                     Grupo grupo = dados.getValue( Grupo.class );
                     System.out.println("grupo "+ grupo.getNome());
                     //remove user groups
-                    if(usuario.getGrupos()==null || !usuario.getGrupos().contains(grupo.getId())) {
+                    if(usuario.getGrupos() == null || !usuario.getGrupos().contains(grupo.getId())) {
                         grupos.add( grupo );
+
                     }
 
                 }
@@ -119,11 +124,25 @@ public class GruposTodosgruposFragment extends Fragment {
             }
         };
 
+        DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
+        dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                userName = user.getName();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             try{
-                Intent intent = new Intent(getActivity(), GrupoActivity.class);
+                Intent intent = new Intent(getActivity(), GrupoFechadoActivity.class);
 
                 // recupera dados a serem passados
                 Grupo grupo = grupos.get(position);
@@ -132,6 +151,7 @@ public class GruposTodosgruposFragment extends Fragment {
                 if(grupo.getIdAdms() != null) {
                     intent.putExtra("idAdmins", grupo.getIdAdms());
                 }
+                intent.putExtra("userName", userName);
                 intent.putExtra("nome", grupo.getNome() );
                 intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()) );
                 intent.putExtra("descricao", grupo.getDescricao() );

@@ -69,11 +69,11 @@ public class CriaGrupoActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar_create_group);
         toolbar.setTitle("Criar Grupo");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {   //TODO FIX BACK BUG
+            public void onClick(View v) {
                 finish();
-                Toast.makeText(getApplicationContext(), "voltei", Toast.LENGTH_LONG).show();
             }
         });
         setSupportActionBar(toolbar);

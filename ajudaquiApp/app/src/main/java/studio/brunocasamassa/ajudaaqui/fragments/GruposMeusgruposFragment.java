@@ -95,6 +95,7 @@ public class GruposMeusgruposFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 usuario.setGrupos(user.getGrupos());
+                usuario.setName(user.getName());
 
             }
 
