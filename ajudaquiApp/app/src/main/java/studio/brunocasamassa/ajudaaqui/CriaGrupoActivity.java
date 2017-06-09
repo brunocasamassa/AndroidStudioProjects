@@ -121,6 +121,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
                     grupo.setDescricao(descricao.getText().toString());
                     grupo.setId(groupId);
 
+
                     FirebaseAuth autenticacao = FirebaseConfig.getFirebaseAuthentication();
 
                     String userKey = Base64Decoder.encoderBase64(autenticacao.getCurrentUser().getEmail());
@@ -128,6 +129,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
                     System.out.println("AUTH caraio" + userKey);
 
                     adms.add(0, userKey);
+                    grupo.setIdMembros(adms);
                     grupo.setQtdMembros(1);
                     grupo.setIdAdms(adms);
 

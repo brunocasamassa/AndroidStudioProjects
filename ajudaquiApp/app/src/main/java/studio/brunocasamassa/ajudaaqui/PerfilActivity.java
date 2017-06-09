@@ -4,9 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -23,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -42,7 +37,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import studio.brunocasamassa.ajudaaqui.adapters.NotificacoesAdapter;
@@ -71,8 +65,8 @@ public class PerfilActivity extends AppCompatActivity {
     private TextView pontosConquistados;
     private TextView pedidosFeitos;
     private TextView pedidosAtendidos;
+    private User user = new User();
     private MainActivity main;
-    private static User user = new User();
     private CadastroActivity cdrst;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> listaNotificacoes;
@@ -82,10 +76,11 @@ public class PerfilActivity extends AppCompatActivity {
     private ArrayList<String> listaKey;
     private String groupName;
     private String userName;
-    private String email;
+    private String encodedKeyRequestedUser;
     private String message;
     public static User usuarioPivot = new User();
     private ArrayList<Integer> badgesList = new ArrayList<>();
+    private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -143,17 +138,17 @@ public class PerfilActivity extends AppCompatActivity {
                             if (sentence.equals("MENSAGEM")) {
                                 message = msg[5];
                                 //msgCompleta = msgCompleta + " (MENSAGEM: "+message+" )";
-
                             }
                             if (sentence.equals("USERKEY")) {
-                                email = msg[7];
-                                    System.out.println("SOLICITATION userkey "+email);
+                                encodedKeyRequestedUser = msg[7];
+                                System.out.println("SOLICITATION userkey " + encodedKeyRequestedUser);
                                 //msgCompleta = msgCompleta + " (MENSAGEM: "+message+" )";
                             }
 
                         }
+
                         System.out.println("CONCATENADO TOTAL " + msgCompleta);
-                        listaKey.add(listaKey.size(), email);
+                        listaKey.add(listaKey.size(), encodedKeyRequestedUser);
                         listaGrupos.add(listaGrupos.size(), groupName);
                         listaUserName.add(listaUserName.size(), userName);
                         listaMessages.add(listaMessages.size(), message);
@@ -185,7 +180,6 @@ public class PerfilActivity extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-
                         }
                     });
                 }
@@ -203,7 +197,7 @@ public class PerfilActivity extends AppCompatActivity {
 
         notificacoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(final AdapterView<?> parent, View view, final int position, final long id) {
                 String mensagem = listaMessages.get(position);
                 String usuarioSolicitante = listaUserName.get(position);
                 final String grupoSolicitado = listaGrupos.get(position);
@@ -212,7 +206,7 @@ public class PerfilActivity extends AppCompatActivity {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(PerfilActivity.this);
 
                 alertDialog.setTitle("Solicitação de Grupo");
-                alertDialog.setMessage("O usuario" + usuarioSolicitante + " deseja entrar no grupo " + grupoSolicitado);
+                alertDialog.setTitle("O usuario " + usuarioSolicitante + " deseja entrar no grupo " + grupoSolicitado);
                 alertDialog.setMessage(mensagem);
                 alertDialog.setCancelable(false);
 
@@ -223,16 +217,14 @@ public class PerfilActivity extends AppCompatActivity {
                         dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                System.out.println(dataSnapshot);   //ou caminho errado ou preciso declarar usuario como publico (GRUPOS MEUS GRUPOS FRAGMENT)
-                                User user = dataSnapshot.child("usuarios").child(userKeySolicitante).getValue(User.class);
-                                usuarioPivot.setGrupos(user.getGrupos());
-                                ArrayList<String> grupos = new ArrayList<String>();
-                                if (usuarioPivot.getGrupos() != null) {
-                                    grupos.addAll(user.getGrupos());
-                                    grupos.add(grupos.size(), Base64Decoder.encoderBase64(grupoSolicitado));
-                                } else grupos.add(0, Base64Decoder.encoderBase64(grupoSolicitado));
-                                user.setGrupos(grupos);
-                                user.save();
+                                try {
+                                    System.out.println("userkey '"+userKeySolicitante+"'");
+                                    User user = dataSnapshot.getValue(User.class);
+                                    System.out.println("username "+ user.getName());  //ou caminho errado ou preciso declarar usuario como publico (GRUPOS MEUS GRUPOS FRAGMENT)
+                                    addGroupIntoUser(user, grupoSolicitado, userKeySolicitante);
+                                } catch (Exception e) {
+                                    System.out.println("Exception " + e.getLocalizedMessage());
+                                }
                             }
 
                             @Override
@@ -247,8 +239,15 @@ public class PerfilActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 Grupo grupo = dataSnapshot.getValue(Grupo.class);
+                                System.out.println("grupo " + grupo.getNome());
+                                ArrayList<String> idMembros =  new ArrayList<String>();
                                 int qtdMembros = grupo.getQtdMembros() + 1;
                                 grupo.setQtdMembros(qtdMembros);
+                                if (grupo.getIdMembros() != null) {
+                                    idMembros.addAll(user.getGrupos());
+                                    idMembros.add(idMembros.size(), Base64Decoder.encoderBase64(grupoSolicitado));
+                                } else idMembros.add(0, Base64Decoder.encoderBase64(grupoSolicitado));
+
                                 grupo.save();
                             }
 
@@ -257,7 +256,13 @@ public class PerfilActivity extends AppCompatActivity {
                                 System.out.println("SOLICITATION ERROR: " + databaseError);
                             }
                         });
+
+                        removeSolicitationMessage(position);
                         Toast.makeText(getApplicationContext(), "Solicitação Aceita", Toast.LENGTH_LONG).show();
+                        /*ArrayAdapter newAdapter = new NotificacoesAdapter(getApplicationContext(), listaNotificacoes);
+                        notificacoes.setDivider(null);
+                        notificacoes.setAdapter(newAdapter);
+*/
                     }
                 });
 
@@ -265,6 +270,9 @@ public class PerfilActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getApplicationContext(), "Solicitação Recusada ", Toast.LENGTH_LONG).show();
+                        listaNotificacoes.remove(position);
+
+
                     }
                 }).create().show();
 
@@ -286,7 +294,6 @@ public class PerfilActivity extends AppCompatActivity {
                             getResources(), R.drawable.badge_back));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
-
                 }
                 if (i == 1) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
@@ -315,7 +322,6 @@ public class PerfilActivity extends AppCompatActivity {
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
 
-
                 }
                 if (i == 5) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
@@ -330,14 +336,12 @@ public class PerfilActivity extends AppCompatActivity {
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
 
-
                 }
                 if (i == 7) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
                             getResources(), R.drawable.badge3));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
-
 
                 }
                 if (i == 8) {
@@ -373,6 +377,42 @@ public class PerfilActivity extends AppCompatActivity {
 
         navigator.createDrawer(PerfilActivity.this, toolbar, 7);
 
+    }
+
+    private void removeSolicitationMessage(final int position) {
+
+        DatabaseReference dbUserRemover = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
+        dbUserRemover.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                ArrayList<String> lista = new ArrayList<String>();
+                lista.addAll(user.getMsgSolicitacoes());
+                lista.remove(position);
+                user.setMsgSolicitacoes(lista);
+
+                user.save();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void addGroupIntoUser(User user, String grupoSolicitado, String userKeySolicitante) {
+
+        ArrayList<String> grupos = new ArrayList<String>();
+        if (user.getGrupos() != null) {
+            grupos.addAll(user.getGrupos());
+            grupos.add(grupos.size(), Base64Decoder.encoderBase64(grupoSolicitado));
+        } else
+            grupos.add(0, Base64Decoder.encoderBase64(grupoSolicitado));
+        user.setGrupos(grupos);
+        user.setId(userKeySolicitante);
+        user.save();
     }
 
     @Override

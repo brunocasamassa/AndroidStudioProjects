@@ -171,6 +171,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
 
             }
+
         });
 
         alertDialog.setPositiveButton("Solicitar", new DialogInterface.OnClickListener() {
@@ -212,11 +213,11 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                                             System.out.println("mensagens solicitação usuario: "+ user.getMsgSolicitacoes());
                                         msgSolicitacoes.addAll(user.getMsgSolicitacoes());
                                             //padrao de mensagem na db
-                                        msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO: "+grupo.getNome() + ":USUARIO: "+ userName + " :MENSAGEM: "+ mensagemSolicitacao +":USERKEY:"+userKey);
+                                        msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:"+grupo.getNome() + ":USUARIO:"+ userName + " :MENSAGEM: "+ mensagemSolicitacao +":USERKEY:"+userKey);
 
                                         }else{
                                             //padrao de mensagem na db
-                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO: "+grupo.getNome() + ":USUARIO: "+ userName + " :MENSAGEM: "+ mensagemSolicitacao +":USERKEY: "+userKey);
+                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:"+grupo.getNome() + ":USUARIO:"+ userName + " :MENSAGEM: "+ mensagemSolicitacao +":USERKEY:"+userKey);
                                         }
 
                                         if(dataUser.getMedalhas() != null){

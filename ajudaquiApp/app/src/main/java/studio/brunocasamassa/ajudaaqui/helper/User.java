@@ -130,6 +130,7 @@ public class User implements DatabaseReference.CompletionListener {
     }
 
     public void setGrupos(ArrayList<String> grupos) {
+
         this.grupos = grupos;
     }
 

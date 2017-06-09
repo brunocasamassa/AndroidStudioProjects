@@ -20,6 +20,16 @@ public class Grupo {
     public int qtdMembros;
     public String descricao;
     public ArrayList<String> idAdms;
+
+    public ArrayList<String> getIdMembros() {
+        return idMembros;
+    }
+
+    public void setIdMembros(ArrayList<String> idMembros) {
+        this.idMembros = idMembros;
+    }
+
+    public ArrayList<String> idMembros;
     public List<Pedido> trocas;
     public List<Pedido> emprestimos;
     public List<Pedido> servicos;
