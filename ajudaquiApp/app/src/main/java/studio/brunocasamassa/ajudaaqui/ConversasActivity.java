@@ -1,0 +1,165 @@
+package studio.brunocasamassa.ajudaaqui;
+
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.RequiresApi;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.facebook.login.LoginManager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+
+import studio.brunocasamassa.ajudaaqui.adapters.ConversaAdapter;
+import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
+import studio.brunocasamassa.ajudaaqui.helper.Conversa;
+import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
+import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
+import studio.brunocasamassa.ajudaaqui.helper.Preferences;
+import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
+
+/**
+ * Created by bruno on 24/04/2017.
+ */
+
+public class ConversasActivity extends AppCompatActivity {
+
+    private DatabaseReference firebase;
+    private ValueEventListener valueEventListenerConversas;
+    private ArrayList<Conversa> conversas;
+    private Toolbar toolbar;
+    private ListView listview_nomes;
+    private ArrayAdapter adapter;
+    private ViewPager viewPager;
+    private SlidingTabLayout slidingTabLayout;
+    private int posicao;
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        firebase.addValueEventListener(valueEventListenerConversas);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        firebase.removeEventListener(valueEventListenerConversas);
+    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_conversas);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
+        toolbar.setTitle(getResources().getString(R.string.menu_chats));
+        //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        setSupportActionBar(toolbar);
+
+        NavigationDrawer navigator = new NavigationDrawer();
+        navigator.createDrawer(ConversasActivity.this, toolbar ,3 );
+        conversas = new ArrayList<>();
+        listview_nomes = (ListView) findViewById(R.id.ListContatos);
+
+        adapter = new ConversaAdapter(this, conversas );
+
+        listview_nomes.setAdapter( adapter );
+
+        // recuperar dados do usuário
+        Preferences preferencias = new Preferences(getApplication());
+        String idUsuarioLogado = preferencias.getIdentificador();
+
+        // Recuperar conversas do Firebase
+        firebase = FirebaseConfig.getFireBase()
+                .child("conversas")
+                .child( idUsuarioLogado );
+
+        valueEventListenerConversas = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                conversas.clear();
+                for ( DataSnapshot dados: dataSnapshot.getChildren() ){
+                    Conversa conversa = dados.getValue( Conversa.class );
+                    conversas.add(conversa);
+                }
+                adapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        //Adicionar evento de clique na lista
+        listview_nomes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Conversa conversa = conversas.get(position);
+                Intent intent = new Intent(ConversasActivity.this, ChatActivity.class );
+
+                intent.putExtra("nome", conversa.getNome() );
+                String email = Base64Decoder.decoderBase64( conversa.getIdUsuario() );
+                intent.putExtra("email", email );
+
+                startActivity(intent);
+
+            }
+        });
+
+
+
+        //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    }
+
+
+    @Override
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_exit:
+                //logoutUser();
+                LoginManager.getInstance().logOut();
+                startActivity(new Intent(ConversasActivity.this, MainActivity.class));
+                return true;
+            case R.id.action_settings:
+                Toast.makeText(ConversasActivity.this, "Em Breve", Toast.LENGTH_LONG).show();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+}

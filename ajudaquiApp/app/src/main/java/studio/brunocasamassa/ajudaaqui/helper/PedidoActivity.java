@@ -36,6 +36,7 @@ public class PedidoActivity extends AppCompatActivity{
  private Pedido pedido ;
  private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
  private User user = new User();
+ private DatabaseReference firebase;
 
 
     @Override
@@ -183,6 +184,38 @@ public class PedidoActivity extends AppCompatActivity{
                                 user.setPedidosAtendidos(pedidosAtendidos);
                                 user.save();
 
+
+                                // salvamos Conversa para o remetente
+                                Conversa conversa = new Conversa();
+                                conversa.setIdUsuario( pedido.getAtendenteId() );
+                                conversa.setNome( pedido.getAtendenteId() );
+                                conversa.setMensagem( "bem vindo");
+                                Boolean retornoConversaRemetente = salvarConversa(userKey, pedido.getAtendenteId(), conversa);
+                                if( !retornoConversaRemetente ){
+                                    Toast.makeText(
+                                            PedidoActivity.this,
+                                            "Problema ao salvar conversa, tente novamente!",
+                                            Toast.LENGTH_LONG
+                                    ).show();
+                                }else {
+
+                                    // salvamos Conversa para o Destinatario
+
+                                    conversa = new Conversa();
+                                    conversa.setIdUsuario( userKey);
+                                    conversa.setNome( user.getName() );
+                                    conversa.setMensagem("bem indo");
+
+                                    Boolean retornoConversaDestinatario = salvarConversa(pedido.getAtendenteId(), userKey, conversa );
+                                    if( !retornoConversaDestinatario ){
+                                        Toast.makeText(
+                                                PedidoActivity.this,
+                                                "Problema ao salvar conversa para o destinatário, tente novamente!",
+                                                Toast.LENGTH_LONG
+                                        ).show();
+                                    }
+
+                                }
                             }
 
                             @Override
@@ -197,5 +230,21 @@ public class PedidoActivity extends AppCompatActivity{
             }
         });
 
+    }
+
+
+    private boolean salvarConversa(String idRemetente, String idDestinatario, Conversa conversa){
+        try {
+            firebase = FirebaseConfig.getFireBase().child("conversas");
+            firebase.child( idRemetente )
+                    .child( idDestinatario )
+                    .setValue( conversa );
+
+            return true;
+
+        }catch ( Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 }

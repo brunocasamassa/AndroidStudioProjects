@@ -37,7 +37,7 @@
         <activity android:name=".GrupoAbertoActivity"></activity>
         <activity android:name=".CriaGrupoActivity"></activity>
         <activity android:name=".SobreActivity"></activity>
-        <activity android:name=".ChatActivity"></activity>
+        <activity android:name=".ConversasActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

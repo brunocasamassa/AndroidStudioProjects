@@ -379,6 +379,13 @@ public class PerfilActivity extends AppCompatActivity {
 
     }
 
+
+    private void refresh(){
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    };
+
     private void removeSolicitationMessage(final int position) {
 
         DatabaseReference dbUserRemover = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
@@ -390,8 +397,9 @@ public class PerfilActivity extends AppCompatActivity {
                 lista.addAll(user.getMsgSolicitacoes());
                 lista.remove(position);
                 user.setMsgSolicitacoes(lista);
-
+                user.setId(userKey);
                 user.save();
+                refresh();
 
             }
 

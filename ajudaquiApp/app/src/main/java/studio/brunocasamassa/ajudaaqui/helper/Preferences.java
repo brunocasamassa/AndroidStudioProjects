@@ -47,5 +47,12 @@ public class Preferences {
     }
 
 
+    public String getIdentificador(){
+        return preferences.getString(CHAVE_ID, null);
+    }
+
+    public String getNome(){
+        return preferences.getString(CHAVE_NOME, null);
+    }
 
 }

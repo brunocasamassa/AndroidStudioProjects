@@ -2,21 +2,14 @@ package studio.brunocasamassa.ajudaaqui.helper;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,12 +29,10 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
-import studio.brunocasamassa.ajudaaqui.ChatActivity;
 import studio.brunocasamassa.ajudaaqui.GruposActivity;
 import studio.brunocasamassa.ajudaaqui.PedidosActivity;
 import studio.brunocasamassa.ajudaaqui.PerfilActivity;
 import studio.brunocasamassa.ajudaaqui.R;
-import studio.brunocasamassa.ajudaaqui.SobreActivity;
 
 /**
  * Created by bruno on 24/04/2017.
@@ -191,7 +182,7 @@ public class NavigationDrawer {
         }
         if (position == 3) {
             Toast.makeText(classe, "Em Breve!", Toast.LENGTH_SHORT).show();
-            //classe.startActivity(new Intent(classe, ChatActivity.class));
+            //classe.startActivity(new Intent(classe, ConversasActivity.class));
         }
         if (position == 5) {
             classe.startActivity(new Intent(classe, GruposActivity.class));

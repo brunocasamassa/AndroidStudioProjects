@@ -8,7 +8,6 @@ import studio.brunocasamassa.ajudaaqui.fragments.PedidosDisponiveisFragment;
 import studio.brunocasamassa.ajudaaqui.fragments.PedidosEscolhidosFragment;
 import studio.brunocasamassa.ajudaaqui.fragments.PedidosMeusPedidosFragment;
 
-
 public class PedidosTabAdapter extends FragmentStatePagerAdapter {
 
     private String[] tituloAbas = {"DISPONIVEIS", "ESCOLHIDOS", "MEUS PEDIDOS"};
@@ -41,7 +40,6 @@ public class PedidosTabAdapter extends FragmentStatePagerAdapter {
 
     }
 
-
     @Override
     public int getCount() {
         return tituloAbas.length;
@@ -51,10 +49,6 @@ public class PedidosTabAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         return tituloAbas[position];
     }
-
-
-
-
 
 
 }
