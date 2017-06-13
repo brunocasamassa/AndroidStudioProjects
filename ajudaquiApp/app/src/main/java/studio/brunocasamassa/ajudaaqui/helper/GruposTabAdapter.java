@@ -13,6 +13,8 @@ public class GruposTabAdapter extends FragmentStatePagerAdapter {
 
     private String[] tituloAbas = {"TODOS OS GRUPOS", "MEUS GRUPOS"};
 
+
+
     public GruposTabAdapter(FragmentManager fm) {
         super(fm);
     }

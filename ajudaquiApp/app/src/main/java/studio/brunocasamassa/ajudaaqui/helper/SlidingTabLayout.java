@@ -3,6 +3,7 @@ package studio.brunocasamassa.ajudaaqui.helper;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -16,6 +17,11 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import studio.brunocasamassa.ajudaaqui.R;
+
+import static studio.brunocasamassa.ajudaaqui.R.color.colorPrimaryDark;
+import static studio.brunocasamassa.ajudaaqui.R.color.md_white_1000;
 
 /**
  * To be used with ViewPager to provide a tab indicator component which give constant feedback as to
@@ -150,6 +156,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
      */
     protected TextView createDefaultTabView(Context context) {
         TextView textView = new TextView(context);
+        textView.setTextColor(Color.WHITE);
         textView.setGravity(Gravity.CENTER);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, TAB_VIEW_TEXT_SIZE_SP);
         textView.setTypeface(Typeface.DEFAULT_BOLD);

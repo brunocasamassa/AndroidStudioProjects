@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +36,7 @@ import studio.brunocasamassa.ajudaaqui.helper.User;
 
 
 public class GruposTodosgruposFragment extends Fragment {
-    private ListView listView;
+    private GridView listView;
     private ArrayAdapter adapter;
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
     private ArrayList<Grupo> grupos;
@@ -48,8 +49,6 @@ public class GruposTodosgruposFragment extends Fragment {
     public GruposTodosgruposFragment() {
         // Required empty public constructor
     }
-
-
 
     @Override
     public void onStart() {
@@ -74,19 +73,18 @@ public class GruposTodosgruposFragment extends Fragment {
         System.out.println("grupos do usuario: "+ usuario.getGrupos());
         System.out.println("Nome do usuario2: "+ usuario.getName());
 
-        fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        listView = (ListView) view.findViewById(R.id.allgroups_list);
-
+        listView = (GridView) view.findViewById(R.id.allgroups_list);
         adapter = new MyGroupsAdapter(getContext(), grupos);
         //adapter = new AllGroupsAdapter(getActivity(), grupos );
         listView.setAdapter( adapter);
 
+        /*fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent (getActivity(), CriaGrupoActivity.class));
             }
-        });
+        });*/
 
         firebase = FirebaseConfig.getFireBase()
                 .child("grupos");

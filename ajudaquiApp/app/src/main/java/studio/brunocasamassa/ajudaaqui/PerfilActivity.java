@@ -44,6 +44,7 @@ import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Grupo;
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
+import studio.brunocasamassa.ajudaaqui.helper.Preferences;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
 import studio.brunocasamassa.ajudaaqui.helper.User;
 
@@ -81,6 +82,7 @@ public class PerfilActivity extends AppCompatActivity {
     public static User usuarioPivot = new User();
     private ArrayList<Integer> badgesList = new ArrayList<>();
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
+    private static int premium;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -117,6 +119,12 @@ public class PerfilActivity extends AppCompatActivity {
                 user.setMedalhas(badgesList); //usuario.getMedalhas()
                 System.out.println("recebe usuario NAME: " + usuario.getName());
                 System.out.println("recebe usuario DATA: " + dataSnapshot.getValue());
+
+                int respPremium = usuario.getPremiumUser();
+
+                premium = respPremium;
+
+                System.out.println("Premium user Perfil Activity response "+ premium);
 
                 if (usuario.getMsgSolicitacoes() != null) {
                     ArrayList<String> msgSolicita = usuario.getMsgSolicitacoes();
@@ -194,6 +202,9 @@ public class PerfilActivity extends AppCompatActivity {
 
             }
         });
+        Intent intent = new Intent(PerfilActivity.this, CriaPedidoActivity.class);
+        intent.putExtra("premium", premium);
+        System.out.println("Premium user Perfil Activity response fora"+ premium);
 
         notificacoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -375,6 +386,7 @@ public class PerfilActivity extends AppCompatActivity {
 
         NavigationDrawer navigator = new NavigationDrawer();
 
+
         navigator.createDrawer(PerfilActivity.this, toolbar, 7);
 
     }
@@ -439,6 +451,8 @@ public class PerfilActivity extends AppCompatActivity {
                 LoginManager.getInstance().logOut();
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(PerfilActivity.this, MainActivity.class));
+                Preferences preferences = new Preferences(PerfilActivity.this);
+                preferences.clearSession();
                 return true;
             case R.id.action_settings:
                 Toast.makeText(PerfilActivity.this, "Em Produção", Toast.LENGTH_LONG).show();

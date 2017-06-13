@@ -1,6 +1,5 @@
 package studio.brunocasamassa.ajudaaqui.fragments;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -33,6 +32,7 @@ import studio.brunocasamassa.ajudaaqui.helper.User;
 /**
  * A simple {@link Fragment} subclass.
  */
+
 public class PedidosEscolhidosFragment extends Fragment {
     private int premium;
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
@@ -66,20 +66,19 @@ public class PedidosEscolhidosFragment extends Fragment {
         //dbGroups.removeEventListener(valueEventListenerAllGroups);
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pedidos_escolhidos, container, false);
         pedidos = new ArrayList<>();
-        fab = (FloatingActionButton) view.findViewById(R.id.fab);
         pedidosEscolhidos = (ListView) view.findViewById(R.id.pedidos_escolhidos_list);
         System.out.println("GRUPO NA POSICAO "+ pedidos.isEmpty());
 
         pedidoArrayAdapter = new PedidosAdapter(getActivity(), pedidos);
 
         pedidosEscolhidos.setAdapter(pedidoArrayAdapter);
+        /*fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +87,7 @@ public class PedidosEscolhidosFragment extends Fragment {
                 intent.putExtra("premium", premium);
                 startActivity(intent);
             }
-        });
+        });*/
 
 
         DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);

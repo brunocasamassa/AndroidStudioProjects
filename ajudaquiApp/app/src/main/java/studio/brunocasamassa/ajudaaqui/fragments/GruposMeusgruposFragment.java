@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -40,7 +41,7 @@ public class GruposMeusgruposFragment extends Fragment {
     private ValueEventListener valueEventListenerAll;
     private ArrayAdapter adapter;
     private ArrayList<Grupo> grupos;
-    private ListView listView;
+    private GridView listView;
     private ValueEventListener valueEventListenerAllGroups;
 
     public static User usuario = new User();
@@ -72,20 +73,20 @@ public class GruposMeusgruposFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_mygroups, container, false);
         grupos = new ArrayList<>();
 
-        fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
-        listView = (ListView) view.findViewById(R.id.mygroups_list);
+        listView = (GridView) view.findViewById(R.id.mygroups_list);
 
         adapter = new MyGroupsAdapter(getActivity(), grupos);
         listView.setAdapter(adapter);
 
+       /* fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getActivity(), CriaGrupoActivity.class));
             }
         });
-
+*/
 
         final String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail()).toString();
 

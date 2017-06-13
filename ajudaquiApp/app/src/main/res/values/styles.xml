@@ -10,8 +10,15 @@
 
     </style>
 
+
+    <style name="BezelImageView">
+        <item name="biv_maskDrawable">@drawable/material_drawer_circle_mask</item>
+        <item name="biv_drawCircularShadow">false</item>
+        <item name="biv_selectorOnPress">@color/material_drawer_primary</item>
+    </style>
+
     <style name="botaoPadrao" parent="Theme.AppCompat.Light">
-        <item name="colorButtonNormal">@color/colorBackground</item>
+        <item name="colorButtonNormal">@color/md_white_1000</item>
         <item name="colorControlHighlight">@color/colorPrimary</item>
         <item name="android:textColor">@android:color/holo_green_light</item>
     </style>

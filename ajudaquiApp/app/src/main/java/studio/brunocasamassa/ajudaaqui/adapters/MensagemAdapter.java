@@ -10,6 +10,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import studio.brunocasamassa.ajudaaqui.R;
+import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
+import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Mensagem;
 import studio.brunocasamassa.ajudaaqui.helper.Preferences;
 
@@ -34,7 +36,7 @@ public class MensagemAdapter extends ArrayAdapter<Mensagem> {
 
             // Recupera dados do usuario remetente
             Preferences preferencias = new Preferences(context);
-            String idUsuarioRementente = preferencias.getIdentificador();
+            String idUsuarioRementente = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
 
             // Inicializa objeto para montagem do layout
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);

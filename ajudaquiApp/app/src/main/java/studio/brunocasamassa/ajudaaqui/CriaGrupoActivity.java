@@ -76,7 +76,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
                 finish();
             }
         });
-        setSupportActionBar(toolbar);
+
 
         databaseGroups = FirebaseConfig.getFireBase().child("grupos");
         storage = FirebaseConfig.getFirebaseStorage().child("groupImages");

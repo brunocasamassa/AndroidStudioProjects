@@ -75,13 +75,14 @@ public class PedidosMeusPedidosFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pedidos_meuspedidos, container, false);
         pedidos = new ArrayList<>();
-        fab = (FloatingActionButton) view.findViewById(R.id.fab);
         meusPedidos = (ListView) view.findViewById(R.id.meusPedidos_list);
         System.out.println("GRUPO NA POSICAO "+ pedidos.isEmpty());
 
         pedidoArrayAdapter = new PedidosAdapter(getActivity(), pedidos);
 
         meusPedidos.setAdapter(pedidoArrayAdapter);
+
+        /*fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +91,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
                 intent.putExtra("premium", premium);
                 startActivity(intent);
             }
-        });
+        });*/
 
 
         DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);

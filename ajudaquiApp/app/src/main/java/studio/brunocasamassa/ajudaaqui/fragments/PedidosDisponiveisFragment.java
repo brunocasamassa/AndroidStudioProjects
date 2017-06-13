@@ -75,7 +75,7 @@ public class PedidosDisponiveisFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pedidos_disponiveis, container, false);
         pedidos = new ArrayList<>();
         pedidosView = (ListView) view.findViewById(R.id.allpedidos_list);
-        fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        /*fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,7 +87,7 @@ public class PedidosDisponiveisFragment extends Fragment {
 
             }
         });
-
+*/
         pedidosArrayAdapter = new PedidosAdapter(getContext(), pedidos);
 
         pedidosView.setAdapter(pedidosArrayAdapter);

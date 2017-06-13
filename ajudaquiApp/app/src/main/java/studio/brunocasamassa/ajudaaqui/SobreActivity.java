@@ -26,6 +26,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
+import studio.brunocasamassa.ajudaaqui.helper.Preferences;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
 
 /**
@@ -78,6 +79,8 @@ public class SobreActivity extends AppCompatActivity{
             case R.id.action_exit:
                 LoginManager.getInstance().logOut();
                 startActivity(new Intent(SobreActivity.this, MainActivity.class));
+                Preferences preferences = new Preferences(SobreActivity.this);
+                preferences.clearSession();
                 //logoutUser();
                 return true;
             case R.id.action_settings:

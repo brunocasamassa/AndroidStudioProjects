@@ -2,6 +2,7 @@ package studio.brunocasamassa.ajudaaqui.helper;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -28,7 +29,10 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.mikepenz.materialdrawer.view.BezelImageView;
 
+import studio.brunocasamassa.ajudaaqui.ConversasActivity;
+import studio.brunocasamassa.ajudaaqui.CriaPedidoActivity;
 import studio.brunocasamassa.ajudaaqui.GruposActivity;
 import studio.brunocasamassa.ajudaaqui.PedidosActivity;
 import studio.brunocasamassa.ajudaaqui.PerfilActivity;
@@ -49,6 +53,7 @@ public class NavigationDrawer {
     private static User usuario = new User();
     public int pivotPosition;
     public Activity pivotClass;
+    private int premium;
     public String nomeUser;
     private static String idUser;
     private StorageReference storage;
@@ -56,8 +61,6 @@ public class NavigationDrawer {
 
 
     public void createDrawer(final Activity classe, final Toolbar toolbar, final int posicao) {
-        //setClasse = classe;
-        //Itens do Drawer
 
         storage = FirebaseConfig.getFirebaseStorage().child("userImages");
 
@@ -76,6 +79,7 @@ public class NavigationDrawer {
             @Override
             public void onFailure(@NonNull Exception exception) {
 
+
             }
         });
 
@@ -86,10 +90,10 @@ public class NavigationDrawer {
         System.out.println("email user " + emailUser);
         idUser = Base64Decoder.encoderBase64(emailUser);
         System.out.println("URI USER " + userUri);
+
         try {
             firebaseData = FirebaseConfig.getFireBase().child("usuarios").child(idUser);
             firebaseData.addValueEventListener(new ValueEventListener() {
-
 
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -98,6 +102,8 @@ public class NavigationDrawer {
                     System.out.println("MAIL " + user.getEmail());
                     System.out.println("NAME " + user.getName());
                     nomeUser = user.getName().toString();
+                    premium = user.getPremiumUser();
+                    System.out.println("Premium user drawer in response"+ premium);
                     usuario = user;
 
                     PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos).withIcon(R.drawable.pedidos_icon);
@@ -110,20 +116,23 @@ public class NavigationDrawer {
 
                     AccountHeader headerResult = new AccountHeaderBuilder()
                             .withActivity(classe)
-                            .withHeaderBackground(R.color.colorPrimary)
+                            .withHeaderBackground(R.drawable.background_navigation_drawer)
                             .addProfiles(
-                                    new ProfileDrawerItem().withName(nomeUser).withEmail(emailUser).withIcon(R.drawable.logo_big)
+                                    new ProfileDrawerItem().withName(nomeUser).withEmail(emailUser).withIcon(android.R.color.transparent)
                             )
+
                             .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                                 @Override
                                 public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
                                     return false;
                                 }
                             })
+                            .withSelectionListEnabled(false)
                             .build();
 
                     //Definition Drawer
                     Drawer drawer = new DrawerBuilder()
+                            .withSliderBackgroundColor(Color.WHITE)
                             .withActivity(classe)
                             .withToolbar(toolbar)
                             .withAccountHeader(headerResult)
@@ -154,6 +163,8 @@ public class NavigationDrawer {
 
                 }
 
+
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
@@ -171,18 +182,16 @@ public class NavigationDrawer {
 
 
 
-
-
     }
 
     private void verifyActivity(Activity classe, int position) {
         if (position == 1) {
-
-            classe.startActivity(new Intent(classe, PedidosActivity.class));
+            Intent intent = new Intent(classe, PedidosActivity.class);
+            classe.startActivity(intent);
         }
         if (position == 3) {
-            Toast.makeText(classe, "Em Breve!", Toast.LENGTH_SHORT).show();
-            //classe.startActivity(new Intent(classe, ConversasActivity.class));
+            //Toast.makeText(classe, "Em Breve!", Toast.LENGTH_SHORT).show();
+            classe.startActivity(new Intent(classe, ConversasActivity.class));
         }
         if (position == 5) {
             classe.startActivity(new Intent(classe, GruposActivity.class));

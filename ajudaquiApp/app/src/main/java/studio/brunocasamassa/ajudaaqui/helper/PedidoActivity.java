@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ public class PedidoActivity extends AppCompatActivity{
  private TagGroup tagsGrupo;
  private Button atenderPedido;
  private Pedido pedido ;
+ private String criadorId;
  private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
  private User user = new User();
  private DatabaseReference firebase;
@@ -72,6 +74,7 @@ public class PedidoActivity extends AppCompatActivity{
             pedido.setStatus(extra.getInt("status"));
             pedido.setTipo(extra.getString("tipo"));
             pedido.setCriadorId(extra.getString("criadorId"));
+            criadorId = pedido.getCriadorId();
 
         }
 
@@ -91,8 +94,9 @@ public class PedidoActivity extends AppCompatActivity{
 
         tagsCategoria.setTags(pedido.getTagsCategoria());
 
-        tagsGrupo.setTags(pedido.getGrupo());
-
+        if(pedido.getGrupo() != null) {
+            tagsGrupo.setTags(pedido.getGrupo());
+        }
 
         atenderPedido.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,9 +149,7 @@ public class PedidoActivity extends AppCompatActivity{
                         });
 
 
-
                         final DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
-
 
                         dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -175,6 +177,7 @@ public class PedidoActivity extends AppCompatActivity{
                                 if(usuario.getPontos() != null){
                                 user.setPontos(usuario.getPontos());}
 
+
                                 ArrayList<String> pedidosAtendidos = new ArrayList<String>();
                                 if(usuario.getPedidosAtendidos()!= null) {
                                     pedidosAtendidos = usuario.getPedidosAtendidos();
@@ -184,35 +187,27 @@ public class PedidoActivity extends AppCompatActivity{
                                 user.setPedidosAtendidos(pedidosAtendidos);
                                 user.save();
 
-
-                                // salvamos Conversa para o remetente
+                                // salvando Conversa para o remetente
                                 Conversa conversa = new Conversa();
-                                conversa.setIdUsuario( pedido.getAtendenteId() );
-                                conversa.setNome( pedido.getAtendenteId() );
-                                conversa.setMensagem( "bem vindo");
-                                Boolean retornoConversaRemetente = salvarConversa(userKey, pedido.getAtendenteId(), conversa);
+                                conversa.setIdUsuario( criadorId );
+                                conversa.setNome( Base64Decoder.decoderBase64(criadorId) );
+                                conversa.setMensagem("bem vindo");
+                                Boolean retornoConversaRemetente = salvarConversa(userKey, criadorId, conversa);
+                                    System.out.println("SALVANDO CONVERSA PARA O REMETENTE(atendente pedido): "+ userKey);
                                 if( !retornoConversaRemetente ){
-                                    Toast.makeText(
-                                            PedidoActivity.this,
-                                            "Problema ao salvar conversa, tente novamente!",
-                                            Toast.LENGTH_LONG
-                                    ).show();
+                                    System.out.println("PROBLEMA AO CRIAR CAMPO DE CONVERSA PARA O ATENDENTE");
                                 }else {
 
-                                    // salvamos Conversa para o Destinatario
-
+                                    // salvando Conversa para o Destinatario
+                                    System.out.println("SALVANDO CONVERSA PARA O DESTINATARIO(criador pedido): "+ criadorId);
                                     conversa = new Conversa();
-                                    conversa.setIdUsuario( userKey);
+                                    conversa.setIdUsuario( userKey );
                                     conversa.setNome( user.getName() );
-                                    conversa.setMensagem("bem indo");
+                                    conversa.setMensagem("bem vindo");
 
-                                    Boolean retornoConversaDestinatario = salvarConversa(pedido.getAtendenteId(), userKey, conversa );
+                                    Boolean retornoConversaDestinatario = salvarConversa(criadorId, userKey, conversa );
                                     if( !retornoConversaDestinatario ){
-                                        Toast.makeText(
-                                                PedidoActivity.this,
-                                                "Problema ao salvar conversa para o destinatário, tente novamente!",
-                                                Toast.LENGTH_LONG
-                                        ).show();
+                                        System.out.println("PROBLEMA AO CRIAR CAMPO DE CONVERSA PARA O CRIADOR DO PEDIDO");
                                     }
 
                                 }

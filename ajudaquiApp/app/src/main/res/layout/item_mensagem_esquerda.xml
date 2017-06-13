@@ -8,9 +8,11 @@
         android:id="@+id/tv_mensagem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="5dp"
         android:text="Mensagem..."
         android:textColor="@android:color/black"
-        android:background="@android:color/white"
+        android:background="@drawable/rounded_corner_message_left"
         android:padding="8dp"/>
 
 </RelativeLayout>

@@ -87,11 +87,9 @@ public class CriaPedidoActivity extends AppCompatActivity {
                 finish();
             }
         });
-        setSupportActionBar(toolbar);
 
         categorias = (TagGroup) findViewById(R.id.tagGroupCategoria);
         grupos = (TagGroup) findViewById(R.id.tagGroupGrupos);
-
 
         add_grupos = (TextView) findViewById(R.id.word_add_groups);
         add_tags = (TextView) findViewById(R.id.word_add_tags);
@@ -104,8 +102,8 @@ public class CriaPedidoActivity extends AppCompatActivity {
         add_grupos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (premium == 1) {
-                    Toast.makeText(getApplicationContext(), "Conteudo exclusivo para usuarios Premium, adquira uma conta para utilizar o recurso de grupos", Toast.LENGTH_LONG).show();
+                if (premium == 0) {
+                    Toast.makeText(getApplicationContext(), "Conteudo exclusivo para usuarios Premium, adquira para utilizar o recurso de grupos", Toast.LENGTH_LONG).show();
                 } else
                     startActivityForResult(new Intent(CriaPedidoActivity.this, PedidoAddGroupsList.class), 2);
 
@@ -115,8 +113,8 @@ public class CriaPedidoActivity extends AppCompatActivity {
         addGroupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (premium == 1) {
-                    Toast.makeText(getApplicationContext(), "Conteudo exclusivo para usuarios Premium, adquira uma conta para utilizar o recurso de grupos", Toast.LENGTH_LONG).show();
+                if (premium == 0) {
+                    Toast.makeText(getApplicationContext(), "Conteudo exclusivo para usuarios Premium, adquira para utilizar o recurso de grupos", Toast.LENGTH_LONG).show();
                 } else
                     startActivityForResult(new Intent(CriaPedidoActivity.this, PedidoAddGroupsList.class), 2);
 

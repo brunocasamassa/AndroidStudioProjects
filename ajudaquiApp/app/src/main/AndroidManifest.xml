@@ -20,11 +20,12 @@
 
         <activity android:name=".LoginActivity"></activity>
         <activity android:name=".TagsList"></activity>
-        <activity android:name=".PedidosActivity"></activity>
+        <activity android:name=".MainActivity"></activity>
         <activity android:name=".CriaPedidoActivity"></activity>
         <activity android:name=".PerfilActivity"></activity>
         <activity android:name=".helper.PedidoAtendidoActivity"></activity>
         <activity android:name=".CadastroActivity"></activity>
+        <activity android:name=".ChatActivity"></activity>
 
         <fragment android:name=".GruposTodosgruposFragment"></fragment>
         <fragment android:name=".GruposMeusgruposFragment"></fragment>
@@ -38,7 +39,7 @@
         <activity android:name=".CriaGrupoActivity"></activity>
         <activity android:name=".SobreActivity"></activity>
         <activity android:name=".ConversasActivity"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".PedidosActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

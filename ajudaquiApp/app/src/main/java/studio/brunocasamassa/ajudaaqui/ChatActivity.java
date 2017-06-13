@@ -69,11 +69,17 @@ public class ChatActivity extends AppCompatActivity {
         // Configura toolbar
         toolbar.setTitle( nomeUsuarioDestinatario );
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
-        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         // Monta listview e adapter
         mensagens = new ArrayList<>();
         adapter = new MensagemAdapter(ChatActivity.this, mensagens);
+        listView.setDivider(null);
         listView.setAdapter( adapter );
 
         // Recuperar mensagens do Firebase

@@ -4,6 +4,7 @@ import  android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +30,11 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import studio.brunocasamassa.ajudaaqui.helper.GruposTabAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
+import studio.brunocasamassa.ajudaaqui.helper.Preferences;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
+
+import static studio.brunocasamassa.ajudaaqui.R.id.fab;
+import static studio.brunocasamassa.ajudaaqui.R.id.view;
 
 /**
  *
@@ -43,6 +48,8 @@ public class GruposActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
     private int posicao;
+    private FloatingActionButton fab;
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -57,6 +64,15 @@ public class GruposActivity extends AppCompatActivity {
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
 
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GruposActivity.this, CriaGrupoActivity.class);
+                startActivity(intent);
+            }});
 
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
         viewPager = (ViewPager) findViewById(R.id.vp_pagina);
@@ -97,6 +113,8 @@ public class GruposActivity extends AppCompatActivity {
                 LoginManager.getInstance().logOut();
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(GruposActivity.this, MainActivity.class));
+                Preferences preferences = new Preferences(GruposActivity.this);
+                preferences.clearSession();
                 return true;
             case R.id.action_settings:
                 Toast.makeText(GruposActivity.this, "Em Breve", Toast.LENGTH_LONG).show();

@@ -2,9 +2,13 @@ package studio.brunocasamassa.ajudaaqui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -20,6 +25,7 @@ import com.facebook.login.LoginResult;
 
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaaqui.helper.PedidosTabAdapter;
+import studio.brunocasamassa.ajudaaqui.helper.Preferences;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
 import studio.brunocasamassa.ajudaaqui.helper.User;
 
@@ -32,10 +38,12 @@ public class PedidosActivity extends AppCompatActivity {
     private ListView listview_nomes;
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
+    private int premium;
 
     private User usuario;
 
     private static NavigationDrawer navigator = new NavigationDrawer();
+    private FloatingActionButton fab;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -50,6 +58,7 @@ public class PedidosActivity extends AppCompatActivity {
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
 
+
         /*
         loginResult = MainActivity.lr;
         Profile profile = Profile.getCurrentProfile();
@@ -59,19 +68,29 @@ public class PedidosActivity extends AppCompatActivity {
         String name = message(profile);
         user.setName(name);*/
 
-
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
         viewPager = (ViewPager) findViewById(R.id.vp_pagina);
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.stl_tabs);
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setSelectedIndicatorColors(ContextCompat.getColor(this, R.color.colorAccent));
 
+
         PedidosTabAdapter pedidosTabAdapter = new PedidosTabAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pedidosTabAdapter);
         slidingTabLayout.setViewPager(viewPager);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PedidosActivity.this, CriaPedidoActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         navigator.createDrawer(PedidosActivity.this, toolbar ,0);
+
+
 
 
     }
@@ -92,6 +111,8 @@ public class PedidosActivity extends AppCompatActivity {
                 //logoutUser();
                 LoginManager.getInstance().logOut();
                 startActivity(new Intent(PedidosActivity.this, MainActivity.class));
+                Preferences preferences = new Preferences(PedidosActivity.this);
+                preferences.clearSession();
                 return true;
             case R.id.action_settings:
 

@@ -20,6 +20,7 @@ public class GrupoAbertoTabAdapter extends FragmentStatePagerAdapter {
         super(fm);
     }
 
+
     @Override
     public Fragment getItem(int position) {
 
@@ -41,8 +42,6 @@ public class GrupoAbertoTabAdapter extends FragmentStatePagerAdapter {
                 fragment = new GruposDoacoesFragment();
                 //notifyDataSetChanged();
                 break;
-
-
 
         }
 

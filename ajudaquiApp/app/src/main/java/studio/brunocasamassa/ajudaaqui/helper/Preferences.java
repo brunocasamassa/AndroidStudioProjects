@@ -55,4 +55,9 @@ public class Preferences {
         return preferences.getString(CHAVE_NOME, null);
     }
 
+    public void clearSession(){
+        editor.clear();
+        editor.commit();
+    }
+
 }

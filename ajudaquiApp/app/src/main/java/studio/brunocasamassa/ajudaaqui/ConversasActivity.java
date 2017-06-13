@@ -45,12 +45,11 @@ public class ConversasActivity extends AppCompatActivity {
     private ListView listview_nomes;
     private ArrayAdapter adapter;
     private ViewPager viewPager;
+    private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
     private SlidingTabLayout slidingTabLayout;
     private int posicao;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-
-
 
     @Override
     public void onStart() {
@@ -64,7 +63,6 @@ public class ConversasActivity extends AppCompatActivity {
         firebase.removeEventListener(valueEventListenerConversas);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,27 +74,33 @@ public class ConversasActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         NavigationDrawer navigator = new NavigationDrawer();
-        navigator.createDrawer(ConversasActivity.this, toolbar ,3 );
+        navigator.createDrawer(ConversasActivity.this, toolbar , 3 );
+
         conversas = new ArrayList<>();
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
 
         adapter = new ConversaAdapter(this, conversas );
 
+        listview_nomes.setDivider(null);
         listview_nomes.setAdapter( adapter );
 
-        // recuperar dados do usuário
+        // Recuperar dados do usuário
         Preferences preferencias = new Preferences(getApplication());
         String idUsuarioLogado = preferencias.getIdentificador();
+        String nameUsuarioLogado = preferencias.getNome();
+        System.out.println("!preferencias "+ nameUsuarioLogado);
+
 
         // Recuperar conversas do Firebase
         firebase = FirebaseConfig.getFireBase()
                 .child("conversas")
-                .child( idUsuarioLogado );
+                .child( userKey );
 
         valueEventListenerConversas = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                System.out.println("entrei laco conversas ativas do user");
                 conversas.clear();
                 for ( DataSnapshot dados: dataSnapshot.getChildren() ){
                     Conversa conversa = dados.getValue( Conversa.class );
@@ -151,6 +155,8 @@ public class ConversasActivity extends AppCompatActivity {
                 //logoutUser();
                 LoginManager.getInstance().logOut();
                 startActivity(new Intent(ConversasActivity.this, MainActivity.class));
+                Preferences preferences = new Preferences(ConversasActivity.this);
+                preferences.clearSession();
                 return true;
             case R.id.action_settings:
                 Toast.makeText(ConversasActivity.this, "Em Breve", Toast.LENGTH_LONG).show();

@@ -114,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("usuario conectado: " + firebaseAuth.getCurrentUser());
                 if (user != null) {
                     Toast.makeText(getApplicationContext(), "signed in " + user.getDisplayName(), Toast.LENGTH_LONG).show();
+                    Preferences preferencias = new Preferences(MainActivity.this);
+                    preferencias.saveData(usuario.getId(), usuario.getName());
+                    System.out.println("usuario name "+usuario.getName());
                     startActivity(new Intent(MainActivity.this, PerfilActivity.class));
                     Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
                 } else {
@@ -225,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
                                         System.out.println("user name1 " + usuario.getName());
                                         Preferences preferences = new Preferences(MainActivity.this);
                                         preferences.saveDataImgFacebook(usuario.getId(), usuario.getName(), usuario.getProfileImg());
+
                                         facebookImg = usuario.getProfileImg();
 
                                         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
@@ -258,8 +262,11 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         }).create().show();
                                         usuario.save();
+                                    } else {
+                                        Preferences preferences = new Preferences(MainActivity.this);
+                                        preferences.saveDataImgFacebook(encodedFacebookEmailUser, name, photo.toString());
+                                        System.out.println("username "+name);
                                     }
-
                                 }
 
 

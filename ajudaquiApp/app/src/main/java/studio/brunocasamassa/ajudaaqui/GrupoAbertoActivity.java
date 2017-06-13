@@ -25,8 +25,6 @@ import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Grupo;
 import studio.brunocasamassa.ajudaaqui.helper.GrupoAbertoTabAdapter;
-import studio.brunocasamassa.ajudaaqui.helper.GruposTabAdapter;
-import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
 
 /**
@@ -49,7 +47,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hello);
+        setContentView(R.layout.activity_grupo_aberto);
 
         Bundle extra = getIntent().getExtras();
 
@@ -85,7 +83,6 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         });
 
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        setSupportActionBar(toolbar);
 
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
         viewPager = (ViewPager) findViewById(R.id.vp_pagina);

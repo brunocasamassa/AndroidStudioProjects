@@ -147,7 +147,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
         toolbar.setTitle(R.string.menu_grupos);
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        setSupportActionBar(toolbar);
+
 
         NavigationDrawer navigator = new NavigationDrawer();
         navigator.createDrawer(GrupoFechadoActivity.this, toolbar, 5);
