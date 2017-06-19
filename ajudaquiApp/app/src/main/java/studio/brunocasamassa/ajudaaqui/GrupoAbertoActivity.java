@@ -1,6 +1,7 @@
 package studio.brunocasamassa.ajudaaqui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -14,13 +15,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
+import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Grupo;
@@ -39,8 +44,10 @@ public class GrupoAbertoActivity extends AppCompatActivity {
     private ListView listview_nomes;
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
+    private CircleImageView groupImage;
     private int posicao;
     private static Grupo grupo = new Grupo();
+    private StorageReference storage;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -54,6 +61,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         String groupKey = Base64Decoder.encoderBase64(extra.getString("nome").toString());
         System.out.println("group Name bundleded "+ extra.getString("nome").toString());
 
+        String uri = extra.getString("uri");
         String titulo =  extra.getString("nome").toString();
         firebase = FirebaseConfig.getFireBase().child("grupos").child(groupKey);
 
@@ -71,14 +79,32 @@ public class GrupoAbertoActivity extends AppCompatActivity {
             }
         });
 
+        groupImage = (CircleImageView) findViewById(R.id.circleImageView);
+
+        storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
+
+        storage.child(grupo.getNome()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+/*
+                Glide.with(GrupoAbertoActivity.this).load(uri).override(68,68).into(groupImage);
+*/
+                System.out.println("group image chat "+  uri);
+            }});
+
+
+
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
         toolbar.setTitle(titulo);
+        Glide.with(GrupoAbertoActivity.this).load(uri).override(68,68).into(groupImage);
         System.out.println("nome grupo "+ grupo.getNome());
+        System.out.println("uri grupo "+ uri);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(GrupoAbertoActivity.this, GruposActivity.class));
+                /*startActivity(new Intent(GrupoAbertoActivity.this, GruposActivity.class));*/
+                finish();
             }
         });
 

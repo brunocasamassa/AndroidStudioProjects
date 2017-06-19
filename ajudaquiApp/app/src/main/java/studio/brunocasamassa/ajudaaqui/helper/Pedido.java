@@ -106,10 +106,10 @@ public class Pedido {
 
 
 /* STATUS
-aguardando avaliação - 1
-em andamento - 2
-finalizado - 3
-cancelado - 4
+aberto - 0
+em andamento - 1
+finalizado - 2
+cancelado - 3
 */
 
 

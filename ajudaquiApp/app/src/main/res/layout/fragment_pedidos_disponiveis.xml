@@ -1,6 +1,7 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/md_grey_200"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="studio.brunocasamassa.ajudaaqui.fragments.PedidosDisponiveisFragment">
@@ -12,10 +13,10 @@
         android:id="@+id/allpedidos_list"
         android:layout_width="403dp"
         android:layout_height="614dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.062"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:scrollbars="none"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        tools:layout_editor_absoluteX="4dp" />
 
-
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

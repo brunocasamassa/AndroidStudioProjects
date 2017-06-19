@@ -30,10 +30,10 @@ public class Grupo {
     }
 
     public ArrayList<String> idMembros;
-    public List<Pedido> trocas;
-    public List<Pedido> emprestimos;
-    public List<Pedido> servicos;
-    public List<Pedido> doacoes;
+    public ArrayList<String> trocas;
+    public ArrayList<String> emprestimos;
+    public ArrayList<String> servicos;
+    public ArrayList<String> doacoes;
 
 
     public Grupo getGrupo() {
@@ -62,35 +62,35 @@ public class Grupo {
         this.idAdms = idAdms;
     }
 
-    public List<Pedido> getTrocas() {
+        public ArrayList<String> getTrocas() {
         return trocas;
     }
 
-    public void setTrocas(List<Pedido> trocas) {
+    public void setTrocas(ArrayList<String> trocas) {
         this.trocas = trocas;
     }
 
-    public List<Pedido> getEmprestimos() {
+    public ArrayList<String> getEmprestimos() {
         return emprestimos;
     }
 
-    public void setEmprestimos(List<Pedido> emprestimos) {
+    public void setEmprestimos(ArrayList<String> emprestimos) {
         this.emprestimos = emprestimos;
     }
 
-    public List<Pedido> getServicos() {
+    public ArrayList<String> getServicos() {
         return servicos;
     }
 
-    public void setServicos(List<Pedido> servicos) {
+    public void setServicos(ArrayList<String> servicos) {
         this.servicos = servicos;
     }
 
-    public List<Pedido> getDoacoes() {
+    public ArrayList<String> getDoacoes() {
         return doacoes;
     }
 
-    public void setDoacoes(List<Pedido> doacoes) {
+    public void setDoacoes(ArrayList<String> doacoes) {
         this.doacoes = doacoes;
     }
 

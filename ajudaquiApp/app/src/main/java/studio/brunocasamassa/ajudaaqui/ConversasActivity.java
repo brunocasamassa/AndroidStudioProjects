@@ -1,6 +1,7 @@
 package studio.brunocasamassa.ajudaaqui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -55,6 +56,7 @@ public class ConversasActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         firebase.addValueEventListener(valueEventListenerConversas);
+
     }
 
     @Override
@@ -70,31 +72,30 @@ public class ConversasActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
         toolbar.setTitle(getResources().getString(R.string.menu_chats));
-        //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
 
         NavigationDrawer navigator = new NavigationDrawer();
-        navigator.createDrawer(ConversasActivity.this, toolbar , 3 );
+        navigator.createDrawer(ConversasActivity.this, toolbar, 3);
 
         conversas = new ArrayList<>();
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
 
-        adapter = new ConversaAdapter(this, conversas );
+        adapter = new ConversaAdapter(this, conversas);
 
         listview_nomes.setDivider(null);
-        listview_nomes.setAdapter( adapter );
+        listview_nomes.setAdapter(adapter);
 
         // Recuperar dados do usuário
         Preferences preferencias = new Preferences(getApplication());
         String idUsuarioLogado = preferencias.getIdentificador();
         String nameUsuarioLogado = preferencias.getNome();
-        System.out.println("!preferencias "+ nameUsuarioLogado);
-
+        System.out.println("preferencias " + nameUsuarioLogado);
 
         // Recuperar conversas do Firebase
         firebase = FirebaseConfig.getFireBase()
                 .child("conversas")
-                .child( userKey );
+                .child(userKey);
 
         valueEventListenerConversas = new ValueEventListener() {
             @Override
@@ -102,10 +103,11 @@ public class ConversasActivity extends AppCompatActivity {
 
                 System.out.println("entrei laco conversas ativas do user");
                 conversas.clear();
-                for ( DataSnapshot dados: dataSnapshot.getChildren() ){
-                    Conversa conversa = dados.getValue( Conversa.class );
+                for (DataSnapshot dados : dataSnapshot.getChildren()) {
+                    Conversa conversa = dados.getValue(Conversa.class);
                     conversas.add(conversa);
                 }
+
                 adapter.notifyDataSetChanged();
 
             }
@@ -116,25 +118,23 @@ public class ConversasActivity extends AppCompatActivity {
             }
         };
 
+
+
         //Adicionar evento de clique na lista
         listview_nomes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                System.out.println("MANU ENTROU");
                 Conversa conversa = conversas.get(position);
-                Intent intent = new Intent(ConversasActivity.this, ChatActivity.class );
-
-                intent.putExtra("nome", conversa.getNome() );
-                String email = Base64Decoder.decoderBase64( conversa.getIdUsuario() );
-                intent.putExtra("email", email );
+                Intent intent = new Intent(ConversasActivity.this, ChatActivity.class);
+                intent.putExtra("nome", conversa.getNome());
+                String email = Base64Decoder.decoderBase64(conversa.getIdUsuario());
+                intent.putExtra("email", email);
 
                 startActivity(intent);
 
             }
         });
-
-
-
         //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     }
 

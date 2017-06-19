@@ -190,7 +190,7 @@ public class PedidoActivity extends AppCompatActivity{
                                 // salvando Conversa para o remetente
                                 Conversa conversa = new Conversa();
                                 conversa.setIdUsuario( criadorId );
-                                conversa.setNome( Base64Decoder.decoderBase64(criadorId) );
+                                conversa.setNome( pedido.getTitulo() );
                                 conversa.setMensagem("bem vindo");
                                 Boolean retornoConversaRemetente = salvarConversa(userKey, criadorId, conversa);
                                     System.out.println("SALVANDO CONVERSA PARA O REMETENTE(atendente pedido): "+ userKey);
@@ -202,7 +202,7 @@ public class PedidoActivity extends AppCompatActivity{
                                     System.out.println("SALVANDO CONVERSA PARA O DESTINATARIO(criador pedido): "+ criadorId);
                                     conversa = new Conversa();
                                     conversa.setIdUsuario( userKey );
-                                    conversa.setNome( user.getName() );
+                                    conversa.setNome( pedido.getTitulo() );
                                     conversa.setMensagem("bem vindo");
 
                                     Boolean retornoConversaDestinatario = salvarConversa(criadorId, userKey, conversa );

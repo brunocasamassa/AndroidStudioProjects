@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorBackground"
-        app:titleTextColor="@android:color/black"
+        app:titleTextColor="@android:color/white"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"></android.support.v7.widget.Toolbar>
@@ -81,9 +81,12 @@
         android:textColor="@color/cardview_light_background"
         android:textStyle="bold"
         tools:text="Membros: "
-        android:layout_below="@+id/groupImg"
+        android:layout_alignBaseline="@+id/qtdMembros"
+        android:layout_alignBottom="@+id/qtdMembros"
         android:layout_alignLeft="@+id/groupImg"
-        android:layout_alignStart="@+id/groupImg" />
+        android:layout_alignStart="@+id/groupImg"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp" />
 
     <ImageView
         android:id="@+id/imageView5"

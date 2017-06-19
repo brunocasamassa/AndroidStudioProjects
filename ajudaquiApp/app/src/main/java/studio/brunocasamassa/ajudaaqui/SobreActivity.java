@@ -1,6 +1,11 @@
 package studio.brunocasamassa.ajudaaqui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -11,20 +16,19 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
-import com.mikepenz.materialdrawer.AccountHeader;
-import com.mikepenz.materialdrawer.AccountHeaderBuilder;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
+import java.util.ArrayList;
+
+import studio.brunocasamassa.ajudaaqui.adapters.SobreAdapter;
+import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
+import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaaqui.helper.Preferences;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
@@ -33,39 +37,149 @@ import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
  * Created by bruno on 24/04/2017.
  */
 
-public class SobreActivity extends AppCompatActivity{
+public class SobreActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ListView listview_nomes;
     private ViewPager viewPager;
+    private ArrayAdapter arrayAdapterSobre;
     private SlidingTabLayout slidingTabLayout;
     public int posicao;
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hello);
+        setContentView(R.layout.activvity_sobre);
 
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_principal_sobre);
         toolbar.setTitle(getResources().getString(R.string.menu_sobre));
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        listview_nomes = (ListView) findViewById(R.id.sobre_lista);
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
 
+        final NavigationDrawer navigator = new NavigationDrawer();
+        navigator.createDrawer(SobreActivity.this, toolbar, 9);
+
+        String[] vector = {"Duvidas", "Fale Conosco", "Denuncie", "Curta no Facebook", "Acesse o site"};
+        //ArrayList<String> listaSobre = new ArrayList<>();
+
+        arrayAdapterSobre = new SobreAdapter(getApplicationContext(), vector);
+
+        listview_nomes.setAdapter(arrayAdapterSobre);
 
 
-        NavigationDrawer navigator = new NavigationDrawer();
+        listview_nomes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0){
+                    startActivity(new Intent(SobreActivity.this, FaqActivity.class));
+                }
+                if (position == 1) {
+                    //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                    enviaEmailSuporte("Suporte ao Usuario", "Escreva uma mensagem para nós, adoraremos te conhecer", "FALE CONOSCO");
+                }
+                if (position == 2){
+                    enviaEmailSuporte("Denuncia", "Por favor, nos conte o que ocorreu: ", "DENUNCIA");
+                }
 
-       navigator.createDrawer(SobreActivity.this, toolbar,9);
+                if(position == 3){
+                    //newFacebookIntent(getPackageManager(),"https://www.facebook.com/ajudaquiapp/");
+                    Uri uri = Uri.parse("https://www.facebook.com/ajudaquiapp/");
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 
-        //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                    startActivity(intent);
+                }
+
+                if (position ==4){
+                    Uri uri = Uri.parse("http://www.ajudaqui.com.br/");
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+
+                    startActivity(intent);
+                }
+
+
+            }
+        });
+    }
+
+    public static Intent newFacebookIntent(PackageManager pm, String url) {
+        Uri uri = Uri.parse(url);
+        try {
+            ApplicationInfo applicationInfo = pm.getApplicationInfo("com.facebook.katana", 0);
+            if (applicationInfo.enabled) {
+                // http://stackoverflow.com/a/24547437/1048340
+                uri = Uri.parse("fb://facewebmodal/f?href=" + url);
+            }
+        } catch (PackageManager.NameNotFoundException ignored) {
+            System.out.println("sobre error "+ignored);
+        } catch (Exception e ){
+            System.out.println("sobre error "+e);
+        }
+        return new Intent(Intent.ACTION_VIEW, uri);
+    }
+
+    private void enviaEmailSuporte(String titulo, String mensagem, final String tipo) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(SobreActivity.this);
+
+        alertDialog.setTitle(titulo);
+        alertDialog.setMessage(mensagem);
+        alertDialog.setCancelable(false);
+
+        final EditText editText = new EditText(SobreActivity.this);
+        alertDialog.setView(editText);
+
+        alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+
+        });
+
+        alertDialog.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                final String mensagemSolicitacao = editText.getText().toString();
+
+                //Validate message to contact
+                if (mensagemSolicitacao.isEmpty()) {
+                    Toast.makeText(SobreActivity.this, "Preencha o campo de mensagem", Toast.LENGTH_LONG).show();
+                } else {
+                    Preferences preferences = new Preferences(SobreActivity.this);
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("message/rfc822");
+                    i.putExtra(Intent.EXTRA_EMAIL, new String[]{"brunocasamassa@hotmail.com"});
+                    i.putExtra(Intent.EXTRA_SUBJECT, "AJUDAQUI: "+tipo+": USUARIO: " + preferences.getNome());
+                    i.putExtra(Intent.EXTRA_TEXT,
+                            "USUARIO ID: " + Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail()) + "\n" +
+                                    "USUARIO NOME: " + preferences.getNome() + "\n" +
+                                    "USUARIO E-MAIL: " + FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail()+ "\n" +
+                                    "\n" + mensagemSolicitacao);
+                    try {
+                        startActivity(Intent.createChooser(i, "Send mail..."));
+                        Toast.makeText(SobreActivity.this, "Obrigado pela mensagem, entraremos em contato o mais breve possível", Toast.LENGTH_SHORT).show();
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(SobreActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }).create().show();
 
     }
 
-
-
     @Override
-
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
@@ -84,14 +198,12 @@ public class SobreActivity extends AppCompatActivity{
                 //logoutUser();
                 return true;
             case R.id.action_settings:
-
                 Toast.makeText(SobreActivity.this, "Em Breve", Toast.LENGTH_LONG).show();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
 
     }
-
 }
+

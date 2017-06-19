@@ -18,7 +18,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.helper.Conversa;
@@ -58,11 +63,21 @@ public class ConversaAdapter extends ArrayAdapter<Conversa> {
             TextView nome = (TextView) view.findViewById(R.id.name_chat_contact);
             TextView ultimaMensagem = (TextView) view.findViewById(R.id.last_message);
 
+            TextView time = (TextView) view.findViewById(R.id.time_chat);
+
+
+            DateFormat formatter = new SimpleDateFormat("HH:mm");
+            formatter.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
+            String currentTime = formatter.format(new Date());
+            System.out.println("formatter: "+currentTime);
+
             Conversa conversa = conversas.get(position);
             nome.setText( conversa.getNome() );
             ultimaMensagem.setText( conversa.getMensagem() );
             String idUser = conversa.getIdUsuario();
-
+            if(conversa.getTime() != null) {
+                time.setText(conversa.getTime());
+            } else time.setText(currentTime);
             firebase = FirebaseConfig.getFireBase().child("usuarios").child(idUser);
 
             storage = FirebaseConfig.getFirebaseStorage().child("userImages");

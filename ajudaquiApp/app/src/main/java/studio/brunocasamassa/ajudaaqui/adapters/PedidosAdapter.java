@@ -64,7 +64,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> {
         // Verifica se a lista está vazia
         if (pedidos != null) {
 
-
+            //IF The user image is from facebook
             if(mainActivity.facebookImg != null) {
                 facebookPhoto = mainActivity.facebookImg;
             }

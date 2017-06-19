@@ -26,11 +26,13 @@ import studio.brunocasamassa.ajudaaqui.GrupoAbertoActivity;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.adapters.MyGroupsAdapter;
 import studio.brunocasamassa.ajudaaqui.adapters.PedidosAdapter;
+import studio.brunocasamassa.ajudaaqui.adapters.PedidosSelecionadoAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Grupo;
 import studio.brunocasamassa.ajudaaqui.helper.Pedido;
 import studio.brunocasamassa.ajudaaqui.helper.PedidoAtendidoActivity;
+import studio.brunocasamassa.ajudaaqui.helper.PedidoCriadoActivity;
 import studio.brunocasamassa.ajudaaqui.helper.User;
 /**
  * A simple {@link Fragment} subclass.
@@ -78,7 +80,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
         meusPedidos = (ListView) view.findViewById(R.id.meusPedidos_list);
         System.out.println("GRUPO NA POSICAO "+ pedidos.isEmpty());
 
-        pedidoArrayAdapter = new PedidosAdapter(getActivity(), pedidos);
+        pedidoArrayAdapter = new PedidosSelecionadoAdapter(getActivity(), pedidos);
 
         meusPedidos.setAdapter(pedidoArrayAdapter);
 
@@ -152,7 +154,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            Intent intent = new Intent(getActivity(), PedidoAtendidoActivity.class);
+            Intent intent = new Intent(getActivity(), PedidoCriadoActivity.class);
 
         // recupera dados a serem passados
         Pedido selectedPedido = pedidos.get(position);

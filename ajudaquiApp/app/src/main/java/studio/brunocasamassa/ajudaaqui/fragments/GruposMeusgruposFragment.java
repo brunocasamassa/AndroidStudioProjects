@@ -66,7 +66,7 @@ public class GruposMeusgruposFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
@@ -154,6 +154,7 @@ public class GruposMeusgruposFragment extends Fragment {
                 Grupo grupo = grupos.get(position);
 
                 // enviando dados para grupo activity
+                intent.putExtra("uri", grupo.getGrupoImg());
                 intent.putExtra("nome", grupo.getNome());
                 intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()));
                 intent.putExtra("descricao", grupo.getDescricao());

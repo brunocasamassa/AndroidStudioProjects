@@ -12,6 +12,7 @@ public class Conversa {
     
 	private String mensagem;
 
+    private String time;
     
 
 
@@ -60,4 +61,11 @@ this.mensagem = mensagem;
 }
 
 
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 }

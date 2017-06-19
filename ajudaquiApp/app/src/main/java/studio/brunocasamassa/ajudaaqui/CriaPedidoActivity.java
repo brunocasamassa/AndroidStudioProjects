@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import me.gujun.android.taggroup.TagGroup;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
+import studio.brunocasamassa.ajudaaqui.helper.Grupo;
 import studio.brunocasamassa.ajudaaqui.helper.Pedido;
 import studio.brunocasamassa.ajudaaqui.helper.User;
 
@@ -210,6 +211,11 @@ public class CriaPedidoActivity extends AppCompatActivity {
         pedido.setTitulo(pedidoName.getText().toString());
         pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo()));
         pedido.setCriadorId(userKey);
+        pedido.setGrupo(groupCaptured);
+
+        if (pedido.getGrupo() != null) {
+            savePedidoIntoGroup(pedido);
+        }
 
         System.out.println("user id key " + userKey);
 
@@ -219,6 +225,73 @@ public class CriaPedidoActivity extends AppCompatActivity {
         finish();
 
     }
+
+    private void savePedidoIntoGroup(final Pedido pedido) {
+        String groupKey = Base64Decoder.encoderBase64(pedido.getGrupo());
+        final String tipoPedido = pedido.getTipo();
+        final ArrayList<String> pedidosList = new ArrayList<>();
+        DatabaseReference dbGroup = FirebaseConfig.getFireBase().child("grupos").child(groupKey);
+        dbGroup.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Grupo grupo = dataSnapshot.getValue(Grupo.class);
+                if (tipoPedido.equals("Emprestimos")) {
+                    if (grupo.getEmprestimos() != null) {
+                        pedidosList.addAll(grupo.getEmprestimos());
+                        pedidosList.add(pedidosList.size(), pedido.getIdPedido());
+                        grupo.setEmprestimos(pedidosList);
+                    } else {
+                        pedidosList.add(0, pedido.getIdPedido());
+
+                    }
+
+                }
+                if (tipoPedido.equals("Troca")) {
+                    if (grupo.getTrocas() != null) {
+                        pedidosList.addAll(grupo.getTrocas());
+                        pedidosList.add(pedidosList.size(), pedido.getIdPedido());
+                        grupo.setTrocas(pedidosList);
+                    } else {
+                        pedidosList.add(0, pedido.getIdPedido());
+
+                    }
+
+                }
+
+                if (tipoPedido.equals("Servicos")) {
+                    if (grupo.getServicos() != null) {
+                        pedidosList.addAll(grupo.getServicos());
+                        pedidosList.add(pedidosList.size(), pedido.getIdPedido());
+                        grupo.setServicos(pedidosList);
+                    } else {
+                        pedidosList.add(0, pedido.getIdPedido());
+
+                    }
+
+                }
+                if (tipoPedido.equals("Doacoes")) {
+                    if (grupo.getDoacoes() != null) {
+                        pedidosList.addAll(grupo.getDoacoes());
+                        pedidosList.add(pedidosList.size(), pedido.getIdPedido());
+                        grupo.setDoacoes(pedidosList);
+                    } else {
+                        pedidosList.add(0, pedido.getIdPedido());
+
+                    }
+
+                }
+
+                grupo.save();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("erro database "+databaseError);
+
+            }
+        });
+
+    };
 
     private void pedidoSaveIntoUser(boolean b) {
         if (b) {

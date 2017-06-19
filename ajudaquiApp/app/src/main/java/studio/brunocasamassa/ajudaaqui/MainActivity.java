@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                     Preferences preferencias = new Preferences(MainActivity.this);
                     preferencias.saveData(usuario.getId(), usuario.getName());
                     System.out.println("usuario name "+usuario.getName());
-                    startActivity(new Intent(MainActivity.this, PerfilActivity.class));
+                    startActivity(new Intent(MainActivity.this, PedidosActivity.class));
                     Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
                 } else {
                     // User is signed out
@@ -265,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
                                     } else {
                                         Preferences preferences = new Preferences(MainActivity.this);
                                         preferences.saveDataImgFacebook(encodedFacebookEmailUser, name, photo.toString());
+                                        preferences.saveData(encodedFacebookEmailUser,name);
                                         System.out.println("username "+name);
                                     }
                                 }

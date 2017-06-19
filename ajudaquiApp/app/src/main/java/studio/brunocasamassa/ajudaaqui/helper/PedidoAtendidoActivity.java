@@ -2,14 +2,17 @@ package studio.brunocasamassa.ajudaaqui.helper;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,11 +30,13 @@ import studio.brunocasamassa.ajudaaqui.R;
 
 public class PedidoAtendidoActivity extends AppCompatActivity {
 
+    private int statusInt;
     private Toolbar toolbar;
     private TextView nomePedido;
     private TextView descricao;
     private TagGroup tagsCategoria;
     private TagGroup tagsGrupo;
+    private ImageView statusImage;
     private Button finalizarPedido;
     private Pedido pedido;
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
@@ -50,6 +55,7 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido_atendido);
 
+        statusImage = (ImageView) findViewById(R.id.status_image);
         toolbar = (Toolbar) findViewById(R.id.toolbar_pedido_atendido);
         nomePedido = (TextView) findViewById(R.id.nome_pedido_atendido);
         descricao = (TextView) findViewById(R.id.descricao_pedido_atendido);
@@ -72,7 +78,23 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
             pedido.setTipo(extra.getString("tipo"));
             pedido.setCriadorId(extra.getString("criadorId"));
 
+
         }
+
+        if (pedido.getStatus() != 0) {
+            int status = pedido.getStatus();
+            System.out.println("status pedido " + pedido.getTitulo() + ": " + status);
+            if (status == 0) {
+                Glide.with(PedidoAtendidoActivity.this).load(R.drawable.tag_aberto).override(274, 274).into(statusImage);
+            } else if (status == 1) {
+                Glide.with(PedidoAtendidoActivity.this).load(R.drawable.tag_emandamento).override(274, 274).into(statusImage);
+            } else if (status == 2) {
+                Glide.with(PedidoAtendidoActivity.this).load(R.drawable.tag_finalizado).override(274, 274).into(statusImage);
+            } else if (status == 3) {
+                Glide.with(PedidoAtendidoActivity.this).load(R.drawable.tag_cancelado).override(274, 274).into(statusImage);
+            }
+        }
+
 
         toolbar.setTitle(pedido.getTitulo().toUpperCase());
 

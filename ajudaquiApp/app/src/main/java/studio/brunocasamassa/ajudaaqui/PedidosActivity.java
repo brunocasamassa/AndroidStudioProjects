@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
+import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaaqui.helper.PedidosTabAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.Preferences;
@@ -82,6 +83,7 @@ public class PedidosActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //todo por put extra premium aqui
                 Intent intent = new Intent(PedidosActivity.this, CriaPedidoActivity.class);
                 startActivity(intent);
             }
@@ -110,6 +112,7 @@ public class PedidosActivity extends AppCompatActivity {
             case R.id.action_exit:
                 //logoutUser();
                 LoginManager.getInstance().logOut();
+                FirebaseConfig.getFirebaseAuthentication().signOut();
                 startActivity(new Intent(PedidosActivity.this, MainActivity.class));
                 Preferences preferences = new Preferences(PedidosActivity.this);
                 preferences.clearSession();

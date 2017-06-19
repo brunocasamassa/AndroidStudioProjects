@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/md_grey_200"
     android:layout_marginBottom="0dp"
     tools:context="studio.brunocasamassa.ajudaaqui.fragments.ContatosFragment">
 
@@ -20,6 +21,7 @@
 
     <ListView
         android:id="@+id/ListContatos"
+        android:clickable="true"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginTop="55dp" />

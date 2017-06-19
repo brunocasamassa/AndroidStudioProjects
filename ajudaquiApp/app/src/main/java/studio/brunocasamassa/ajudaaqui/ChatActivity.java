@@ -15,7 +15,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 import studio.brunocasamassa.ajudaaqui.adapters.MensagemAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
@@ -139,7 +143,6 @@ public class ChatActivity extends AppCompatActivity {
                                 Toast.LENGTH_LONG
                         ).show();
                     }else {
-
                         // salvamos mensagem para o destinatario
                         Boolean retornoMensagemDestinatario = salvarMensagem(idUsuarioDestinatario, idUsuarioRemetente , mensagem );
                         if( !retornoMensagemDestinatario ){
@@ -153,10 +156,16 @@ public class ChatActivity extends AppCompatActivity {
                     }
 
                     // salvamos Conversa para o remetente
+                    DateFormat formatter = new SimpleDateFormat("HH:mm");
+                    formatter.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
+                    String currentTime = formatter.format(new Date());
+                    System.out.println("formatter: "+currentTime);
+
                     Conversa conversa = new Conversa();
                     conversa.setIdUsuario( idUsuarioDestinatario );
                     conversa.setNome( nomeUsuarioDestinatario );
                     conversa.setMensagem( textoMensagem );
+                    conversa.setTime(currentTime);
                     Boolean retornoConversaRemetente = salvarConversa(idUsuarioRemetente, idUsuarioDestinatario, conversa);
                     if( !retornoConversaRemetente ){
                         Toast.makeText(
@@ -172,6 +181,7 @@ public class ChatActivity extends AppCompatActivity {
                         conversa.setIdUsuario( idUsuarioRemetente );
                         conversa.setNome( nomeUsuarioRemetente );
                         conversa.setMensagem(textoMensagem);
+                        conversa.setTime(currentTime);
 
                         Boolean retornoConversaDestinatario = salvarConversa(idUsuarioDestinatario, idUsuarioRemetente, conversa );
                         if( !retornoConversaDestinatario ){

@@ -23,6 +23,7 @@ import java.util.List;
 import studio.brunocasamassa.ajudaaqui.CriaPedidoActivity;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.adapters.PedidosAdapter;
+import studio.brunocasamassa.ajudaaqui.adapters.PedidosSelecionadoAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Pedido;
@@ -75,7 +76,7 @@ public class PedidosEscolhidosFragment extends Fragment {
         pedidosEscolhidos = (ListView) view.findViewById(R.id.pedidos_escolhidos_list);
         System.out.println("GRUPO NA POSICAO "+ pedidos.isEmpty());
 
-        pedidoArrayAdapter = new PedidosAdapter(getActivity(), pedidos);
+        pedidoArrayAdapter = new PedidosSelecionadoAdapter(getActivity(), pedidos);
 
         pedidosEscolhidos.setAdapter(pedidoArrayAdapter);
         /*fab = (FloatingActionButton) view.findViewById(R.id.fab);

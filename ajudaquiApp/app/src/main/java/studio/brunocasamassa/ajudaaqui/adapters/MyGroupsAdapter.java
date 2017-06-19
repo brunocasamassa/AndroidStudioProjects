@@ -60,7 +60,7 @@ public class MyGroupsAdapter extends ArrayAdapter<Grupo> {
             TextView qtdMmebros = (TextView) view.findViewById(R.id.qtd_membros);
             final CircleImageView imgGrupo = (CircleImageView) view.findViewById(R.id.groupImg);
 
-            Grupo grupo = grupos.get( position );
+            final Grupo grupo = grupos.get( position );
             nomeGrupo.setText( grupo.getNome());
             qtdMmebros.setText( "Membros: "+String.valueOf(grupo.getQtdMembros()));
             // DOWNLOAD GROUP IMG FROM STORAGE
@@ -68,6 +68,7 @@ public class MyGroupsAdapter extends ArrayAdapter<Grupo> {
                 @Override
                 public void onSuccess(Uri uri) {
 
+                    grupo.setGrupoImg(uri.toString());
                     Glide.with(getContext()).load(uri).override(68,68).into(imgGrupo);
                     System.out.println("my groups lets seee2"+ uri);
                 }

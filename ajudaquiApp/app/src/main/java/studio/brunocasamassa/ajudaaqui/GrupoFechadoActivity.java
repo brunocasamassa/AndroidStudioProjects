@@ -20,7 +20,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -137,7 +139,16 @@ public class GrupoFechadoActivity extends AppCompatActivity {
         groupName.setText(grupo.getNome());
         qtdMembros.setText(String.valueOf(grupo.getQtdMembros()));
         // groupImg.setImageURI();
-       // Glide.with(GrupoFechadoActivity.this).load(uri2.getResult()).override(68,68).into(groupImg);
+        storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
+
+        storage.child(grupo.getNome()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(GrupoFechadoActivity.this).load(uri).override(68,68).into(groupImg);
+                System.out.println("group image chat "+  uri);
+            }});
+
+
         System.out.println("group URI "+grupo.getGrupoImg());
         descricao.setText(grupo.getDescricao());
         //grupo.save();

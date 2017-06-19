@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -37,6 +38,7 @@ import studio.brunocasamassa.ajudaaqui.GruposActivity;
 import studio.brunocasamassa.ajudaaqui.PedidosActivity;
 import studio.brunocasamassa.ajudaaqui.PerfilActivity;
 import studio.brunocasamassa.ajudaaqui.R;
+import studio.brunocasamassa.ajudaaqui.SobreActivity;
 
 /**
  * Created by bruno on 24/04/2017.
@@ -184,6 +186,7 @@ public class NavigationDrawer {
 
     }
 
+    //nao me julgue
     private void verifyActivity(Activity classe, int position) {
         if (position == 1) {
             Intent intent = new Intent(classe, PedidosActivity.class);
@@ -200,8 +203,10 @@ public class NavigationDrawer {
             classe.startActivity(new Intent(classe, PerfilActivity.class));
         }
         if (position == 9) {
-            Toast.makeText(classe, "Em Breve!", Toast.LENGTH_SHORT).show();
-            //classe.startActivity(new Intent(classe, SobreActivity.class));
+            Intent sobreIntent = new Intent(classe, SobreActivity.class);
+            sobreIntent.putExtra("NOME",nomeUser) ;
+            sobreIntent.putExtra("EMAIL", FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail()) ;
+            classe.startActivity(sobreIntent);
         }
     }
 

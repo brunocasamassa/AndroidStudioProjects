@@ -13,19 +13,18 @@
         android:layout_alignParentTop="true"
         android:background="@color/colorBackground"
         android:visibility="visible"
-        app:titleTextColor="@android:color/black"></android.support.v7.widget.Toolbar>
+        app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/import_group_img"
         android:layout_width="96dp"
         android:layout_height="96dp"
-        android:src="@drawable/adduserlogo"
+        android:src="@drawable/add_group_logo"
         app:civ_border_color="@color/md_white_1000"
         app:civ_border_width="2dp"
         android:layout_marginTop="13dp"
         android:layout_below="@+id/toolbar_create_group"
         android:layout_centerHorizontal="true"
-
     />
 
     <ImageView
@@ -35,14 +34,16 @@
         android:elevation="-10dp"
         app:srcCompat="@drawable/addgroups_icon"
         android:layout_above="@+id/create_group_description"
-        android:layout_alignLeft="@+id/create_group_description"
-        android:layout_alignStart="@+id/create_group_description"
         android:layout_toLeftOf="@+id/create_group_name"
-        android:layout_toStartOf="@+id/create_group_name" />
+        android:layout_marginRight="21dp"
+        android:layout_marginEnd="21dp"
+        android:layout_alignLeft="@+id/create_group_description"
+        android:layout_alignStart="@+id/create_group_description" />
 
     <TextView
         android:layout_width="100dp"
         android:layout_height="20dp"
+        android:textSize="12dp"
         android:text="Insira uma foto"
         android:layout_below="@+id/import_group_img"
         android:layout_alignLeft="@+id/import_group_img"
@@ -54,10 +55,10 @@
         android:layout_width="250dp"
         android:layout_height="40dp"
         android:hint="Nome do Grupo"
+        android:layout_marginTop="34dp"
         android:layout_below="@+id/textView4"
         android:layout_alignRight="@+id/create_group_description"
-        android:layout_alignEnd="@+id/create_group_description"
-        android:layout_marginTop="39dp" />
+        android:layout_alignEnd="@+id/create_group_description" />
 
 
     <EditText
