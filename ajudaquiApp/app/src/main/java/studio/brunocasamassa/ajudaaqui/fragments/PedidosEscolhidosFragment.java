@@ -76,6 +76,7 @@ public class PedidosEscolhidosFragment extends Fragment {
         pedidosEscolhidos = (ListView) view.findViewById(R.id.pedidos_escolhidos_list);
         System.out.println("GRUPO NA POSICAO "+ pedidos.isEmpty());
 
+        pedidosEscolhidos.setDivider(null);
         pedidoArrayAdapter = new PedidosSelecionadoAdapter(getActivity(), pedidos);
 
         pedidosEscolhidos.setAdapter(pedidoArrayAdapter);

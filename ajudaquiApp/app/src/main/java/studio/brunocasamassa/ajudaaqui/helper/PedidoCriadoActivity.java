@@ -1,19 +1,26 @@
 package studio.brunocasamassa.ajudaaqui.helper;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.share.widget.MessageDialog;
 import com.google.firebase.auth.FirebaseAuth;
 
 import me.gujun.android.taggroup.TagGroup;
+import studio.brunocasamassa.ajudaaqui.ConversasActivity;
 import studio.brunocasamassa.ajudaaqui.R;
+import studio.brunocasamassa.ajudaaqui.SobreActivity;
 
 /**
  * Created by bruno on 04/06/2017.
@@ -25,6 +32,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView nomePedido;
     private TextView descricao;
+    private ImageView pedidoChat;
     private TagGroup tagsCategoria;
     private TagGroup tagsGrupo;
     private ImageView statusImage;
@@ -33,11 +41,9 @@ public class PedidoCriadoActivity extends AppCompatActivity {
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private User user = new User();
 
-
     @Override
     protected void onStart() {
         super.onStart();
-
 
     }
 
@@ -46,6 +52,9 @@ public class PedidoCriadoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido_criado);
 
+        Toast.makeText(getApplicationContext(), "Segure um item para alterá-lo", Toast.LENGTH_SHORT).show();
+
+        pedidoChat = (ImageView) findViewById(R.id.chat_pedido);
         statusImage = (ImageView) findViewById(R.id.status_image_criado);
         toolbar = (Toolbar) findViewById(R.id.toolbar_pedido_criado);
         nomePedido = (TextView) findViewById(R.id.nome_pedido_criado);
@@ -53,7 +62,6 @@ public class PedidoCriadoActivity extends AppCompatActivity {
         tagsCategoria = (TagGroup) findViewById(R.id.tags_pedido_categoria_criado);
         tagsGrupo = (TagGroup) findViewById(R.id.tags_pedido_grupo_criado);
         finalizarPedido = (Button) findViewById(R.id.finalizar_pedido_criado);
-
 
         final Bundle extra = getIntent().getExtras();
         if (extra != null) {
@@ -69,9 +77,113 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             pedido.setTipo(extra.getString("tipo"));
             pedido.setCriadorId(extra.getString("criadorId"));
 
-
         }
 
+
+        pedidoChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PedidoCriadoActivity.this, ConversasActivity.class);
+                startActivity(intent);
+                finish();
+
+            }
+        });
+
+
+        descricao.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoCriadoActivity.this);
+
+                alertDialog.setTitle("Escreva abaixo a nova descrição");
+                alertDialog.setMessage("Deseja alterar o status deste pedido?");
+                alertDialog.setCancelable(false);
+
+                final EditText editText = new EditText(PedidoCriadoActivity.this);
+                alertDialog.setView(editText);
+
+                alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                alertDialog.setPositiveButton("Alterar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        pedido.setDescricao(editText.getText().toString());
+                        pedido.save();
+                        Toast.makeText(getApplicationContext(),"Descrição alterada com sucesso", Toast.LENGTH_SHORT).show();
+                    }
+                }).create().show();
+                return false;
+            }
+        });
+
+        statusImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoCriadoActivity.this);
+
+                alertDialog.setTitle("Editar Pedido");
+                alertDialog.setMessage("Deseja alterar o status deste pedido?");
+                alertDialog.setCancelable(false);
+
+                alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        AlertDialog.Builder selectStatus = new AlertDialog.Builder(PedidoCriadoActivity.this);
+                        selectStatus.setTitle("Selecione o novo status do pedido");
+                        selectStatus.setNegativeButton("Cancelar:", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        selectStatus.setItems(new CharSequence[]
+                                        {"Finalizado", "Cancelado", "Em Andamento"},
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // The 'which' argument contains the index position
+                                        // of the selected item
+                                        switch (which) {
+                                            case 0:
+                                                pedido.setStatus(2);
+                                                Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_finalizado).into(statusImage);
+                                                pedido.save();
+                                                break;
+                                            case 1:
+                                                pedido.setStatus(3);
+                                                Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_cancelado).into(statusImage);
+                                                pedido.save();
+                                                break;
+                                            case 2:
+                                                pedido.setStatus(1);
+                                                Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_emandamento).into(statusImage);
+                                                pedido.save();
+                                                break;
+                                        }
+                                    }
+                                }).create().show();
+
+                        selectStatus.setCancelable(false);
+                    }
+
+                }).create().show();
+
+                return false;
+            }
+        });
         if (pedido.getStatus() != 0) {
             int status = pedido.getStatus();
             System.out.println("status pedido " + pedido.getTitulo() + ": " + status);
@@ -114,109 +226,6 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             }
         });
 
-       /* atenderPedido.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoAtendidoActivity.this);
-
-                alertDialog.setTitle("Atender Pedido");
-                alertDialog.setMessage("Deseja atender este pedido?");
-                alertDialog.setCancelable(false);
-
-                alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-                alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        final DatabaseReference firebase = FirebaseConfig.getFireBase().child("Pedidos");
-                        firebase.child(pedido.getIdPedido());
-                        System.out.println("pedido id "+pedido.getIdPedido());
-                        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Pedido dbPedido = dataSnapshot.getValue(Pedido.class);
-                                System.out.println("dbPedido "+ dbPedido.getTitulo());
-                                dbPedido.setCriadorId(pedido.getCriadorId());
-                                dbPedido.setDescricao(pedido.getDescricao());
-                                dbPedido.setIdPedido(pedido.getIdPedido());
-                                dbPedido.setStatus(1);
-                                dbPedido.setTagsCategoria(pedido.getTagsCategoria());
-                                dbPedido.setTipo(pedido.getTipo());
-                                dbPedido.setTitulo(pedido.getTitulo());
-                                dbPedido.setAtendenteId(userKey);
-
-                                firebase.child(pedido.getIdPedido()).setValue(dbPedido);
-
-                                Toast.makeText(PedidoAtendidoActivity.this, "Parabéns, voce já pode conversar com o criador do pedido", Toast.LENGTH_LONG).show();
-                                finish();
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                    System.out.println("error create atendimento "+databaseError);
-                            }
-                        });
-
-
-
-                        final DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
-
-
-                        dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                User usuario = dataSnapshot.child(userKey).getValue(User.class);
-                                user.setId(userKey);
-                                if(usuario.getMedalhas() != null){
-                                user.setMedalhas(usuario.getMedalhas());}
-                                if(usuario.getMsgSolicitacoes() != null){
-                                user.setMsgSolicitacoes(usuario.getMsgSolicitacoes());}
-                                if(usuario.getGrupos() != null){
-                                user.setGrupos(usuario.getGrupos());}
-                                user.setCreditos(usuario.getCreditos());
-                                if(usuario.getEmail() != null){
-                                user.setEmail(usuario.getEmail());}
-                                if(usuario.getName() != null){
-                                user.setName(usuario.getName());}
-                                user.setPremiumUser(usuario.getPremiumUser());
-                                if(usuario.getProfileImageURL() != null){
-                                user.setProfileImageURL(usuario.getProfileImageURL());}
-                                if(usuario.getProfileImg() != null){
-                                user.setProfileImg(usuario.getProfileImg());}
-                                if(usuario.getPedidosFeitos() != null){
-                                user.setPedidosFeitos(usuario.getPedidosFeitos());}
-                                if(usuario.getPontos() != null){
-                                user.setPontos(usuario.getPontos());}
-
-                                ArrayList<String> pedidosAtendidos = new ArrayList<String>();
-                                if(usuario.getPedidosAtendidos()!= null) {
-                                    pedidosAtendidos = usuario.getPedidosAtendidos();
-                                    pedidosAtendidos.add(pedidosAtendidos.size(), extra.getString("idPedido"));
-                                } else pedidosAtendidos.add(0, extra.getString("idPedido"));
-
-                                user.setPedidosAtendidos(pedidosAtendidos);
-                                user.save();
-
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-                }).create().show();
-
-
-            }
-        });
-*/
     }
 }

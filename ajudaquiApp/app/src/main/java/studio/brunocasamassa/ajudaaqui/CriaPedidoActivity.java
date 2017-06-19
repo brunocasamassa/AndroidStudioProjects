@@ -118,7 +118,6 @@ public class CriaPedidoActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Conteudo exclusivo para usuarios Premium, adquira para utilizar o recurso de grupos", Toast.LENGTH_LONG).show();
                 } else
                     startActivityForResult(new Intent(CriaPedidoActivity.this, PedidoAddGroupsList.class), 2);
-
             }
         });
 
@@ -136,7 +135,6 @@ public class CriaPedidoActivity extends AppCompatActivity {
 
             }
         });
-
 
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override

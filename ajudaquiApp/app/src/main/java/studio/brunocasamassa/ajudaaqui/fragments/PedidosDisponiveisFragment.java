@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -20,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import es.dmoral.toasty.Toasty;
 import studio.brunocasamassa.ajudaaqui.CriaPedidoActivity;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.adapters.PedidosAdapter;
@@ -90,6 +92,7 @@ public class PedidosDisponiveisFragment extends Fragment {
 */
         pedidosArrayAdapter = new PedidosAdapter(getContext(), pedidos);
 
+        pedidosView.setDivider(null);
         pedidosView.setAdapter(pedidosArrayAdapter);
 
 
@@ -101,6 +104,18 @@ public class PedidosDisponiveisFragment extends Fragment {
                 User user = dataSnapshot.getValue(User.class);
                 usuario.setPedidosFeitos(user.getPedidosFeitos());
                 premium = user.getPremiumUser();
+                if (user.getMessageNotification() != null && !user.getMessageNotification().equals("no message")) {
+                    //manual toast delay (nao me julgue)
+                    for(int i =0;i<2;i++){
+
+                        Toasty.warning(getContext(), user.getMessageNotification(), Toast.LENGTH_LONG, true).show();
+                    }
+
+                    user.setMessageNotification("no message");
+                    user.setId(userKey);
+                    user.save();
+                }
+
             }
 
             @Override

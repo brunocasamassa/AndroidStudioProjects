@@ -40,6 +40,8 @@ dependencies {
     compile('com.mikepenz:materialdrawer:5.3.6@aar') {
         transitive = true
     }
+
+    compile 'com.github.GrenderG:Toasty:1.2.5'
     compile 'com.android.support:appcompat-v7:25+'
     compile 'com.android.support:design:25+'
     compile 'de.hdodenhof:circleimageview:2.1.0'

@@ -37,6 +37,15 @@ public class User implements DatabaseReference.CompletionListener {
 
     private ArrayList<String> pedidosFeitos;
 
+    public String getMessageNotification() {
+        return MessageNotification;
+    }
+
+    public void setMessageNotification(String messageNotification) {
+        MessageNotification = messageNotification;
+    }
+
+    private String MessageNotification;
     private String senha;
 
     private ArrayList<String> grupos;

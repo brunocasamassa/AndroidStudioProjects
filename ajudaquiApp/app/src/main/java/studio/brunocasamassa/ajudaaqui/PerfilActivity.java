@@ -126,6 +126,8 @@ public class PerfilActivity extends AppCompatActivity {
 
                 System.out.println("Premium user Perfil Activity response "+ premium);
 
+
+
                 if (usuario.getMsgSolicitacoes() != null) {
                     ArrayList<String> msgSolicita = usuario.getMsgSolicitacoes();
                     for (int i = 0; i < msgSolicita.size(); i++) {

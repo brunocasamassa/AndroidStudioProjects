@@ -1,4 +1,4 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,16 +13,13 @@
         android:id="@+id/mygroups_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginRight="6dp"
         android:columnWidth="80dp"
         android:gravity="center"
         android:numColumns="2"
         android:scrollbars="none"
         android:stretchMode="columnWidth"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         tools:layout_editor_absoluteY="0dp" />
 
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

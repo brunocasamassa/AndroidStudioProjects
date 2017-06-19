@@ -22,6 +22,7 @@
         <activity android:name=".LoginActivity"></activity>
         <activity android:name=".TagsList"></activity>
         <activity android:name=".PedidosActivity"></activity>
+        <activity android:name=".FaqActivity"></activity>
         <activity android:name=".helper.PedidoCriadoActivity"></activity>
         <activity android:name=".CriaPedidoActivity"></activity>
         <activity android:name=".PerfilActivity"></activity>

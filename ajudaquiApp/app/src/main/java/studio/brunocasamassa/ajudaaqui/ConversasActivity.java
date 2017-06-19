@@ -119,7 +119,6 @@ public class ConversasActivity extends AppCompatActivity {
         };
 
 
-
         //Adicionar evento de clique na lista
         listview_nomes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -135,15 +134,14 @@ public class ConversasActivity extends AppCompatActivity {
 
             }
         });
-        //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
     }
 
 
     @Override
-
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.menu_sobre, menu);
         return true;
     }
 

@@ -82,6 +82,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
 
         pedidoArrayAdapter = new PedidosSelecionadoAdapter(getActivity(), pedidos);
 
+        meusPedidos.setDivider(null);
         meusPedidos.setAdapter(pedidoArrayAdapter);
 
         /*fab = (FloatingActionButton) view.findViewById(R.id.fab);

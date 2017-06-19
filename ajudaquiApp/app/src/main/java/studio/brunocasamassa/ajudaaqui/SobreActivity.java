@@ -53,6 +53,8 @@ public class SobreActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activvity_sobre);
 
+
+
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal_sobre);
         toolbar.setTitle(getResources().getString(R.string.menu_sobre));
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
@@ -75,6 +77,8 @@ public class SobreActivity extends AppCompatActivity {
         //ArrayList<String> listaSobre = new ArrayList<>();
 
         arrayAdapterSobre = new SobreAdapter(getApplicationContext(), vector);
+
+        listview_nomes.setDivider(null);
 
         listview_nomes.setAdapter(arrayAdapterSobre);
 
@@ -182,7 +186,7 @@ public class SobreActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.menu_sobre, menu);
         return true;
     }
 
