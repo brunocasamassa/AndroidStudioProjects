@@ -65,6 +65,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
     private ValueEventListener valueEventListenerUser;
     private User user = new User();
     private String idAdmin;
+    private ArrayList<String> solicitacoesUser = new ArrayList<>();
     private String userName = new String();
 
 
@@ -96,13 +97,6 @@ public class GrupoFechadoActivity extends AppCompatActivity {
         groupImg = (CircleImageView) findViewById(R.id.groupImg);
         botaoSolicitar = (Button) findViewById(R.id.botaoSolicitar);
 
-        botaoSolicitar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                geraSolicitacao();
-
-            }
-        });
 
         grupo = new Grupo();
 
@@ -110,18 +104,34 @@ public class GrupoFechadoActivity extends AppCompatActivity {
         if (extra != null) {
             userName = extra.getString("userName");
 
-            System.out.println("userName "+userName);
+            System.out.println("userName " + userName);
 
             grupo.setIdAdms(extra.getStringArrayList("idAdmins"));
             grupo.setDescricao(extra.getString("descricao"));
             grupo.setNome(extra.getString("nome"));
             grupo.setQtdMembros(Integer.valueOf(extra.getString("qtdmembros")));
-
+            if(extra.getStringArrayList("gruposSolicitados")!= null){
+                solicitacoesUser.addAll(extra.getStringArrayList("gruposSolicitados"));
+            }
         }
+
+        botaoSolicitar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                System.out.println("Solicitacao user "+solicitacoesUser);
+                if(!solicitacoesUser.contains(grupo.getId())) {
+
+                    geraSolicitacao();
+                } else Toast.makeText(GrupoFechadoActivity.this, "Pedido de solicitação para este grupo já enviado, aguarde resposta dos administradores ", Toast.LENGTH_LONG).show();
+
+            }
+        });
+
 
         final File[] imgFile = new File[1];
         StorageReference storage = FirebaseConfig.getFirebaseStorage().child("groupImage");
-        Task<Uri> uri2 = storage.child(grupo.getNome()+".jpg").getDownloadUrl();/*.addOnSuccessListener(new OnSuccessListener<Uri>() {
+        Task<Uri> uri2 = storage.child(grupo.getNome() + ".jpg").getDownloadUrl();/*.addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 //imgFile[0] = new File(uri.toString());
@@ -141,15 +151,16 @@ public class GrupoFechadoActivity extends AppCompatActivity {
         // groupImg.setImageURI();
         storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
 
-        storage.child(grupo.getNome()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        storage.child(grupo.getNome() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                Glide.with(GrupoFechadoActivity.this).load(uri).override(68,68).into(groupImg);
-                System.out.println("group image chat "+  uri);
-            }});
+                Glide.with(GrupoFechadoActivity.this).load(uri).override(68, 68).into(groupImg);
+                System.out.println("group image chat " + uri);
+            }
+        });
 
 
-        System.out.println("group URI "+grupo.getGrupoImg());
+        System.out.println("group URI " + grupo.getGrupoImg());
         descricao.setText(grupo.getDescricao());
         //grupo.save();
 
@@ -165,7 +176,14 @@ public class GrupoFechadoActivity extends AppCompatActivity {
 
     }
 
+    private void refresh(){
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    };
+
     private void geraSolicitacao() {
+
 
         Log.i("Gera Solicitação", "entrei");
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(GrupoFechadoActivity.this);
@@ -191,94 +209,47 @@ public class GrupoFechadoActivity extends AppCompatActivity {
 
                 final String mensagemSolicitacao = editText.getText().toString();
                 String grupoNome = groupName.getText().toString();
-
-                //Validate message to contact
+                
+                //MESSAGE TO ADMINS
                 if (mensagemSolicitacao.isEmpty()) {
                     Toast.makeText(GrupoFechadoActivity.this, "Preencha o campo de mensagem", Toast.LENGTH_LONG).show();
-                } else {
+                }  else {
 
-                    firebase = FirebaseConfig.getFireBase().child("grupos").child(grupo.getId());
-
-                    Log.i("Gera Solicitação", "antes do evento de leitura");
-
-                    firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Log.i("Gera Solicitação", " admins" + dataSnapshot.getValue());
-                            Grupo dataGrupo = dataSnapshot.getValue(Grupo.class);
-                            grupo.setNome(dataGrupo.getNome());
-                            Log.i("Gera Solicitação", " grupo populado" + dataGrupo.getIdAdms());
-                            ArrayList idAdms = (ArrayList) dataGrupo.getIdAdms();
-                            for (int i = 0; i < idAdms.size(); i++) {
-                                String dataIdAdm = (String) idAdms.get(i);
-                                idAdmin = dataIdAdm;
-                                userData = FirebaseConfig.getFireBase().child("usuarios").child(idAdmin);
-                                userData.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        User dataUser = dataSnapshot.getValue(User.class);
-                                        ArrayList<String> msgSolicitacoes = new ArrayList();
-                                        if(dataUser.getMsgSolicitacoes() != null){
-                                            System.out.println("mensagens solicitação usuario: "+ dataUser.getMsgSolicitacoes());
-                                         user.setMsgSolicitacoes(dataUser.getMsgSolicitacoes());
-                                            System.out.println("mensagens solicitação usuario: "+ user.getMsgSolicitacoes());
-                                        msgSolicitacoes.addAll(user.getMsgSolicitacoes());
-                                            //padrao de mensagem na db
-                                        msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:"+grupo.getNome() + ":USUARIO:"+ userName + " :MENSAGEM: "+ mensagemSolicitacao +":USERKEY:"+userKey);
-
-                                        }else{
-                                            //padrao de mensagem na db
-                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:"+grupo.getNome() + ":USUARIO:"+ userName + " :MENSAGEM: "+ mensagemSolicitacao +":USERKEY:"+userKey);
-                                        }
-
-                                        if(dataUser.getMedalhas() != null){
-                                            user.setMedalhas(dataUser.getMedalhas());}
-                                            user.setMsgSolicitacoes(msgSolicitacoes);
-                                        if(dataUser.getGrupos() != null){
-                                            user.setGrupos(dataUser.getGrupos());}
-                                        user.setCreditos(dataUser.getCreditos());
-                                        if(dataUser.getEmail() != null){
-                                            user.setEmail(dataUser.getEmail());}
-                                        if(dataUser.getName() != null){
-                                            user.setName(dataUser.getName());}
-                                        user.setPremiumUser(dataUser.getPremiumUser());
-                                        if(dataUser.getProfileImageURL() != null){
-                                            user.setProfileImageURL(dataUser.getProfileImageURL());}
-                                        if(dataUser.getProfileImg() != null){
-                                            user.setProfileImg(dataUser.getProfileImg());}
-                                        if(dataUser.getPedidosFeitos() != null){
-                                            user.setPedidosFeitos(dataUser.getPedidosFeitos());}
-                                        if(dataUser.getPedidosAtendidos() != null){
-                                            user.setPedidosAtendidos(dataUser.getPedidosAtendidos());}
-                                        if(dataUser.getPontos() != null){
-                                            user.setPontos(dataUser.getPontos());}
-                                        System.out.println("userName "+userName);
-                                        user.setId(Base64Decoder.encoderBase64(user.getEmail()));
-                                        user.save();
-
-                                        Toast.makeText(GrupoFechadoActivity.this, "Solicitação enviada", Toast.LENGTH_LONG).show();
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
-
-                                finish();
-                            }
+                //insert solicitacao into user(para nao solicitar de novo)
+                DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
+                dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        ArrayList<String> gruposSolicitados = new ArrayList<String>();
+                        user.setGruposSolicitados(user.getGruposSolicitados());
+                        if (user.getGruposSolicitados() != null) {
+                            gruposSolicitados.addAll(user.getGruposSolicitados());
+                            gruposSolicitados.add(gruposSolicitados.size(), grupo.getId());
+                            user.setGruposSolicitados(gruposSolicitados);
+                        } else {
+                            gruposSolicitados.add(0, grupo.getId());
+                            user.setGruposSolicitados(gruposSolicitados);
                         }
+                        user.setId(userKey);
+                        user.save();
+                        Intent intent = new Intent(GrupoFechadoActivity.this, ListaAdmins.class);
+                        intent.putExtra("MESSAGE",mensagemSolicitacao );
+                        intent.putExtra("GROUP ID", grupo.getId());
+                        startActivity(intent);
+                    }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                    }
+                });
 
 
                 }
             }
         }).create().show();
+
     }
 
     @Override

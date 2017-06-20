@@ -45,6 +45,7 @@ public class GruposTodosgruposFragment extends Fragment {
     private FloatingActionButton fab;
     private User usuario = new User();
     private String userName = new String();
+    private ArrayList<String> gruposSolicitadosUser = new ArrayList<>();
 
     public GruposTodosgruposFragment() {
         // Required empty public constructor
@@ -53,13 +54,13 @@ public class GruposTodosgruposFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        firebase.addValueEventListener( valueEventListenerAllGroups );
+        firebase.addValueEventListener(valueEventListenerAllGroups);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        firebase.removeEventListener( valueEventListenerAllGroups );
+        firebase.removeEventListener(valueEventListenerAllGroups);
     }
 
     @Override
@@ -70,13 +71,13 @@ public class GruposTodosgruposFragment extends Fragment {
 
         usuario.setGrupos(GruposMeusgruposFragment.usuario.getGrupos());
         usuario.setName(GruposMeusgruposFragment.usuario.getName());
-        System.out.println("grupos do usuario: "+ usuario.getGrupos());
-        System.out.println("Nome do usuario2: "+ usuario.getName());
+        System.out.println("grupos do usuario: " + usuario.getGrupos());
+        System.out.println("Nome do usuario2: " + usuario.getName());
 
         listView = (GridView) view.findViewById(R.id.allgroups_list);
         adapter = new MyGroupsAdapter(getContext(), grupos);
         //adapter = new AllGroupsAdapter(getActivity(), grupos );
-        listView.setAdapter( adapter);
+        listView.setAdapter(adapter);
 
         /*fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -99,14 +100,14 @@ public class GruposTodosgruposFragment extends Fragment {
                 grupos.clear();
 
                 //Listar contatos
-                for (DataSnapshot dados: dataSnapshot.getChildren()){
+                for (DataSnapshot dados : dataSnapshot.getChildren()) {
                     System.out.println("get children allgroups " + dados);
 
-                    Grupo grupo = dados.getValue( Grupo.class );
-                    System.out.println("grupo "+ grupo.getNome());
+                    Grupo grupo = dados.getValue(Grupo.class);
+                    System.out.println("grupo " + grupo.getNome());
                     //remove user groups
-                    if(usuario.getGrupos() == null || !usuario.getGrupos().contains(grupo.getId())) {
-                        grupos.add( grupo );
+                    if (usuario.getGrupos() == null || !usuario.getGrupos().contains(grupo.getId())) {
+                        grupos.add(grupo);
 
                     }
 
@@ -128,6 +129,10 @@ public class GruposTodosgruposFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 userName = user.getName();
+                if (user.getGruposSolicitados() != null) {
+                    gruposSolicitadosUser.addAll(user.getGruposSolicitados());
+
+                }
             }
 
             @Override
@@ -139,25 +144,25 @@ public class GruposTodosgruposFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            try{
-                Intent intent = new Intent(getActivity(), GrupoFechadoActivity.class);
+                try {
+                    Intent intent = new Intent(getActivity(), GrupoFechadoActivity.class);
 
-                // recupera dados a serem passados
-                Grupo grupo = grupos.get(position);
+                    // recupera dados a serem passados
+                    Grupo grupo = grupos.get(position);
 
-                // enviando dados para grupo activity
-                if(grupo.getIdAdms() != null) {
-                    intent.putExtra("idAdmins", grupo.getIdAdms());
-                }
-                intent.putExtra("userName", userName);
-                intent.putExtra("nome", grupo.getNome() );
-                intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()) );
-                intent.putExtra("descricao", grupo.getDescricao() );
+                    // enviando dados para grupo activity
+                    if (grupo.getIdAdms() != null) {
+                        intent.putExtra("idAdmins", grupo.getIdAdms());
+                    }
+                    intent.putExtra("userName", userName);
+                    intent.putExtra("nome", grupo.getNome());
+                    intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()));
+                    intent.putExtra("descricao", grupo.getDescricao());
+                    intent.putExtra("gruposSolicitados", gruposSolicitadosUser);
 
-                startActivity(intent);
-            }
-                catch (Exception e){
-                    System.out.println("Exception grupos "+ e);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    System.out.println("Exception grupos " + e);
                 }
 
             }
@@ -166,9 +171,7 @@ public class GruposTodosgruposFragment extends Fragment {
         return view;
 
 
-
     }
-
 
 
 }

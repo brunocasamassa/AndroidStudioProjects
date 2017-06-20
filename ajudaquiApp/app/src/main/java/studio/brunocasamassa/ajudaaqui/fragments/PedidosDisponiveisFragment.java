@@ -95,7 +95,6 @@ public class PedidosDisponiveisFragment extends Fragment {
         pedidosView.setDivider(null);
         pedidosView.setAdapter(pedidosArrayAdapter);
 
-
         final DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
 
         databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {

@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
     public static User usuario = new User();
     private StorageReference storage;
     public String facebookImg;
-
+    private static String userName;
+    private User pivotUsuario = new User();
 
     @Override
     public void onStart() {
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
     }
     // ...
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         storage = FirebaseConfig.getFirebaseStorage().child("userImages");
 
         firebaseDatabase = FirebaseConfig.getFireBase().child("usuarios");
+        final Preferences preferencias = new Preferences(MainActivity.this);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -113,12 +116,30 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 System.out.println("usuario conectado: " + firebaseAuth.getCurrentUser());
                 if (user != null) {
-                    Toast.makeText(getApplicationContext(), "signed in " + user.getDisplayName(), Toast.LENGTH_LONG).show();
-                    Preferences preferencias = new Preferences(MainActivity.this);
-                    preferencias.saveData(usuario.getId(), usuario.getName());
-                    System.out.println("usuario name "+usuario.getName());
-                    startActivity(new Intent(MainActivity.this, PedidosActivity.class));
-                    Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
+
+                    DatabaseReference firebase = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(user.getEmail()));
+                    firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User user = dataSnapshot.getValue(User.class);
+                            pivotUsuario.setName(user.getName());
+                            pivotUsuario.setEmail(user.getEmail());
+                            System.out.println("usernAME "+ userName);
+
+                            preferencias.saveData(Base64Decoder.encoderBase64(pivotUsuario.getEmail()), pivotUsuario.getName());
+                            Toast.makeText(getApplicationContext(), "signed in " + preferencias.getNome(), Toast.LENGTH_LONG).show();
+
+                            System.out.println("usuario name "+usuario.getName());
+                            startActivity(new Intent(MainActivity.this, PedidosActivity.class));
+                            //Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
                 } else {
                     // User is signed out
                     Log.d("OUT", "onAuthStateChanged:signed_out");

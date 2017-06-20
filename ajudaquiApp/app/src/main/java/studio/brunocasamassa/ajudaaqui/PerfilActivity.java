@@ -247,6 +247,7 @@ public class PerfilActivity extends AppCompatActivity {
                             }
                         });
 
+                        //ADD USER INTO GROUP
                         DatabaseReference dbGroups = FirebaseConfig.getFireBase().child("grupos").child(Base64Decoder.encoderBase64(grupoSolicitado));
                         dbGroups.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -257,9 +258,11 @@ public class PerfilActivity extends AppCompatActivity {
                                 int qtdMembros = grupo.getQtdMembros() + 1;
                                 grupo.setQtdMembros(qtdMembros);
                                 if (grupo.getIdMembros() != null) {
-                                    idMembros.addAll(user.getGrupos());
-                                    idMembros.add(idMembros.size(), Base64Decoder.encoderBase64(grupoSolicitado));
-                                } else idMembros.add(0, Base64Decoder.encoderBase64(grupoSolicitado));
+                                    idMembros.addAll(grupo.getIdMembros());
+                                    idMembros.add(idMembros.size(), userKeySolicitante);
+                                } else idMembros.add(0, userKeySolicitante);
+
+                                grupo.setIdMembros(idMembros);
 
                                 grupo.save();
                             }
@@ -426,6 +429,17 @@ public class PerfilActivity extends AppCompatActivity {
 
     private void addGroupIntoUser(User user, String grupoSolicitado, String userKeySolicitante) {
 
+        System.out.println("USER SOLICITANTE: "+userKeySolicitante);
+        ArrayList<String> solicitacoes = new ArrayList<>();
+        if(user.getGruposSolicitados() != null){
+            System.out.println("USER SOLICITANTE SOLICITACOES: "+user.getGruposSolicitados());
+            solicitacoes.addAll(user.getGruposSolicitados());
+            System.out.println("USER SOLICITACOES: "+solicitacoes);
+            solicitacoes.remove(Base64Decoder.encoderBase64(grupoSolicitado));
+            user.setGruposSolicitados(solicitacoes);
+            System.out.println("USER SOLICITANTE SOLICITACOES: "+user.getGruposSolicitados());
+            System.out.println("USER SOLICITACOES: "+solicitacoes);
+        }
         ArrayList<String> grupos = new ArrayList<String>();
         if (user.getGrupos() != null) {
             grupos.addAll(user.getGrupos());

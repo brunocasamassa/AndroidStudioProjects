@@ -14,6 +14,7 @@ import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Mensagem;
 import studio.brunocasamassa.ajudaaqui.helper.Preferences;
+import studio.brunocasamassa.ajudaaqui.helper.User;
 
 public class MensagemAdapter extends ArrayAdapter<Mensagem> {
 
@@ -49,6 +50,8 @@ public class MensagemAdapter extends ArrayAdapter<Mensagem> {
                 view = inflater.inflate(R.layout.item_mensagem_direita, parent, false);
             }else {
                 view = inflater.inflate(R.layout.item_mensagem_esquerda, parent, false);
+
+
             }
 
             // Recupera elemento para exibição

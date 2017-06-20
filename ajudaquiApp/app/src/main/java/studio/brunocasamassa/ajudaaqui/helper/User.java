@@ -33,6 +33,10 @@ public class User implements DatabaseReference.CompletionListener {
 
     private String pontos;
 
+    private ArrayList<String> gruposSolicitados;
+
+    private int chatNotification;
+
     private ArrayList<String> pedidosAtendidos;
 
     private ArrayList<String> pedidosFeitos;
@@ -212,4 +216,19 @@ public class User implements DatabaseReference.CompletionListener {
         this.msgSolicitacoes = msgSolicitacoes;
     }
 
+    public int getChatNotification() {
+        return chatNotification;
+    }
+
+    public void setChatNotification(int chatNotification) {
+        this.chatNotification = chatNotification;
+    }
+
+    public ArrayList<String> getGruposSolicitados() {
+        return gruposSolicitados;
+    }
+
+    public void setGruposSolicitados(ArrayList<String> gruposSolicitados) {
+        this.gruposSolicitados = gruposSolicitados;
+    }
 }

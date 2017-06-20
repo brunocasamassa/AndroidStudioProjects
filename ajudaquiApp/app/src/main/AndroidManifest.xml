@@ -21,6 +21,7 @@
 
         <activity android:name=".LoginActivity"></activity>
         <activity android:name=".TagsList"></activity>
+        <activity android:name=".ListaAdmins"></activity>
         <activity android:name=".PedidosActivity"></activity>
         <activity android:name=".FaqActivity"></activity>
         <activity android:name=".helper.PedidoCriadoActivity"></activity>

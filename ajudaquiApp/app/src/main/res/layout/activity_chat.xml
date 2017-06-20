@@ -20,7 +20,8 @@
         android:padding="8dp"
         android:layout_below="@+id/tb_conversa"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"></ListView>
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/ll_mensagem"></ListView>
 
     <LinearLayout
         android:id="@+id/ll_mensagem"
@@ -31,7 +32,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
-
 
         <EditText
             android:id="@+id/edit_mensagem"
