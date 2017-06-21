@@ -19,31 +19,31 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".TagsList"></activity>
-        <activity android:name=".ListaAdmins"></activity>
-        <activity android:name=".PedidosActivity"></activity>
-        <activity android:name=".FaqActivity"></activity>
-        <activity android:name=".helper.PedidoCriadoActivity"></activity>
-        <activity android:name=".CriaPedidoActivity"></activity>
-        <activity android:name=".PerfilActivity"></activity>
-        <activity android:name=".helper.PedidoAtendidoActivity"></activity>
-        <activity android:name=".CadastroActivity"></activity>
-        <activity android:name=".ChatActivity"></activity>
+        <activity android:name=".LoginActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".TagsList" android:screenOrientation="portrait"></activity>
+        <activity android:name=".ListaAdmins" android:screenOrientation="portrait"></activity>
+        <activity android:name=".PedidosActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".FaqActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".helper.PedidoCriadoActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".CriaPedidoActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".PerfilActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".helper.PedidoAtendidoActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".CadastroActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".ChatActivity" android:screenOrientation="portrait"></activity>
 
-        <fragment android:name=".GruposTodosgruposFragment"></fragment>
-        <fragment android:name=".GruposMeusgruposFragment"></fragment>
+        <fragment android:name=".GruposTodosgruposFragment" android:screenOrientation="portrait"></fragment>
+        <fragment android:name=".GruposMeusgruposFragment" android:screenOrientation="portrait"></fragment>
 
-        <activity android:name=".GrupoFechadoActivity"></activity>
-        <activity android:name=".ConfiguracoesActivity"></activity>
-        <activity android:name=".GruposActivity"></activity>
-        <activity android:name=".PedidoAddGroupsList"></activity>
-        <activity android:name=".helper.PedidoActivity"></activity>
-        <activity android:name=".GrupoAbertoActivity"></activity>
-        <activity android:name=".CriaGrupoActivity"></activity>
-        <activity android:name=".SobreActivity"></activity>
-        <activity android:name=".ConversasActivity"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".GrupoFechadoActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".ConfiguracoesActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".GruposActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".PedidoAddGroupsList" android:screenOrientation="portrait"></activity>
+        <activity android:name=".helper.PedidoActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".GrupoAbertoActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".CriaGrupoActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".SobreActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".ConversasActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,6 +1,7 @@
 package studio.brunocasamassa.ajudaaqui;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -27,6 +28,7 @@ import studio.brunocasamassa.ajudaaqui.helper.Conversa;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Mensagem;
 import studio.brunocasamassa.ajudaaqui.helper.Preferences;
+import studio.brunocasamassa.ajudaaqui.helper.User;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -34,6 +36,8 @@ public class ChatActivity extends AppCompatActivity {
     private EditText editMensagem;
     private ImageButton btMensagem;
     private DatabaseReference firebase;
+    private DatabaseReference dbUserDestinatario ;
+    private DatabaseReference dbUserRemetente ;
     private ListView listView;
     private ArrayList<Mensagem> mensagens;
     private ArrayAdapter<Mensagem> adapter;
@@ -69,6 +73,25 @@ public class ChatActivity extends AppCompatActivity {
             String emailDestinatario = extra.getString("email");
             idUsuarioDestinatario = Base64Decoder.encoderBase64( emailDestinatario );
         }
+
+
+        dbUserRemetente = FirebaseConfig.getFireBase().child("usuarios");
+
+        dbUserRemetente.child(idUsuarioRemetente).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user.getChatNotificationCount() != 0){
+                user.setChatNotificationCount(/*user.getChatNotificationCount() - mensagens.size()*/ 0);
+                user.setId(idUsuarioRemetente);
+                user.save();
+            }}
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         // Configura toolbar
         toolbar.setTitle( nomeUsuarioDestinatario );
@@ -142,16 +165,19 @@ public class ChatActivity extends AppCompatActivity {
                                 "Problema ao salvar mensagem, tente novamente!",
                                 Toast.LENGTH_LONG
                         ).show();
+
                     }else {
-                        // salvamos mensagem para o destinatario
+
+                        //salvamos mensagem para o destinatario
                         Boolean retornoMensagemDestinatario = salvarMensagem(idUsuarioDestinatario, idUsuarioRemetente , mensagem );
-                        if( !retornoMensagemDestinatario ){
+                        if ( !retornoMensagemDestinatario ) {
                             Toast.makeText(
                                     ChatActivity.this,
                                     "Problema ao enviar mensagem para o destinatário, tente novamente!",
                                     Toast.LENGTH_LONG
                             ).show();
                         }
+
 
                     }
 
@@ -194,22 +220,16 @@ public class ChatActivity extends AppCompatActivity {
 
                     }
 
-
-
-
                     editMensagem.setText("");
-
 
                 }
 
             }
         });
 
-
-
     }
 
-    private boolean salvarMensagem(String idRemetente, String idDestinatario, Mensagem mensagem){
+    private boolean salvarMensagem(String idRemetente, final String idDestinatario, Mensagem mensagem){
         try {
 
             firebase = FirebaseConfig.getFireBase().child("mensagens");
@@ -219,12 +239,32 @@ public class ChatActivity extends AppCompatActivity {
                     .push()
                     .setValue( mensagem );
 
+            dbUserDestinatario = FirebaseConfig.getFireBase().child("usuarios");
+
+            dbUserDestinatario.child(idUsuarioDestinatario).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    user.setChatNotificationCount(user.getChatNotificationCount() + 1);
+                    user.setId(idUsuarioDestinatario);
+                    user.save();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
             return true;
 
         }catch ( Exception e){
             e.printStackTrace();
             return false;
         }
+
+
+
     }
 
     private boolean salvarConversa(String idRemetente, String idDestinatario, Conversa conversa){

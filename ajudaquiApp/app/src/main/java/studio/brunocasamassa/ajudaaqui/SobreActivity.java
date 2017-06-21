@@ -202,7 +202,7 @@ public class SobreActivity extends AppCompatActivity {
                 //logoutUser();
                 return true;
             case R.id.action_settings:
-                Toast.makeText(SobreActivity.this, "Em Breve", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(SobreActivity.this, ConfiguracoesActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

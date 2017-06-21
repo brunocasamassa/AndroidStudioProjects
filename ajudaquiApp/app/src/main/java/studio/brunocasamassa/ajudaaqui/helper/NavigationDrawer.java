@@ -25,6 +25,7 @@ import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.holder.BadgeStyle;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
@@ -39,6 +40,8 @@ import studio.brunocasamassa.ajudaaqui.PedidosActivity;
 import studio.brunocasamassa.ajudaaqui.PerfilActivity;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.SobreActivity;
+
+import static studio.brunocasamassa.ajudaaqui.R.drawable.round_notification;
 
 /**
  * Created by bruno on 24/04/2017.
@@ -59,31 +62,11 @@ public class NavigationDrawer {
     public String nomeUser;
     private static String idUser;
     private StorageReference storage;
-    private Uri userUri;
 
 
     public void createDrawer(final Activity classe, final Toolbar toolbar, final int posicao) {
 
         storage = FirebaseConfig.getFirebaseStorage().child("userImages");
-
-
-        storage.child(idUser + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-
-                userUri = uri;
-                System.out.println("URI USER no storage " + userUri);
-
-                //Glide.with(classe).load(uri).override(68, 68).into(image);
-                System.out.println("my groups lets seee2 " + uri);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-
-
-            }
-        });
 
         FirebaseUser authentication = FirebaseConfig.getFirebaseAuthentication().getCurrentUser();
         System.out.println("usuario no drawer: " + authentication);
@@ -91,7 +74,6 @@ public class NavigationDrawer {
         final String emailUser = authentication.getEmail();
         System.out.println("email user " + emailUser);
         idUser = Base64Decoder.encoderBase64(emailUser);
-        System.out.println("URI USER " + userUri);
 
         try {
             firebaseData = FirebaseConfig.getFireBase().child("usuarios").child(idUser);
@@ -99,18 +81,37 @@ public class NavigationDrawer {
 
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    int chatNotification;
+                    int groupNotification;
+                    int pedidosNotification;
+
+
                     System.out.println("DATASNAPSHOT " + dataSnapshot);
                     User user = dataSnapshot.getValue(User.class);
                     System.out.println("MAIL " + user.getEmail());
                     System.out.println("NAME " + user.getName());
                     nomeUser = user.getName().toString();
                     premium = user.getPremiumUser();
-                    System.out.println("Premium user drawer in response"+ premium);
+                    System.out.println("Premium user drawer in response" + premium);
                     usuario = user;
 
-                    PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos).withIcon(R.drawable.pedidos_icon);
-                    PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.menu_chats).withIcon(R.drawable.chat_icon);
-                    PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.menu_grupos).withIcon(R.drawable.groups_icon);
+                    chatNotification = user.getChatNotificationCount();
+                    pedidosNotification = user.getPedidosNotificationCount();
+
+                    PrimaryDrawerItem item1;
+                    PrimaryDrawerItem item2;
+                    PrimaryDrawerItem item3;
+
+                    if (pedidosNotification != 0) {
+                        item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos).withIcon(R.drawable.pedidos_icon).withBadge(String.valueOf(pedidosNotification)).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.colorAccent));
+                    } else
+                        item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos).withIcon(R.drawable.pedidos_icon);
+                    if (chatNotification != 0) {
+                        item2 = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.menu_chats).withIcon(R.drawable.chat_icon).withBadge(String.valueOf(chatNotification)).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.colorAccent));
+                    } else
+                        item2 = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.menu_chats).withIcon(R.drawable.chat_icon);
+
+                    item3 = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.menu_grupos).withIcon(R.drawable.groups_icon);
                     PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.menu_perfil).withIcon(R.drawable.profile_icon);
                     PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_sobre).withIcon(R.drawable.sobre_icon);
 
@@ -166,7 +167,6 @@ public class NavigationDrawer {
                 }
 
 
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
@@ -183,7 +183,6 @@ public class NavigationDrawer {
         }
 
 
-
     }
 
     //nao me julgue
@@ -193,7 +192,6 @@ public class NavigationDrawer {
             classe.startActivity(intent);
         }
         if (position == 3) {
-            //Toast.makeText(classe, "Em Breve!", Toast.LENGTH_SHORT).show();
             classe.startActivity(new Intent(classe, ConversasActivity.class));
         }
         if (position == 5) {
@@ -204,8 +202,8 @@ public class NavigationDrawer {
         }
         if (position == 9) {
             Intent sobreIntent = new Intent(classe, SobreActivity.class);
-            sobreIntent.putExtra("NOME",nomeUser) ;
-            sobreIntent.putExtra("EMAIL", FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail()) ;
+            sobreIntent.putExtra("NOME", nomeUser);
+            sobreIntent.putExtra("EMAIL", FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
             classe.startActivity(sobreIntent);
         }
     }

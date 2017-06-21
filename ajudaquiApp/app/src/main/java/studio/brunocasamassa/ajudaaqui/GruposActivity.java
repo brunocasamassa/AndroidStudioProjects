@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ConfigurationHelper;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -117,7 +118,7 @@ public class GruposActivity extends AppCompatActivity {
                 preferences.clearSession();
                 return true;
             case R.id.action_settings:
-                Toast.makeText(GruposActivity.this, "Em Breve", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(GruposActivity.this, ConfiguracoesActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

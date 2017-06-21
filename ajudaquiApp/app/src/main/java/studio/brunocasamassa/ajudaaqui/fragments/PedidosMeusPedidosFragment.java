@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +35,9 @@ import studio.brunocasamassa.ajudaaqui.helper.Pedido;
 import studio.brunocasamassa.ajudaaqui.helper.PedidoAtendidoActivity;
 import studio.brunocasamassa.ajudaaqui.helper.PedidoCriadoActivity;
 import studio.brunocasamassa.ajudaaqui.helper.User;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -47,6 +51,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
     private FloatingActionButton fab;
     private ValueEventListener valueEventListenerPedidos;
     private User usuario = new User();
+    private DatabaseReference dbUser;
 
 
     public PedidosMeusPedidosFragment() {
@@ -57,6 +62,25 @@ public class PedidosMeusPedidosFragment extends Fragment {
     public void onStart() {
         super.onStart();
         databasePedidos.addListenerForSingleValueEvent(valueEventListenerPedidos);
+        dbUser = FirebaseConfig.getFireBase().child("usuarios");
+
+        dbUser.child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user.getPedidosNotificationCount() != 0){
+                    //Toast.makeText(getApplicationContext(),"Parabens, voce possui um pedido atendido", Toast.LENGTH_LONG).show();
+                    user.setPedidosNotificationCount(/*user.getChatNotificationCount() - mensagens.size()*/ 0);
+                    user.setId(userKey);
+                    user.save();
+                }}
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
 //      dbGroups.addListenerForSingleValueEvent(valueEventListenerAllGroups);
 

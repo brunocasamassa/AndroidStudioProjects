@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -66,8 +67,8 @@ import studio.brunocasamassa.ajudaaqui.helper.User;
 public class MainActivity extends AppCompatActivity {
 
     private ProfileTracker mProfileTracker;
-    private Button cadastrar;
-    private Button login;
+    private ImageButton cadastrar;
+    private ImageButton login;
     private LoginButton btnLogin;
     private CallbackManager callbackManager;
     public static LoginResult lr;
@@ -149,8 +150,8 @@ public class MainActivity extends AppCompatActivity {
         };
 
 
-        cadastrar = (Button) findViewById(R.id.entrar);
-        login = (Button) findViewById(R.id.loginButton);
+        cadastrar = (ImageButton) findViewById(R.id.entrar);
+        login = (ImageButton) findViewById(R.id.loginButton);
 
         cadastrar.setOnClickListener(new View.OnClickListener() {
             @Override

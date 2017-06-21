@@ -39,6 +39,7 @@ public class PedidoActivity extends AppCompatActivity{
  private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
  private User user = new User();
  private DatabaseReference firebase;
+ private DatabaseReference dbUserDestinatario;
 
 
     @Override
@@ -205,6 +206,23 @@ public class PedidoActivity extends AppCompatActivity{
                                     conversa.setNome( pedido.getTitulo() );
                                     conversa.setMensagem("bem vindo");
 
+                                    dbUserDestinatario = FirebaseConfig.getFireBase().child("usuarios");
+
+                                    dbUserDestinatario.child(criadorId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            User user = dataSnapshot.getValue(User.class);
+                                            user.setPedidosNotificationCount(user.getPedidosNotificationCount() + 1);
+                                            user.setId(criadorId);
+                                            user.save();
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+
                                     Boolean retornoConversaDestinatario = salvarConversa(criadorId, userKey, conversa );
                                     if( !retornoConversaDestinatario ){
                                         System.out.println("PROBLEMA AO CRIAR CAMPO DE CONVERSA PARA O CRIADOR DO PEDIDO");
@@ -227,13 +245,14 @@ public class PedidoActivity extends AppCompatActivity{
 
     }
 
-
     private boolean salvarConversa(String idRemetente, String idDestinatario, Conversa conversa){
         try {
             firebase = FirebaseConfig.getFireBase().child("conversas");
             firebase.child( idRemetente )
                     .child( idDestinatario )
                     .setValue( conversa );
+
+
 
             return true;
 

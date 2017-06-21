@@ -7,7 +7,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by bruno on 26/04/2017.
@@ -35,7 +34,10 @@ public class User implements DatabaseReference.CompletionListener {
 
     private ArrayList<String> gruposSolicitados;
 
-    private int chatNotification;
+    private int chatNotificationCount;
+
+
+    private int pedidosNotificationCount;
 
     private ArrayList<String> pedidosAtendidos;
 
@@ -216,12 +218,12 @@ public class User implements DatabaseReference.CompletionListener {
         this.msgSolicitacoes = msgSolicitacoes;
     }
 
-    public int getChatNotification() {
-        return chatNotification;
+    public int getChatNotificationCount() {
+        return chatNotificationCount;
     }
 
-    public void setChatNotification(int chatNotification) {
-        this.chatNotification = chatNotification;
+    public void setChatNotificationCount(int chatNotificationCount) {
+        this.chatNotificationCount = chatNotificationCount;
     }
 
     public ArrayList<String> getGruposSolicitados() {
@@ -230,5 +232,13 @@ public class User implements DatabaseReference.CompletionListener {
 
     public void setGruposSolicitados(ArrayList<String> gruposSolicitados) {
         this.gruposSolicitados = gruposSolicitados;
+    }
+
+    public int getPedidosNotificationCount() {
+        return pedidosNotificationCount;
+    }
+
+    public void setPedidosNotificationCount(int pedidosNotificationCount) {
+        this.pedidosNotificationCount = pedidosNotificationCount;
     }
 }

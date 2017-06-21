@@ -471,7 +471,7 @@ public class PerfilActivity extends AppCompatActivity {
                 preferences.clearSession();
                 return true;
             case R.id.action_settings:
-                Toast.makeText(PerfilActivity.this, "Em Produção", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(PerfilActivity.this, ConfiguracoesActivity.class));
                 return true;
 
             default:

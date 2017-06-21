@@ -13,7 +13,7 @@
         android:layout_alignParentTop="true"
         android:background="@color/colorBackground"
         android:visibility="visible"
-        app:titleTextColor="@android:color/black"
+        app:titleTextColor="@android:color/white"
         tools:layout_editor_absoluteY="0dp"
         android:layout_marginRight="-21dp"
         app:layout_constraintRight_toRightOf="parent"

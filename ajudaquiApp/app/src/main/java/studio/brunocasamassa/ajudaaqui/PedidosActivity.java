@@ -1,10 +1,6 @@
 package studio.brunocasamassa.ajudaaqui;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -13,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,8 +18,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
+import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaaqui.helper.PedidosTabAdapter;
@@ -40,11 +41,13 @@ public class PedidosActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
     private int premium;
+    private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
 
     private User usuario;
 
     private static NavigationDrawer navigator = new NavigationDrawer();
     private FloatingActionButton fab;
+    private DatabaseReference dbUser;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -59,6 +62,23 @@ public class PedidosActivity extends AppCompatActivity {
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
 
+        dbUser = FirebaseConfig.getFireBase().child("usuarios");
+
+        dbUser.child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user.getPedidosNotificationCount() != 0){
+                    Toast.makeText(getApplicationContext(),"Parabens, voce possui um pedido atendido", Toast.LENGTH_LONG).show();
+
+                }}
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
         /*
         loginResult = MainActivity.lr;
@@ -71,10 +91,10 @@ public class PedidosActivity extends AppCompatActivity {
 
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
         viewPager = (ViewPager) findViewById(R.id.vp_pagina);
+
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.stl_tabs);
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setSelectedIndicatorColors(ContextCompat.getColor(this, R.color.colorAccent));
-
 
         PedidosTabAdapter pedidosTabAdapter = new PedidosTabAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pedidosTabAdapter);
@@ -89,14 +109,9 @@ public class PedidosActivity extends AppCompatActivity {
             }
         });
 
-
         navigator.createDrawer(PedidosActivity.this, toolbar ,0);
 
-
-
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
