@@ -134,7 +134,7 @@ public class PedidosActivity extends AppCompatActivity {
                 return true;
             case R.id.action_settings:
 
-                Toast.makeText(PedidosActivity.this, "Em Produção", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(PedidosActivity.this, ConfiguracoesActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
