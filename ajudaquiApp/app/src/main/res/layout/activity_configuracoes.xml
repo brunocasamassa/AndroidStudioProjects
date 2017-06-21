@@ -42,7 +42,7 @@
     <EditText
         android:layout_width="259dp"
         android:layout_height="57dp"
-        android:text="userName"
+        android:hint="userName"
         android:id="@+id/name_config"
         tools:layout_editor_absoluteY="339dp"
         tools:layout_editor_absoluteX="27dp"
