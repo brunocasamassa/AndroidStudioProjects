@@ -13,6 +13,7 @@
         android:layout_alignRight="@+id/create_group_description"
         android:layout_below="@+id/toolbar_create_group"
         android:hint="Nome do Pedido"
+        android:maxLength="17"
         android:textColorHint="@color/md_grey_300"
         android:textAlignment="viewStart"
         android:textColor="@color/md_grey_300"

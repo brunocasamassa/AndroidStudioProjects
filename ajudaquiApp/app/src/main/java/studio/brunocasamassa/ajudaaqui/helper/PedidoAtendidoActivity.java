@@ -44,11 +44,9 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private User user = new User();
 
-
     @Override
     protected void onStart() {
         super.onStart();
-
 
     }
 
@@ -56,7 +54,6 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido_atendido);
-
 
         statusImage = (ImageView) findViewById(R.id.status_image);
         toolbar = (Toolbar) findViewById(R.id.toolbar_pedido_atendido);
@@ -144,9 +141,8 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
                 alertDialog.setPositiveButton("Desistir", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(PedidoAtendidoActivity.this, "Em processo", Toast.LENGTH_LONG).show();
 
-                        pedido.setStatus(3);
+                        pedido.setStatus(0);
                         pedido.setAtendenteId("");
                         pedido.save();
 
@@ -193,11 +189,15 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
                             }
                         });
 
+                        Toast.makeText(PedidoAtendidoActivity.this, "Voce Desistiu do pedido", Toast.LENGTH_LONG).show();
+                        finish();
+
                     }
                 }).create().show();
 
 
             }
+
         });
 
     }

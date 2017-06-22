@@ -32,7 +32,6 @@ import java.io.IOException;
 import de.hdodenhof.circleimageview.CircleImageView;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
-import studio.brunocasamassa.ajudaaqui.helper.PedidoAtendidoActivity;
 import studio.brunocasamassa.ajudaaqui.helper.User;
 
 /**
@@ -49,6 +48,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
     private StorageReference storage = FirebaseConfig.getFirebaseStorage();
     private DatabaseReference dbUser = FirebaseConfig.getFireBase();
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
+    private boolean photoWasChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +64,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
+                name.setText(user.getName());
                 if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
                     Glide.with(ConfiguracoesActivity.this).load(user.getProfileImg()).into(circleImageView);
                 } else {
@@ -87,7 +88,6 @@ public class ConfiguracoesActivity extends AppCompatActivity {
             }
         });
 
-
         cam_config.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +97,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 // Always show the chooser (if there are multiple options available)
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+                photoWasChanged = true;
             }
         });
 
@@ -130,10 +131,16 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                                     user.setProfileImg(null);
                                 }
                                 user.setId(userKey);
-                                user.setName(name.getText().toString());
-                                user.save();
-                                uploadImages();
-                                Toast.makeText(getApplicationContext(),"Alteraçoes Salvas", Toast.LENGTH_SHORT).show();
+                                if (!name.getText().equals(user.getName())) {
+                                    user.setName(name.getText().toString());
+                                    user.save();
+                                }else System.out.println("username nao mudad0");
+
+                                if (photoWasChanged) {
+                                    uploadImages();
+                                    System.out.println("photo mudada");
+                                } else System.out.println("photo nao mudada");
+                                Toast.makeText(getApplicationContext(), "Alteraçoes Salvas", Toast.LENGTH_SHORT).show();
                                 finish();
                             }
 

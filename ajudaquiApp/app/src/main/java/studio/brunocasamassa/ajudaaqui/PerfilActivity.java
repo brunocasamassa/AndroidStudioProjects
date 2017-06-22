@@ -79,6 +79,7 @@ public class PerfilActivity extends AppCompatActivity {
     private String userName;
     private String encodedKeyRequestedUser;
     private String message;
+    private ImageView premiumTag;
     public static User usuarioPivot = new User();
     private ArrayList<Integer> badgesList = new ArrayList<>();
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
@@ -95,6 +96,7 @@ public class PerfilActivity extends AppCompatActivity {
         LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
         profileImg = (CircleImageView) findViewById(R.id.profileImg);
         profileName = (TextView) findViewById(R.id.profileName);
+        premiumTag = (ImageView) findViewById(R.id.premiumTag);
         pedidosAtendidos = (TextView) findViewById(R.id.perfilPedidosAtendidos);
         pedidosFeitos = (TextView) findViewById(R.id.perfilPedidosFeitos);
         pontosConquistados = (TextView) findViewById(R.id.perfilPontosConquistados);
@@ -123,6 +125,10 @@ public class PerfilActivity extends AppCompatActivity {
                 int respPremium = usuario.getPremiumUser();
 
                 premium = respPremium;
+
+                if(premium == 1){
+                    Glide.with(PerfilActivity.this).load(R.drawable.premium_icon).into(premiumTag);
+                }
 
                 System.out.println("Premium user Perfil Activity response "+ premium);
 

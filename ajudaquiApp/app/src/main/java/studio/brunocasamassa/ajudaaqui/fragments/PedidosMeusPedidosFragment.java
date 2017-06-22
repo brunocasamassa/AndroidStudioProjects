@@ -167,7 +167,6 @@ public class PedidosMeusPedidosFragment extends Fragment {
 
             }
 
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 pedidos.clear();
@@ -179,10 +178,14 @@ public class PedidosMeusPedidosFragment extends Fragment {
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            Intent intent = new Intent(getActivity(), PedidoCriadoActivity.class);
+        Intent intent = new Intent(getActivity(), PedidoCriadoActivity.class);
 
         // recupera dados a serem passados
         Pedido selectedPedido = pedidos.get(position);
+
+        if(selectedPedido.getStatus() == 2){//finalizado
+            Toast.makeText(getApplicationContext(),"Pedido finalizado", Toast.LENGTH_SHORT).show();
+        } else{
 
         // enviando dados para grupo activity
         // enviando dados para pedido activity
@@ -192,12 +195,13 @@ public class PedidosMeusPedidosFragment extends Fragment {
         intent.putExtra("idPedido", selectedPedido.getIdPedido());
         intent.putExtra("criadorId", selectedPedido.getCriadorId());
         intent.putExtra("tipo", selectedPedido.getTipo());
+        intent.putExtra("atendenteId", selectedPedido.getAtendenteId());
         if (selectedPedido.getGrupo() != null) {
             intent.putExtra("tagsGrupo", selectedPedido.getGrupo());
         }
         intent.putExtra("descricao", selectedPedido.getDescricao());
 
-        startActivity(intent);
+        startActivity(intent);}
 
     }
 });

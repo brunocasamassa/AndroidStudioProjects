@@ -64,6 +64,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
         if (groupCaptured != null) {
             grupos.setTags(groupCaptured);
         }
+
         System.out.println("vamos ver " + groupCaptured);
 
     }
@@ -74,9 +75,9 @@ public class CriaPedidoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_criar_pedido);
-        Bundle extras = new Bundle();
+        Bundle extras = getIntent().getExtras();
         premium = (extras.getInt("premium")); //TODO =0 EVEN FIREBASE =1
-        System.out.println("PREMIUMM " + premium);
+        System.out.println("PREMIUM RECEBE" + premium);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_create_group);
         toolbar.setTitle("Criar Pedido");
@@ -99,6 +100,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
         createButton = (Button) findViewById(R.id.create_pedido_button);
         addTagButton = (ImageButton) findViewById((R.id.add_tag_button));
         addGroupButton = (ImageButton) findViewById((R.id.addGroup_tag_button));
+
 
         add_grupos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -205,6 +207,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
         if (groupCaptured != null) {
             pedido.setGrupo(groupCaptured);
         }
+
         pedido.setDescricao(descricao.getText().toString());
         pedido.setTitulo(pedidoName.getText().toString());
         pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo()));
@@ -284,17 +287,18 @@ public class CriaPedidoActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                System.out.println("erro database "+databaseError);
+                System.out.println("erro database " + databaseError);
 
             }
         });
 
-    };
+    }
+
+    ;
 
     private void pedidoSaveIntoUser(boolean b) {
         if (b) {
             DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
-
             databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {

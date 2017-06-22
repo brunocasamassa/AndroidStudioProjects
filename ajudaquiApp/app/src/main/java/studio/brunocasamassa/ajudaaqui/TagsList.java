@@ -95,6 +95,7 @@ public class TagsList extends AppCompatActivity {
                             System.out.println("seleceted tag " + selectedTag);
                             Intent intent = new Intent(TagsList.this, CriaPedidoActivity.class);
                             intent.putExtra("result", selectedTag);
+
                             setResult(Activity.RESULT_OK, intent);
                             finish();
 

@@ -30,7 +30,7 @@ public class User implements DatabaseReference.CompletionListener {
 
     private int creditos =3;
 
-    private String pontos;
+    private int pontos;
 
     private ArrayList<String> gruposSolicitados;
 
@@ -102,11 +102,11 @@ public class User implements DatabaseReference.CompletionListener {
     }
 
 
-    public String getPontos() {
+    public int getPontos() {
         return pontos;
     }
 
-    public void setPontos(String pontos) {
+    public void setPontos(int pontos) {
         this.pontos = pontos;
     }
 

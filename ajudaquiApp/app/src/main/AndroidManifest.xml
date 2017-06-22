@@ -22,6 +22,7 @@
         <activity android:name=".LoginActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".TagsList" android:screenOrientation="portrait"></activity>
         <activity android:name=".ListaAdmins" android:screenOrientation="portrait"></activity>
+        <activity android:name=".StarsBar" android:screenOrientation="portrait"></activity>
         <activity android:name=".PedidosActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".FaqActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".helper.PedidoCriadoActivity" android:screenOrientation="portrait"></activity>
@@ -50,6 +51,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         [
     </application>
 

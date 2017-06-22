@@ -130,9 +130,9 @@ public class ListaAdmins extends AppCompatActivity {
                                 if (dataUser.getPedidosAtendidos() != null) {
                                     user.setPedidosAtendidos(dataUser.getPedidosAtendidos());
                                 }
-                                if (dataUser.getPontos() != null) {
+
                                     user.setPontos(dataUser.getPontos());
-                                }
+
                                 System.out.println("userName " + adminSelected);
                                 user.setId(Base64Decoder.encoderBase64(user.getEmail()));
 

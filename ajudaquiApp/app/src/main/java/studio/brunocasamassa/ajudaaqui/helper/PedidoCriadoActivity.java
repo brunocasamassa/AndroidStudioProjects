@@ -14,13 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.facebook.share.widget.MessageDialog;
 import com.google.firebase.auth.FirebaseAuth;
 
 import me.gujun.android.taggroup.TagGroup;
 import studio.brunocasamassa.ajudaaqui.ConversasActivity;
 import studio.brunocasamassa.ajudaaqui.R;
-import studio.brunocasamassa.ajudaaqui.SobreActivity;
+import studio.brunocasamassa.ajudaaqui.StarsBar;
 
 /**
  * Created by bruno on 04/06/2017.
@@ -40,6 +39,8 @@ public class PedidoCriadoActivity extends AppCompatActivity {
     private Pedido pedido;
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private User user = new User();
+    private String keyAtendente;
+    private boolean trigger = false;
 
     @Override
     protected void onStart() {
@@ -76,9 +77,9 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             pedido.setStatus(extra.getInt("status"));
             pedido.setTipo(extra.getString("tipo"));
             pedido.setCriadorId(extra.getString("criadorId"));
+            pedido.setAtendenteId(extra.getString("atendenteId"));
 
         }
-
 
         pedidoChat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,8 +97,8 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             public boolean onLongClick(View v) {
                 final AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoCriadoActivity.this);
 
-                alertDialog.setTitle("Escreva abaixo a nova descrição");
-                alertDialog.setMessage("Deseja alterar o status deste pedido?");
+                alertDialog.setTitle("Deseja alterar o status deste pedido?");
+                alertDialog.setMessage("Escreva abaixo a nova descrição");
                 alertDialog.setCancelable(false);
 
                 final EditText editText = new EditText(PedidoCriadoActivity.this);
@@ -115,7 +116,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         pedido.setDescricao(editText.getText().toString());
                         pedido.save();
-                        Toast.makeText(getApplicationContext(),"Descrição alterada com sucesso", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Descrição alterada com sucesso", Toast.LENGTH_SHORT).show();
                     }
                 }).create().show();
                 return false;
@@ -151,23 +152,18 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                             }
                         });
                         selectStatus.setItems(new CharSequence[]
-                                        {"Finalizado", "Cancelado", "Em Andamento"},
+                                        {"Cancelado", "Em Andamento"},
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         // The 'which' argument contains the index position
                                         // of the selected item
                                         switch (which) {
                                             case 0:
-                                                pedido.setStatus(2);
-                                                Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_finalizado).into(statusImage);
-                                                pedido.save();
-                                                break;
-                                            case 1:
                                                 pedido.setStatus(3);
                                                 Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_cancelado).into(statusImage);
                                                 pedido.save();
                                                 break;
-                                            case 2:
+                                            case 1:
                                                 pedido.setStatus(1);
                                                 Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_emandamento).into(statusImage);
                                                 pedido.save();
@@ -222,10 +218,69 @@ public class PedidoCriadoActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+
+                if(pedido.getStatus() == 0){
+                    Toast.makeText(getApplicationContext(), "Voce nao pode finalizar um pedido aberto", Toast.LENGTH_SHORT).show();
+
+                }
+                else {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoCriadoActivity.this);
+
+                alertDialog.setTitle("Finalizar Pedido");
+                alertDialog.setMessage("Deseja finalizar este pedido?");
+                alertDialog.setCancelable(false);
+
+                alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        trigger = true;
+                        startStars(trigger);
+
+                    }
+                }).create().show();
+
+
+/*
                 Toast.makeText(PedidoCriadoActivity.this, "Em processo", Toast.LENGTH_LONG).show();
+*/
             }
-        });
+        }});
+
 
 
     }
+
+    private void startStars(boolean trigger) {
+
+        if (trigger){
+            System.out.println("trigger entrado");
+            keyAtendente = pedido.getAtendenteId();
+            Intent intent = new Intent(PedidoCriadoActivity.this, StarsBar.class);
+            intent.putExtra("keyAtendente", keyAtendente);
+            System.out.println("key nos pedidos "+ keyAtendente);
+            startActivity(intent);
+
+            pedido.setStatus(2);
+            pedido.save();
+            finish();
+        }
+    }
+/*
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                Toast.makeText(getApplicationContext(), rating, Toast.LENGTH_LONG).show();
+            }
+        }
+    }*/
 }

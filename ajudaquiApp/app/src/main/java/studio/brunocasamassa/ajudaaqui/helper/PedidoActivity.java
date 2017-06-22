@@ -175,8 +175,7 @@ public class PedidoActivity extends AppCompatActivity{
                                 user.setProfileImg(usuario.getProfileImg());}
                                 if(usuario.getPedidosFeitos() != null){
                                 user.setPedidosFeitos(usuario.getPedidosFeitos());}
-                                if(usuario.getPontos() != null){
-                                user.setPontos(usuario.getPontos());}
+                                user.setPontos(usuario.getPontos());
 
 
                                 ArrayList<String> pedidosAtendidos = new ArrayList<String>();
@@ -244,6 +243,7 @@ public class PedidoActivity extends AppCompatActivity{
         });
 
     }
+
 
     private boolean salvarConversa(String idRemetente, String idDestinatario, Conversa conversa){
         try {

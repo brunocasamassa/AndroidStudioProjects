@@ -69,9 +69,26 @@ public class PedidosActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if(user.getPedidosNotificationCount() != 0){
+
                     Toast.makeText(getApplicationContext(),"Parabens, voce possui um pedido atendido", Toast.LENGTH_LONG).show();
 
-                }}
+                }
+
+                final int premiumUser = user.getPremiumUser();
+                fab = (FloatingActionButton) findViewById(R.id.fab);
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //todo por put extra premium aqui
+                        Intent intent = new Intent(PedidosActivity.this, CriaPedidoActivity.class);
+                        intent.putExtra("premium", premiumUser);
+                        System.out.println("PREMIUM PASSA" + premiumUser);
+                        startActivity(intent);
+                    }
+                });
+
+
+            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -79,15 +96,6 @@ public class PedidosActivity extends AppCompatActivity {
             }
         });
 
-
-        /*
-        loginResult = MainActivity.lr;
-        Profile profile = Profile.getCurrentProfile();
-        System.out.println("PROFILE: "+ profile);
-
-        String userid = loginResult.getAccessToken().getUserId();
-        String name = message(profile);
-        user.setName(name);*/
 
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
         viewPager = (ViewPager) findViewById(R.id.vp_pagina);
@@ -99,15 +107,7 @@ public class PedidosActivity extends AppCompatActivity {
         PedidosTabAdapter pedidosTabAdapter = new PedidosTabAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pedidosTabAdapter);
         slidingTabLayout.setViewPager(viewPager);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //todo por put extra premium aqui
-                Intent intent = new Intent(PedidosActivity.this, CriaPedidoActivity.class);
-                startActivity(intent);
-            }
-        });
+
 
         navigator.createDrawer(PedidosActivity.this, toolbar ,0);
 
