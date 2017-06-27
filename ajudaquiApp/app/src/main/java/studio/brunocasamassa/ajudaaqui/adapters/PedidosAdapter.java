@@ -45,7 +45,6 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> {
     private Preferences preferences;
     private String facebookPhoto;
 
-
     private MainActivity mainActivity = new MainActivity();
 
     public PedidosAdapter(Context c, ArrayList<Pedido> objects) {
@@ -57,8 +56,6 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-
-
         View view = null;
 
         // Verifica se a lista está vazia
@@ -68,6 +65,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> {
             if(mainActivity.facebookImg != null) {
                 facebookPhoto = mainActivity.facebookImg;
             }
+
             System.out.println("facebook img pedido: "+ facebookPhoto);
             // inicializar objeto para montagem da view
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
@@ -87,6 +85,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> {
             } else if (pedido.getGrupo() == null) {
                 storage = FirebaseConfig.getFirebaseStorage().child("userImages");
             }*/
+
             storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
             nomePedido.setText(pedido.getTitulo());
             System.out.println("DADOS PEDIDO NO ADAPTER: " + pedido.getTitulo());

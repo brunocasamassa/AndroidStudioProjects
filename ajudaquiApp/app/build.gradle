@@ -1,4 +1,4 @@
-    apply plugin: 'com.android.application'
+apply plugin: 'com.android.application'
 android {
 
     compileSdkVersion 25
@@ -42,8 +42,8 @@ dependencies {
     }
 
     compile 'com.github.GrenderG:Toasty:1.2.5'
-    compile 'com.android.support:appcompat-v7:25+'
-    compile 'com.android.support:design:25+'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.facebook.android:facebook-android-sdk:4.+'
     compile 'com.google.firebase:firebase-database:9.6.1'
@@ -55,10 +55,10 @@ dependencies {
     compile 'org.solovyev.android.views:linear-layout-manager:0.5@aar'
     compile 'com.github.rtoshiro.mflibrary:mflibrary:1.0.0'
     compile 'com.android.support:gridlayout-v7:23.1.1'
-    compile 'com.android.support:recyclerview-v7:21.0.+'
+    compile 'com.android.support:recyclerview-v7:21.0.3'
     compile 'me.gujun.android.taggroup:library:1.4@aar'
-    compile 'com.android.support:support-v4:23.4.0'
-    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

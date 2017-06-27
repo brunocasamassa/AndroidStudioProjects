@@ -36,55 +36,48 @@ public class StarsBar extends AppCompatActivity {
         button = (Button) findViewById(R.id.button1);
 
 
-
         Bundle extras = getIntent().getExtras();
         final String atendenteKey = extras.getString("keyAtendente");
         System.out.println("key nas stars " + atendenteKey);
 
-            //Performing action on Button Click
-            Drawable progress = ratingbar1.getProgressDrawable();
-            DrawableCompat.setTint(progress, Color.BLUE);
+        //Performing action on Button Click
+        Drawable progress = ratingbar1.getProgressDrawable();
+        DrawableCompat.setTint(progress, Color.BLUE);
 
-            button.setOnClickListener(new OnClickListener() {
+        button.setOnClickListener(new OnClickListener() {
 
-                @Override
-                public void onClick(View arg0) {
-                    //Getting the rating and displaying it on the toast
-                    String rating = String.valueOf(ratingbar1.getRating());
-                    final int ratingPoints = (int) (ratingbar1.getRating() * 2);
+            @Override
+            public void onClick(View arg0) {
+                //Getting the rating and displaying it on the toast
+                String rating = String.valueOf(ratingbar1.getRating());
+                final int ratingPoints = (int) (ratingbar1.getRating() * 2);
                 /*Intent intent = new Intent(StarsBar.this, PedidoCriadoActivity.class);
                 intent.putExtra("groupSelected", rating);
                 setResult(Activity.RESULT_OK, intent);
                 */
-                    DatabaseReference atendenteUser = FirebaseConfig.getFireBase().child("usuarios");
+                DatabaseReference atendenteUser = FirebaseConfig.getFireBase().child("usuarios");
 
-                    atendenteUser.child(atendenteKey).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+                atendenteUser.child(atendenteKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        user.setPontos(user.getPontos() + ratingPoints);
+                        user.setId(atendenteKey);
+                        user.save();
+                        finish();
+                    }
 
-                            User user = dataSnapshot.getValue(User.class);
-                            user.setPontos(user.getPontos() + ratingPoints);
-                            user.setId(atendenteKey);
-                            user.save();
-                            finish();
-                        }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-
-                }
-
-            });
+                    }
+                });
 
 
+            }
+
+        });
 
 
-
-
-
-
-}  }
+    }
+}

@@ -96,7 +96,6 @@ public class PedidosActivity extends AppCompatActivity {
             }
         });
 
-
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
         viewPager = (ViewPager) findViewById(R.id.vp_pagina);
 
@@ -108,10 +107,10 @@ public class PedidosActivity extends AppCompatActivity {
         viewPager.setAdapter(pedidosTabAdapter);
         slidingTabLayout.setViewPager(viewPager);
 
-
         navigator.createDrawer(PedidosActivity.this, toolbar ,0);
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

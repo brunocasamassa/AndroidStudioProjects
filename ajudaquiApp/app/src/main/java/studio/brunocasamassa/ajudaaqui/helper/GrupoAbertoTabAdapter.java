@@ -4,17 +4,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import studio.brunocasamassa.ajudaaqui.fragments.GruposDoacoesFragment;
-import studio.brunocasamassa.ajudaaqui.fragments.GruposEmprestimosFragment;
-import studio.brunocasamassa.ajudaaqui.fragments.GruposMeusgruposFragment;
-import studio.brunocasamassa.ajudaaqui.fragments.GruposServicosFragment;
-import studio.brunocasamassa.ajudaaqui.fragments.GruposTodosgruposFragment;
-import studio.brunocasamassa.ajudaaqui.fragments.GruposTrocasFragment;
+import studio.brunocasamassa.ajudaaqui.fragments.GrupoAbertoRankingFragment;
+import studio.brunocasamassa.ajudaaqui.fragments.GrupoAbertoMeusPedidosFragment;
+import studio.brunocasamassa.ajudaaqui.fragments.GrupoAbertoPedidosFragment;
 
 
 public class GrupoAbertoTabAdapter extends FragmentStatePagerAdapter {
 
-    private String[] tituloAbas = {"TROCA", "EMPRESTIMOS","SERVIÇOS", "DOAÇÕES"};
+    private String[] tituloAbas = {"PEDIDOS", "RANKING", "MEUS PEDIDOS"};
 
     public GrupoAbertoTabAdapter(FragmentManager fm) {
         super(fm);
@@ -28,21 +25,16 @@ public class GrupoAbertoTabAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                fragment = new GruposTrocasFragment();
+                fragment = new GrupoAbertoPedidosFragment();
                 break;
             case 1:
-                fragment = new GruposEmprestimosFragment();
+                fragment = new GrupoAbertoRankingFragment();
                //notifyDataSetChanged();
                 break;
             case 2:
-                fragment = new GruposServicosFragment();
+                fragment = new GrupoAbertoMeusPedidosFragment();
                 //notifyDataSetChanged();
                 break;
-            case 3:
-                fragment = new GruposDoacoesFragment();
-                //notifyDataSetChanged();
-                break;
-
         }
 
         return fragment;

@@ -44,15 +44,14 @@ public class SobreActivity extends AppCompatActivity {
     private ArrayAdapter arrayAdapterSobre;
     private SlidingTabLayout slidingTabLayout;
     public int posicao;
+    private String SUPPORT_EMAIL = "brunocasamassa@hotmail.com";
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activvity_sobre);
-
 
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal_sobre);
@@ -164,10 +163,10 @@ public class SobreActivity extends AppCompatActivity {
                     Preferences preferences = new Preferences(SobreActivity.this);
                     Intent i = new Intent(Intent.ACTION_SEND);
                     i.setType("message/rfc822");
-                    i.putExtra(Intent.EXTRA_EMAIL, new String[]{"brunocasamassa@hotmail.com"});
+                    i.putExtra(Intent.EXTRA_EMAIL, new String[]{SUPPORT_EMAIL});
                     i.putExtra(Intent.EXTRA_SUBJECT, "AJUDAQUI: "+tipo+": USUARIO: " + preferences.getNome());
                     i.putExtra(Intent.EXTRA_TEXT,
-                            "USUARIO ID: " + Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail()) + "\n" +
+                            " " + Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail()) + "\n" +
                                     "USUARIO NOME: " + preferences.getNome() + "\n" +
                                     "USUARIO E-MAIL: " + FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail()+ "\n" +
                                     "\n" + mensagemSolicitacao);

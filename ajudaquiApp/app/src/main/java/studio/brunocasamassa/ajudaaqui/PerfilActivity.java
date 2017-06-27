@@ -183,7 +183,7 @@ public class PerfilActivity extends AppCompatActivity {
                 if (usuario.getPedidosFeitos() != null) {
                     pedidosFeitos.setText("" + usuario.getPedidosFeitos().size());
                 } else pedidosFeitos.setText("" + 0);
-                //pontosConquistados.setText(usuario.getPontos());
+                pontosConquistados.setText(String.valueOf(usuario.getPontos()));
                 if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
                     Glide.with(PerfilActivity.this).load(usuario.getProfileImg()).into(profileImg);
                 } else {
@@ -292,7 +292,8 @@ public class PerfilActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getApplicationContext(), "Solicitação Recusada ", Toast.LENGTH_LONG).show();
-                        listaNotificacoes.remove(position);
+                        removeSolicitationMessage(position);
+
 
 
                     }

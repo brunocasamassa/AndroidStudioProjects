@@ -1,12 +1,11 @@
 package studio.brunocasamassa.ajudaaqui;
 
-import  android.content.Intent;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ConfigurationHelper;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,27 +14,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
-import com.mikepenz.materialdrawer.AccountHeader;
-import com.mikepenz.materialdrawer.AccountHeaderBuilder;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import studio.brunocasamassa.ajudaaqui.helper.GruposTabAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaaqui.helper.Preferences;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
-
-import static studio.brunocasamassa.ajudaaqui.R.id.fab;
-import static studio.brunocasamassa.ajudaaqui.R.id.view;
 
 /**
  *
@@ -50,7 +36,6 @@ public class GruposActivity extends AppCompatActivity {
     private SlidingTabLayout slidingTabLayout;
     private int posicao;
     private FloatingActionButton fab;
-
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -125,7 +110,6 @@ public class GruposActivity extends AppCompatActivity {
         }
 
     }
-
 
 
 }

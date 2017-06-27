@@ -29,7 +29,6 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/toolbar_principal"
             android:baseline="@dimen/activity_vertical_margin"
             android:elevation="0dp"
             android:fadingEdge="vertical"

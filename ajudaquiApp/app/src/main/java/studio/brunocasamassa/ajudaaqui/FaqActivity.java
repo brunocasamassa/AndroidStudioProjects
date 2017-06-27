@@ -52,7 +52,6 @@ public class FaqActivity extends AppCompatActivity {
             }
         });
 
-
         databaseFaqPerguntas.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

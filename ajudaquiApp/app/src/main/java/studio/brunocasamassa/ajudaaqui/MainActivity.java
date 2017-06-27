@@ -86,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         autenticacao.addAuthStateListener(mAuthListener);
-
     }
 
     @Override
@@ -95,9 +94,10 @@ public class MainActivity extends AppCompatActivity {
         if (mAuthListener != null) {
             autenticacao.removeAuthStateListener(mAuthListener);
         }
-    }
-    // ...
 
+    }
+
+    // ...
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,34 +116,38 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 System.out.println("usuario conectado: " + firebaseAuth.getCurrentUser());
-                if (user != null) {
+                try {
+                    if (user != null) {
+                        DatabaseReference firebase = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(user.getEmail()));
+                        System.out.println("main email " + user.getEmail());
+                        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                User user = dataSnapshot.getValue(User.class);
+                                pivotUsuario.setName(user.getName());
+                                pivotUsuario.setEmail(user.getEmail());
+                                System.out.println("usernAME " + userName);
 
-                    DatabaseReference firebase = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(user.getEmail()));
-                    firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            User user = dataSnapshot.getValue(User.class);
-                            pivotUsuario.setName(user.getName());
-                            pivotUsuario.setEmail(user.getEmail());
-                            System.out.println("usernAME "+ userName);
+                                preferencias.saveData(Base64Decoder.encoderBase64(pivotUsuario.getEmail()), pivotUsuario.getName());
+                                Toast.makeText(getApplicationContext(), "signed in " + preferencias.getNome(), Toast.LENGTH_LONG).show();
 
-                            preferencias.saveData(Base64Decoder.encoderBase64(pivotUsuario.getEmail()), pivotUsuario.getName());
-                            Toast.makeText(getApplicationContext(), "signed in " + preferencias.getNome(), Toast.LENGTH_LONG).show();
+                                System.out.println("usuario name " + usuario.getName());
+                                startActivity(new Intent(MainActivity.this, PedidosActivity.class));
+                                //Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
+                            }
 
-                            System.out.println("usuario name "+usuario.getName());
-                            startActivity(new Intent(MainActivity.this, PedidosActivity.class));
-                            //Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
-                        }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
 
-                        }
-                    });
-
-                } else {
-                    // User is signed out
-                    Log.d("OUT", "onAuthStateChanged:signed_out");
+                    } else {
+                        // User is signed out
+                        Log.d("OUT", "onAuthStateChanged:signed_out");
+                    }
+                } catch (Exception e) {
+                    System.out.println("EXCEPTION " + e);
                 }
                 // ...
             }
@@ -210,6 +214,8 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken()); //firebase-facebook bound-line
+        autenticacao.removeAuthStateListener(mAuthListener);
+
         autenticacao.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -218,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
                         users.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-
+                                System.out.println("datasnapshot 1" + dataSnapshot);
                             }
 
                             @Override
@@ -226,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
 
                             }
                         });
-                        try {
+
                             System.out.println("login no firebase " + task);
                             Toast.makeText(MainActivity.this, "Sucesso em fazer login, ola " + task.getResult().getUser().getDisplayName().toString(), Toast.LENGTH_LONG).show();
                             final String encodedFacebookEmailUser = Base64Decoder.encoderBase64(task.getResult().getUser().getEmail());
@@ -253,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
 
                                         facebookImg = usuario.getProfileImg();
 
-                                        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+                                /*        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
 
                                         alertDialog.setTitle("Voce possui cpf ou cnpj?");
 
@@ -282,13 +288,18 @@ public class MainActivity extends AppCompatActivity {
                                                 usuario.setCpf_cnpj(cnpj);
 
                                             }
-                                        }).create().show();
+                                        }).create().show();*/
                                         usuario.save();
+                                        autenticacao.addAuthStateListener(mAuthListener);
+
+                                        //refresh();
                                     } else {
                                         Preferences preferences = new Preferences(MainActivity.this);
                                         preferences.saveDataImgFacebook(encodedFacebookEmailUser, name, photo.toString());
-                                        preferences.saveData(encodedFacebookEmailUser,name);
-                                        System.out.println("username "+name);
+                                        preferences.saveData(encodedFacebookEmailUser, name);
+                                        System.out.println("username " + name);
+                                        autenticacao.addAuthStateListener(mAuthListener);
+
                                     }
                                 }
 
@@ -299,9 +310,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
 
-                        } catch (Exception e) {
-                            System.out.println("EXCESSAO " + e);
-                        }
+
 
                         /*Preferences preferences = new Preferences(MainActivity.this);
                         preferences.saveData(encodedFacebookEmailUser, user.getName());*/
@@ -320,7 +329,11 @@ public class MainActivity extends AppCompatActivity {
                 });
 
     }
-
+    private void refresh(){
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    };
     private void verifyLoggedUser(final Task<AuthResult> task) {
 
 

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -48,6 +49,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
     private int posicao;
     private static Grupo grupo = new Grupo();
     private StorageReference storage;
+    private FloatingActionButton fab;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -99,6 +101,16 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         Glide.with(GrupoAbertoActivity.this).load(uri).override(68,68).into(groupImage);
         System.out.println("nome grupo "+ grupo.getNome());
         System.out.println("uri grupo "+ uri);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GrupoAbertoActivity.this, CriaPedidoActivity .class);
+                startActivity(intent);
+            }});
+
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +136,6 @@ public class GrupoAbertoActivity extends AppCompatActivity {
 
 
     }
-
 
 
     @Override

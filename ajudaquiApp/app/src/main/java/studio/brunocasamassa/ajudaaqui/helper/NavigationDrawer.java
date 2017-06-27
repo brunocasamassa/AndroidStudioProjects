@@ -3,22 +3,16 @@ package studio.brunocasamassa.ajudaaqui.helper;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -31,17 +25,14 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.mikepenz.materialdrawer.view.BezelImageView;
 
 import studio.brunocasamassa.ajudaaqui.ConversasActivity;
-import studio.brunocasamassa.ajudaaqui.CriaPedidoActivity;
 import studio.brunocasamassa.ajudaaqui.GruposActivity;
 import studio.brunocasamassa.ajudaaqui.PedidosActivity;
 import studio.brunocasamassa.ajudaaqui.PerfilActivity;
+import studio.brunocasamassa.ajudaaqui.PurchaseActivity;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.SobreActivity;
-
-import static studio.brunocasamassa.ajudaaqui.R.drawable.round_notification;
 
 /**
  * Created by bruno on 24/04/2017.
@@ -195,7 +186,12 @@ public class NavigationDrawer {
             classe.startActivity(new Intent(classe, ConversasActivity.class));
         }
         if (position == 5) {
-            classe.startActivity(new Intent(classe, GruposActivity.class));
+            if (premium != 1) {
+
+                classe.startActivity(new Intent(classe, PurchaseActivity.class));
+
+            } else classe.startActivity(new Intent(classe, GruposActivity.class));
+
         }
         if (position == 7) {
             classe.startActivity(new Intent(classe, PerfilActivity.class));
