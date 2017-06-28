@@ -68,15 +68,16 @@ public class PedidoAddGroupsList extends AppCompatActivity {
                     groupView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            selectedGroup = (String) groupView.getItemAtPosition(position);
 
-                            System.out.println("seleceted group " + selectedGroup);
+                            selectedGroup = (String) groupView.getItemAtPosition(position);
+                            System.out.println("selected group " + selectedGroup);
                             Intent intent = new Intent(PedidoAddGroupsList.this, CriaPedidoActivity.class);
                             intent.putExtra("groupSelected", selectedGroup);
                             setResult(Activity.RESULT_OK, intent);
                             finish();
 
                         }
+
                     });
 
                 }

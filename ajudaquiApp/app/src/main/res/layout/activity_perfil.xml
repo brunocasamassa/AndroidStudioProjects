@@ -33,7 +33,7 @@
         android:layout_width="95dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/perfilPontosConquistados"
+        android:layout_below="@+id/rankedUserPontosConquistados"
         android:layout_marginStart="19dp"
         android:text="  pontos conquistados  "
         android:textAlignment="center"
@@ -41,7 +41,7 @@
         tools:text="  pontos conquistados" />
 
     <TextView
-        android:id="@+id/perfilPontosConquistados"
+        android:id="@+id/rankedUserPontosConquistados"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginLeft="0dp"
@@ -67,7 +67,7 @@
         android:layout_alignBottom="@+id/textView5"
         android:layout_alignEnd="@+id/premiumTag"
         android:layout_alignRight="@+id/premiumTag"
-        android:layout_below="@+id/perfilPedidosAtendidos"
+        android:layout_below="@+id/rankedPedidosAtendidos"
         android:text="  pedidos atendidos  "
         android:textAlignment="center"
         android:textSize="12sp"
@@ -81,12 +81,12 @@
         android:textAlignment="center"
         android:textSize="12sp"
         tools:text="   pedidos            feitos"
-        android:layout_below="@+id/perfilPedidosFeitos"
-        android:layout_alignRight="@+id/perfilPedidosFeitos"
-        android:layout_alignEnd="@+id/perfilPedidosFeitos" />
+        android:layout_below="@+id/rankedPedidosFeitos"
+        android:layout_alignRight="@+id/rankedPedidosFeitos"
+        android:layout_alignEnd="@+id/rankedPedidosFeitos" />
 
     <TextView
-        android:id="@+id/perfilPedidosAtendidos"
+        android:id="@+id/rankedPedidosAtendidos"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginLeft="0dp"
@@ -105,7 +105,7 @@
 
 
     <TextView
-        android:id="@+id/perfilPedidosFeitos"
+        android:id="@+id/rankedPedidosFeitos"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:ems="10"

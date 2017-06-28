@@ -87,6 +87,9 @@
             android:name=".SobreActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".PerfilGruposActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ConversasActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -98,8 +101,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        [
-        <activity android:name=".PurchaseActivity"></activity>
+
+        <activity android:name=".PurchaseActivity" />
     </application>
 
 </manifest>

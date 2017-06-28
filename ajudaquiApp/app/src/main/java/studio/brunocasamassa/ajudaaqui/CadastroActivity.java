@@ -16,14 +16,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -141,6 +138,10 @@ public class CadastroActivity extends AppCompatActivity {
                     usuario.setName(nome.getText().toString());
                     usuario.setEmail(email.getText().toString());
                     usuario.setSenha(senha.getText().toString());
+                    idUser = Base64Decoder.encoderBase64(usuario.getEmail());
+                    System.out.println("BASE64 ENCODER: " + idUser);
+                    usuario.setId(idUser);
+                    usuario.setMedalhas(badgesList);
                     cadastrarUsuario();
                 } else
                     Toast.makeText(getApplicationContext(), "Senha e confirmação devem ser iguais", Toast.LENGTH_LONG).show();
@@ -159,10 +160,7 @@ public class CadastroActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(CadastroActivity.this, "Usuario cadastrado com sucesso", Toast.LENGTH_LONG).show();
 
-                                    idUser = Base64Decoder.encoderBase64(usuario.getEmail());
-                                    System.out.println("BASE64 ENCODER: " + idUser);
-                                    usuario.setId(idUser);
-                                    usuario.setMedalhas(badgesList);
+
                                     // FirebaseUser usuarioFireBase = task.getResult().getUser();
                                     usuario.save();
 

@@ -75,7 +75,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_criar_pedido);
-        Bundle extras = getIntent().getExtras();
+        final Bundle extras = getIntent().getExtras();
         premium = (extras.getInt("premium")); //TODO =0 EVEN FIREBASE =1
         System.out.println("PREMIUM RECEBE" + premium);
 
@@ -102,6 +102,14 @@ public class CriaPedidoActivity extends AppCompatActivity {
         addGroupButton = (ImageButton) findViewById((R.id.addGroup_tag_button));
 
 
+
+        categorias.setOnTagClickListener(new TagGroup.OnTagClickListener() {
+            @Override
+            public void onTagClick(String tag) {
+                tagsCaptured.remove(tag);
+
+            }
+        });
         add_grupos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,6 +212,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
         System.out.println("tipo de pedido: " + tipoPedido);
         pedido.setTagsCategoria(tagsCaptured);
         pedido.setTipo(tipoPedido);
+
         if (groupCaptured != null) {
             pedido.setGrupo(groupCaptured);
         }
@@ -223,7 +232,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
         pedido.save();
         pedidoSaveIntoUser(true);
         Toast.makeText(getApplicationContext(), "Pedido criado com sucesso", Toast.LENGTH_LONG).show();
-        finish();
+        refresh();
 
     }
 
@@ -358,6 +367,14 @@ public class CriaPedidoActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void refresh() {
+        Intent intent = new Intent(CriaPedidoActivity.this, PedidosActivity.class);
+        finish();
+        startActivity(intent);
+    }
+
+    ;
 }
 
 

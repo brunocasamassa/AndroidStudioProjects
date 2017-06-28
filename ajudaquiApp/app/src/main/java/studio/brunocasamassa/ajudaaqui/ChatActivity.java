@@ -1,7 +1,6 @@
 package studio.brunocasamassa.ajudaaqui;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -205,7 +204,7 @@ public class ChatActivity extends AppCompatActivity {
 
                         conversa = new Conversa();
                         conversa.setIdUsuario( idUsuarioRemetente );
-                        conversa.setNome( nomeUsuarioRemetente );
+                        conversa.setNome( nomeUsuarioDestinatario );
                         conversa.setMensagem(textoMensagem);
                         conversa.setTime(currentTime);
 

@@ -1,10 +1,12 @@
 package studio.brunocasamassa.ajudaaqui.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -17,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import studio.brunocasamassa.ajudaaqui.PerfilGruposActivity;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.adapters.RankingAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
@@ -30,7 +33,6 @@ import studio.brunocasamassa.ajudaaqui.helper.User;
 
 
 public class GrupoAbertoRankingFragment extends Fragment {
-
 
     private ListView listview_nomes;
     private ArrayList<User> arraylist_nomes = new ArrayList<>();
@@ -49,16 +51,13 @@ public class GrupoAbertoRankingFragment extends Fragment {
         query.addListenerForSingleValueEvent(valueEventListenerRankingGroup);
     }
 
-
     public GrupoAbertoRankingFragment() {
-
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
-
         Bundle extra = getActivity().getIntent().getExtras();
 
         idGroup = Base64Decoder.encoderBase64(extra.getString("nome"));
@@ -71,13 +70,37 @@ public class GrupoAbertoRankingFragment extends Fragment {
 
         listview_nomes = (ListView) v.findViewById(R.id.ranking_list);
 
-
         adapter_nomes = new RankingAdapter(getContext(), arraylist_nomes);
 
         listview_nomes.setDivider(null);
 
         listview_nomes.setAdapter(adapter_nomes);
 
+        listview_nomes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), PerfilGruposActivity.class);
+                intent.putExtra("rankedUserId", arraylist_nomes.get(position).getId());
+                System.out.println("target id no ranking " + arraylist_nomes.get(position).getId());
+                intent.putExtra("rankedUserName", arraylist_nomes.get(position).getName());
+                intent.putExtra("rankedUserEmail", arraylist_nomes.get(position).getEmail());
+                intent.putExtra("rankedUserPontos", arraylist_nomes.get(position).getPontos());
+                intent.putExtra("groupId", idGroup);
+                intent.putExtra("rankedUserImg", arraylist_nomes.get(position).getProfileImg());
+                if (arraylist_nomes.get(position).getPedidosAtendidos() == null) {
+                    intent.putExtra("rankedUserPedidosAtendidos", 0);
+                } else
+                    intent.putExtra("rankedUserPedidosAtendidos", arraylist_nomes.get(position).getPedidosAtendidos().size());
+                if (arraylist_nomes.get(position).getPedidosFeitos() == null) {
+                    intent.putExtra("rankedUserPedidosFeitos",0);
+                } else
+                    intent.putExtra("rankedUserPedidosFeitos", arraylist_nomes.get(position).getPedidosFeitos().size());
+
+                intent.putExtra("posicao", position);
+                System.out.println("usr img no ranking " + arraylist_nomes.get(position).getProfileImageURL());
+                startActivity(intent);
+            }
+        });
 
         firebaseDatabase = FirebaseConfig.getFireBase().child("usuarios");
 
@@ -89,9 +112,9 @@ public class GrupoAbertoRankingFragment extends Fragment {
                 arraylist_nomes.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     User rankedUser = postSnapshot.getValue(User.class);
-                    System.out.println("idGROUP "+idGroup);
-                    if (rankedUser.getGrupos().contains(idGroup)) {
-                        System.out.println("user no ranking "+rankedUser.getName());
+                    System.out.println("idGROUP " + idGroup);
+                    if (rankedUser.getGrupos() != null && rankedUser.getGrupos().contains(idGroup)) {
+                        System.out.println("user no ranking " + rankedUser.getName());
                         arraylist_nomes.add(rankedUser);
                     }
 

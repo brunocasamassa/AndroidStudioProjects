@@ -84,6 +84,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
         pedidoChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(PedidoCriadoActivity.this, ConversasActivity.class);
                 startActivity(intent);
                 finish();
@@ -143,6 +144,9 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                 alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        if(pedido.getStatus() == 0 ){
+                            Toast.makeText(getApplication(), "Pedidos abertos nao podem ser alterados", Toast.LENGTH_SHORT).show();
+                        }else{
                         AlertDialog.Builder selectStatus = new AlertDialog.Builder(PedidoCriadoActivity.this);
                         selectStatus.setTitle("Selecione o novo status do pedido");
                         selectStatus.setNegativeButton("Cancelar:", new DialogInterface.OnClickListener() {
@@ -152,20 +156,20 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                             }
                         });
                         selectStatus.setItems(new CharSequence[]
-                                        {"Cancelado", "Em Andamento"},
+                                        {"Aberto", "Finalizado"},
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         // The 'which' argument contains the index position
                                         // of the selected item
                                         switch (which) {
                                             case 0:
-                                                pedido.setStatus(3);
-                                                Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_cancelado).into(statusImage);
+                                                pedido.setStatus(0);
+                                                Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_aberto).into(statusImage);
                                                 pedido.save();
                                                 break;
                                             case 1:
-                                                pedido.setStatus(1);
-                                                Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_emandamento).into(statusImage);
+                                                pedido.setStatus(2);
+                                                Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_finalizado).into(statusImage);
                                                 pedido.save();
                                                 break;
                                         }
@@ -173,7 +177,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                                 }).create().show();
 
                         selectStatus.setCancelable(false);
-                    }
+                    }}
 
                 }).create().show();
 

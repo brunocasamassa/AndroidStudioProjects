@@ -97,9 +97,9 @@ public class PerfilActivity extends AppCompatActivity {
         profileImg = (CircleImageView) findViewById(R.id.profileImg);
         profileName = (TextView) findViewById(R.id.profileName);
         premiumTag = (ImageView) findViewById(R.id.premiumTag);
-        pedidosAtendidos = (TextView) findViewById(R.id.perfilPedidosAtendidos);
-        pedidosFeitos = (TextView) findViewById(R.id.perfilPedidosFeitos);
-        pontosConquistados = (TextView) findViewById(R.id.perfilPontosConquistados);
+        pedidosAtendidos = (TextView) findViewById(R.id.rankedPedidosAtendidos);
+        pedidosFeitos = (TextView) findViewById(R.id.rankedPedidosFeitos);
+        pontosConquistados = (TextView) findViewById(R.id.rankedUserPontosConquistados);
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
 
         listaNotificacoes = new ArrayList();

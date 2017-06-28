@@ -28,7 +28,7 @@ public class User implements DatabaseReference.CompletionListener {
 
     private ArrayList<Integer> medalhas;
 
-    private int creditos =3;
+    private int creditos = 3;
 
     private int pontos;
 
@@ -111,7 +111,6 @@ public class User implements DatabaseReference.CompletionListener {
     }
 
 
-    @Exclude
     public String getId() {
         return id;
     }

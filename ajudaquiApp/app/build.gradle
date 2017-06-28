@@ -5,7 +5,7 @@ android {
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "studio.brunocasamassa.ajudaaqui"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -58,6 +58,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:21.0.3'
     compile 'me.gujun.android.taggroup:library:1.4@aar'
     compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.paypal.sdk:paypal-android-sdk:2.15.3'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
 }

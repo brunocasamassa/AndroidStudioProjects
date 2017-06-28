@@ -22,7 +22,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
-import studio.brunocasamassa.ajudaaqui.CriaPedidoActivity;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.adapters.PedidosAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
@@ -200,4 +199,6 @@ public class PedidosDisponiveisFragment extends Fragment {
     }
 
 
+
 }
+

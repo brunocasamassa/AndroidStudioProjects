@@ -2,13 +2,11 @@ package studio.brunocasamassa.ajudaaqui.helper;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +22,6 @@ import java.util.ArrayList;
 
 import me.gujun.android.taggroup.TagGroup;
 import studio.brunocasamassa.ajudaaqui.R;
-import studio.brunocasamassa.ajudaaqui.SobreActivity;
 
 /**
  * Created by bruno on 04/06/2017.
@@ -43,6 +40,7 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
     private Pedido pedido;
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private User user = new User();
+    private DatabaseReference dbConversa = FirebaseConfig.getFireBase().child("conversas");
 
     @Override
     protected void onStart() {
@@ -142,7 +140,7 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        pedido.setStatus(0);
+                        pedido.setStatus(3);
                         pedido.setAtendenteId("");
                         pedido.save();
 
@@ -172,6 +170,9 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
                                         user.setId(Base64Decoder.encoderBase64(user.getEmail()));
                                         user.setMessageNotification("O usuario "+ username+ " cancelou o pedido de ajuda de seu pedido '"+ pedido.getTitulo() + "' voce pode alterar o status para aberto e procurar um novo ajudante");
                                         user.save();
+                                        //REMOVING CHAT FIELD
+                                        dbConversa.child(userKey).removeValue();
+                                        dbConversa.child(pedido.getCriadorId()).removeValue();
 
                                     }
 

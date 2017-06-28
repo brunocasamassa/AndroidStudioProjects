@@ -98,6 +98,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
         toolbar.setTitle(titulo);
+
         Glide.with(GrupoAbertoActivity.this).load(uri).override(68,68).into(groupImage);
         System.out.println("nome grupo "+ grupo.getNome());
         System.out.println("uri grupo "+ uri);
