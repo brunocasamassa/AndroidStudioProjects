@@ -43,8 +43,9 @@ public class ChatActivity extends AppCompatActivity {
     private ValueEventListener valueEventListenerMensagem;
 
     // dados do destinatário
-    private String nomeUsuarioDestinatario;
+    private String idPedido;
     private String idUsuarioDestinatario;
+    private String nomePedido;
 
     // dados do rementente
     private String idUsuarioRemetente;
@@ -68,9 +69,10 @@ public class ChatActivity extends AppCompatActivity {
         Bundle extra = getIntent().getExtras();
 
         if( extra != null ){
-            nomeUsuarioDestinatario = extra.getString("nome");
+            idPedido = Base64Decoder.encoderBase64(extra.getString("nome"));
             String emailDestinatario = extra.getString("email");
             idUsuarioDestinatario = Base64Decoder.encoderBase64( emailDestinatario );
+            nomePedido = extra.getString("nome");
         }
 
 
@@ -93,7 +95,7 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         // Configura toolbar
-        toolbar.setTitle( nomeUsuarioDestinatario );
+        toolbar.setTitle(nomePedido);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,7 +114,7 @@ public class ChatActivity extends AppCompatActivity {
         firebase = FirebaseConfig.getFireBase()
                     .child("mensagens")
                     .child( idUsuarioRemetente )
-                    .child( idUsuarioDestinatario );
+                    .child( idPedido );
 
         // Cria listener para mensagens
         valueEventListenerMensagem = new ValueEventListener() {
@@ -188,7 +190,7 @@ public class ChatActivity extends AppCompatActivity {
 
                     Conversa conversa = new Conversa();
                     conversa.setIdUsuario( idUsuarioDestinatario );
-                    conversa.setNome( nomeUsuarioDestinatario );
+                    conversa.setNome(nomePedido);
                     conversa.setMensagem( textoMensagem );
                     conversa.setTime(currentTime);
                     Boolean retornoConversaRemetente = salvarConversa(idUsuarioRemetente, idUsuarioDestinatario, conversa);
@@ -204,7 +206,7 @@ public class ChatActivity extends AppCompatActivity {
 
                         conversa = new Conversa();
                         conversa.setIdUsuario( idUsuarioRemetente );
-                        conversa.setNome( nomeUsuarioDestinatario );
+                        conversa.setNome(nomePedido);
                         conversa.setMensagem(textoMensagem);
                         conversa.setTime(currentTime);
 
@@ -229,12 +231,13 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private boolean salvarMensagem(String idRemetente, final String idDestinatario, Mensagem mensagem){
+
         try {
 
             firebase = FirebaseConfig.getFireBase().child("mensagens");
 
             firebase.child( idRemetente )
-                    .child( idDestinatario )
+                    .child( idPedido )
                     .push()
                     .setValue( mensagem );
 

@@ -121,9 +121,7 @@ public class PerfilActivity extends AppCompatActivity {
                 user.setMedalhas(badgesList); //usuario.getMedalhas()
                 System.out.println("recebe usuario NAME: " + usuario.getName());
                 System.out.println("recebe usuario DATA: " + dataSnapshot.getValue());
-
                 int respPremium = usuario.getPremiumUser();
-
                 premium = respPremium;
 
                 if(premium == 1){
@@ -131,8 +129,6 @@ public class PerfilActivity extends AppCompatActivity {
                 }
 
                 System.out.println("Premium user Perfil Activity response "+ premium);
-
-
 
                 if (usuario.getMsgSolicitacoes() != null) {
                     ArrayList<String> msgSolicita = usuario.getMsgSolicitacoes();

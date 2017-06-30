@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -29,6 +30,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
 
     private int statusInt;
     private Toolbar toolbar;
+    private ConstraintLayout my_layout;
     private TextView nomePedido;
     private TextView descricao;
     private ImageView pedidoChat;
@@ -53,8 +55,10 @@ public class PedidoCriadoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido_criado);
 
+
         Toast.makeText(getApplicationContext(), "Segure um item para alterá-lo", Toast.LENGTH_SHORT).show();
 
+        my_layout = (ConstraintLayout) findViewById(R.id.layout_my_pedido);
         pedidoChat = (ImageView) findViewById(R.id.chat_pedido);
         statusImage = (ImageView) findViewById(R.id.status_image_criado);
         toolbar = (Toolbar) findViewById(R.id.toolbar_pedido_criado);
@@ -258,13 +262,12 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             }
         }});
 
-
-
     }
 
     private void startStars(boolean trigger) {
 
         if (trigger){
+
             System.out.println("trigger entrado");
             keyAtendente = pedido.getAtendenteId();
             Intent intent = new Intent(PedidoCriadoActivity.this, StarsBar.class);
@@ -274,7 +277,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
 
             pedido.setStatus(2);
             pedido.save();
-            finish();
+
         }
     }
 /*

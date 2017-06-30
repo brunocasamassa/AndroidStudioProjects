@@ -1,7 +1,6 @@
 package studio.brunocasamassa.ajudaaqui.helper;
 
 
-
 public class Conversa {
 
     
@@ -18,8 +17,6 @@ public class Conversa {
 
 public Conversa() {
     }
-
-    
 
 
 public String getIdUsuario() {

@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,10 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -121,7 +118,6 @@ public class CriaGrupoActivity extends AppCompatActivity {
                     grupo.setDescricao(descricao.getText().toString());
                     grupo.setId(groupId);
 
-
                     FirebaseAuth autenticacao = FirebaseConfig.getFirebaseAuthentication();
 
                     String userKey = Base64Decoder.encoderBase64(autenticacao.getCurrentUser().getEmail());
@@ -129,7 +125,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
                     System.out.println("AUTH caraio" + userKey);
 
                     adms.add(0, userKey);
-                    grupo.setIdMembros(adms);
+                    //grupo.setIdMembros(adms);
                     grupo.setQtdMembros(1);
                     grupo.setIdAdms(adms);
 

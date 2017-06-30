@@ -7,8 +7,8 @@ android {
         applicationId "studio.brunocasamassa.ajudaaqui"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -56,6 +56,7 @@ dependencies {
     compile 'com.github.rtoshiro.mflibrary:mflibrary:1.0.0'
     compile 'com.android.support:gridlayout-v7:23.1.1'
     compile 'com.android.support:recyclerview-v7:21.0.3'
+    compile 'co.lujun:androidtagview:1.1.4'
     compile 'me.gujun.android.taggroup:library:1.4@aar'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.paypal.sdk:paypal-android-sdk:2.15.3'

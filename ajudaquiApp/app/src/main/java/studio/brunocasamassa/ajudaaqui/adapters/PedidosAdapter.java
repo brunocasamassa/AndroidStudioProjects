@@ -5,7 +5,6 @@ package studio.brunocasamassa.ajudaaqui.adapters;
  */
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -15,22 +14,14 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.facebook.FacebookGraphResponseException;
-import com.facebook.GraphRequest;
-import com.facebook.login.LoginManager;
-import com.facebook.share.model.ShareOpenGraphObject;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FacebookAuthCredential;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import me.gujun.android.taggroup.TagGroup;
-import studio.brunocasamassa.ajudaaqui.LoginActivity;
 import studio.brunocasamassa.ajudaaqui.MainActivity;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
@@ -93,6 +84,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> {
             tagsCategoria.setTags(pedido.getTagsCategoria());
             // DOWNLOAD GROUP IMG FROM STORAGE
             if (pedido.getGrupo() != null) {
+
                 storage.child(pedido.getGrupo() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                     @Override

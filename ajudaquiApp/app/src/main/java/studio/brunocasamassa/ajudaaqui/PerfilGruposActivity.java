@@ -89,7 +89,6 @@ public class PerfilGruposActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
         toolbar.setTitle(targetUserName);
-
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +122,7 @@ public class PerfilGruposActivity extends AppCompatActivity {
                 final ArrayList<String> idAdmins = group.getIdAdms();
                 final ArrayList<String> idMembros = group.getIdMembros();
 
-                if (idAdmins.contains(userKey)) {
+                if (idAdmins.contains(userKey) && userKey != targetUserId) {
                     becomeAdminButton.setText("TORNAR ADMINISTRADOR DO GRUPO");
                     removeUserButton.setText("REMOVER USUARIO DO GRUPO");
 
@@ -154,6 +153,7 @@ public class PerfilGruposActivity extends AppCompatActivity {
                                         group.setIdAdms(idAdmins);
                                         group.save();
                                         Toast.makeText(getApplicationContext(), targetUserName + " agora é um administrador", Toast.LENGTH_SHORT).show();
+                                        finish();
                                     }
 
                                 }
@@ -199,8 +199,12 @@ public class PerfilGruposActivity extends AppCompatActivity {
 
                                             }
                                         });
-                                        group.save();
 
+                                        group.setIdMembros(idMembros);
+                                        group.setQtdMembros(group.getQtdMembros()-1);
+                                        group.save();
+                                        Toast.makeText(getApplicationContext(), "Usuario removido com sucesso", Toast.LENGTH_SHORT).show();
+                                        finish();
                                     } else if (idAdmins.contains(targetUserId)) {
                                         Toast.makeText(getApplicationContext(), "Nao é possivel remover outro administrador", Toast.LENGTH_SHORT).show();
                                     }

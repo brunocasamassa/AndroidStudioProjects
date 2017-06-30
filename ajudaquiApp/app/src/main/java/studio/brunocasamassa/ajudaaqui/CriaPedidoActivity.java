@@ -3,6 +3,7 @@ package studio.brunocasamassa.ajudaaqui;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -24,7 +25,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import me.gujun.android.taggroup.TagGroup;
+import co.lujun.androidtagview.TagContainerLayout;
+import co.lujun.androidtagview.TagView;
 import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Grupo;
@@ -43,8 +45,8 @@ public class CriaPedidoActivity extends AppCompatActivity {
     private Button createButton;
     private String tagCaptured;
     ArrayList<String> tagsCaptured = new ArrayList<String>();
-    private TagGroup categorias;
-    private TagGroup grupos;
+    private TagContainerLayout categorias;
+    private TagContainerLayout grupos;
     private TextView add_grupos;
     private TextView add_tags;
     private Pedido pedido;
@@ -90,8 +92,8 @@ public class CriaPedidoActivity extends AppCompatActivity {
             }
         });
 
-        categorias = (TagGroup) findViewById(R.id.tagGroupCategoria);
-        grupos = (TagGroup) findViewById(R.id.tagGroupGrupos);
+        categorias = (TagContainerLayout) findViewById(R.id.tagGroupCategoria);
+        grupos = (TagContainerLayout) findViewById(R.id.tagGroupGrupos);
 
         add_grupos = (TextView) findViewById(R.id.word_add_groups);
         add_tags = (TextView) findViewById(R.id.word_add_tags);
@@ -101,15 +103,52 @@ public class CriaPedidoActivity extends AppCompatActivity {
         addTagButton = (ImageButton) findViewById((R.id.add_tag_button));
         addGroupButton = (ImageButton) findViewById((R.id.addGroup_tag_button));
 
-
-
-        categorias.setOnTagClickListener(new TagGroup.OnTagClickListener() {
+        grupos.setBackgroundColor(Color.TRANSPARENT);
+        grupos.setBorderColor(Color.TRANSPARENT);
+        grupos.setTagBackgroundColor(R.color.colorPrimary);
+        grupos.setTagTextColor(R.color.md_white_1000);
+        grupos.setOnTagClickListener(new TagView.OnTagClickListener() {
             @Override
-            public void onTagClick(String tag) {
-                tagsCaptured.remove(tag);
+            public void onTagClick(int position, String text) {
+
+            }
+
+            @Override
+            public void onTagLongClick(int position, String text) {
+
+            }
+
+            @Override
+            public void onTagCrossClick(int position) {
+                grupos.removeTag(position);
 
             }
         });
+
+        categorias.setBackgroundColor(Color.TRANSPARENT);
+        categorias.setBorderColor(Color.TRANSPARENT);
+        categorias.setTagBackgroundColor(R.color.colorPrimary);
+        categorias.setTagTextColor(R.color.md_white_1000);
+        categorias.setOnTagClickListener(new TagView.OnTagClickListener() {
+
+            @Override
+            public void onTagClick(int position, String text) {
+
+            }
+
+            @Override
+            public void onTagLongClick(int position, String text) {
+
+            }
+
+            @Override
+            public void onTagCrossClick(int position) {
+                categorias.removeTag(position);
+                tagsCaptured.remove(position);
+
+            }
+        });
+
         add_grupos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

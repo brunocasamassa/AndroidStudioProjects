@@ -1,27 +1,19 @@
 package studio.brunocasamassa.ajudaaqui;
 
-import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.app.Activity;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RatingBar;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
-import studio.brunocasamassa.ajudaaqui.helper.PedidoCriadoActivity;
 import studio.brunocasamassa.ajudaaqui.helper.User;
 
 public class StarsBar extends AppCompatActivity {
@@ -42,7 +34,7 @@ public class StarsBar extends AppCompatActivity {
 
         //Performing action on Button Click
         Drawable progress = ratingbar1.getProgressDrawable();
-        DrawableCompat.setTint(progress, Color.BLUE);
+        //DrawableCompat.setTint(progress, Color.BLUE);
 
         button.setOnClickListener(new OnClickListener() {
 
