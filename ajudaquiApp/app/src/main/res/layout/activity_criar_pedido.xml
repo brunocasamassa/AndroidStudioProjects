@@ -65,6 +65,7 @@
         app:tag_background_color="@color/colorBackground"
         app:tag_cross_color="@android:color/white"
         app:tag_text_size="18dp"
+        app:tag_theme="none"
         android:layout_marginStart="35dp"
         android:layout_marginTop="46dp"
         app:layout_constraintTop_toBottomOf="@+id/create_pedido_description"
@@ -73,17 +74,21 @@
         android:layout_marginLeft="35dp"
         ></co.lujun.androidtagview.TagContainerLayout>
 
+
     <co.lujun.androidtagview.TagContainerLayout
         android:id="@+id/tagGroupGrupos"
         android:layout_width="290dp"
         android:layout_height="47dp"
         app:tag_enable_cross="true"
         android:layout_below="@+id/word_add_tags"
+        app:tag_background_color="@color/colorBackground"
+        app:tag_cross_color="@android:color/white"
         app:atg_backgroundColor="@color/colorBackground"
         app:atg_textSize="15dp"
-        app:tag_cross_color="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/create_pedido_button"
         app:tag_text_size="25dp"
+        app:tag_text_color="@android:color/white"
+        app:tag_theme="none"
         tools:ignore="MissingConstraints"
         android:layout_marginBottom="21dp"
         app:layout_constraintLeft_toRightOf="@+id/imageView10"
