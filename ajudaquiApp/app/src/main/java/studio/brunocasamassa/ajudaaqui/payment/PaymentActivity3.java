@@ -9,11 +9,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.paypal.android.sdk.payments.PayPalConfiguration;
-import com.paypal.android.sdk.payments.PayPalFuturePaymentActivity;
-import com.paypal.android.sdk.payments.PayPalPayment;
-import com.paypal.android.sdk.payments.PayPalService;
-import com.paypal.android.sdk.payments.PaymentConfirmation;
+import com.paypal.android.sdk.payments.*;
+import com.paypal.android.sdk.payments.PaymentActivity;
 
 import org.json.JSONException;
 
@@ -67,9 +64,8 @@ public class PaymentActivity3 extends AppCompatActivity  implements View.OnClick
         PayPalPayment payment = new PayPalPayment(new BigDecimal(String.valueOf(paymentAmount)), "BRL", "Simplified Coding Fee",
                 PayPalPayment.PAYMENT_INTENT_SALE);
 
-
         //Creating Paypal Payment activity intent
-        Intent intent = new Intent(PaymentActivity3.this, com.paypal.android.sdk.payments.PayPalFuturePaymentActivity.class);
+        Intent intent = new Intent(PaymentActivity3.this, com.paypal.android.sdk.payments.PaymentActivity.class);
 
         //putting the paypal configuration to the intent
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
@@ -79,7 +75,7 @@ public class PaymentActivity3 extends AppCompatActivity  implements View.OnClick
 
         //Starting the intent activity for result
         //the request code will be used on the method onActivityResult
-        startActivityForResult(intent, PayPalFuturePaymentActivity.RESULT_OK);
+        startActivityForResult(intent, PaymentActivity.RESULT_OK);
 
     }
 

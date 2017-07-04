@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.bumptech.glide.Glide;
@@ -50,6 +51,8 @@ public class GrupoAbertoActivity extends AppCompatActivity {
     private static Grupo grupo = new Grupo();
     private StorageReference storage;
     private FloatingActionButton fab;
+    private Button donation;
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -58,9 +61,12 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grupo_aberto);
 
+
+        donation = (Button) findViewById(R.id.button_donation);
+
         Bundle extra = getIntent().getExtras();
 
-        String groupKey = Base64Decoder.encoderBase64(extra.getString("nome").toString());
+        final String groupKey = Base64Decoder.encoderBase64(extra.getString("nome").toString());
         System.out.println("group Name bundleded "+ extra.getString("nome").toString());
 
         String uri = extra.getString("uri");
@@ -91,9 +97,9 @@ public class GrupoAbertoActivity extends AppCompatActivity {
 /*
                 Glide.with(GrupoAbertoActivity.this).load(uri).override(68,68).into(groupImage);
 */
+
                 System.out.println("group image chat "+  uri);
             }});
-
 
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
@@ -102,6 +108,15 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         Glide.with(GrupoAbertoActivity.this).load(uri).override(68,68).into(groupImage);
         System.out.println("nome grupo "+ grupo.getNome());
         System.out.println("uri grupo "+ uri);
+
+        donation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GrupoAbertoActivity.this, CriaDoacaoActivity.class);
+                intent.putExtra("groupKey", groupKey);
+                startActivity(intent);
+            }
+        });
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
 

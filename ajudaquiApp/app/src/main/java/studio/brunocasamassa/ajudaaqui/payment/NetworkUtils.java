@@ -30,7 +30,7 @@ public class NetworkUtils {
             conexao.setReadTimeout(15000);
             conexao.setConnectTimeout(15000);
             conexao.connect();
-            
+
             codigoResposta = conexao.getResponseCode();
             if(codigoResposta < HttpURLConnection.HTTP_BAD_REQUEST){
                 is = conexao.getInputStream();

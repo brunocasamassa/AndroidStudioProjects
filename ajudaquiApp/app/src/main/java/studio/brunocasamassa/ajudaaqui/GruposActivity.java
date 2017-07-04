@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.facebook.login.LoginManager;
@@ -36,6 +37,7 @@ public class GruposActivity extends AppCompatActivity {
     private SlidingTabLayout slidingTabLayout;
     private int posicao;
     private FloatingActionButton fab;
+    private Button donation;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -44,11 +46,11 @@ public class GruposActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hello);
 
-
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
         toolbar.setTitle(getResources().getString(R.string.menu_grupos));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
+
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -71,7 +73,6 @@ public class GruposActivity extends AppCompatActivity {
         viewPager.setAdapter(gruposTabAdapter);
 
         slidingTabLayout.setViewPager(viewPager);
-
 
         NavigationDrawer navigator = new NavigationDrawer();
         navigator.createDrawer(GruposActivity.this, toolbar,5);

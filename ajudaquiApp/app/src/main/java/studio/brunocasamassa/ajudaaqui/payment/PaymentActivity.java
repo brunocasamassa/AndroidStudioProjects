@@ -55,6 +55,7 @@ public class PaymentActivity extends AppCompatActivity  implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paypal);
 
+
         buttonPay = (ImageButton) findViewById(R.id.buttonPay);
         editTextAmount = (TextView) findViewById(R.id.editTextAmount);
 
@@ -126,7 +127,7 @@ public class PaymentActivity extends AppCompatActivity  implements View.OnClickL
         onFuturePaymentPressed(v);
         GetJson download = new GetJson();
         download.execute();
-
+        finish();
         //onFuturePaymentPurchasePressed(v);
     }
 
@@ -142,8 +143,8 @@ public class PaymentActivity extends AppCompatActivity  implements View.OnClickL
 
         @Override
         protected PaymentObj doInBackground(Void... params) {
-            String url = "https://api.paypal.com/v1/oauth2/token";
             Utils util = new Utils();
+            String url = "https://api.paypal.com/v1/oauth2/token";
             return util.getInformacao(url);
         }
 

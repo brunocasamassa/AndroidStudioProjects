@@ -143,6 +143,9 @@ public class PedidosDisponiveisFragment extends Fragment {
                                 System.out.println("pedido " + pedido);
                                 pedidos.remove(pedido);
                             }
+                            if(pedido.getTipo().equals("Doacoes")){
+                                pedidos.remove(pedido);
+                            }
                         }
                     }
                     //remover pedidos do usuario na lista de pedidos geral

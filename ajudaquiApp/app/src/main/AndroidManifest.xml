@@ -18,6 +18,16 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
+        <activity android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="${applicationId}.braintree" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".StarsBar"
             android:screenOrientation="portrait" />
@@ -99,8 +109,10 @@
             android:screenOrientation="portrait" />
         <!--.MainActivity-->
 
+        <activity android:name=".CriaDoacaoActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".payment.PaymentActivity"
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -108,6 +120,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".payment.PaymentActivity3"
+            android:screenOrientation="portrait"></activity>
 
         <activity android:name=".PurchaseActivity" />
     </application>

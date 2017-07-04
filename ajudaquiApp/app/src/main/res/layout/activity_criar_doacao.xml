@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/create_pedido_name"
+        android:layout_width="350dp"
+        android:layout_height="74dp"
+        android:layout_alignEnd="@+id/create_group_description"
+        android:layout_alignRight="@+id/create_group_description"
+        android:layout_below="@+id/toolbar_create_group"
+        android:hint="O que voce quer doar?"
+        android:maxLength="17"
+        android:textColorHint="@color/md_grey_300"
+        android:textAlignment="viewStart"
+        android:textColor="@color/md_grey_300"
+        android:textSize="30sp"
+        android:elevation="21dp"
+        app:layout_constraintRight_toRightOf="@+id/imageView8"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_create_group" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/imageView8"
+        android:layout_width="422dp"
+        android:layout_height="103dp"
+        android:background="@color/colorBackground"
+        app:cardBackgroundColor="@color/colorBackground"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolbar_create_group"
+        android:layout_marginEnd="1539dp"
+        android:layout_marginRight="1539dp"
+        android:elevation="20dp"
+        app:cardElevation="20dp"
+        app:layout_constraintRight_toRightOf="@+id/toolbar_create_group"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_create_group"
+        app:srcCompat="@color/colorBackground" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_create_group"
+        android:layout_width="1962dp"
+        android:layout_height="56dp"
+        android:layout_alignParentLeft="true"
+        android:elevation="20dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorBackground"
+        android:visibility="visible"
+        app:layout_constraintLeft_toLeftOf="@+id/imageView8"
+        app:titleTextColor="@android:color/white"
+        tools:layout_editor_absoluteY="0dp"></android.support.v7.widget.Toolbar>
+
+
+    <me.gujun.android.taggroup.TagGroup
+        android:layout_width="304dp"
+        android:layout_height="60dp"
+        android:id="@+id/tagGroupGruposDoacao"
+        android:layout_marginTop="14dp"
+        app:layout_constraintTop_toBottomOf="@+id/word_add_groups"
+        android:layout_marginLeft="2dp"
+        app:layout_constraintLeft_toLeftOf="@+id/word_add_groups">
+    </me.gujun.android.taggroup.TagGroup>
+
+    <EditText
+        android:layout_width="49dp"
+        android:layout_height="45dp"
+        android:id="@+id/qtdProdutos"
+        tools:layout_editor_absoluteY="499dp"
+        tools:layout_editor_absoluteX="162dp" />
+
+    <EditText
+        android:id="@+id/create_pedido_description"
+        android:layout_width="329dp"
+        android:layout_height="85dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:gravity="top"
+        android:layout_below="@+id/imageView8"
+        android:layout_marginStart="8dp"
+        android:hint="Escreva aqui os detalhes da sua doação"
+        android:textAlignment="textStart"
+        android:textColor="@color/md_black_1000"
+        android:textSize="15dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/textView6"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/textView6"
+        tools:layout_editor_absoluteX="87dp" />
+
+    <Button
+        android:id="@+id/create_pedido_button"
+        android:layout_width="415dp"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/colorBackground"
+        android:text="PRONTO PARA DOAR"
+        android:textAlignment="center"
+        android:textColor="@color/cardview_light_background"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="PRONTO PARA DOAR" />
+
+    <TextView
+        android:id="@+id/word_add_groups"
+        android:layout_width="67dp"
+        android:layout_height="28dp"
+        android:layout_alignLeft="@+id/create_group_description"
+        android:layout_alignStart="@+id/create_group_description"
+        android:layout_below="@+id/create_group_description"
+        android:layout_marginStart="12dp"
+        android:text="Grupo"
+        android:textSize="20dp"
+        android:layout_marginTop="22dp"
+        app:layout_constraintTop_toBottomOf="@+id/create_pedido_description"
+        tools:layout_editor_absoluteX="72dp" />
+
+    <ImageView
+        android:id="@+id/imageView10"
+        android:layout_width="32dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="15dp"
+        app:srcCompat="@drawable/groups_icon"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="120dp"
+        app:layout_constraintTop_toBottomOf="@+id/imageView11" />
+
+    <ImageView
+        android:id="@+id/imageView11"
+        android:layout_width="30dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="53dp"
+        app:layout_constraintTop_toBottomOf="@+id/imageView8"
+        app:srcCompat="@drawable/pedidos_icon"
+        android:layout_marginLeft="15dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/textView6"
+        android:layout_marginRight="8dp"
+        app:layout_constraintHorizontal_bias="0.052"
+        android:layout_marginEnd="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Descriçao"
+        android:textSize="20dp"
+        android:id="@+id/textView6"
+        android:layout_marginTop="64dp"
+        app:layout_constraintTop_toBottomOf="@+id/imageView8"
+        android:layout_marginLeft="72dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="72dp" />
+
+
+</android.support.constraint.ConstraintLayout>
