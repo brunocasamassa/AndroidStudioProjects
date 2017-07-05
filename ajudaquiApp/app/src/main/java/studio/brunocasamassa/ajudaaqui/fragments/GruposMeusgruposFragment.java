@@ -5,14 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,7 +19,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import studio.brunocasamassa.ajudaaqui.CriaGrupoActivity;
 import studio.brunocasamassa.ajudaaqui.GrupoAbertoActivity;
 import studio.brunocasamassa.ajudaaqui.R;
 import studio.brunocasamassa.ajudaaqui.adapters.MyGroupsAdapter;
@@ -45,6 +42,7 @@ public class GruposMeusgruposFragment extends Fragment {
     private ValueEventListener valueEventListenerAllGroups;
 
     public static User usuario = new User();
+    private int premium;
 
     public GruposMeusgruposFragment() {
         // Required empty public constructor
@@ -97,7 +95,7 @@ public class GruposMeusgruposFragment extends Fragment {
                 User user = dataSnapshot.getValue(User.class);
                 usuario.setGrupos(user.getGrupos());
                 usuario.setName(user.getName());
-
+                    premium = user.getPremiumUser();
             }
 
             @Override
@@ -154,6 +152,7 @@ public class GruposMeusgruposFragment extends Fragment {
                 Grupo grupo = grupos.get(position);
 
                 // enviando dados para grupo activity
+                intent.putExtra("premium", premium);
                 intent.putExtra("uri", grupo.getGrupoImg());
                 intent.putExtra("nome", grupo.getNome());
                 intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()));

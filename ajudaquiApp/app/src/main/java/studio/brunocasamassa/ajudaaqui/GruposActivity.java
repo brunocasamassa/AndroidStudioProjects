@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.facebook.login.LoginManager;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.auth.FirebaseAuth;
 
 import studio.brunocasamassa.ajudaaqui.helper.GruposTabAdapter;
@@ -25,9 +25,7 @@ import studio.brunocasamassa.ajudaaqui.helper.Preferences;
 import studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout;
 
 /**
- *
  * Created by bruno on 24/04/2017.
- *
  */
 
 public class GruposActivity extends AppCompatActivity {
@@ -36,31 +34,43 @@ public class GruposActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
     private int posicao;
-    private FloatingActionButton fab;
+    private com.github.clans.fab.FloatingActionButton fab;
     private Button donation;
+    private FloatingActionMenu fabMenu;
+    private com.github.clans.fab.FloatingActionButton fab2;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hello);
+        setContentView(R.layout.activity_hello_grupos);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
         toolbar.setTitle(getResources().getString(R.string.menu_grupos));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
 
+        fabMenu = (FloatingActionMenu) findViewById(R.id.fab_open_menu);
+        fab2 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab2);
 
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GruposActivity.this, CabineFarturaActivity.class);
+                startActivity(intent);
+            }
+        });
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(GruposActivity.this, CriaGrupoActivity.class);
                 startActivity(intent);
-            }});
+            }
+        });
 
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
         viewPager = (ViewPager) findViewById(R.id.vp_pagina);
@@ -75,12 +85,11 @@ public class GruposActivity extends AppCompatActivity {
         slidingTabLayout.setViewPager(viewPager);
 
         NavigationDrawer navigator = new NavigationDrawer();
-        navigator.createDrawer(GruposActivity.this, toolbar,5);
+        navigator.createDrawer(GruposActivity.this, toolbar, 5);
 
         //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
     }
-
 
 
     @Override

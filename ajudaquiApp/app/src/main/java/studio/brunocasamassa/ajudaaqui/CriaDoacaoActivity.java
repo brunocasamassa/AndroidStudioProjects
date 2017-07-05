@@ -1,5 +1,7 @@
 package studio.brunocasamassa.ajudaaqui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -54,6 +56,7 @@ public class CriaDoacaoActivity extends AppCompatActivity {
     private String groupKey;
     private EditText doacaoQtd;
     private int qtd;
+    private int naCabine = 0;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -108,7 +111,44 @@ public class CriaDoacaoActivity extends AppCompatActivity {
                 } else if (descricao.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Insira uma descricao para o pedido", Toast.LENGTH_LONG).show();
                     return;
-                } else createPedido();
+                } else if(qtd>=10){
+
+                    final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CriaDoacaoActivity.this);
+
+                    alertDialog.setTitle("Cabine da fartura?");
+                    alertDialog.setMessage("Mais de 10 quantidades? deseja envia-las para a a cabine da fartura?");
+                    alertDialog.setCancelable(false);
+
+                    alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            naCabine = 0;
+                        }
+                    });
+                    alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            naCabine = 1;
+                            createPedido();
+                            DatabaseReference dbUser =  FirebaseConfig.getFireBase().child("usuarios").child(userKey);
+                            dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    User usuario = dataSnapshot.getValue(User.class);
+
+                                    usuario.setCreditos(usuario.getCreditos()+5);
+                                    usuario.save();
+
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    });
+                }
             }
 
         });
@@ -124,6 +164,7 @@ public class CriaDoacaoActivity extends AppCompatActivity {
             pedido.setTagsCategoria(tagsCaptured);
             pedido.setTipo("Doacoes");
 
+            pedido.setNaCabine(naCabine);
             pedido.setGrupo(groupKey);
 
             pedido.setDescricao(descricao.getText().toString());
@@ -142,7 +183,6 @@ public class CriaDoacaoActivity extends AppCompatActivity {
             pedidoSaveIntoUser(true);
             Toast.makeText(getApplicationContext(), "Pedido criado com sucesso", Toast.LENGTH_LONG).show();
             refresh();
-
         }
 
     }

@@ -41,7 +41,7 @@ public class PaymentActivity extends AppCompatActivity  implements View.OnClickL
             // Minimally, you will need to set three merchant information properties.
             // These should be the same values that you provided to PayPal when you registered your app.
             .merchantName("Hipster Store")
-            .merchantPrivacyPolicyUri(Uri.parse("https://www.example.com/privacy"))
+            .merchantPrivacyPolicyUri(Uri.parse("https://firebasestorage.googleapis.com/v0/b/ajudaqui-d58a0.appspot.com/o/TERMOS%20DE%20USO%20E%20POL%C3%8DTICA%20DE%20PRIVACIDADE%20pdf.pdf?alt=media&token=b47f8352-ecf8-4855-9c8d-d69d8a7d7048"))
             .merchantUserAgreementUri(Uri.parse("https://www.example.com/legal"));
 
     private ImageButton buttonPay;

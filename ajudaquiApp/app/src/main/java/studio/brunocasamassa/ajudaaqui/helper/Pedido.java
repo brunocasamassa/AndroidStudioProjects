@@ -20,6 +20,8 @@ public class Pedido {
         this.idPedido = idPedido;
     }
 
+    private int naCabine;  //0=false , 1=true
+
     private String idPedido;
 
     public String getTitulo() {
@@ -102,6 +104,14 @@ public class Pedido {
 
     public void setAtendenteId(String atendenteId) {
         this.atendenteId = atendenteId;
+    }
+
+    public int getNaCabine() {
+        return naCabine;
+    }
+
+    public void setNaCabine(int naCabine) {
+        this.naCabine = naCabine;
     }
 
 

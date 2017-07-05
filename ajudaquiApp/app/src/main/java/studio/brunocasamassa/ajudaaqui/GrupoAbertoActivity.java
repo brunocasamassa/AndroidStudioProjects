@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,11 +13,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -50,25 +49,32 @@ public class GrupoAbertoActivity extends AppCompatActivity {
     private int posicao;
     private static Grupo grupo = new Grupo();
     private StorageReference storage;
-    private FloatingActionButton fab;
-    private Button donation;
+    private FloatingActionMenu menuFAB;
+    private com.github.clans.fab.FloatingActionButton donationFAB;
+    private com.github.clans.fab.FloatingActionButton pedidoFAB;
+    private int premium;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grupo_aberto);
 
+        menuFAB = (FloatingActionMenu) findViewById(R.id.fab_menu);
 
-        donation = (Button) findViewById(R.id.button_donation);
+
+        donationFAB = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.doacao_fab);
+        pedidoFAB = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.pedido_fab);
 
         Bundle extra = getIntent().getExtras();
 
         final String groupKey = Base64Decoder.encoderBase64(extra.getString("nome").toString());
         System.out.println("group Name bundleded "+ extra.getString("nome").toString());
 
+        premium = extra.getInt("premium");
         String uri = extra.getString("uri");
         String titulo =  extra.getString("nome").toString();
         firebase = FirebaseConfig.getFireBase().child("grupos").child(groupKey);
@@ -94,9 +100,8 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         storage.child(grupo.getNome()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-/*
                 Glide.with(GrupoAbertoActivity.this).load(uri).override(68,68).into(groupImage);
-*/
+
 
                 System.out.println("group image chat "+  uri);
             }});
@@ -109,7 +114,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         System.out.println("nome grupo "+ grupo.getNome());
         System.out.println("uri grupo "+ uri);
 
-        donation.setOnClickListener(new View.OnClickListener() {
+        donationFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(GrupoAbertoActivity.this, CriaDoacaoActivity.class);
@@ -118,12 +123,13 @@ public class GrupoAbertoActivity extends AppCompatActivity {
             }
         });
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+
+        pedidoFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(GrupoAbertoActivity.this, CriaPedidoActivity .class);
+                intent.putExtra("premium", premium);
                 startActivity(intent);
             }});
 

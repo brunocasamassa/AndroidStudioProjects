@@ -38,6 +38,7 @@ public class PaymentActivity3 extends AppCompatActivity  implements View.OnClick
         setContentView(R.layout.activity_paypal);
 
         buttonPay = (ImageButton) findViewById(R.id.buttonPay);
+
         editTextAmount = (TextView) findViewById(R.id.editTextAmount);
 
         buttonPay.setOnClickListener(this);
@@ -54,7 +55,7 @@ public class PaymentActivity3 extends AppCompatActivity  implements View.OnClick
         private static PayPalConfiguration config = new PayPalConfiguration()
                 // Start with mock environment.  When ready, switch to sandbox (ENVIRONMENT_SANDBOX)
                 // or live (ENVIRONMENT_PRODUCTION)
-                .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
+                .environment(PayPalConfiguration.ENVIRONMENT_PRODUCTION)
                 .clientId(PayPalConfig.PAYPAL_CLIENT_ID);
 
     private void getPayment() {

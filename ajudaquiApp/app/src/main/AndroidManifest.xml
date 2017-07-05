@@ -99,6 +99,9 @@
             android:name=".CriaGrupoActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".CabineFarturaActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".SobreActivity"
             android:screenOrientation="portrait" />
         <activity

@@ -76,19 +76,6 @@ public class PedidosDisponiveisFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pedidos_disponiveis, container, false);
         pedidos = new ArrayList<>();
         pedidosView = (ListView) view.findViewById(R.id.allpedidos_list);
-        /*fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = new Intent(getActivity(), CriaPedidoActivity.class);
-                intent.putExtra("premium", premium);
-                System.out.println("PREMIUM FRAGMENT " + premium);
-                startActivity(intent);
-
-            }
-        });
-*/
         pedidosArrayAdapter = new PedidosAdapter(getContext(), pedidos);
 
         pedidosView.setDivider(null);

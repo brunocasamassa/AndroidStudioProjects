@@ -104,9 +104,6 @@ public class CriaPedidoActivity extends AppCompatActivity {
         addGroupButton = (ImageButton) findViewById((R.id.addGroup_tag_button));
 
         grupos.setBackgroundColor(Color.TRANSPARENT);
-        grupos.setBorderColor(Color.TRANSPARENT);
-        grupos.setTagBackgroundColor(R.color.colorPrimary);
-        grupos.setTagTextColor(R.color.md_white_1000);
         grupos.setOnTagClickListener(new TagView.OnTagClickListener() {
             @Override
             public void onTagClick(int position, String text) {
@@ -126,9 +123,6 @@ public class CriaPedidoActivity extends AppCompatActivity {
         });
 
         categorias.setBackgroundColor(Color.TRANSPARENT);
-        categorias.setBorderColor(Color.TRANSPARENT);
-        categorias.setTagBackgroundColor(R.color.colorPrimary);
-        categorias.setTagTextColor(R.color.md_white_1000);
         categorias.setOnTagClickListener(new TagView.OnTagClickListener() {
 
             @Override
