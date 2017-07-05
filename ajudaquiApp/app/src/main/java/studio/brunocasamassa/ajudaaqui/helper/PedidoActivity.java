@@ -39,7 +39,7 @@ public class PedidoActivity extends AppCompatActivity {
     private User user = new User();
     private DatabaseReference firebase;
     private DatabaseReference dbUserDestinatario;
-    private Bundle extra = getIntent().getExtras();
+
 
     @Override
     protected void onStart() {
@@ -53,6 +53,7 @@ public class PedidoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido);
 
+       final Bundle extra = getIntent().getExtras();
         toolbar = (Toolbar) findViewById(R.id.toolbar_create_pedido);
         nomePedido = (TextView) findViewById(R.id.nome_pedido_feito);
         descricao = (TextView) findViewById(R.id.descricao_pedido_feito);

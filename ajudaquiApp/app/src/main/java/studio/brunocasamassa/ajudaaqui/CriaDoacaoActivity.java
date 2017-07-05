@@ -71,7 +71,7 @@ public class CriaDoacaoActivity extends AppCompatActivity {
         System.out.println("group key " + groupKey);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_create_group);
-        toolbar.setTitle("Criar Pedido");
+        toolbar.setTitle("Criar doacao");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -117,7 +117,7 @@ public class CriaDoacaoActivity extends AppCompatActivity {
 
     private void createPedido() {
 
-        for (int i = 0; i < qtd; i++) {
+        for (int i = 1; i <= qtd; i++) {
 
             pedido = new Pedido();
             System.out.println("tipo de pedido: " + tipoPedido);
@@ -127,7 +127,7 @@ public class CriaDoacaoActivity extends AppCompatActivity {
             pedido.setGrupo(groupKey);
 
             pedido.setDescricao(descricao.getText().toString());
-            pedido.setTitulo(pedidoName.getText().toString());
+            pedido.setTitulo(pedidoName.getText().toString()+" Nº"+i+" ");
             pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo() + i));
             pedido.setCriadorId(userKey);
             pedido.setGrupo(Base64Decoder.decoderBase64(groupKey));
@@ -163,6 +163,7 @@ public class CriaDoacaoActivity extends AppCompatActivity {
                         pedidosList.add(pedidosList.size(), pedido.getIdPedido());
                         grupo.setDoacoes(pedidosList);
                     } else {
+
                         pedidosList.add(0, pedido.getIdPedido());
 
                     }

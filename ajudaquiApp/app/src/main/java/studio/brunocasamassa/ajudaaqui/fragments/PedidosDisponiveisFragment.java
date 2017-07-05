@@ -188,7 +188,7 @@ public class PedidosDisponiveisFragment extends Fragment {
                     }
                     intent.putExtra("descricao", pedido.getDescricao());
 
-                    System.out.println("titulo " + pedido.getTitulo() + "\n" + "grupo " + pedido.getGrupo() + "\n" + "desxcricao " + pedido.getDescricao() + "\n");
+                    System.out.println("titulo enviando " + pedido.getTitulo() + "\n" + "grupo " + pedido.getGrupo() + "\n" + "desxcricao " + pedido.getDescricao() + "\n");
                     startActivity(intent);
                 } catch (Exception e) {
                     System.out.println("Exception grupos " + e);

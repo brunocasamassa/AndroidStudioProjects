@@ -55,9 +55,6 @@ public class PedidoCriadoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido_criado);
 
-
-        Toast.makeText(getApplicationContext(), "Segure um item para alterá-lo", Toast.LENGTH_SHORT).show();
-
         my_layout = (ConstraintLayout) findViewById(R.id.layout_my_pedido);
         pedidoChat = (ImageView) findViewById(R.id.chat_pedido);
         statusImage = (ImageView) findViewById(R.id.status_image_criado);
