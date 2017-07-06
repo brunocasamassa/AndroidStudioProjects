@@ -1,6 +1,7 @@
 package studio.brunocasamassa.ajudaaqui.helper;
 
 import android.net.Uri;
+import android.support.v7.app.NotificationCompat;
 
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,6 +33,7 @@ public class User implements DatabaseReference.CompletionListener {
 
     private int pontos;
 
+    private NotificationCompat.Builder pedidoCanceladoNotification;
     private ArrayList<String> gruposSolicitados;
 
     private int chatNotificationCount;
@@ -239,5 +241,13 @@ public class User implements DatabaseReference.CompletionListener {
 
     public void setPedidosNotificationCount(int pedidosNotificationCount) {
         this.pedidosNotificationCount = pedidosNotificationCount;
+    }
+
+    public NotificationCompat.Builder getPedidoCanceladoNotification() {
+        return pedidoCanceladoNotification;
+    }
+
+    public void setPedidoCanceladoNotification(NotificationCompat.Builder pedidoCanceladoNotification) {
+        this.pedidoCanceladoNotification = pedidoCanceladoNotification;
     }
 }

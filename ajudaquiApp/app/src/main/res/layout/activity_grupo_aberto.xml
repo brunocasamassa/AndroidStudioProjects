@@ -132,8 +132,6 @@
                 android:id="@+id/pedido_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/material_design_android_floating_action_menu"
-                android:layout_alignRight="@+id/material_design_android_floating_action_menu"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="12dp"
                 android:layout_marginRight="12dp"

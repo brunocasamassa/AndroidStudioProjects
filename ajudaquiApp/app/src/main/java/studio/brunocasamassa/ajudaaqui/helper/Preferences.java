@@ -27,6 +27,10 @@ public class Preferences {
         editor = preferences.edit();
     }
 
+    public Preferences() {
+
+    }
+
     public void saveData(String idUser, String nameUser) {
         editor.putString(CHAVE_ID, idUser);
         editor.putString(CHAVE_NOME, nameUser);

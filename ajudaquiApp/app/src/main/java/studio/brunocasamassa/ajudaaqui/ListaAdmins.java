@@ -1,6 +1,5 @@
 package studio.brunocasamassa.ajudaaqui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -106,7 +105,7 @@ public class ListaAdmins extends AppCompatActivity {
                                 if (dataUser.getMedalhas() != null) {
                                     user.setMedalhas(dataUser.getMedalhas());
                                 }
-                                user.setMsgSolicitacoes(msgSolicitacoes);
+                                dataUser.setMsgSolicitacoes(msgSolicitacoes);
                                 if (dataUser.getGrupos() != null) {
                                     user.setGrupos(dataUser.getGrupos());
                                 }
@@ -136,7 +135,7 @@ public class ListaAdmins extends AppCompatActivity {
                                 System.out.println("userName " + adminSelected);
                                 user.setId(Base64Decoder.encoderBase64(user.getEmail()));
 
-                                user.save();
+                                dataUser.save();
 
                                 Toast.makeText(ListaAdmins.this, "Solicitação enviada", Toast.LENGTH_LONG).show();
                             }

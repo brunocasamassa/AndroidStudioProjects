@@ -1,9 +1,15 @@
 package studio.brunocasamassa.ajudaaqui.helper;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import me.gujun.android.taggroup.TagGroup;
+import studio.brunocasamassa.ajudaaqui.PedidosActivity;
 import studio.brunocasamassa.ajudaaqui.R;
 
 /**
@@ -36,7 +43,7 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
     private TagGroup tagsCategoria;
     private TagGroup tagsGrupo;
     private ImageView statusImage;
-    private Button finalizarPedido;
+    private Button cancelarButton;
     private Pedido pedido;
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private User user = new User();
@@ -53,13 +60,14 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido_atendido);
 
+
         statusImage = (ImageView) findViewById(R.id.status_image);
         toolbar = (Toolbar) findViewById(R.id.toolbar_pedido_atendido);
         nomePedido = (TextView) findViewById(R.id.nome_pedido_atendido);
         descricao = (TextView) findViewById(R.id.descricao_pedido_atendido);
         tagsCategoria = (TagGroup) findViewById(R.id.tags_pedido_categoria_atendido);
         tagsGrupo = (TagGroup) findViewById(R.id.tags_pedido_grupo_atendido);
-        finalizarPedido = (Button) findViewById(R.id.finalizar_pedido_button);
+        cancelarButton = (Button) findViewById(R.id.finalizar_pedido_button);
 
         Preferences preferences = new Preferences(PedidoAtendidoActivity.this);
 
@@ -79,7 +87,6 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
             pedido.setTipo(extra.getString("tipo"));
             pedido.setCriadorId(extra.getString("criadorId"));
 
-
         }
 
         if (pedido.getStatus() != 0) {
@@ -96,6 +103,22 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
             }
         }
 
+        final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+
+        mBuilder.setSmallIcon(R.drawable.logo_pb);
+        mBuilder.setContentTitle("Pedido Cancelado");
+        mBuilder.setContentText("O Usuario " + username + " cancelou o pedido  " + pedido.getTitulo());
+
+        Intent resultIntent = new Intent(this, PedidosActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(PedidosActivity.class);
+
+        stackBuilder.addNextIntent(resultIntent);
+        final PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(0, mBuilder.build());
 
         toolbar.setTitle(pedido.getTitulo().toUpperCase());
 
@@ -116,90 +139,99 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
         if (pedido.getGrupo() != null) {
             tagsGrupo.setTags(pedido.getGrupo());
         }
-        finalizarPedido.setOnClickListener(new View.OnClickListener() {
+        cancelarButton.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoAtendidoActivity.this);
+                                              @Override
+                                              public void onClick(View v) {
+                                                  AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoAtendidoActivity.this);
 
-                alertDialog.setTitle("Desistir do Pedido");
-                alertDialog.setMessage("Deseja desistir deste pedido de ajuda? voce nao receberá creditos ou pontos por ele");
-                alertDialog.setCancelable(false);
+                                                  alertDialog.setTitle("Desistir do Pedido");
+                                                  alertDialog.setMessage("Deseja desistir deste pedido de ajuda? voce nao receberá creditos ou pontos por ele");
+                                                  alertDialog.setCancelable(false);
 
-
-
-                alertDialog.setNegativeButton("Voltar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-
-                });
-
-                alertDialog.setPositiveButton("Desistir", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        pedido.setStatus(3);
-                        pedido.setAtendenteId("");
-                        pedido.save();
-
-                        DatabaseReference dbUser = FirebaseConfig.getFireBase();
-                        dbUser.child("usuarios").child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                User user = dataSnapshot.getValue(User.class);
-                                ArrayList<String> pedidosAtendidos = new ArrayList<>();
-
-                                pedidosAtendidos.addAll(user.getPedidosAtendidos());
-
-                                int targetPedidoToRemove = pedidosAtendidos.indexOf(pedido.getIdPedido());
-
-                                pedidosAtendidos.remove(targetPedidoToRemove);
-
-                                user.setPedidosAtendidos(pedidosAtendidos);
-                                user.setId(Base64Decoder.encoderBase64(user.getEmail()));
-                                user.save();
-
-                                DatabaseReference dbUser = FirebaseConfig.getFireBase();
-                                dbUser.child("usuarios").child(pedido.getCriadorId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        User user = dataSnapshot.getValue(User.class);
-                                        user.setCreditos(user.getCreditos()+1);
-                                        user.setId(Base64Decoder.encoderBase64(user.getEmail()));
-                                        user.setMessageNotification("O usuario "+ username+ " cancelou o pedido de ajuda de seu pedido '"+ pedido.getTitulo() + "' voce pode alterar o status para aberto e procurar um novo ajudante");
-                                        user.save();
-                                        //REMOVING CHAT FIELD
-                                        dbConversa.child(userKey).removeValue();
-                                        dbConversa.child(pedido.getCriadorId()).removeValue();
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
-
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-
-                        Toast.makeText(PedidoAtendidoActivity.this, "Voce Desistiu do pedido", Toast.LENGTH_LONG).show();
-                        finish();
-
-                    }
-                }).create().show();
+                                                  alertDialog.setNegativeButton("Voltar", new DialogInterface.OnClickListener() {
+                                                      @Override
+                                                      public void onClick(DialogInterface dialog, int which) {
 
 
-            }
+                                                      }
 
-        });
+                                                  });
+
+                                                  alertDialog.setPositiveButton("Desistir", new DialogInterface.OnClickListener() {
+                                                      @Override
+                                                      public void onClick(DialogInterface dialog, int which) {
+
+                                                          pedido.setStatus(3);
+                                                          pedido.setAtendenteId("");
+                                                          pedido.save();
+
+                                                          //apaga pedido do usuario logado
+                                                          DatabaseReference dbUser = FirebaseConfig.getFireBase();
+                                                          dbUser.child("usuarios").child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                              @Override
+                                                              public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                  User user = dataSnapshot.getValue(User.class);
+                                                                  ArrayList<String> pedidosAtendidos = new ArrayList<>();
+
+                                                                  pedidosAtendidos.addAll(user.getPedidosAtendidos());
+
+                                                                  int targetPedidoToRemove = pedidosAtendidos.indexOf(pedido.getIdPedido());
+
+                                                                  pedidosAtendidos.remove(targetPedidoToRemove);
+
+                                                                  user.setPedidosAtendidos(pedidosAtendidos);
+                                                                  user.setId(Base64Decoder.encoderBase64(user.getEmail()));
+                                                                  user.save();
+
+                                                                  //renova pedido do usuario criador
+                                                                  DatabaseReference dbUser = FirebaseConfig.getFireBase();
+                                                                  dbUser.child("usuarios").child(pedido.getCriadorId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                      @Override
+                                                                      public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                          User user = dataSnapshot.getValue(User.class);
+                                                                          user.setCreditos(user.getCreditos() + 1);
+                                                                          user.setId(Base64Decoder.encoderBase64(user.getEmail()));
+                                                                          user.setMessageNotification("O usuario " + username + " cancelou o pedido de ajuda de seu pedido '" + pedido.getTitulo() + "' voce pode alterar o status para aberto e procurar um novo ajudante");
+                                                                          user.save();
+                                                                          //REMOVING CHAT FIELD
+                                                                          dbConversa.child(userKey).removeValue();
+                                                                          dbConversa.child(pedido.getCriadorId()).removeValue();
+
+                                                                      }
+
+                                                                      @Override
+                                                                      public void onCancelled(DatabaseError databaseError) {
+
+                                                                      }
+                                                                  });
+
+                                                              }
+
+                                                              @Override
+                                                              public void onCancelled(DatabaseError databaseError) {
+
+                                                              }
+                                                          });
+
+                                                          Toast.makeText(PedidoAtendidoActivity.this, "Voce Desistiu do pedido", Toast.LENGTH_LONG).show();
+                                                          finish();
+
+                                                      }
+                                                  }).create().show();
+
+                                               /*   FirebaseMessaging fm = FirebaseMessaging.getInstance();
+                                                  fm.send(new RemoteMessage.Builder(userKey + "https://ajudaqui-d58a0.firebaseio.com/").setMessageId(Integer.toString(msgId.incrementAndGet()))
+                                                          .addData("my_message","O Usuario " + username + " cancelou o pedido  " + pedido.getTitulo() )
+                                                          .addData("my_action", resultPendingIntent)
+                                                          .build());
+*/
+
+                                              }
+                                          }
+
+
+        );
 
     }
 }

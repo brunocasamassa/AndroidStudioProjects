@@ -18,7 +18,10 @@ import android.widget.ListView;
 import com.facebook.login.LoginManager;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 
+import studio.brunocasamassa.ajudaaqui.helper.Base64Decoder;
+import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.GruposTabAdapter;
 import studio.brunocasamassa.ajudaaqui.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaaqui.helper.Preferences;
@@ -106,11 +109,15 @@ public class GruposActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_exit:
                 //logoutUser();
+
                 LoginManager.getInstance().logOut();
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(GruposActivity.this, MainActivity.class));
+
                 Preferences preferences = new Preferences(GruposActivity.this);
                 preferences.clearSession();
+                DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
+                dbUser.child("notificationToken").removeValue();
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(GruposActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
                 startActivity(new Intent(GruposActivity.this, ConfiguracoesActivity.class));

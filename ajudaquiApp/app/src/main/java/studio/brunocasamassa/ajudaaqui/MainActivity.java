@@ -28,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -38,7 +39,8 @@ import studio.brunocasamassa.ajudaaqui.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaaqui.helper.Preferences;
 import studio.brunocasamassa.ajudaaqui.helper.User;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
+
 
     private ProfileTracker mProfileTracker;
     private ImageButton cadastrar;
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         autenticacao = FirebaseConfig.getFirebaseAuthentication();
 
         storage = FirebaseConfig.getFirebaseStorage().child("userImages");
@@ -104,6 +107,12 @@ public class MainActivity extends AppCompatActivity {
 
                                 preferencias.saveData(Base64Decoder.encoderBase64(pivotUsuario.getEmail()), pivotUsuario.getName());
                                 Toast.makeText(getApplicationContext(), "signed in " + preferencias.getNome(), Toast.LENGTH_LONG).show();
+
+                                String token = FirebaseInstanceId.getInstance().getToken();
+
+                                MyFirebaseInstanceIdService md = new MyFirebaseInstanceIdService();
+
+                                md.onTokenRefresh();
 
                                 System.out.println("usuario name " + usuario.getName());
                                 startActivity(new Intent(MainActivity.this, PedidosActivity.class));

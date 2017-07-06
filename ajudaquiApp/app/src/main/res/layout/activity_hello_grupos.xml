@@ -88,17 +88,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|start"
-                android:clickable="true"
                 android:elevation="5dp"
                 fab:fab_label="CABINE DA FARTURA"
                 android:src="@drawable/badge3"
                 app:backgroundTint="@color/colorAccent"
-                app:fabSize="normal"
-                android:layout_marginBottom="10dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:translationY="-100dp"
-                android:translationX="-10dp"
+                app:fabSize="mini"
                 />
 
             <com.github.clans.fab.FloatingActionButton
@@ -110,13 +104,10 @@
                 android:elevation="5dp"
                 android:src="@drawable/button_plus_dark"
                 app:backgroundTint="@color/colorAccent"
-                app:fabSize="normal"
+                app:fabSize="mini"
                 fab:fab_label="Criar Grupo"
-                android:layout_marginBottom="10dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:translationY="-10dp"
-                android:translationX="-10dp"
+
+
                 />
 
             </com.github.clans.fab.FloatingActionMenu>

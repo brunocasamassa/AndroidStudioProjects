@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -151,10 +152,15 @@ public class ConversasActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_exit:
                 //logoutUser();
+
                 LoginManager.getInstance().logOut();
-                startActivity(new Intent(ConversasActivity.this, MainActivity.class));
+
                 Preferences preferences = new Preferences(ConversasActivity.this);
                 preferences.clearSession();
+                DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
+                dbUser.child("notificationToken").removeValue();
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(ConversasActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
                 Toast.makeText(ConversasActivity.this, "Em Breve", Toast.LENGTH_LONG).show();

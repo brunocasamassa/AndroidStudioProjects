@@ -468,10 +468,12 @@ public class PerfilActivity extends AppCompatActivity {
             case R.id.action_exit:
                 //logoutUser();
                 LoginManager.getInstance().logOut();
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(PerfilActivity.this, MainActivity.class));
                 Preferences preferences = new Preferences(PerfilActivity.this);
                 preferences.clearSession();
+                DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
+                dbUser.child("notificationToken").removeValue();
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(PerfilActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
                 startActivity(new Intent(PerfilActivity.this, ConfiguracoesActivity.class));
