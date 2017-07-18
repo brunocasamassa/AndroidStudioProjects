@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/md_grey_200"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="studio.brunocasamassa.ajudaaqui.fragments.PedidosEscolhidosFragment">
+    tools:context="studio.brunocasamassa.ajudaquiapp.fragments.PedidosEscolhidosFragment">
 
     <!-- TODO: Update blank fragment layout -->
 

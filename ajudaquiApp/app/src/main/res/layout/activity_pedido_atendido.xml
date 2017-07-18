@@ -22,7 +22,25 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintHorizontal_bias="0.0"></android.support.v7.widget.Toolbar>
 
-   <TextView
+
+    <ImageView
+        android:id="@+id/chat_pedido_atendido"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="30dp"
+        android:src="@drawable/pedido_chat_icon"
+        android:layout_marginRight="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar_pedido_atendido"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/toolbar_pedido_atendido"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar_pedido_atendido"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintHorizontal_bias="0.977"
+        app:layout_constraintVertical_bias="1.0"/>
+
+    <TextView
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:text="Nome Pedido"

@@ -4,7 +4,7 @@
     android:background="@color/md_grey_200"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="studio.brunocasamassa.ajudaaqui.fragments.GruposTodosgruposFragment">
+    tools:context="studio.brunocasamassa.ajudaquiapp.fragments.GruposTodosgruposFragment">
 
     <!-- TODO: Update blank fragment layout -->
 

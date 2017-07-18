@@ -26,9 +26,8 @@
         tools:text="Escolha um administrador do grupo para enviar a mensagem"
         android:textStyle="bold"
         android:id="@+id/textView10"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="27dp" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 
     <ListView

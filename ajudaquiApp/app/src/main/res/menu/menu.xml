@@ -19,11 +19,14 @@
 
     <item
         android:id="@+id/item_search"
-        android:icon="@drawable/ic_search"
+        android:actionViewClass="android.support.v7.widget.SearchView"
         android:orderInCategory="302"
-        android:title="Search"
         app:showAsAction="always"
-        tools:ignore="AlwaysShowAction,HardcodedText" />
+        tools:ignore="AlwaysShowAction,HardcodedText"
+        android:icon="@drawable/ic_search"
+        android:title="Search"
+        />
+
 
 
 </menu>

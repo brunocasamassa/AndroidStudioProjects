@@ -6,6 +6,8 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_light">
+    <include layout="@layout/searchable"
+        android:visibility="gone"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_principal"
@@ -14,14 +16,14 @@
         android:background="@color/colorBackground"
         app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
 
-    <studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout
+    <studio.brunocasamassa.ajudaquiapp.helper.SlidingTabLayout
         android:id="@+id/stl_tabs"
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/vp_pagina"
         android:background="@color/colorBackground"
-        app:titleTextColor="@android:color/white"></studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout>
+        app:titleTextColor="@android:color/white"></studio.brunocasamassa.ajudaquiapp.helper.SlidingTabLayout>
 
     <RelativeLayout
         android:id="@+id/activity_crear_entrenamiento"
@@ -47,7 +49,7 @@
             android:layout_gravity="bottom|start"
             android:clickable="true"
             android:elevation="5dp"
-            android:src="@drawable/button_plus_dark"
+            android:src="@drawable/fab_add"
             app:backgroundTint="@color/colorAccent"
             app:fabSize="normal"
             android:layout_marginBottom="10dp"
@@ -57,6 +59,7 @@
             android:translationX="-10dp"
              />
     </RelativeLayout>
+
 
 
 </LinearLayout>

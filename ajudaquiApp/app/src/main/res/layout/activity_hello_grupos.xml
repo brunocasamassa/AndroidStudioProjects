@@ -15,7 +15,7 @@
         android:background="@color/colorBackground"
         app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
 
-    <studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout
+    <studio.brunocasamassa.ajudaquiapp.helper.SlidingTabLayout
         android:id="@+id/stl_tabs"
         android:layout_width="match_parent"
         android:layout_height="46dp"
@@ -24,7 +24,7 @@
         android:background="@color/colorBackground"
         app:titleTextColor="@android:color/white">
 
-    </studio.brunocasamassa.ajudaaqui.helper.SlidingTabLayout>
+    </studio.brunocasamassa.ajudaquiapp.helper.SlidingTabLayout>
 
     <RelativeLayout
         android:id="@+id/activity_crear_entrenamiento"
