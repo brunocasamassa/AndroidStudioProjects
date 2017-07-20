@@ -17,6 +17,8 @@ public class User implements DatabaseReference.CompletionListener {
 
     private String id;
 
+
+    private int maxDistance;
     public int getPremiumUser() {
         return premiumUser;
     }
@@ -289,5 +291,13 @@ public class User implements DatabaseReference.CompletionListener {
 
     public void setPedidoCanceladoNotification(NotificationCompat.Builder pedidoCanceladoNotification) {
         this.pedidoCanceladoNotification = pedidoCanceladoNotification;
+    }
+
+    public int getMaxDistance() {
+        return maxDistance;
+    }
+
+    public void setMaxDistance(int maxDistance) {
+        this.maxDistance = maxDistance;
     }
 }

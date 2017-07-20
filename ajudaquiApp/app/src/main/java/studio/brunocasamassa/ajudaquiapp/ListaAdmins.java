@@ -99,7 +99,7 @@ public class ListaAdmins extends AppCompatActivity {
                                     msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:" + grupo.getNome() + ":USUARIO:" + userName + " :MENSAGEM: " + mensagemSolicitacao + ":USERKEY:" + userId);
                                 }
 
-                                if (dataUser.getMessageNotification() != null) {  //todo mudou user, altera aqui
+                                /*if (dataUser.getMessageNotification() != null) {  //todo mudou user, altera aqui
                                     user.setMessageNotification(dataUser.getMessageNotification());
                                 }
                                 if (dataUser.getMedalhas() != null) {
@@ -134,7 +134,7 @@ public class ListaAdmins extends AppCompatActivity {
 
                                 System.out.println("userName " + adminSelected);
                                 user.setId(Base64Decoder.encoderBase64(user.getEmail()));
-
+*/
                                 dataUser.save();
 
                                 Toast.makeText(ListaAdmins.this, "Solicitação enviada", Toast.LENGTH_LONG).show();

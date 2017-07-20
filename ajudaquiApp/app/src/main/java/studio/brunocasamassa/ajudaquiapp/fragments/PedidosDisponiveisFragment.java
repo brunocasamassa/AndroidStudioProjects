@@ -26,6 +26,7 @@ import java.util.Comparator;
 
 import es.dmoral.toasty.Toasty;
 import im.delight.android.location.SimpleLocation;
+import studio.brunocasamassa.ajudaquiapp.PedidosActivity;
 import studio.brunocasamassa.ajudaquiapp.R;
 import studio.brunocasamassa.ajudaquiapp.adapters.PedidosAdapter;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
@@ -48,7 +49,7 @@ public class PedidosDisponiveisFragment extends Fragment {
     private int premium;
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private ArrayList<Pedido> pedidos;
-    private ArrayAdapter pedidosArrayAdapter;
+    public ArrayAdapter pedidosArrayAdapter;
     private ListView pedidosView;
     private DatabaseReference databasePedidos = FirebaseConfig.getFireBase().child("Pedidos");
     private SimpleLocation localizacao;
@@ -65,20 +66,35 @@ public class PedidosDisponiveisFragment extends Fragment {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
-    private ArrayList<Pedido> pedidosPivot;
+    private PedidosActivity pa ;
 
+    private PedidosAdapter pedidosAdapter;
+    private ArrayList<Pedido> pedidosPivot;
 
     public PedidosDisponiveisFragment() {
         // Required empty public constructor
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onStart() {
+        if (pa.getArrayAdapter() != null) {
+            pedidosArrayAdapter = pa.getArrayAdapter();
+        }
+        super.onStart();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pedidos_disponiveis, container, false);
+        pa = (PedidosActivity) getActivity();
         pedidos = new ArrayList<>();
         pedidosPivot = new ArrayList<>();
         pedidosView = (ListView) view.findViewById(R.id.allpedidos_list);
@@ -87,10 +103,19 @@ public class PedidosDisponiveisFragment extends Fragment {
                 pedidos.remove(i);
             }
         }
-        pedidosArrayAdapter = new PedidosAdapter(getContext(), pedidos);
+        pedidosAdapter = new PedidosAdapter(getContext(),pedidos);
+        if (pa.getArrayAdapter() != null) {
+            pedidosArrayAdapter = pa.getArrayAdapter();
+        } else pedidosArrayAdapter = pedidosAdapter;
+
         System.out.println("inflei");
         pedidosView.setDivider(null);
+
+
+        pa.setArrayAdapter(pedidosArrayAdapter);
+
         pedidosView.setAdapter(pedidosArrayAdapter);
+
 
         final DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
 
@@ -115,17 +140,16 @@ public class PedidosDisponiveisFragment extends Fragment {
                     user.save();
                 }
 
-
                 databasePedidos.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         pedidos.clear();
 
-                            Location userLocation = new Location("my location");
-                            userLocation.setLatitude(user.getLatitude());
-                            userLocation.setLongitude(user.getLongitude());
-                        System.out.println("user locations "+ user.getLatitude()+ "  " + user.getLongitude());
+                        Location userLocation = new Location("my location");
+                        userLocation.setLatitude(user.getLatitude());
+                        userLocation.setLongitude(user.getLongitude());
+                        System.out.println("user locations " + user.getLatitude() + "  " + user.getLongitude());
 
                         System.out.println("latitudes dos pedidos " + userLocation.getLatitude());
                         for (DataSnapshot dados : dataSnapshot.getChildren()) {
@@ -140,6 +164,7 @@ public class PedidosDisponiveisFragment extends Fragment {
                                 double distance = userLocation.distanceTo(pedidoLocation);
 
                                 pedido.setDistanceInMeters(distance);
+                                System.out.println("DISTANCIA " + distance + "USUARIO DISTANCE "+ usuario.getMaxDistance()*1000000);
                             }
                             if (pedido.getStatus() == 0) {
                                 pedidos.add(pedido);
@@ -148,6 +173,11 @@ public class PedidosDisponiveisFragment extends Fragment {
                                         System.out.println("pedido " + pedido);
                                         pedidos.remove(pedido);
                                     }
+
+                                    if(pedido.getDistanceInMeters() > user.getMaxDistance()*1000000){
+                                        pedidos.remove(pedido);
+                                    }
+
                                     if (pedido.getTipo().equals("Doacoes")) {
                                         pedidos.remove(pedido);
                                     }
@@ -158,7 +188,6 @@ public class PedidosDisponiveisFragment extends Fragment {
                             System.out.println("PMPF: pilha pedidos na view " + pedidos);
 
                         }
-
 
                         Collections.sort(pedidos, new Comparator<Pedido>() {
                             @Override
@@ -178,7 +207,7 @@ public class PedidosDisponiveisFragment extends Fragment {
                                     Intent intent = new Intent(getActivity(), PedidoActivity.class);
 
                                     // recupera dados a serem passados
-                                    Pedido pedido = pedidos.get(position);
+                                    Pedido pedido = pedidosAdapter.getPedidosFiltrado().get(position);
 
                                     // enviando dados para pedido activity
                                     intent.putExtra("status", pedido.getStatus());
@@ -197,7 +226,6 @@ public class PedidosDisponiveisFragment extends Fragment {
                                     startActivity(intent);
                                 } catch (Exception e) {
                                     System.out.println("Exception grupos " + e);
-
                                 }
 
                             }
@@ -213,6 +241,7 @@ public class PedidosDisponiveisFragment extends Fragment {
 
                 })
                 ;
+
             }
 
             @Override
@@ -220,10 +249,11 @@ public class PedidosDisponiveisFragment extends Fragment {
                 System.out.println("ERROR GET PEDIDOS USER STRINGS: " + databaseError);
 
             }
+
         });
 
-
         return view;
+
     }
 
 }

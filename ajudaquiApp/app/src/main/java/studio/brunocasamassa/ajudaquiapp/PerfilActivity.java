@@ -77,13 +77,15 @@ public class PerfilActivity extends AppCompatActivity {
     private ArrayList<String> listaKey;
     private String groupName;
     private String userName;
-    private String encodedKeyRequestedUser;
+    private String userKeySolicitante;
     private String message;
     private ImageView premiumTag;
     public static User usuarioPivot = new User();
     private ArrayList<Integer> badgesList = new ArrayList<>();
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
     private static int premium;
+    private String encodedKeySolicitation;
+    private ArrayList<String> listaSolicitationKey;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -102,6 +104,7 @@ public class PerfilActivity extends AppCompatActivity {
         pontosConquistados = (TextView) findViewById(R.id.rankedUserPontosConquistados);
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
 
+        listaSolicitationKey = new ArrayList<>();
         listaNotificacoes = new ArrayList();
         listaMessages = new ArrayList();
         listaGrupos = new ArrayList();
@@ -124,11 +127,11 @@ public class PerfilActivity extends AppCompatActivity {
                 int respPremium = usuario.getPremiumUser();
                 premium = respPremium;
 
-                if(premium == 1){
+                if (premium == 1) {
                     Glide.with(PerfilActivity.this).load(R.drawable.premium_icon).into(premiumTag);
                 }
 
-                System.out.println("Premium user Perfil Activity response "+ premium);
+                System.out.println("Premium user Perfil Activity response " + premium);
 
                 if (usuario.getMsgSolicitacoes() != null) {
                     ArrayList<String> msgSolicita = usuario.getMsgSolicitacoes();
@@ -136,10 +139,10 @@ public class PerfilActivity extends AppCompatActivity {
                         String msgCompleta = "";
                         String[] msg = msgSolicita.get(i).split(":");
 
-                        //GRUPO: vamos ver: usuario: dGVzdGVAdGVzdGUuY29t :mensagem: osmanu"
+                        //GRUPO: vamos ver: usuario: dGVzdGVAdGVzdGUuY29t :mensagem: osmanu: hashkey"
 
                         for (String sentence : msg) {
-                            if (sentence.equals("GRUPO")) { //TODO alterar padrao de mensagem  (FULANO desej entrar no grupo TAL)
+                            if (sentence.equals("GRUPO")) {
                                 groupName = msg[1];
                                 //msgCompleta = groupName;
                                 System.out.println("GROUP NAME CONCATENADO " + groupName);
@@ -153,15 +156,22 @@ public class PerfilActivity extends AppCompatActivity {
                                 //msgCompleta = msgCompleta + " (MENSAGEM: "+message+" )";
                             }
                             if (sentence.equals("USERKEY")) {
-                                encodedKeyRequestedUser = msg[7];
-                                System.out.println("SOLICITATION userkey " + encodedKeyRequestedUser);
+                                userKeySolicitante = msg[7];
+                                System.out.println("USERKEY userkey " + userKeySolicitante);
+                                //msgCompleta = msgCompleta + " (MENSAGEM: "+message+" )";
+                            }
+
+                            if (sentence.equals("SOLICITATIONKEY")) {
+                                encodedKeySolicitation = msg[9];
+                                System.out.println("USERKEY userkey " + encodedKeySolicitation);
                                 //msgCompleta = msgCompleta + " (MENSAGEM: "+message+" )";
                             }
 
                         }
 
                         System.out.println("CONCATENADO TOTAL " + msgCompleta);
-                        listaKey.add(listaKey.size(), encodedKeyRequestedUser);
+                        listaSolicitationKey.add(listaSolicitationKey.size(), encodedKeySolicitation);
+                        listaKey.add(listaKey.size(), userKeySolicitante);
                         listaGrupos.add(listaGrupos.size(), groupName);
                         listaUserName.add(listaUserName.size(), userName);
                         listaMessages.add(listaMessages.size(), message);
@@ -209,7 +219,7 @@ public class PerfilActivity extends AppCompatActivity {
         });
         Intent intent = new Intent(PerfilActivity.this, CriaPedidoActivity.class);
         intent.putExtra("premium", premium);
-        System.out.println("Premium user Perfil Activity response fora"+ premium);
+        System.out.println("Premium user Perfil Activity response fora" + premium);
 
         notificacoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -218,6 +228,7 @@ public class PerfilActivity extends AppCompatActivity {
                 String usuarioSolicitante = listaUserName.get(position);
                 final String grupoSolicitado = listaGrupos.get(position);
                 final String userKeySolicitante = listaKey.get(position);
+                final String encodedKeySolicitation = listaSolicitationKey.get(position);
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(PerfilActivity.this);
 
@@ -234,9 +245,9 @@ public class PerfilActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 try {
-                                    System.out.println("userkey '"+userKeySolicitante+"'");
+                                    System.out.println("userkey '" + userKeySolicitante + "'");
                                     User user = dataSnapshot.getValue(User.class);
-                                    System.out.println("username "+ user.getName());  //ou caminho errado ou preciso declarar usuario como publico (GRUPOS MEUS GRUPOS FRAGMENT)
+                                    System.out.println("username " + user.getName());  //ou caminho errado ou preciso declarar usuario como publico (GRUPOS MEUS GRUPOS FRAGMENT)
                                     addGroupIntoUser(user, grupoSolicitado, userKeySolicitante);
                                 } catch (Exception e) {
                                     System.out.println("Exception " + e.getLocalizedMessage());
@@ -257,7 +268,7 @@ public class PerfilActivity extends AppCompatActivity {
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 Grupo grupo = dataSnapshot.getValue(Grupo.class);
                                 System.out.println("grupo " + grupo.getNome());
-                                ArrayList<String> idMembros =  new ArrayList<String>();
+                                ArrayList<String> idMembros = new ArrayList<String>();
                                 int qtdMembros = grupo.getQtdMembros() + 1;
                                 grupo.setQtdMembros(qtdMembros);
                                 if (grupo.getIdMembros() != null) {
@@ -276,8 +287,10 @@ public class PerfilActivity extends AppCompatActivity {
                             }
                         });
 
-                        removeSolicitationMessage(position);
+                        removeSolicitationMessage(Base64Decoder.encoderBase64(grupoSolicitado), encodedKeySolicitation);
+
                         Toast.makeText(getApplicationContext(), "Solicitação Aceita", Toast.LENGTH_LONG).show();
+                        finish();
                         /*ArrayAdapter newAdapter = new NotificacoesAdapter(getApplicationContext(), listaNotificacoes);
                         notificacoes.setDivider(null);
                         notificacoes.setAdapter(newAdapter);
@@ -289,8 +302,7 @@ public class PerfilActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getApplicationContext(), "Solicitação Recusada ", Toast.LENGTH_LONG).show();
-                        removeSolicitationMessage(position);
-
+                        removeSolicitationMessage(Base64Decoder.encoderBase64(grupoSolicitado), encodedKeySolicitation);
 
 
                     }
@@ -401,26 +413,50 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
 
-    private void refresh(){
+    private void refresh() {
         Intent intent = getIntent();
         finish();
+        System.out.println("REFRESHED");
         startActivity(intent);
-    };
+    }
 
-    private void removeSolicitationMessage(final int position) {
+    ;
 
-        DatabaseReference dbUserRemover = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
-        dbUserRemover.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void removeSolicitationMessage(String grupoId, final String keySolicitacao) {
+
+        DatabaseReference dbGroupSolicitaiton = FirebaseConfig.getFireBase().child("grupos").child(grupoId);
+        dbGroupSolicitaiton.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                    User user = dataSnapshot.getValue(User.class);
-                ArrayList<String> lista = new ArrayList<String>();
-                lista.addAll(user.getMsgSolicitacoes());
-                lista.remove(position);
-                user.setMsgSolicitacoes(lista);
-                user.setId(userKey);
-                user.save();
-                refresh();
+                Grupo group = dataSnapshot.getValue(Grupo.class);
+                ArrayList<String> groupAdmins = group.getIdAdms();
+                //loop admins
+                for (int i = 0; i < groupAdmins.size(); i++) {
+                    System.out.println("admins grupo: " + groupAdmins.get(i));
+                    DatabaseReference admins = FirebaseConfig.getFireBase().child("usuarios").child(groupAdmins.get(i));
+                    admins.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User userAdmin = dataSnapshot.getValue(User.class);
+                            ArrayList<String> userSolicitations = userAdmin.getMsgSolicitacoes();
+                            //loop admin messsages
+                            for (int j = 0; j < userSolicitations.size(); j++)
+                                if (userSolicitations.get(j).endsWith(keySolicitacao)) {
+                                    userSolicitations.remove(j);
+                                }
+
+                            userAdmin.setMsgSolicitacoes(userSolicitations);
+                            userAdmin.save();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+                }
 
             }
 
@@ -429,20 +465,29 @@ public class PerfilActivity extends AppCompatActivity {
 
             }
         });
+
+        //don't judge me
+        int timer = 2000;
+        while (timer>=0) {
+            if (timer == 0) {
+                finish();
+            }
+            timer--;
+        }
     }
 
     private void addGroupIntoUser(User user, String grupoSolicitado, String userKeySolicitante) {
 
-        System.out.println("USER SOLICITANTE: "+userKeySolicitante);
+        System.out.println("USER SOLICITANTE: " + userKeySolicitante);
         ArrayList<String> solicitacoes = new ArrayList<>();
-        if(user.getGruposSolicitados() != null){
-            System.out.println("USER SOLICITANTE SOLICITACOES: "+user.getGruposSolicitados());
+        if (user.getGruposSolicitados() != null) {
+            System.out.println("USER SOLICITANTE SOLICITACOES: " + user.getGruposSolicitados());
             solicitacoes.addAll(user.getGruposSolicitados());
-            System.out.println("USER SOLICITACOES: "+solicitacoes);
+            System.out.println("USER SOLICITACOES: " + solicitacoes);
             solicitacoes.remove(Base64Decoder.encoderBase64(grupoSolicitado));
             user.setGruposSolicitados(solicitacoes);
-            System.out.println("USER SOLICITANTE SOLICITACOES: "+user.getGruposSolicitados());
-            System.out.println("USER SOLICITACOES: "+solicitacoes);
+            System.out.println("USER SOLICITANTE SOLICITACOES: " + user.getGruposSolicitados());
+            System.out.println("USER SOLICITACOES: " + solicitacoes);
         }
         ArrayList<String> grupos = new ArrayList<String>();
         if (user.getGrupos() != null) {
@@ -475,8 +520,10 @@ public class PerfilActivity extends AppCompatActivity {
                 FirebaseAuth.getInstance().signOut();
                 LoginManager.getInstance().logOut();
                 finish();
+                startActivity(new Intent(PerfilActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
+                finish();
                 startActivity(new Intent(PerfilActivity.this, ConfiguracoesActivity.class));
                 return true;
 

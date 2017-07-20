@@ -41,10 +41,12 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
     private ImageView statusImage;
     private Button cancelarButton;
     private Pedido pedido;
+    private DatabaseReference dbPedidos = FirebaseConfig.getFireBase().child("Pedidos");
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private User user = new User();
     private DatabaseReference dbConversa = FirebaseConfig.getFireBase().child("conversas");
     private ImageView chatImage;
+
 
     @Override
     protected void onStart() {
@@ -56,6 +58,8 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido_atendido);
+
+
 
 
         chatImage = (ImageView) findViewById(R.id.chat_pedido_atendido);
@@ -199,10 +203,11 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
                                                                       @Override
                                                                       public void onDataChange(DataSnapshot dataSnapshot) {
                                                                           User user = dataSnapshot.getValue(User.class);
-                                                                          user.setCreditos(user.getCreditos() + 1);
                                                                           user.setId(Base64Decoder.encoderBase64(user.getEmail()));
                                                                           user.setMessageNotification("O usuario " + username + " cancelou o pedido de ajuda de seu pedido '" + pedido.getTitulo() + "' voce pode alterar o status para aberto e procurar um novo ajudante");
                                                                           user.save();
+                                                                          //change pedido status
+                                                                          dbPedidos.child(pedido.getIdPedido()).child("status").setValue(3);
                                                                           //REMOVING CHAT FIELD
                                                                           dbConversa.child(userKey).child(pedido.getIdPedido()).removeValue();
                                                                           dbConversa.child(pedido.getCriadorId()).child(pedido.getIdPedido()).removeValue();

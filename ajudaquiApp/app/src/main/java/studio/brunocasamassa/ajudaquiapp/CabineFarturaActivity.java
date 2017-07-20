@@ -90,7 +90,7 @@ public class CabineFarturaActivity extends AppCompatActivity {
                         System.out.println("distance in meters "+ pedido.getDistanceInMeters());
 
                     }
-                    if (pedido.getTipo().equals("Doacoes") && pedido.getNaCabine() == 1) {
+                    if (pedido.getTipo().equals("Doacoes") && pedido.getNaCabine() == 1 && !pedido.getCriadorId().equals(userKey)) {
                         if (!listaDoacoes.isEmpty()) {
                             System.out.println("doacoes adicioandas " + pedido.getTitulo());
                             System.out.println("doacoes adicioandas " + pedido.getDistanceInMeters());

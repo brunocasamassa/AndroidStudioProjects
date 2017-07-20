@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -45,6 +47,9 @@ public class ConfiguracoesActivity extends AppCompatActivity {
     private ImageView cam_config;
     private EditText name;
     private Button salvar;
+    private TextView seekValue;
+    private int distance;
+    private SeekBar maxDistance;
     private StorageReference storage = FirebaseConfig.getFirebaseStorage();
     private DatabaseReference dbUser = FirebaseConfig.getFireBase();
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
@@ -55,11 +60,32 @@ public class ConfiguracoesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuracoes);
 
+        maxDistance = (SeekBar) findViewById(R.id.max_distance_seekbar);
+        seekValue = (TextView) findViewById(R.id.seekbar_distance);
         circleImageView = (CircleImageView) findViewById(R.id.photo_config);
         cam_config = (ImageView) findViewById(R.id.cam_config);
         name = (EditText) findViewById(R.id.name_config);
         salvar = (Button) findViewById(R.id.save_config);
 
+
+        maxDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                distance = progress;
+                seekValue.setText(String.valueOf(progress)+" km");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+
+        });
         dbUser.child("usuarios").child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -127,6 +153,9 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 User user = dataSnapshot.getValue(User.class);
+                                if(distance!=0){
+                                    user.setMaxDistance(distance);
+                                }
                                 if (user.getProfileImg() != null) {
                                     user.setProfileImg(null);
                                 }
@@ -141,7 +170,8 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                                     System.out.println("photo mudada");
                                 } else System.out.println("photo nao mudada");
                                 Toast.makeText(getApplicationContext(), "Alteraçoes Salvas", Toast.LENGTH_SHORT).show();
-                                finish();
+                                refresh();
+
                             }
 
                             @Override
@@ -205,6 +235,12 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                 Log.e("error in get image ", e.toString());
             }
         }
+    }
+
+    private void refresh() {
+        Intent intent = new Intent(ConfiguracoesActivity.this, PedidosActivity.class);
+        finish();
+        startActivity(intent);
     }
 }
 

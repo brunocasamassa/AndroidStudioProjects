@@ -52,13 +52,14 @@ public class PedidosEscolhidosFragment extends Fragment {
 
     @Override
     public void onStart() {
+
+
         super.onStart();
         databasePedidos.addListenerForSingleValueEvent(valueEventListenerPedidos);
 
-//      dbGroups.addListenerForSingleValueEvent(valueEventListenerAllGroups);
+        //dbGroups.addListenerForSingleValueEvent(valueEventListenerAllGroups);
 
     }
-
 
     @Override
     public void onStop() {

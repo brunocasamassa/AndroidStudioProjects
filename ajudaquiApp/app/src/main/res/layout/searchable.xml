@@ -5,6 +5,7 @@
     app:collapseIcon="@drawable/ic_arrow_left"
     app:titleTextColor="@color/colorPrimary"
     android:layout_alignParentTop="true"
+    app:actionViewClass="android.support.v7.widget.SearchView"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="@color/md_white_1000"/>

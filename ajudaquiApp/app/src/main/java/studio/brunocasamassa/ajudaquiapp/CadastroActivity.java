@@ -103,46 +103,64 @@ public class CadastroActivity extends AppCompatActivity {
             public void onClick(View view) {
                 final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CadastroActivity.this);
 
-                alertDialog.setTitle("Voce possui cpf ou cnpj?");
+                alertDialog.setTitle("Este é um cadastro de emmpresa?");
 
 
-                alertDialog.setPositiveButton("CPF", new DialogInterface.OnClickListener() {
+                alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        alertDialog.setMessage("Digite seu cpf");
-                        EditText editText = new EditText(CadastroActivity.this);
-                        alertDialog.setView(editText);
-                        String cpf = editText.getText().toString();
-                        usuario.setCpf_cnpj(cpf);
+                        AlertDialog.Builder putCNPJ = new AlertDialog.Builder(CadastroActivity.this);
+                        putCNPJ.setMessage("Digite seu CNPJ");
+                        final EditText editText = new EditText(CadastroActivity.this);
+                        putCNPJ.setView(editText);
 
+
+                        putCNPJ.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+                        putCNPJ.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                usuario = new User();
+                                usuario.setName(nome.getText().toString());
+                                usuario.setEmail(email.getText().toString());
+                                usuario.setSenha(senha.getText().toString());
+                                idUser = Base64Decoder.encoderBase64(usuario.getEmail());
+                                System.out.println("BASE64 ENCODER: " + idUser);
+                                usuario.setId(idUser);
+                                usuario.setMedalhas(badgesList);
+                                String cpf = editText.getText().toString();
+                                usuario.setCpf_cnpj(cpf);
+                                cadastrarUsuario();
+                            }
+                        }).create().show();
                     }
 
                 });
 
-                alertDialog.setPositiveButton("CNPJ", new DialogInterface.OnClickListener() {
+                alertDialog.setNegativeButton("NAO", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
-                        alertDialog.setMessage("Digite seu cnpj");
-                        EditText editText = new EditText(CadastroActivity.this);
-                        alertDialog.setView(editText);
-                        String cnpj = editText.getText().toString();
-                        usuario.setCpf_cnpj(cnpj);
+                        usuario = new User();
+                        usuario.setName(nome.getText().toString());
+                        usuario.setEmail(email.getText().toString());
+                        usuario.setSenha(senha.getText().toString());
+                        idUser = Base64Decoder.encoderBase64(usuario.getEmail());
+                        System.out.println("BASE64 ENCODER: " + idUser);
+                        usuario.setId(idUser);
+                        usuario.setMedalhas(badgesList);
+                        cadastrarUsuario();
 
                     }
                 }).create().show();
 
                 if (senha.getText().toString().equals(senhaConfirm.getText().toString())) {
-                    usuario = new User();
-                    usuario.setName(nome.getText().toString());
-                    usuario.setEmail(email.getText().toString());
-                    usuario.setSenha(senha.getText().toString());
-                    idUser = Base64Decoder.encoderBase64(usuario.getEmail());
-                    System.out.println("BASE64 ENCODER: " + idUser);
-                    usuario.setId(idUser);
-                    usuario.setMedalhas(badgesList);
-                    cadastrarUsuario();
+
                 } else
                     Toast.makeText(getApplicationContext(), "Senha e confirmação devem ser iguais", Toast.LENGTH_LONG).show();
             }

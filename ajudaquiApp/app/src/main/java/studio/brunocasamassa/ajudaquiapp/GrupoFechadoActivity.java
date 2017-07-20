@@ -39,6 +39,7 @@ import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquiapp.helper.Grupo;
 import studio.brunocasamassa.ajudaquiapp.helper.NavigationDrawer;
+import studio.brunocasamassa.ajudaquiapp.helper.Preferences;
 import studio.brunocasamassa.ajudaquiapp.helper.SlidingTabLayout;
 import studio.brunocasamassa.ajudaquiapp.helper.User;
 
@@ -111,6 +112,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
             grupo.setDescricao(extra.getString("descricao"));
             grupo.setNome(extra.getString("nome"));
             grupo.setQtdMembros(Integer.valueOf(extra.getString("qtdmembros")));
+
             if (extra.getStringArrayList("gruposSolicitados") != null) {
                 solicitacoesUser.addAll(extra.getStringArrayList("gruposSolicitados"));
             }
@@ -123,6 +125,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     userInGroup();
+                    finish();
                 }
             });
         } else {
@@ -132,8 +135,8 @@ public class GrupoFechadoActivity extends AppCompatActivity {
 
                     System.out.println("Solicitacao user " + solicitacoesUser);
                     if (!solicitacoesUser.contains(grupo.getId())) {
-
                         geraSolicitacao();
+
                     } else
                         Toast.makeText(GrupoFechadoActivity.this, "Pedido de solicitação para este grupo já enviado, aguarde resposta dos administradores ", Toast.LENGTH_LONG).show();
 
@@ -304,10 +307,10 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                 String grupoNome = groupName.getText().toString();
 
                 //MESSAGE TO ADMINS
+
                 if (mensagemSolicitacao.isEmpty()) {
                     Toast.makeText(GrupoFechadoActivity.this, "Preencha o campo de mensagem", Toast.LENGTH_LONG).show();
                 } else {
-
                     //insert solicitacao into user(para nao solicitar de novo)
                     DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
                     dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -326,10 +329,6 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                             }
                             user.setId(userKey);
                             user.save();
-                            Intent intent = new Intent(GrupoFechadoActivity.this, ListaAdmins.class);
-                            intent.putExtra("MESSAGE", mensagemSolicitacao);
-                            intent.putExtra("GROUP ID", grupo.getId());
-                            startActivity(intent);
                         }
 
                         @Override
@@ -339,9 +338,62 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                     });
 
 
+                    DatabaseReference dbGroups = FirebaseConfig.getFireBase().child("grupos");
+                    dbGroups.child(grupo.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Grupo group = dataSnapshot.getValue(Grupo.class);
+                            ArrayList<String> arrayAdmins = group.getIdAdms();
+
+                            for (int i = 0; i < arrayAdmins.size(); i++) {
+                                DatabaseReference userData = FirebaseConfig.getFireBase().child("usuarios").child(arrayAdmins.get(i));
+                                userData.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        User dataUser = dataSnapshot.getValue(User.class);
+                                        ArrayList<String> msgSolicitacoes = new ArrayList();
+                                        if (dataUser.getMsgSolicitacoes() != null) {
+                                            System.out.println("mensagens solicitação usuario: " + dataUser.getMsgSolicitacoes());
+                                            System.out.println("mensagens solicitação usuario: " + user.getMsgSolicitacoes());
+                                            msgSolicitacoes.addAll(dataUser.getMsgSolicitacoes());
+                                            //padrao de mensagem na db
+                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:" + grupo.getNome() + ":USUARIO:" + userName + " :MENSAGEM: " + mensagemSolicitacao + ":USERKEY:" + userKey + ":SOLICITATIONKEY:" + userKey + grupo.getId());
+                                        } else {
+                                            //padrao de mensagem na db
+                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:" + grupo.getNome() + ":USUARIO:" + userName + " :MENSAGEM: " + mensagemSolicitacao + ":USERKEY:" + userKey + ":SOLICITATIONKEY:" + userKey + grupo.getId());
+                                        }
+
+                                        dataUser.setMsgSolicitacoes(msgSolicitacoes);
+
+                                        dataUser.save();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                        Toast.makeText(getApplicationContext(), "FAILED TO SEND "+databaseError, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                            }
+                            Toast.makeText(getApplicationContext(), "Solicitação enviada", Toast.LENGTH_SHORT).show();
+                            finish();
+
+                        };
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Toast.makeText(getApplicationContext(), "FAILED TO SEND "+databaseError, Toast.LENGTH_SHORT).show();
+                        }
+
+                    });
                 }
+
             }
+
+
         }).create().show();
+
 
     }
 
@@ -358,10 +410,18 @@ public class GrupoFechadoActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_exit:
                 //logoutUser();
+                Preferences preferences = new Preferences(GrupoFechadoActivity.this);
+                preferences.clearSession();
+                DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
+                dbUser.child("notificationToken").removeValue();
+                FirebaseAuth.getInstance().signOut();
                 LoginManager.getInstance().logOut();
+                finish();
                 startActivity(new Intent(GrupoFechadoActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
+                finish();
+                startActivity(new Intent(GrupoFechadoActivity.this, ConfiguracoesActivity.class));
                 return true;
 
             default:

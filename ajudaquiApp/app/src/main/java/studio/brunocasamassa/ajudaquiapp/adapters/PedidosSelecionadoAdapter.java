@@ -115,6 +115,7 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
                     }
                 });
             } else Glide.with(getContext()).load(R.drawable.logo).override(68, 68).into(pedidoImg);
+
             /*else if (facebookPhoto != null){
                 Glide.with(getContext()).load(facebookPhoto).override(68,68).into(pedidoImg);
             } else {

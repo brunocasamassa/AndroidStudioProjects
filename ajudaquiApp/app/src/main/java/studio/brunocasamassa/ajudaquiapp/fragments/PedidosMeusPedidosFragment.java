@@ -1,5 +1,7 @@
 package studio.brunocasamassa.ajudaquiapp.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -60,12 +62,13 @@ public class PedidosMeusPedidosFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                if(user.getPedidosNotificationCount() != 0){
+                if (user.getPedidosNotificationCount() != 0) {
                     //Toast.makeText(getApplicationContext(),"Parabens, voce possui um pedido atendido", Toast.LENGTH_LONG).show();
                     user.setPedidosNotificationCount(/*user.getChatNotificationCount() - mensagens.size()*/ 0);
                     user.setId(userKey);
                     user.save();
-                }}
+                }
+            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -94,7 +97,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pedidos_meuspedidos, container, false);
         pedidos = new ArrayList<>();
         meusPedidos = (ListView) view.findViewById(R.id.meusPedidos_list);
-        System.out.println("GRUPO NA POSICAO "+ pedidos.isEmpty());
+        System.out.println("GRUPO NA POSICAO " + pedidos.isEmpty());
 
         pedidoArrayAdapter = new PedidosSelecionadoAdapter(getActivity(), pedidos);
 
@@ -121,13 +124,13 @@ public class PedidosMeusPedidosFragment extends Fragment {
                 User user = dataSnapshot.getValue(User.class);
                 usuario.setPedidosFeitos(user.getPedidosFeitos());
                 premium = user.getPremiumUser();
-                System.out.println("PMPF:idPedidos "+usuario.getPedidosFeitos());
+                System.out.println("PMPF:idPedidos " + usuario.getPedidosFeitos());
 
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                System.out.println("ERROR GET PEDIDOS USER STRINGS: "+ databaseError);
+                System.out.println("ERROR GET PEDIDOS USER STRINGS: " + databaseError);
             }
         });
 
@@ -150,13 +153,13 @@ public class PedidosMeusPedidosFragment extends Fragment {
                             pedidos.add(pedido);
                         }
                     }
-                    System.out.println("PMPF: pilha pedidos na view "+ pedidos);
+                    System.out.println("PMPF: pilha pedidos na view " + pedidos);
 
                 }
 
 
                 pedidoArrayAdapter.notifyDataSetChanged();
-                System.out.println("PMPF: pilha pedidos na view2 "+ pedidos);
+                System.out.println("PMPF: pilha pedidos na view2 " + pedidos);
 
             }
 
@@ -167,41 +170,77 @@ public class PedidosMeusPedidosFragment extends Fragment {
             }
         };
 
-    meusPedidos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        Intent intent = new Intent(getActivity(), PedidoCriadoActivity.class);
+        meusPedidos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-        // recupera dados a serem passados
-        Pedido selectedPedido = pedidos.get(position);
+                final Pedido pedidoPressed = pedidos.get(position);
 
-        if(selectedPedido.getStatus() == 2){//finalizado
-            Toast.makeText(getApplicationContext(),"Pedido finalizado", Toast.LENGTH_SHORT).show();
-        } else{
+                if (pedidoPressed.getStatus() == 2) {
+                    final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
 
-        // enviando dados para grupo activity
-        // enviando dados para pedido activity
-        intent.putExtra("status", selectedPedido.getStatus());
-        intent.putExtra("titulo", selectedPedido.getTitulo());
-        intent.putExtra("tagsCategoria", selectedPedido.getTagsCategoria());
-        intent.putExtra("idPedido", selectedPedido.getIdPedido());
-        intent.putExtra("criadorId", selectedPedido.getCriadorId());
-        intent.putExtra("tipo", selectedPedido.getTipo());
-        intent.putExtra("atendenteId", selectedPedido.getAtendenteId());
-        if (selectedPedido.getGrupo() != null) {
-            intent.putExtra("tagsGrupo", selectedPedido.getGrupo());
-        }
-        intent.putExtra("descricao", selectedPedido.getDescricao());
+                    alertDialog.setTitle("Apagar pedido");
+                    alertDialog.setMessage("desejaxcluir e4ste pedido? ");
 
-        startActivity(intent);}
+                    alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-    }
-});
+                            apagaPedido(pedidoPressed.getIdPedido());
 
+                        }
+                    });
+
+                    alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }).create().show();
+                }
+                return false;
+            }
+        });
+        meusPedidos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Intent intent = new Intent(getActivity(), PedidoCriadoActivity.class);
+
+                // recupera dados a serem passados
+                Pedido selectedPedido = pedidos.get(position);
+
+                if (selectedPedido.getStatus() == 2) {//finalizado
+                    Toast.makeText(getApplicationContext(), "Pedido finalizado", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    // enviando dados para grupo activity
+                    // enviando dados para pedido activity
+                    intent.putExtra("status", selectedPedido.getStatus());
+                    intent.putExtra("titulo", selectedPedido.getTitulo());
+                    intent.putExtra("tagsCategoria", selectedPedido.getTagsCategoria());
+                    intent.putExtra("idPedido", selectedPedido.getIdPedido());
+                    intent.putExtra("criadorId", selectedPedido.getCriadorId());
+                    intent.putExtra("tipo", selectedPedido.getTipo());
+                    intent.putExtra("atendenteId", selectedPedido.getAtendenteId());
+                    if (selectedPedido.getGrupo() != null) {
+                        intent.putExtra("tagsGrupo", selectedPedido.getGrupo());
+                    }
+                    intent.putExtra("descricao", selectedPedido.getDescricao());
+                    startActivity(intent);
+                }
+
+            }
+        });
 
         return view;
 
+    }
+
+    private void apagaPedido(String idPedido) {
+        DatabaseReference dbPedidos = FirebaseConfig.getFireBase().child("Pedidos");
+        dbPedidos.child(idPedido).removeValue();
     }
 
 }

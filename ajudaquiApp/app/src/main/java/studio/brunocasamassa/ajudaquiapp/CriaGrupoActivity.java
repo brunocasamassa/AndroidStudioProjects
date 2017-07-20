@@ -249,7 +249,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
                     user.setId(Base64Decoder.encoderBase64(user.getEmail()));
                     System.out.println("grupos do usuario que irão ser salvos" + user.getGrupos());
                     user.save();
-                    finish();
+                    refresh();
 
                 }
 
@@ -262,6 +262,12 @@ public class CriaGrupoActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    private void refresh() {
+        Intent intent = new Intent(CriaGrupoActivity.this, GruposActivity.class);
+        finish();
+        startActivity(intent);
     }
 
     @Override

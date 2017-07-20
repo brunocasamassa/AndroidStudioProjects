@@ -44,12 +44,9 @@ public class PedidoActivity extends AppCompatActivity {
     private DatabaseReference firebase;
     private DatabaseReference dbUserDestinatario;
 
-
     @Override
     protected void onStart() {
         super.onStart();
-
-
     }
 
     @Override
@@ -65,11 +62,9 @@ public class PedidoActivity extends AppCompatActivity {
         tagsGrupo = (TagGroup) findViewById(R.id.tags_pedido_grupo);
         atenderPedido = (Button) findViewById(R.id.atender_pedido_button);
 
-
         if (extra != null) {
 
             pedido = new Pedido();
-
             pedido.setIdPedido(extra.getString("idPedido"));
             pedido.setTagsCategoria(extra.getStringArrayList("tagsCategoria"));
             pedido.setDescricao(extra.getString("descricao"));

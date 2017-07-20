@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -28,10 +30,13 @@ import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquiapp.helper.Pedido;
 import studio.brunocasamassa.ajudaquiapp.helper.Preferences;
 
-public class PedidosAdapter extends ArrayAdapter<Pedido> {
+public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
 
     private ArrayList<Pedido> pedidos;
+
+    private ArrayList<Pedido> pedidosFiltrado;
     private Context context;
+    private PedidosFiltro filtrador;
     private StorageReference storage;
     private Preferences preferences;
     private String facebookPhoto;
@@ -41,7 +46,33 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> {
     public PedidosAdapter(Context c, ArrayList<Pedido> objects) {
         super(c, 0, objects);
         this.pedidos = objects;
+        this.pedidosFiltrado = objects;
         this.context = c;
+
+        getFilter();
+    }
+
+    public void setPedidosFiltrado(ArrayList<Pedido> pedidosFiltrado) {
+        this.pedidosFiltrado = pedidosFiltrado;
+    }
+
+    public ArrayList<Pedido> getPedidosFiltrado() {
+        return pedidosFiltrado;
+    }
+
+    @Override
+    public int getCount() {
+        return pedidosFiltrado.size();
+    }
+
+    @Override
+    public Pedido getItem(int position) {
+        return pedidosFiltrado.get(position);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return i;
     }
 
     @Override
@@ -53,13 +84,13 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> {
         if (pedidos != null) {
 
             //IF The user image is from facebook
-            if(mainActivity.facebookImg != null) {
+            if (mainActivity.facebookImg != null) {
 
                 facebookPhoto = mainActivity.facebookImg;
 
             }
 
-            System.out.println("facebook img pedido: "+ facebookPhoto);
+            System.out.println("facebook img pedido: " + facebookPhoto);
             // inicializar objeto para montagem da view
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
 
@@ -73,7 +104,8 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> {
             TagGroup tagsCategoria = (TagGroup) view.findViewById(R.id.tagPedidos);
             final CircleImageView pedidoImg = (CircleImageView) view.findViewById(R.id.imagePedido);
 
-            final Pedido pedido = pedidos.get(position);
+            final Pedido pedido = pedidosFiltrado.get(position);
+
             /*
             if (pedido.getGrupo() != null) {
                 storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
@@ -84,7 +116,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> {
 
             storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
 
-            if(pedido.getDistanceInMeters() != null) {
+            if (pedido.getDistanceInMeters() != null) {
                 distancia.setText(String.valueOf(pedido.getDistanceInMeters().intValue() / 1000000) + "km");
             }
 
@@ -99,7 +131,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> {
 
                     @Override
                     public void onSuccess(Uri uri) {
-                        System.out.println("grupo "+ pedido.getGrupo());
+                        System.out.println("grupo " + pedido.getGrupo());
                         Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
                         System.out.println("my pedidos lets seee2" + uri);
                     }
@@ -110,30 +142,55 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> {
                     }
                 });
 
-            }
-            else Glide.with(getContext()).load(R.drawable.logo).override(68,68).into(pedidoImg);
+            } else Glide.with(getContext()).load(R.drawable.logo).override(68, 68).into(pedidoImg);
 
-            /*else if (facebookPhoto != null){
-                Glide.with(getContext()).load(facebookPhoto).override(68,68).into(pedidoImg);
-            } else {
-                storage.child(pedido.getCriadorId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-
-                        Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
-                        System.out.println("my pedidos lets seee2" + uri);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-
-                    }
-                });
-
-            }*/
         }
 
         return view;
 
     }
+
+    @Override
+    public Filter getFilter() {
+        if (filtrador == null) {
+            filtrador = new PedidosFiltro();
+        }
+
+        return filtrador;
+    }
+
+    private class PedidosFiltro extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults filterResults = new FilterResults();
+            if (constraint != null && constraint.length() > 0) {
+                ArrayList<Pedido> tempList = new ArrayList<>();
+
+                for (Pedido pedido : pedidos) {
+                    if (pedido.getTitulo().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        tempList.add(pedido);
+                    }
+                }
+
+                filterResults.count = tempList.size();
+                filterResults.values = tempList;
+            } else {
+                filterResults.count = pedidos.size();
+                filterResults.values = pedidos;
+            }
+
+
+            return filterResults;
+
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            pedidosFiltrado = (ArrayList<Pedido>) results.values;
+            notifyDataSetChanged();
+        }
+    }
+
 }
+

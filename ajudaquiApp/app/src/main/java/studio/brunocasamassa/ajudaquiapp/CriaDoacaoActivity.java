@@ -109,7 +109,7 @@ public class CriaDoacaoActivity extends AppCompatActivity {
                                                  @Override
                                                  public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                                                      qtd = progress;
-                                                     seekValue.setText(String.valueOf(progress))    ;
+                                                     seekValue.setText(String.valueOf(progress));
                                                  }
 
                                                  @Override
@@ -122,6 +122,7 @@ public class CriaDoacaoActivity extends AppCompatActivity {
 
                                                  }
                                              });
+
                 createButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -176,15 +177,17 @@ public class CriaDoacaoActivity extends AppCompatActivity {
 
                                         }
                                     });
+
                                 }
                             }).create().show();
+
                         }
 
-                        if (qtd < 10) {
+                        else if (qtd < 10) {
                             final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CriaDoacaoActivity.this);
 
                             alertDialog.setTitle("Fazer doação?");
-                            alertDialog.setMessage("");
+                            alertDialog.setMessage("Deseja gerar esta doação?");
                             alertDialog.setCancelable(false);
 
                             alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
@@ -192,6 +195,7 @@ public class CriaDoacaoActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int which) {
                                     naCabine = 0;
                                     createPedido();
+
                                 }
                             });
 
@@ -200,7 +204,7 @@ public class CriaDoacaoActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int which) {
 
                                 }
-                            });
+                            }).create().show();
                         }
                     }
 
@@ -257,6 +261,7 @@ public class CriaDoacaoActivity extends AppCompatActivity {
                         pedidosList.addAll(grupo.getDoacoes());
                         pedidosList.add(pedidosList.size(), pedido.getIdPedido());
                         grupo.setDoacoes(pedidosList);
+
                     } else {
 
                         pedidosList.add(0, pedido.getIdPedido());
