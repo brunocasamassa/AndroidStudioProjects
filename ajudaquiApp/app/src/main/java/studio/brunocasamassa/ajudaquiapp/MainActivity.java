@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference firebaseDatabase;
     public static User usuario = new User();
     private StorageReference storage;
+    private MyFirebaseInstanceIdService md = new MyFirebaseInstanceIdService();
     public String facebookImg;
     private static String userName;
     private User pivotUsuario = new User();
@@ -81,6 +82,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+        md.onTokenRefresh();
+    }}
 
     // ...
     @Override
@@ -184,10 +192,10 @@ public class MainActivity extends AppCompatActivity {
 
                                 String token = FirebaseInstanceId.getInstance().getToken();
 
-                                MyFirebaseInstanceIdService md = new MyFirebaseInstanceIdService();
-                                if (token != savedToken) {
+                                md.onTokenRefresh();
+                                /*if (token != savedToken) {
                                     md.sendRegistrationToServer(token);
-                                } else md.sendRegistrationToServer(savedToken);
+                                } else md.sendRegistrationToServer(savedToken);*/
 
                                 System.out.println("usuario name " + usuario.getName());
                                 startActivity(new Intent(MainActivity.this, PedidosActivity.class));

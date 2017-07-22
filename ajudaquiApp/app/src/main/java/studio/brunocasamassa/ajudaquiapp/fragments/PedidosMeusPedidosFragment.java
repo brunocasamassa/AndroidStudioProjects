@@ -35,6 +35,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 /**
  * A simple {@link Fragment} subclass.
  */
+
 public class PedidosMeusPedidosFragment extends Fragment {
     private int premium;
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());

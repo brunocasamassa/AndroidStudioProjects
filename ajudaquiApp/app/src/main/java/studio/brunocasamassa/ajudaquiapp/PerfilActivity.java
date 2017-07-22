@@ -515,8 +515,6 @@ public class PerfilActivity extends AppCompatActivity {
                 //logoutUser();
                 Preferences preferences = new Preferences(PerfilActivity.this);
                 preferences.clearSession();
-                DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
-                dbUser.child("notificationToken").removeValue();
                 FirebaseAuth.getInstance().signOut();
                 LoginManager.getInstance().logOut();
                 finish();

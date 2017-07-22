@@ -4,13 +4,10 @@ package studio.brunocasamassa.ajudaquiapp;
  * Created by bruno on 06/07/2017.
  */
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
-import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
-import studio.brunocasamassa.ajudaquiapp.helper.Preferences;
 
 
 public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
@@ -28,16 +25,21 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
         // Get updated InstanceID token.
+
+        System.out.println("INSTANCE ID  "+FirebaseInstanceId.getInstance().getId());
         refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        System.out.println(TAG+" Refreshed token: " + refreshedToken);
+        System.out.println(TAG + " Refreshed token: " + refreshedToken);
 
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
-        Preferences preferencias = new Preferences(MyFirebaseInstanceIdService.this);
-        preferencias.saveToken(refreshedToken);
-        /*sendRegistrationToServer(refreshedToken);*/
+/*        Preferences preferencias = new Preferences(MyFirebaseInstanceIdService.this);
+        preferencias.saveToken(refreshedToken);*/
+
+        sendRegistrationToServer(refreshedToken);
+
     }
+
     // [END refresh_token]
 
     /**
@@ -50,9 +52,11 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
      */
 
     public void sendRegistrationToServer(String token) {
-        String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
+        /*String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
         DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
         dbUser.child(userKey).child("notificationToken").setValue(token);
+        */FirebaseConfig.getNotificationRef().setValue(token);
+
 
     }
 }

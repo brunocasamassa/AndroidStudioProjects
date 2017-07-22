@@ -24,7 +24,6 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 
 import studio.brunocasamassa.ajudaquiapp.adapters.SobreAdapter;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
@@ -198,8 +197,6 @@ public class SobreActivity extends AppCompatActivity {
 
                 Preferences preferences = new Preferences(SobreActivity.this);
                 preferences.clearSession();
-                DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
-                dbUser.child("notificationToken").removeValue();
                 FirebaseAuth.getInstance().signOut();
                 LoginManager.getInstance().logOut();
                 startActivity(new Intent(SobreActivity.this, MainActivity.class));

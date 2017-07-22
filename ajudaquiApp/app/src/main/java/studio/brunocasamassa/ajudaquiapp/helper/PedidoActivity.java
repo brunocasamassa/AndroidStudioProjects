@@ -171,7 +171,7 @@ public class PedidoActivity extends AppCompatActivity {
                             dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    User usuario = dataSnapshot.child(userKey).getValue(User.class);
+                                    final User usuario = dataSnapshot.child(userKey).getValue(User.class);
                                     user.setId(userKey);
                                     if (usuario.getMedalhas() != null) {
                                         user.setMedalhas(usuario.getMedalhas());
@@ -244,6 +244,8 @@ public class PedidoActivity extends AppCompatActivity {
                                                 User user = dataSnapshot.getValue(User.class);
                                                 user.setPedidosNotificationCount(user.getPedidosNotificationCount() + 1);
                                                 user.setId(criadorId);
+
+
                                                 user.save();
                                             }
 

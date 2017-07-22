@@ -147,8 +147,14 @@ public class PedidosDisponiveisFragment extends Fragment {
                         pedidos.clear();
 
                         Location userLocation = new Location("my location");
-                        userLocation.setLatitude(user.getLatitude());
-                        userLocation.setLongitude(user.getLongitude());
+                        if(user.getLatitude() != null) {
+                            userLocation.setLatitude(user.getLatitude());
+                            userLocation.setLongitude(user.getLongitude());
+                        }
+                        else {
+                            userLocation.setLatitude(0.0);
+                            userLocation.setLongitude(0.0);
+                        }
                         System.out.println("user locations " + user.getLatitude() + "  " + user.getLongitude());
 
                         System.out.println("latitudes dos pedidos " + userLocation.getLatitude());

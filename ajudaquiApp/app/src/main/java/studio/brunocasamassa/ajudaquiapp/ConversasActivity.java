@@ -153,8 +153,6 @@ public class ConversasActivity extends AppCompatActivity {
                 //logoutUser();
                 Preferences preferences = new Preferences(ConversasActivity.this);
                 preferences.clearSession();
-                DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
-                dbUser.child("notificationToken").removeValue();
                 LoginManager.getInstance().logOut();
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(ConversasActivity.this, MainActivity.class));

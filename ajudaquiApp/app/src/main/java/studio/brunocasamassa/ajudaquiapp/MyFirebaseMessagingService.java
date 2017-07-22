@@ -33,9 +33,9 @@ import java.util.Map;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
-    private static final String USERNAME = "username";
+    private static final String TITLE = "title";
     private static final String IMAGEURL = "imageUrl";
-    private static final String EMAIL = "email";
+    private static final String MESSAGE = "message";
     private static final String UID  = "uid";
     private static final String TEXT= "text";
 
@@ -54,13 +54,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             System.out.println("Message data payload: " + remoteMessage.getData());
             Map<String,String> data  = remoteMessage.getData();
 
-                String username = data.get(USERNAME);
-                String imageUrl = data.get(IMAGEURL);
-                String email = data.get(EMAIL);
-                String uid = data.get(UID);
-                String text = data.get(TEXT);
+                String username = data.get(TITLE);
+                String email = data.get(MESSAGE);
+       /*         String uid = data.get(UID);
+                  String imageUrl = data.get(IMAGEURL);
+                  String text = data.get(TEXT); */
 
-            showNotification(data /*remoteMessage*/);
+            showNotification(data/*remoteMessage*/);
+
         }
 
         // Check if message contains a notification payload.
@@ -71,7 +72,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void showNotification(Map<String, String> payload) {
-/*      Intent intent = new Intent(this, MainActivity.class);
+        /*Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 *//* Request code *//*, intent,
                 PendingIntent.FLAG_ONE_SHOT);
@@ -89,15 +90,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         stackBuilder.addNextIntent(intent);
         PendingIntent resulPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         notificationBuilder.setContentIntent(resulPendingIntent);
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0, notificationBuilder.build());
 
     }
 
     private void handleNow() {
-        Log.d(USERNAME, "Short lived task is done.");
+        Log.d(TITLE, "Short lived task is done.");
     }
 
     /**
@@ -113,6 +112,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.logo_pb)
                 .setContentTitle("FCM Message")
@@ -125,6 +125,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+
     }
 }
 

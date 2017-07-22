@@ -220,8 +220,6 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
 
                 Preferences preferences = new Preferences(PedidosActivity.this);
                 preferences.clearSession();
-                DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
-                dbUser.child("notificationToken").removeValue();
                 FirebaseAuth.getInstance().signOut();
                 LoginManager.getInstance().logOut();
                 startActivity(new Intent(PedidosActivity.this, MainActivity.class));

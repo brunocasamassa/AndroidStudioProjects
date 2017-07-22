@@ -42,9 +42,8 @@ public class FirebaseConfig {
         return storage;
     }
 
-
     public  static  DatabaseReference getNotificationRef(){
-        return FirebaseDatabase.getInstance().getReference("Notifications").push();
+        return FirebaseDatabase.getInstance().getReference("Notifications").child("token");
     }
 
 

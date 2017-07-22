@@ -48,31 +48,31 @@ public class Notification {
         this.text = text;
     }
 
-    public String getTopic() {
-        return topic;
+    public String getToken() {
+        return token;
     }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     private String imageUrl;
     private String email;
     private String uid;
     private String text;
-    private String topic;
+    private String token;
 
     public Notification(){
 
     }
 
-    public Notification(String username , String imageUrl , String email, String uid, String text, String topic){
+    public Notification(String username , String imageUrl , String email, String uid, String text, String token){
         this.username = username;
         this.imageUrl = imageUrl;
         this.email = email;
         this.uid = uid;
         this.text = text;
-        this.topic = topic;
+        this.token = token;
 
     }
 

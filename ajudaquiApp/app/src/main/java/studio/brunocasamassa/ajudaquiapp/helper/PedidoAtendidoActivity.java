@@ -18,7 +18,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 
@@ -211,20 +210,15 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
                                                                           //REMOVING CHAT FIELD
                                                                           dbConversa.child(userKey).child(pedido.getIdPedido()).removeValue();
                                                                           dbConversa.child(pedido.getCriadorId()).child(pedido.getIdPedido()).removeValue();
-                                                                          String key = "fi4A79lgcIQ:APA91bEYJQTJs567NeNIilpTo_UxWPOtNLjqb5WS2PKe_GV1Rcl3LMJMtdR4JaWMqBs4OeJbb5AobjuimIbe5taA1-bEcExY1jBkV6xkg3vcZK8x3kA2G1LTw2CoTVhvkiNOOfxZDab8";/*FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getUid();*/
+
 
                                                                           Notification notifs = new Notification();
                                                                           notifs.setUsername(username);
-                                                                          notifs.setImageUrl("https://lh3.googleusercontent.com/YGqr3CRLm45jMF8eM8eQxc1VSERDTyzkv1CIng0qjcenJZxqV5DBgH5xlRTawnqNPcOp=w300");
                                                                           notifs.setEmail(Base64Decoder.decoderBase64(userKey));
-                                                                          notifs.setText("o Usuario " + username + " cancelou o pedido " + pedido.getTitulo());
-                                                                          notifs.setTopic("Notifications/"+pedido.getCriadorId());
-                                                                          FirebaseAuth.getInstance();
-                                                                          notifs.setUid(pedido.getCriadorId());
 
-                                                                          FirebaseConfig.getNotificationRef().setValue(notifs);
+                                                                          FirebaseConfig.getNotificationRef().child(user.getNotificationToken()).setValue(notifs);
 
-                                                                          FirebaseMessaging.getInstance().subscribeToTopic("Notifications");
+                                                                          //FirebaseMessaging.getInstance().subscribeToTopic("Notifications");
 
                                                                       }
 
