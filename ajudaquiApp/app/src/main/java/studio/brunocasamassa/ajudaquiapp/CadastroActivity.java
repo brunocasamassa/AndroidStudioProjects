@@ -103,8 +103,7 @@ public class CadastroActivity extends AppCompatActivity {
             public void onClick(View view) {
                 final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CadastroActivity.this);
 
-                alertDialog.setTitle("Este é um cadastro de emmpresa?");
-
+                alertDialog.setTitle("Este é um cadastro de empresa?");
 
                 alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     @Override
@@ -146,16 +145,19 @@ public class CadastroActivity extends AppCompatActivity {
                 alertDialog.setNegativeButton("NAO", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        usuario = new User();
-                        usuario.setName(nome.getText().toString());
-                        usuario.setEmail(email.getText().toString());
-                        usuario.setSenha(senha.getText().toString());
-                        idUser = Base64Decoder.encoderBase64(usuario.getEmail());
-                        System.out.println("BASE64 ENCODER: " + idUser);
-                        usuario.setId(idUser);
-                        usuario.setMedalhas(badgesList);
-                        cadastrarUsuario();
-
+                        if (nome.getText() == null || email.getText() == null || senha.getText() == null) {
+                            Toast.makeText(getApplicationContext(), "Preencha todos os campos antes do cadastro", Toast.LENGTH_SHORT).show();
+                        } else {
+                            usuario = new User();
+                            usuario.setName(nome.getText().toString());
+                            usuario.setEmail(email.getText().toString());
+                            usuario.setSenha(senha.getText().toString());
+                            idUser = Base64Decoder.encoderBase64(usuario.getEmail());
+                            System.out.println("BASE64 ENCODER: " + idUser);
+                            usuario.setId(idUser);
+                            usuario.setMedalhas(badgesList);
+                            cadastrarUsuario();
+                        }
                     }
                 }).create().show();
 
@@ -177,7 +179,6 @@ public class CadastroActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(CadastroActivity.this, "Usuario cadastrado com sucesso", Toast.LENGTH_LONG).show();
-
 
                                     // FirebaseUser usuarioFireBase = task.getResult().getUser();
                                     usuario.save();
@@ -225,7 +226,7 @@ public class CadastroActivity extends AppCompatActivity {
 
     private void uploadImages() {
         StorageReference imgRef = storage.child(idUser + ".jpg");
-       System.out.println("lei lei "+idUser);
+        System.out.println("lei lei " + idUser);
         //download img source
         userImg.setDrawingCacheEnabled(true);
         userImg.buildDrawingCache();

@@ -113,7 +113,6 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
                 storage = FirebaseConfig.getFirebaseStorage().child("userImages");
             }
             */
-
             storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
 
             if (pedido.getDistanceInMeters() != null) {
@@ -132,7 +131,12 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
                     @Override
                     public void onSuccess(Uri uri) {
                         System.out.println("grupo " + pedido.getGrupo());
-                        Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                        try {
+                            Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                        } catch (Exception e) {
+                            pedidoImg.setImageURI(uri);
+                            System.out.println("EXCEPTION PedidosAdapter " + e);
+                        }
                         System.out.println("my pedidos lets seee2" + uri);
                     }
                 }).addOnFailureListener(new OnFailureListener() {

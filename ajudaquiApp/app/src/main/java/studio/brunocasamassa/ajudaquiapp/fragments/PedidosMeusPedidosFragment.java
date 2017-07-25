@@ -22,8 +22,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import studio.brunocasamassa.ajudaquiapp.PedidosActivity;
 import studio.brunocasamassa.ajudaquiapp.R;
-import studio.brunocasamassa.ajudaquiapp.adapters.PedidosSelecionadoAdapter;
+import studio.brunocasamassa.ajudaquiapp.adapters.PedidosMeusPedidosAdapter;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquiapp.helper.Pedido;
@@ -47,6 +48,8 @@ public class PedidosMeusPedidosFragment extends Fragment {
     private ValueEventListener valueEventListenerPedidos;
     private User usuario = new User();
     private DatabaseReference dbUser;
+    private PedidosActivity pa;
+    private PedidosMeusPedidosAdapter pedidosAdapter;
 
 
     public PedidosMeusPedidosFragment() {
@@ -55,6 +58,9 @@ public class PedidosMeusPedidosFragment extends Fragment {
 
     @Override
     public void onStart() {
+        if (pa.getArrayMeusPedidosAdapter() != null) {
+            pedidoArrayAdapter = pa.getArrayMeusPedidosAdapter();
+        }
         super.onStart();
         databasePedidos.addListenerForSingleValueEvent(valueEventListenerPedidos);
         dbUser = FirebaseConfig.getFireBase().child("usuarios");
@@ -96,13 +102,21 @@ public class PedidosMeusPedidosFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pedidos_meuspedidos, container, false);
+        pa = (PedidosActivity) getActivity();
         pedidos = new ArrayList<>();
         meusPedidos = (ListView) view.findViewById(R.id.meusPedidos_list);
         System.out.println("GRUPO NA POSICAO " + pedidos.isEmpty());
 
-        pedidoArrayAdapter = new PedidosSelecionadoAdapter(getActivity(), pedidos);
+        pedidosAdapter = new PedidosMeusPedidosAdapter(getContext(), pedidos);
+        if (pa.getArrayMeusPedidosAdapter() != null) {
+            pedidoArrayAdapter = pa.getArrayMeusPedidosAdapter();
+        } else pedidoArrayAdapter = pedidosAdapter;
+
 
         meusPedidos.setDivider(null);
+
+        pa.setArrayMeusPedidosAdapter(pedidoArrayAdapter);
+
         meusPedidos.setAdapter(pedidoArrayAdapter);
 
         /*fab = (FloatingActionButton) view.findViewById(R.id.fab);
@@ -171,18 +185,17 @@ public class PedidosMeusPedidosFragment extends Fragment {
             }
         };
 
-
         meusPedidos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-                final Pedido pedidoPressed = pedidos.get(position);
+                final Pedido pedidoPressed = pedidosAdapter.getPedidosFiltrado().get(position);
 
                 if (pedidoPressed.getStatus() == 2) {
                     final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
 
                     alertDialog.setTitle("Apagar pedido");
-                    alertDialog.setMessage("desejaxcluir e4ste pedido? ");
+                    alertDialog.setMessage("deseja excluir este pedido? ");
 
                     alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         @Override
@@ -210,7 +223,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), PedidoCriadoActivity.class);
 
                 // recupera dados a serem passados
-                Pedido selectedPedido = pedidos.get(position);
+                Pedido selectedPedido = pedidosAdapter.getPedidosFiltrado().get(position);
 
                 if (selectedPedido.getStatus() == 2) {//finalizado
                     Toast.makeText(getApplicationContext(), "Pedido finalizado", Toast.LENGTH_SHORT).show();

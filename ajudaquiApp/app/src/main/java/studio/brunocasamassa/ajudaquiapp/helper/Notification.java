@@ -61,6 +61,9 @@ public class Notification {
     private String uid;
     private String text;
     private String token;
+    private String message;
+    private String title;
+    private String command;
 
     public Notification(){
 
@@ -76,4 +79,27 @@ public class Notification {
 
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
 }

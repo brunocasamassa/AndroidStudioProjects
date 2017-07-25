@@ -26,6 +26,7 @@ import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.Conversa;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquiapp.helper.Mensagem;
+import studio.brunocasamassa.ajudaquiapp.helper.Notification;
 import studio.brunocasamassa.ajudaquiapp.helper.Preferences;
 import studio.brunocasamassa.ajudaquiapp.helper.User;
 
@@ -35,9 +36,9 @@ public class ChatActivity extends AppCompatActivity {
     private EditText editMensagem;
     private ImageButton btMensagem;
     private DatabaseReference firebase;
-    private DatabaseReference dbUserDestinatario ;
-    private DatabaseReference dbUserRemetente ;
-    private DatabaseReference dbUser ;
+    private DatabaseReference dbUserDestinatario;
+    private DatabaseReference dbUserRemetente;
+    private DatabaseReference dbUser;
     private ListView listView;
     private ArrayList<Mensagem> mensagens;
     private ArrayAdapter<Mensagem> adapter;
@@ -52,6 +53,7 @@ public class ChatActivity extends AppCompatActivity {
     private String userKey;
     private String nomeUsuarioRemetente;
     private int chatCount = 0;
+    private boolean trigger = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,12 +72,13 @@ public class ChatActivity extends AppCompatActivity {
 
         Bundle extra = getIntent().getExtras();
 
-        if( extra != null ){
+        if (extra != null) {
 
             idPedido = Base64Decoder.encoderBase64(extra.getString("nome"));
             String emailDestinatario = extra.getString("email");
-            idUsuarioDestinatario = Base64Decoder.encoderBase64( emailDestinatario );
+            idUsuarioDestinatario = Base64Decoder.encoderBase64(emailDestinatario);
             nomePedido = extra.getString("nome");
+
         }
 
 
@@ -83,7 +86,7 @@ public class ChatActivity extends AppCompatActivity {
         FirebaseConfig.getFireBase().child("usuarios").child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                    final User user = dataSnapshot.getValue(User.class);
+                final User user = dataSnapshot.getValue(User.class);
 
                 dbUserRemetente.child(userKey /* <- userKey*/).child(idPedido).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -93,9 +96,9 @@ public class ChatActivity extends AppCompatActivity {
                         conversa.setChatCount(0);
                         DatabaseReference saveDb = FirebaseConfig.getFireBase().child("conversas").child(userKey);
                         saveDb.child(idPedido).setValue(conversa);
-                        System.out.println("Chat activity update chat count no userKey (null == zerou(precisa conversa.save))"+ conversa.getMensagem() );
+                        System.out.println("Chat activity update chat count no userKey (null == zerou(precisa conversa.save))" + conversa.getMensagem());
                         //caso algum erro diminua o valor do count para <0
-                        if(user.getChatNotificationCount() <0){
+                        if (user.getChatNotificationCount() < 0) {
                             user.setChatNotificationCount(0);
                         }
                         user.save();
@@ -116,8 +119,6 @@ public class ChatActivity extends AppCompatActivity {
         });
 
 
-
-
         // Configura toolbar
         toolbar.setTitle(nomePedido);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
@@ -132,13 +133,13 @@ public class ChatActivity extends AppCompatActivity {
         mensagens = new ArrayList<>();
         adapter = new MensagemAdapter(ChatActivity.this, mensagens);
         listView.setDivider(null);
-        listView.setAdapter( adapter );
+        listView.setAdapter(adapter);
 
         // Recuperar mensagens do Firebase
         firebase = FirebaseConfig.getFireBase()
-                    .child("mensagens")
-                    .child(userKey)
-                    .child( idPedido );
+                .child("mensagens")
+                .child(userKey)
+                .child(idPedido);
 
         // Cria listener para mensagens
         valueEventListenerMensagem = new ValueEventListener() {
@@ -149,9 +150,9 @@ public class ChatActivity extends AppCompatActivity {
                 mensagens.clear();
 
                 // Recupera mensagens
-                for ( DataSnapshot dados: dataSnapshot.getChildren() ){
-                    Mensagem mensagem = dados.getValue( Mensagem.class );
-                    mensagens.add( mensagem );
+                for (DataSnapshot dados : dataSnapshot.getChildren()) {
+                    Mensagem mensagem = dados.getValue(Mensagem.class);
+                    mensagens.add(mensagem);
                 }
 
                 adapter.notifyDataSetChanged();
@@ -164,7 +165,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         };
 
-        firebase.addValueEventListener( valueEventListenerMensagem );
+        firebase.addValueEventListener(valueEventListenerMensagem);
 
 
         // Enviar mensagem
@@ -175,34 +176,39 @@ public class ChatActivity extends AppCompatActivity {
                 String textoMensagem = editMensagem.getText().toString();
 
 
-                if( textoMensagem.isEmpty() ){
+                if (textoMensagem.isEmpty()) {
                     Toast.makeText(ChatActivity.this, "Digite uma mensagem para enviar!", Toast.LENGTH_LONG).show();
 
-                }else{
+                } else {
                     chatCount++;
                     Mensagem mensagem = new Mensagem();
                     mensagem.setIdUsuario(userKey);
-                    mensagem.setMensagem( textoMensagem );
+                    mensagem.setMensagem(textoMensagem);
 
-                    // salvamos mensagem para o remetente
-                    Boolean retornoMensagemRemetente = salvarMensagem(userKey, idUsuarioDestinatario , mensagem );
-                    if( !retornoMensagemRemetente ){
+                    // salvando mensagem para o remetente
+                    Boolean retornoMensagemRemetente = salvarMensagem(userKey, idUsuarioDestinatario, mensagem);
+                    if (!retornoMensagemRemetente) {
                         Toast.makeText(
                                 ChatActivity.this,
                                 "Problema ao salvar mensagem, tente novamente!",
                                 Toast.LENGTH_LONG
                         ).show();
 
-                    }else {
+                    } else {
 
-                        //salvamos mensagem para o destinatario
-                        Boolean retornoMensagemDestinatario = salvarMensagem(idUsuarioDestinatario, userKey, mensagem );
-                        if ( !retornoMensagemDestinatario ) {
+                        //salvando mensagem para o destinatario
+                        Boolean retornoMensagemDestinatario = salvarMensagem(idUsuarioDestinatario, userKey, mensagem);
+                        if (!retornoMensagemDestinatario) {
                             Toast.makeText(
                                     ChatActivity.this,
                                     "Problema ao enviar mensagem para o destinatário, tente novamente!",
                                     Toast.LENGTH_LONG
                             ).show();
+                        } else {
+                            if (trigger) {
+                                sendNotification(idUsuarioDestinatario, mensagem, nomePedido);
+                                trigger = false;
+                            }
                         }
 
 
@@ -212,21 +218,21 @@ public class ChatActivity extends AppCompatActivity {
                     DateFormat formatter = new SimpleDateFormat("HH:mm");
                     formatter.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
                     String currentTime = formatter.format(new Date());
-                    System.out.println("formatter: "+currentTime);
+                    System.out.println("formatter: " + currentTime);
 
                     Conversa conversa = new Conversa();
-                    conversa.setIdUsuario( idUsuarioDestinatario);
+                    conversa.setIdUsuario(idUsuarioDestinatario);
                     conversa.setNome(nomePedido);
-                    conversa.setMensagem( textoMensagem );
+                    conversa.setMensagem(textoMensagem);
                     conversa.setTime(currentTime);
                     Boolean retornoConversaRemetente = salvarConversa(userKey, idUsuarioDestinatario, conversa);
-                    if( !retornoConversaRemetente ){
+                    if (!retornoConversaRemetente) {
                         Toast.makeText(
                                 ChatActivity.this,
                                 "Problema ao salvar conversa, tente novamente!",
                                 Toast.LENGTH_LONG
                         ).show();
-                    }else {
+                    } else {
 
                         // salvamos Conversa para o Destinatario
 
@@ -237,8 +243,8 @@ public class ChatActivity extends AppCompatActivity {
                         conversa.setMensagem(textoMensagem);
                         conversa.setTime(currentTime);
 
-                        Boolean retornoConversaDestinatario = salvarConversa(idUsuarioDestinatario, userKey, conversa );
-                        if( !retornoConversaDestinatario ){
+                        Boolean retornoConversaDestinatario = salvarConversa(idUsuarioDestinatario, userKey, conversa);
+                        if (!retornoConversaDestinatario) {
                             Toast.makeText(
                                     ChatActivity.this,
                                     "Problema ao salvar conversa para o destinatário, tente novamente!",
@@ -256,17 +262,44 @@ public class ChatActivity extends AppCompatActivity {
         });
 
     }
+    private void sendNotification(String idUsuarioDestinatario, final Mensagem mensagem, final String nomePedido) {
 
-    private boolean salvarMensagem(String idRemetente, final String idDestinatario, Mensagem mensagem){
+        DatabaseReference dbDestinatario = FirebaseConfig.getFireBase().child("usuarios");
+        dbDestinatario.child(idUsuarioDestinatario).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                String userToken = user.getNotificationToken();
+                String userId = user.getId();
+
+                Notification notifs = new Notification();
+                notifs.setToken(userToken);
+                notifs.setUid(userId);
+                notifs.setMessage(mensagem.getMensagem());
+                notifs.setCommand("chat");
+                notifs.setTitle("AJUDAQU]I - " + nomePedido);
+
+                FirebaseConfig.getNotificationRef().child(userId).setValue(notifs);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private boolean salvarMensagem(String idRemetente, final String idDestinatario, Mensagem mensagem) {
 
         try {
 
             firebase = FirebaseConfig.getFireBase().child("mensagens");
 
-            firebase.child( idRemetente )
-                    .child( idPedido )
+            firebase.child(idRemetente)
+                    .child(idPedido)
                     .push()
-                    .setValue( mensagem );
+                    .setValue(mensagem);
 
             dbUserDestinatario = FirebaseConfig.getFireBase().child("usuarios");
 
@@ -275,7 +308,7 @@ public class ChatActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
                     user.setId(idUsuarioDestinatario);
-                    user.setChatNotificationCount(user.getChatNotificationCount()+1);
+                    user.setChatNotificationCount(user.getChatNotificationCount() + 1);
                     user.save();
                 }
 
@@ -287,25 +320,24 @@ public class ChatActivity extends AppCompatActivity {
 
             return true;
 
-        }catch ( Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
 
 
-
     }
 
-    private boolean salvarConversa(String idRemetente, String idDestinatario, Conversa conversa){
+    private boolean salvarConversa(String idRemetente, String idDestinatario, Conversa conversa) {
         try {
             firebase = FirebaseConfig.getFireBase().child("conversas");
-            firebase.child( idRemetente )
-                    .child( idPedido )
-                    .setValue( conversa );
+            firebase.child(idRemetente)
+                    .child(idPedido)
+                    .setValue(conversa);
 
             return true;
 
-        }catch ( Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }

@@ -7,10 +7,11 @@ android {
                 applicationId 'studio.brunocasamassa.ajudaquiapp'
                 minSdkVersion 16
                 targetSdkVersion 23
-                versionCode 7
-                versionName "1.7"
+                versionCode 11
+                versionName "1.11"
                 testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
             }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -23,6 +24,10 @@ android {
         exclude 'META-INF/LICENSE-FIREBASE.txt'
         exclude 'META-INF/NOTICE'
 
+    }
+
+    dexOptions {
+        jumboMode = true
     }
 
     productFlavors {

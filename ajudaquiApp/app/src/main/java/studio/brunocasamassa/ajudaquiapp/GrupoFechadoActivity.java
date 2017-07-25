@@ -67,6 +67,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
     private User user = new User();
     private String idAdmin;
     private ArrayList<String> solicitacoesUser = new ArrayList<>();
+    private ArrayList<String> gruposUser = new ArrayList<>();
     private String userName = new String();
 
 
@@ -113,36 +114,62 @@ public class GrupoFechadoActivity extends AppCompatActivity {
             grupo.setNome(extra.getString("nome"));
             grupo.setQtdMembros(Integer.valueOf(extra.getString("qtdmembros")));
 
-            if (extra.getStringArrayList("gruposSolicitados") != null) {
-                solicitacoesUser.addAll(extra.getStringArrayList("gruposSolicitados"));
+
+        }
+
+        DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
+        dbUser.child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user.getGruposSolicitados() != null) {
+                    solicitacoesUser.addAll(user.getGruposSolicitados());
+                }
+                if (user.getGrupos() != null) {
+                    gruposUser.addAll(user.getGrupos());
+                }
+
+                if (grupo.isOpened()) {
+                    botaoSolicitar.setText("PARTICIPAR");
+                    botaoSolicitar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            System.out.println("Solicitacao user " + solicitacoesUser);
+                            if (!gruposUser.contains(grupo.getId())) {
+                                userInGroup();
+                                finish();
+                            } else
+                                Toast.makeText(GrupoFechadoActivity.this, "Voce já participa deste grupo", Toast.LENGTH_LONG).show();
+                                finish();
+                        }
+                    });
+                } else {
+                    botaoSolicitar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            System.out.println("Solicitacao user " + solicitacoesUser);
+                            if (solicitacoesUser.contains(grupo.getId())) {
+                                Toast.makeText(GrupoFechadoActivity.this, "Pedido de solicitação para este grupo já enviado, aguarde resposta dos administradores", Toast.LENGTH_LONG).show();
+                                finish();
+                            } else if (gruposUser.contains(grupo.getId())) {
+                                Toast.makeText(GrupoFechadoActivity.this, "Voce já participa deste grupo", Toast.LENGTH_LONG).show();
+                                finish();
+                            } else if (!solicitacoesUser.contains(grupo.getId())) {
+                                geraSolicitacao();
+
+                            }
+                        }
+                    });
+                }
+
             }
-        }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-        if (grupo.isOpened()) {
-            botaoSolicitar.setText("PARTICIPAR");
-            botaoSolicitar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    userInGroup();
-                    finish();
-                }
-            });
-        } else {
-            botaoSolicitar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    System.out.println("Solicitacao user " + solicitacoesUser);
-                    if (!solicitacoesUser.contains(grupo.getId())) {
-                        geraSolicitacao();
-
-                    } else
-                        Toast.makeText(GrupoFechadoActivity.this, "Pedido de solicitação para este grupo já enviado, aguarde resposta dos administradores ", Toast.LENGTH_LONG).show();
-
-                }
-            });
-        }
+            }
+        });
 
 
         final File[] imgFile = new File[1];
@@ -170,8 +197,12 @@ public class GrupoFechadoActivity extends AppCompatActivity {
         storage.child(grupo.getNome() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                Glide.with(GrupoFechadoActivity.this).load(uri).override(68, 68).into(groupImg);
-                System.out.println("group image chat " + uri);
+                try {
+                    Glide.with(GrupoFechadoActivity.this).load(uri).override(68, 68).into(groupImg);
+                }catch (Exception e){
+                    groupImg.setImageURI(uri);
+                }
+                    System.out.println("group image chat " + uri);
             }
         });
 
@@ -371,7 +402,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {
 
-                                        Toast.makeText(getApplicationContext(), "FAILED TO SEND "+databaseError, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), "FAILED TO SEND " + databaseError, Toast.LENGTH_SHORT).show();
                                     }
                                 });
 
@@ -379,11 +410,13 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Solicitação enviada", Toast.LENGTH_SHORT).show();
                             finish();
 
-                        };
+                        }
+
+                        ;
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-                            Toast.makeText(getApplicationContext(), "FAILED TO SEND "+databaseError, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "FAILED TO SEND " + databaseError, Toast.LENGTH_SHORT).show();
                         }
 
                     });

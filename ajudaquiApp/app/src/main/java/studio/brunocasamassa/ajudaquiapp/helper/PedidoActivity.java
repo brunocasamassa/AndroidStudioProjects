@@ -54,7 +54,7 @@ public class PedidoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido);
 
-       final Bundle extra = getIntent().getExtras();
+        final Bundle extra = getIntent().getExtras();
         toolbar = (Toolbar) findViewById(R.id.toolbar_create_pedido);
         nomePedido = (TextView) findViewById(R.id.nome_pedido_feito);
         descricao = (TextView) findViewById(R.id.descricao_pedido_feito);
@@ -146,15 +146,7 @@ public class PedidoActivity extends AppCompatActivity {
 
                                     firebase.child(pedido.getIdPedido()).setValue(dbPedido);
 
-                             /*       String msgId = "teste";
-                                    FirebaseMessaging fm = FirebaseMessaging.getInstance();
-
-                                    fm.send(new RemoteMessage.Builder(SENDER_ID + "")
-                                            .setMessageId(Integer.toString(msgId.incrementAndGet()))
-                                            .addData("my_message", "Hello World")
-                                            .addData("my_action","SAY_HELLO")
-                                            .build());
-*/
+                                    sendNotiication(pedido.getCriadorId());
                                     Toast.makeText(PedidoActivity.this, "Parabéns, voce já pode conversar com o criador do pedido", Toast.LENGTH_LONG).show();
                                     finish();
                                 }
@@ -214,7 +206,7 @@ public class PedidoActivity extends AppCompatActivity {
                                     DateFormat formatter = new SimpleDateFormat("HH:mm");
                                     formatter.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
                                     String currentTime = formatter.format(new Date());
-                                    System.out.println("formatter: "+currentTime);
+                                    System.out.println("formatter: " + currentTime);
 
                                     // salvando Conversa para o remetente
                                     Conversa conversa = new Conversa();
@@ -275,6 +267,33 @@ public class PedidoActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void sendNotiication(String criadorId) {
+    DatabaseReference dbDestinatario =FirebaseConfig.getFireBase().child("usuarios");
+        dbDestinatario.child(criadorId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+
+                Notification notifs = new Notification();
+                notifs.setToken(user.getNotificationToken());
+                notifs.setUid(user.getId());
+                notifs.setMessage("Seu pedido '"+pedido.getTitulo()+"' foi atendido" );
+                System.out.println("tiro tiro "+ pedido.getTitulo());
+                notifs.setCommand("pedidos");
+                notifs.setTitle("AJUDAQUI - Pedido Atendido");
+
+                FirebaseConfig.getNotificationRef().child(user.getId()).setValue(notifs);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     private void receberDoacao() {

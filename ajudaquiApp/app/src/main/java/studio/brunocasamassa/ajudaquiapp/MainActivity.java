@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private static String userName;
     private User pivotUsuario = new User();
 
+
     @Override
     public void onStart() {
         super.onStart();
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println("usernAME " + userName);
 
                                 preferencias.saveData(Base64Decoder.encoderBase64(pivotUsuario.getEmail()), pivotUsuario.getName());
-                                Toast.makeText(getApplicationContext(), "signed in " + preferencias.getNome(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Bem vindo " + preferencias.getNome(), Toast.LENGTH_LONG).show();
 
                                 String savedToken = preferencias.getToken();
 

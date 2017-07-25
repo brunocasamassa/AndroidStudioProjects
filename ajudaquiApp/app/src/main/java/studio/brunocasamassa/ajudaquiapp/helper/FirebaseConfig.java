@@ -43,7 +43,7 @@ public class FirebaseConfig {
     }
 
     public  static  DatabaseReference getNotificationRef(){
-        return FirebaseDatabase.getInstance().getReference("Notifications").child("token");
+        return FirebaseDatabase.getInstance().getReference("Notifications");
     }
 
 

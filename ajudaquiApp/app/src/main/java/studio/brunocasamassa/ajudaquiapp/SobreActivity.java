@@ -43,7 +43,7 @@ public class SobreActivity extends AppCompatActivity {
     private ArrayAdapter arrayAdapterSobre;
     private SlidingTabLayout slidingTabLayout;
     public int posicao;
-    private String SUPPORT_EMAIL = "brunocasamassa@hotmail.com";
+    private String SUPPORT_EMAIL = "contatoajudaqui@outlook.com";
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -51,7 +51,6 @@ public class SobreActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activvity_sobre);
-
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal_sobre);
         toolbar.setTitle(getResources().getString(R.string.menu_sobre));
@@ -97,7 +96,7 @@ public class SobreActivity extends AppCompatActivity {
 
                 if(position == 3){
                     //newFacebookIntent(getPackageManager(),"https://www.facebook.com/ajudaquiapp/");
-                    Uri uri = Uri.parse("https://www.facebook.com/ajudaqui/");
+                    Uri uri = Uri.parse("https://www.facebook.com/ajudaquiapp/");
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 
                     startActivity(intent);

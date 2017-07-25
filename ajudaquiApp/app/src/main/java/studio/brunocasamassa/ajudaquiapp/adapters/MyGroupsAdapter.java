@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -45,7 +46,7 @@ public class MyGroupsAdapter extends ArrayAdapter<Grupo> {
         View view = null;
 
         // Verifica se a lista está vazia
-        if( grupos != null ){
+        if (grupos != null) {
 
             // inicializar objeto para montagem da view
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
@@ -54,21 +55,26 @@ public class MyGroupsAdapter extends ArrayAdapter<Grupo> {
             view = inflater.inflate(R.layout.model_group, parent, false);
 
             // recupera elemento para exibição
+            ImageView lock = (ImageView) view.findViewById(R.id.lock_icon);
             TextView nomeGrupo = (TextView) view.findViewById(R.id.nomeGrupo);
             TextView qtdMmebros = (TextView) view.findViewById(R.id.qtd_membros);
             final CircleImageView imgGrupo = (CircleImageView) view.findViewById(R.id.groupImg);
 
-            final Grupo grupo = grupos.get( position );
-            nomeGrupo.setText( grupo.getNome());
-            qtdMmebros.setText( "Membros: "+String.valueOf(grupo.getQtdMembros()));
+            final Grupo grupo = grupos.get(position);
+            nomeGrupo.setText(grupo.getNome());
+            qtdMmebros.setText("Membros: " + String.valueOf(grupo.getQtdMembros()));
+            if (!grupo.isOpened()) {
+                lock.setBackgroundResource(R.drawable.ic_lock);
+            }
             // DOWNLOAD GROUP IMG FROM STORAGE
-            storage.child(grupo.getNome()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            storage.child(grupo.getNome() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
                 public void onSuccess(Uri uri) {
 
                     grupo.setGrupoImg(uri.toString());
-                    Glide.with(getContext()).load(uri).override(68,68).into(imgGrupo);
-                    System.out.println("my groups lets seee2"+ uri);
+                    Glide.with(getContext()).load(uri).override(68, 68).into(imgGrupo);
+                    System.out.println("my groups lets seee2" + uri);
+
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -76,7 +82,6 @@ public class MyGroupsAdapter extends ArrayAdapter<Grupo> {
 
                 }
             });
-
 
 
         }

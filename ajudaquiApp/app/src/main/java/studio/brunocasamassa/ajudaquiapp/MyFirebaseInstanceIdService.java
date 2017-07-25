@@ -4,9 +4,11 @@ package studio.brunocasamassa.ajudaquiapp;
  * Created by bruno on 06/07/2017.
  */
 
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
+import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
 
 
@@ -33,7 +35,7 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
-/*        Preferences preferencias = new Preferences(MyFirebaseInstanceIdService.this);
+/*      Preferences preferencias = new Preferences(MyFirebaseInstanceIdService.this);
         preferencias.saveToken(refreshedToken);*/
 
         sendRegistrationToServer(refreshedToken);
@@ -52,10 +54,11 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
      */
 
     public void sendRegistrationToServer(String token) {
-        /*String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
+        String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
         DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
         dbUser.child(userKey).child("notificationToken").setValue(token);
-        */FirebaseConfig.getNotificationRef().setValue(token);
+
+        FirebaseConfig.getNotificationRef().setValue(token);
 
 
     }

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,6 +36,8 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
     private Context context;
     private StorageReference storage;
     private Preferences preferences;
+    private ArrayList<Pedido> pedidosFiltrado;
+    private PedidosFiltro filtrador;
     private String facebookPhoto;
 
 
@@ -43,7 +46,34 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
     public PedidosSelecionadoAdapter(Context c, ArrayList<Pedido> objects) {
         super(c, 0, objects);
         this.pedidos = objects;
+        this.pedidosFiltrado = objects;
         this.context = c;
+
+        getFilter();
+    }
+
+    public void setPedidosFiltrado(ArrayList<Pedido> pedidosFiltrado) {
+        this.pedidosFiltrado = pedidosFiltrado;
+    }
+
+    public ArrayList<Pedido> getPedidosFiltrado() {
+        return pedidosFiltrado;
+    }
+
+
+    @Override
+    public int getCount() {
+        return pedidosFiltrado.size();
+    }
+
+    @Override
+    public Pedido getItem(int position) {
+        return pedidosFiltrado.get(position);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return i;
     }
 
     @Override
@@ -54,10 +84,10 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
         // Verifica se a lista está vazia
         if (pedidos != null) {
 
-
             if (mainActivity.facebookImg != null) {
                 facebookPhoto = mainActivity.facebookImg;
             }
+
             System.out.println("facebook img pedido: " + facebookPhoto);
             // inicializar objeto para montagem da view
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
@@ -72,7 +102,8 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
             TagGroup tagsCategoria = (TagGroup) view.findViewById(R.id.tagPedidos);
             final CircleImageView pedidoImg = (CircleImageView) view.findViewById(R.id.imagePedido);
 
-            final Pedido pedido = pedidos.get(position);/*
+            System.out.println("PEDDIDOS NO ADAPTER POSITION "+ position);
+            final Pedido pedido = pedidosFiltrado.get(position);/*
             if (pedido.getGrupo() != null) {
                 storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
             } else if (pedido.getGrupo() == null) {
@@ -116,27 +147,52 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
                 });
             } else Glide.with(getContext()).load(R.drawable.logo).override(68, 68).into(pedidoImg);
 
-            /*else if (facebookPhoto != null){
-                Glide.with(getContext()).load(facebookPhoto).override(68,68).into(pedidoImg);
-            } else {
-                storage.child(pedido.getCriadorId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-
-                        Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
-                        System.out.println("my pedidos lets seee2" + uri);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-
-                    }
-                });
-
-            }*/
         }
 
         return view;
 
     }
+
+    @Override
+    public Filter getFilter() {
+        if (filtrador == null) {
+            filtrador = new PedidosFiltro();
+        }
+
+        return filtrador;
+    }
+
+    private class PedidosFiltro extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults filterResults = new FilterResults();
+            if (constraint != null && constraint.length() > 0) {
+                ArrayList<Pedido> tempList = new ArrayList<>();
+
+                for (Pedido pedido : pedidos) {
+                    if (pedido.getTitulo().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        tempList.add(pedido);
+                    }
+                }
+
+                filterResults.count = tempList.size();
+                filterResults.values = tempList;
+            } else {
+                filterResults.count = pedidos.size();
+                filterResults.values = pedidos;
+            }
+
+
+            return filterResults;
+
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            pedidosFiltrado = (ArrayList<Pedido>) results.values;
+            notifyDataSetChanged();
+        }
+    }
+
 }

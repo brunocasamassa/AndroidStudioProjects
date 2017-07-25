@@ -83,7 +83,6 @@ public class CriaDoacaoActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar_create_group);
         toolbar.setTitle("Criar doacao");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
-
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,7 +165,6 @@ public class CriaDoacaoActivity extends AppCompatActivity {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                             User usuario = dataSnapshot.getValue(User.class);
-
                                             usuario.setCreditos(usuario.getCreditos() + 5);
                                             usuario.save();
 

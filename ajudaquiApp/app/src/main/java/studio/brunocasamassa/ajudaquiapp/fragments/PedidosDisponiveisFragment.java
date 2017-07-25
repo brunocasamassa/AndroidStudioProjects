@@ -98,11 +98,7 @@ public class PedidosDisponiveisFragment extends Fragment {
         pedidos = new ArrayList<>();
         pedidosPivot = new ArrayList<>();
         pedidosView = (ListView) view.findViewById(R.id.allpedidos_list);
-        for (int i = 0; i < pedidos.size(); i++) {
-            if (!pedidos.get(i).getTitulo().contains("pescar")) {
-                pedidos.remove(i);
-            }
-        }
+
         pedidosAdapter = new PedidosAdapter(getContext(),pedidos);
         if (pa.getArrayAdapter() != null) {
             pedidosArrayAdapter = pa.getArrayAdapter();
@@ -111,11 +107,9 @@ public class PedidosDisponiveisFragment extends Fragment {
         System.out.println("inflei");
         pedidosView.setDivider(null);
 
-
         pa.setArrayAdapter(pedidosArrayAdapter);
 
         pedidosView.setAdapter(pedidosArrayAdapter);
-
 
         final DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
 
@@ -129,7 +123,6 @@ public class PedidosDisponiveisFragment extends Fragment {
                 if (user.getMessageNotification() != null && !user.getMessageNotification().equals("no message")) {
 
                     //manual toast delay (nao me julgue)
-
                     for (int i = 0; i < 2; i++) {
                         Toasty.warning(getContext(), user.getMessageNotification(), Toast.LENGTH_SHORT, true).show();
                     }
@@ -174,9 +167,11 @@ public class PedidosDisponiveisFragment extends Fragment {
                             }
                             if (pedido.getStatus() == 0) {
                                 pedidos.add(pedido);
+                                System.out.println("pedidao " + pedido.getTitulo());
+
                                 if (usuario.getPedidosFeitos() != null) {
                                     if (usuario.getPedidosFeitos().contains(pedido.getIdPedido())) {
-                                        System.out.println("pedido " + pedido);
+                                        System.out.println("pedidao " + pedido.getIdPedido());
                                         pedidos.remove(pedido);
                                     }
 

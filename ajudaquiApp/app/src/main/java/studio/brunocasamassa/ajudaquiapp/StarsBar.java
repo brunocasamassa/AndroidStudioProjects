@@ -1,5 +1,6 @@
 package studio.brunocasamassa.ajudaquiapp;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RatingBar;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,6 +48,7 @@ public class StarsBar extends AppCompatActivity {
                 intent.putExtra("groupSelected", rating);
                 setResult(Activity.RESULT_OK, intent);
                 */
+
                 DatabaseReference atendenteUser = FirebaseConfig.getFireBase().child("usuarios");
 
                 atendenteUser.child(atendenteKey).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -56,6 +59,8 @@ public class StarsBar extends AppCompatActivity {
                         user.setId(atendenteKey);
                         user.save();
                         finish();
+                        Toast.makeText(getApplicationContext(), "Pedido finalizado com sucesso", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(StarsBar.this, PedidosActivity.class));
                     }
 
                     @Override

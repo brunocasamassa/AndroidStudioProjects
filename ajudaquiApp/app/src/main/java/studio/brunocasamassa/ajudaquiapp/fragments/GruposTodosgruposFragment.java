@@ -1,6 +1,5 @@
 package studio.brunocasamassa.ajudaquiapp.fragments;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,9 +18,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import studio.brunocasamassa.ajudaquiapp.CabineFarturaActivity;
 import studio.brunocasamassa.ajudaquiapp.GrupoFechadoActivity;
 import studio.brunocasamassa.ajudaquiapp.R;
-import studio.brunocasamassa.ajudaquiapp.adapters.MyGroupsAdapter;
+import studio.brunocasamassa.ajudaquiapp.adapters.AllGroupsAdapter;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquiapp.helper.Grupo;
@@ -46,6 +46,7 @@ public class GruposTodosgruposFragment extends Fragment {
     private ArrayList<String> gruposSolicitadosUser = new ArrayList<>();
 
     public GruposTodosgruposFragment() {
+
         // Required empty public constructor
     }
 
@@ -65,15 +66,16 @@ public class GruposTodosgruposFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_allgroups, container, false);
+
         grupos = new ArrayList<>();
 
         usuario.setGrupos(GruposMeusgruposFragment.usuario.getGrupos());
         usuario.setName(GruposMeusgruposFragment.usuario.getName());
         System.out.println("grupos do usuario: " + usuario.getGrupos());
-        System.out.println("Nome do usuario2: " + usuario.getName());
+        System.out.println("Nome do usuario 2: " + usuario.getName());
 
         listView = (GridView) view.findViewById(R.id.allgroups_list);
-        adapter = new MyGroupsAdapter(getContext(), grupos);
+        adapter = new AllGroupsAdapter(getContext(), grupos);
         //adapter = new AllGroupsAdapter(getActivity(), grupos );
         listView.setAdapter(adapter);
 
@@ -105,8 +107,10 @@ public class GruposTodosgruposFragment extends Fragment {
                     System.out.println("grupo " + grupo.getNome());
                     //remove user groups
                     if (usuario.getGrupos() == null || !usuario.getGrupos().contains(grupo.getId())) {
+                        if (grupos.size() == 0) {
+                            grupos.add(grupo);
+                        }
                         grupos.add(grupo);
-
                     }
 
                 }
@@ -121,49 +125,38 @@ public class GruposTodosgruposFragment extends Fragment {
             }
         };
 
-        DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
-        dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                userName = user.getName();
-                if (user.getGruposSolicitados() != null) {
-                    gruposSolicitadosUser.addAll(user.getGruposSolicitados());
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    Intent intent = new Intent(getActivity(), GrupoFechadoActivity.class);
 
-                    // recupera dados a serem passados
-                    Grupo grupo = grupos.get(position);
+                // recupera dados a serem passados
 
-                    // enviando dados para grupo activity
-                    if (grupo.getIdAdms() != null) {
-                        intent.putExtra("idAdmins", grupo.getIdAdms());
-                    }
-                    intent.putExtra("isOpened", grupo.isOpened());
-                    intent.putExtra("userName", userName);
-                    intent.putExtra("nome", grupo.getNome());
-                    intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()));
-                    intent.putExtra("descricao", grupo.getDescricao());
-                    intent.putExtra("gruposSolicitados", gruposSolicitadosUser);
-
-                    startActivity(intent);
-                } catch (Exception e) {
-                    System.out.println("Exception grupos " + e);
+                if (position == 0) {
+                    startActivity(new Intent(getActivity(), CabineFarturaActivity.class));
                 }
+                // enviando dados para grupo activity
+                else {
+                    Grupo grupo = grupos.get(position);
+                    try {
+                        Intent intent = new Intent(getActivity(), GrupoFechadoActivity.class);
+                        if (grupo.getIdAdms() != null) {
+                            intent.putExtra("idAdmins", grupo.getIdAdms());
+                        }
 
+                        intent.putExtra("isOpened", grupo.isOpened());
+                        intent.putExtra("userName", userName);
+                        intent.putExtra("nome", grupo.getNome());
+                        intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()));
+                        intent.putExtra("descricao", grupo.getDescricao());
+
+
+                        startActivity(intent);
+
+                    } catch (Exception e) {
+                        System.out.println("Exception grupos " + e);
+                    }
+
+                }
             }
         });
 

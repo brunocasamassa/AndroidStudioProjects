@@ -83,17 +83,6 @@
             fab:menu_shadowYOffset="4dp"
             fab:menu_showShadow="true">
 
-            <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/fab2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|start"
-                android:elevation="5dp"
-                fab:fab_label="CABINE DA FARTURA"
-                android:src="@drawable/badge3"
-                app:backgroundTint="@color/colorAccent"
-                app:fabSize="mini"
-                />
 
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/fab"

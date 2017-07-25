@@ -266,9 +266,16 @@ public class CriaPedidoActivity extends AppCompatActivity {
         pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo()));
         pedido.setCriadorId(userKey);
         pedido.setGrupo(groupCaptured);
-        pedido.setLatitude(latitude);
-        pedido.setLongitude(longitude);
-
+        if (latitude == null) {
+            pedido.setLatitude(0.0);
+        } else {
+            pedido.setLatitude(latitude);
+        }
+        if (longitude == null) {
+            pedido.setLongitude(0.0);
+        } else {
+            pedido.setLongitude(longitude);
+        }
         if (pedido.getGrupo() != null) {
             savePedidoIntoGroup(pedido);
         }

@@ -23,7 +23,6 @@ import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquiapp.helper.GruposTabAdapter;
 import studio.brunocasamassa.ajudaquiapp.helper.NavigationDrawer;
-import studio.brunocasamassa.ajudaquiapp.helper.Notification;
 import studio.brunocasamassa.ajudaquiapp.helper.Preferences;
 import studio.brunocasamassa.ajudaquiapp.helper.SlidingTabLayout;
 
@@ -42,7 +41,7 @@ public class GruposActivity extends AppCompatActivity {
     private FloatingActionMenu fabMenu;
     private com.github.clans.fab.FloatingActionButton fab2;
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
-    private String jamiltonToken = "cq89an2UGDQ:APA91bG9VMTqgMvDnSPTRmoNiQKzm7d3rqltyOVKIcIN15JM8cYEbK2YlDmgb6MNe4lwWGp2tRA4ScXkdsRJgd7HHH1D6zIyRR4WTTOHa0zcRL5F-pHEyyrV3BGPDI523oDxG68cWLxh";
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -51,13 +50,6 @@ public class GruposActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hello_grupos);
 
-            Notification notifs = new Notification();
-        notifs.setUsername("jamilton");
-        notifs.setEmail(Base64Decoder.decoderBase64(userKey));
-        notifs.setToken(jamiltonToken);
-
-        FirebaseConfig.getNotificationRef().child(jamiltonToken).setValue(notifs);
-
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
         toolbar.setTitle(getResources().getString(R.string.menu_grupos));
@@ -65,7 +57,8 @@ public class GruposActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         fabMenu = (FloatingActionMenu) findViewById(R.id.fab_open_menu);
-        fab2 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab2);
+    /*    fab2 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab2);
+
 
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,8 +66,7 @@ public class GruposActivity extends AppCompatActivity {
                 Intent intent = new Intent(GruposActivity.this, CabineFarturaActivity.class);
                 startActivity(intent);
             }
-        });
-
+        });*/
         fab = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -134,5 +126,12 @@ public class GruposActivity extends AppCompatActivity {
 
     }
 
+
+    private void refresh() {
+        Intent intent = new Intent(GruposActivity.this, GruposActivity.class);
+        finish();
+        System.out.println("REFRESHED");
+        startActivity(intent);
+    }
 
 }

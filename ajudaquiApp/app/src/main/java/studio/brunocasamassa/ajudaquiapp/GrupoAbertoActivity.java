@@ -110,7 +110,6 @@ public class GrupoAbertoActivity extends AppCompatActivity {
             }
         });
 
-
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
         toolbar.setTitle(titulo);
 

@@ -22,7 +22,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintHorizontal_bias="0.0"></android.support.v7.widget.Toolbar>
 
-
     <ImageView
         android:id="@+id/chat_pedido_atendido"
         android:layout_width="wrap_content"

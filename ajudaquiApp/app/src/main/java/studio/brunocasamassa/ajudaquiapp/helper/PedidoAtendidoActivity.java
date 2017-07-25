@@ -22,7 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import me.gujun.android.taggroup.TagGroup;
-import studio.brunocasamassa.ajudaquiapp.ConversasActivity;
+import studio.brunocasamassa.ajudaquiapp.ChatActivity;
 import studio.brunocasamassa.ajudaquiapp.R;
 
 /**
@@ -58,9 +58,6 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido_atendido);
 
-
-
-
         chatImage = (ImageView) findViewById(R.id.chat_pedido_atendido);
         statusImage = (ImageView) findViewById(R.id.status_image);
         toolbar = (Toolbar) findViewById(R.id.toolbar_pedido_atendido);
@@ -93,10 +90,26 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
         chatImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DatabaseReference dbConversas = FirebaseConfig.getFireBase().child("conversas").child(userKey);
+                dbConversas.child(pedido.getIdPedido()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Conversa conversa = dataSnapshot.getValue(Conversa.class);
+                        Intent intent = new Intent(PedidoAtendidoActivity.this, ChatActivity.class);
+                        intent.putExtra("nome", conversa.getNome());
+                        String email = Base64Decoder.decoderBase64(conversa.getIdUsuario());
+                        intent.putExtra("email", email);
+                        startActivity(intent);
+                        finish();
+                    }
 
-                Intent intent = new Intent(PedidoAtendidoActivity.this, ConversasActivity.class);
-                startActivity(intent);
-                finish();
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
 
             }
         });

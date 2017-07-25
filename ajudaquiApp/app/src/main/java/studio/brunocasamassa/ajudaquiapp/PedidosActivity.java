@@ -51,6 +51,8 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
     private ListView listview_nomes;
     private ViewPager viewPager;
     private ArrayAdapter<Pedido> arrayAdapter;
+    private ArrayAdapter<Pedido> arrayEscolhidosAdapter;
+    private ArrayAdapter<Pedido> arrayMeusPedidosAdapter;
     private SlidingTabLayout slidingTabLayout;
     private int premium;
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
@@ -259,12 +261,23 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
 
     @Override
     public boolean onQueryTextChange(String newText) {
+
         arrayAdapter = getArrayAdapter();
         arrayAdapter.getFilter().filter(newText);
         arrayAdapter.notifyDataSetChanged();
-        return true;
-    }
 
+        arrayEscolhidosAdapter = getArrayEscolhidosAdapter();
+        arrayEscolhidosAdapter.getFilter().filter(newText);
+        arrayEscolhidosAdapter.notifyDataSetChanged();
+
+        arrayMeusPedidosAdapter = getArrayMeusPedidosAdapter();
+        if(arrayMeusPedidosAdapter != null) { //fica null quando inicia a activity
+            arrayMeusPedidosAdapter.getFilter().filter(newText);
+            arrayMeusPedidosAdapter.notifyDataSetChanged();
+        }
+        return true;
+
+    }
 
     public ArrayAdapter<Pedido> getArrayAdapter() {
         return arrayAdapter;
@@ -272,13 +285,27 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
 
     public void setArrayAdapter(ArrayAdapter<Pedido> arrayAdapter) {
         this.arrayAdapter = arrayAdapter;
-    }
-
-    ;
+    };
 
     private void refresh() {
         Intent intent = new Intent(PedidosActivity.this, PedidosActivity.class);
         finish();
         startActivity(intent);
+    }
+
+    public ArrayAdapter<Pedido> getArrayEscolhidosAdapter() {
+        return arrayEscolhidosAdapter;
+    }
+
+    public void setArrayEscolhidosAdapter(ArrayAdapter<Pedido> arrayEscolhidosAdapter) {
+        this.arrayEscolhidosAdapter = arrayEscolhidosAdapter;
+    }
+
+    public ArrayAdapter<Pedido> getArrayMeusPedidosAdapter() {
+        return arrayMeusPedidosAdapter;
+    }
+
+    public void setArrayMeusPedidosAdapter(ArrayAdapter<Pedido> arrayMeusPedidosAdapter) {
+        this.arrayMeusPedidosAdapter = arrayMeusPedidosAdapter;
     }
 }

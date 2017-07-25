@@ -190,7 +190,10 @@ public class NavigationDrawer {
 
                 classe.startActivity(new Intent(classe, PaymentActivity3.class));
 
-            } else classe.startActivity(new Intent(classe, GruposActivity.class));
+            } else {
+                classe.startActivity(new Intent(classe, GruposActivity.class));
+
+            }
 
         }
         if (position == 7) {
@@ -205,6 +208,7 @@ public class NavigationDrawer {
 
         }
     }
+
 
 
 }

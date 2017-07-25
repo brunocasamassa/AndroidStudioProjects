@@ -57,8 +57,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
     private StorageReference storage;
     private boolean validatedName = true;
     private ArrayList<String> adms = new ArrayList<>();
-    private boolean groupIsOpen;
-
+    private boolean groupIsOpen = true;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 

@@ -95,7 +95,9 @@ public class Pedido {
     }
 
     private String Titulo;
+
     private String Descricao;
+
     private ArrayList<String> tagsCategoria = new ArrayList<String>();
 
     public String getCriadorId() {
@@ -108,8 +110,7 @@ public class Pedido {
 
     private String criadorId;
 
-
-     int status;
+    int status;
     private String grupo;
 
     public String getTipo() {

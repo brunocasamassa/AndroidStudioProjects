@@ -16,9 +16,15 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import me.gujun.android.taggroup.TagGroup;
+import studio.brunocasamassa.ajudaquiapp.ChatActivity;
 import studio.brunocasamassa.ajudaquiapp.ConversasActivity;
+import studio.brunocasamassa.ajudaquiapp.PedidosActivity;
 import studio.brunocasamassa.ajudaquiapp.R;
 import studio.brunocasamassa.ajudaquiapp.StarsBar;
 
@@ -69,7 +75,6 @@ public class PedidoCriadoActivity extends AppCompatActivity {
         if (extra != null) {
 
             pedido = new Pedido();
-
             pedido.setIdPedido(extra.getString("idPedido"));
             pedido.setTagsCategoria(extra.getStringArrayList("tagsCategoria"));
             pedido.setDescricao(extra.getString("descricao"));
@@ -86,13 +91,33 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(PedidoCriadoActivity.this, ConversasActivity.class);
-                startActivity(intent);
-                finish();
+                DatabaseReference dbConversas = FirebaseConfig.getFireBase().child("conversas").child(userKey);
+                dbConversas.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
+                        for (DataSnapshot post : dataSnapshot.getChildren()) {
+                            Conversa conversa = post.getValue(Conversa.class);
+                            if (Base64Decoder.encoderBase64(conversa.getNome()).equals(pedido.getIdPedido())) {
+                                Intent intent = new Intent(PedidoCriadoActivity.this, ChatActivity.class);
+                                intent.putExtra("nome", conversa.getNome());
+                                String email = Base64Decoder.decoderBase64(conversa.getIdUsuario());
+                                intent.putExtra("email", email);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                startActivity(new Intent(PedidoCriadoActivity.this, ConversasActivity.class));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
-
 
         descricao.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -125,7 +150,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             }
         });
 
-        statusImage.setOnLongClickListener(new View.OnLongClickListener() {
+/*        statusImage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
 
@@ -145,46 +170,47 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                 alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(pedido.getStatus() == 0 ){
+                        if (pedido.getStatus() == 0) {
                             Toast.makeText(getApplication(), "Pedidos abertos nao podem ser alterados", Toast.LENGTH_SHORT).show();
-                        }else{
-                        AlertDialog.Builder selectStatus = new AlertDialog.Builder(PedidoCriadoActivity.this);
-                        selectStatus.setTitle("Selecione o novo status do pedido");
-                        selectStatus.setNegativeButton("Cancelar:", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        } else {
+                            AlertDialog.Builder selectStatus = new AlertDialog.Builder(PedidoCriadoActivity.this);
+                            selectStatus.setTitle("Selecione o novo status do pedido");
+                            selectStatus.setNegativeButton("Cancelar:", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                            }
-                        });
-                        selectStatus.setItems(new CharSequence[]
-                                        {"Aberto", "Finalizado"},
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // The 'which' argument contains the index position
-                                        // of the selected item
-                                        switch (which) {
-                                            case 0:
-                                                pedido.setStatus(0);
-                                                Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_aberto).into(statusImage);
-                                                pedido.save();
-                                                break;
-                                            case 1:
-                                                pedido.setStatus(2);
-                                                Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_finalizado).into(statusImage);
-                                                pedido.save();
-                                                break;
+                                }
+                            });
+                            selectStatus.setItems(new CharSequence[]
+                                            {"Aberto", "Finalizado"},
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // The 'which' argument contains the index position
+                                            // of the selected item
+                                            switch (which) {
+                                                case 0:
+                                                    pedido.setStatus(0);
+                                                    Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_aberto).into(statusImage);
+                                                    pedido.save();
+                                                    break;
+                                                case 1:
+                                                    pedido.setStatus(2);
+                                                    Glide.with(PedidoCriadoActivity.this).load(R.drawable.tag_finalizado).into(statusImage);
+                                                    pedido.save();
+                                                    break;
+                                            }
                                         }
-                                    }
-                                }).create().show();
+                                    }).create().show();
 
-                        selectStatus.setCancelable(false);
-                    }}
+                            selectStatus.setCancelable(false);
+                        }
+                    }
 
                 }).create().show();
 
                 return false;
             }
-        });
+        });*/
         if (pedido.getStatus() != 0) {
             int status = pedido.getStatus();
             System.out.println("status pedido " + pedido.getTitulo() + ": " + status);
@@ -219,61 +245,113 @@ public class PedidoCriadoActivity extends AppCompatActivity {
         if (pedido.getGrupo() != null) {
             tagsGrupo.setTags(pedido.getGrupo());
         }
-        finalizarPedido.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
+        if (pedido.getStatus() == 3) {
+            finalizarPedido.setText("LIBERAR PEDIDO");
+            finalizarPedido.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoCriadoActivity.this);
 
-                if(pedido.getStatus() == 0){
-                    Toast.makeText(getApplicationContext(), "Voce nao pode finalizar um pedido aberto", Toast.LENGTH_SHORT).show();
+                    alertDialog.setTitle("Liberar Pedido");
+                    alertDialog.setMessage("Deseja tornar este pedido aberto novamente?");
+                    alertDialog.setCancelable(false);
 
+                    alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+
+                    alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            openPedidoStatus();
+                            finish();
+                            startActivity(new Intent(PedidoCriadoActivity.this, PedidosActivity.class));
+
+                        }
+                    }).create().show();
                 }
-                else {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoCriadoActivity.this);
+            });
 
-                alertDialog.setTitle("Finalizar Pedido");
-                alertDialog.setMessage("Deseja finalizar este pedido?");
-                alertDialog.setCancelable(false);
+        } else {
+            finalizarPedido.setOnClickListener(new View.OnClickListener() {
 
-                alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                @Override
+                public void onClick(View v) {
 
-                    }
-                });
+                    if (pedido.getStatus() == 0) {
+                        Toast.makeText(getApplicationContext(), "Voce nao pode finalizar um pedido aberto", Toast.LENGTH_SHORT).show();
 
-                alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    } else {
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoCriadoActivity.this);
 
-                        trigger = true;
-                        startStars(trigger);
+                        alertDialog.setTitle("Finalizar Pedido");
+                        alertDialog.setMessage("Deseja finalizar este pedido?");
+                        alertDialog.setCancelable(false);
 
-                    }
-                }).create().show();
+                        alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+                        alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                trigger = true;
+                                startStars(trigger);
+
+                            }
+                        }).create().show();
 
 
 /*
                 Toast.makeText(PedidoCriadoActivity.this, "Em processo", Toast.LENGTH_LONG).show();
 */
-            }
-        }});
+                    }
+                }
+            });
 
+        }
+    }
+
+    private void openPedidoStatus() {
+        DatabaseReference dbPedido = FirebaseConfig.getFireBase().child("Pedidos");
+        dbPedido.child(pedido.getIdPedido()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Pedido pedido = dataSnapshot.getValue(Pedido.class);
+                pedido.setStatus(0);
+                pedido.save();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void startStars(boolean trigger) {
 
-        if (trigger){
+        if (trigger) {
 
             System.out.println("trigger entrado");
             keyAtendente = pedido.getAtendenteId();
             Intent intent = new Intent(PedidoCriadoActivity.this, StarsBar.class);
             intent.putExtra("keyAtendente", keyAtendente);
-            System.out.println("key nos pedidos "+ keyAtendente);
-            startActivity(intent);
+            System.out.println("key nos pedidos " + keyAtendente);
+
 
             pedido.setStatus(2);
             pedido.save();
+            finish();
+            startActivity(intent);
 
         }
     }

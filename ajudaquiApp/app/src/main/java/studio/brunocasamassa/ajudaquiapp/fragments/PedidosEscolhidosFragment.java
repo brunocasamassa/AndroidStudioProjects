@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import studio.brunocasamassa.ajudaquiapp.PedidosActivity;
 import studio.brunocasamassa.ajudaquiapp.R;
 import studio.brunocasamassa.ajudaquiapp.adapters.PedidosSelecionadoAdapter;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
@@ -35,6 +36,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  */
 
 public class PedidosEscolhidosFragment extends Fragment {
+
     private int premium;
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private DatabaseReference databasePedidos;
@@ -44,17 +46,21 @@ public class PedidosEscolhidosFragment extends Fragment {
     private ArrayList<Pedido> pedidos;
     private ListView pedidosEscolhidos;
     private ArrayAdapter pedidoArrayAdapter;
-
+    private PedidosActivity pa;
+    private PedidosSelecionadoAdapter pedidosAdapter;
 
     public PedidosEscolhidosFragment() {
-        // Required empty public constructor
+        //Required empty public constructor
     }
 
     @Override
     public void onStart() {
 
-
+        if (pa.getArrayEscolhidosAdapter() != null) {
+            pedidoArrayAdapter = pa.getArrayEscolhidosAdapter();
+        }
         super.onStart();
+
         databasePedidos.addListenerForSingleValueEvent(valueEventListenerPedidos);
 
         //dbGroups.addListenerForSingleValueEvent(valueEventListenerAllGroups);
@@ -73,14 +79,25 @@ public class PedidosEscolhidosFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pedidos_escolhidos, container, false);
+        pa = (PedidosActivity) getActivity();
         pedidos = new ArrayList<>();
         pedidosEscolhidos = (ListView) view.findViewById(R.id.pedidos_escolhidos_list);
-        System.out.println("GRUPO NA POSICAO "+ pedidos.isEmpty());
+        System.out.println("GRUPO NA POSICAO " + pedidos.isEmpty());
+
+        pedidosAdapter = new PedidosSelecionadoAdapter(getContext(), pedidos);
+        if (pa.getArrayEscolhidosAdapter() != null) {
+            pedidoArrayAdapter = pa.getArrayEscolhidosAdapter();
+        } else pedidoArrayAdapter = pedidosAdapter;
+
 
         pedidosEscolhidos.setDivider(null);
-        pedidoArrayAdapter = new PedidosSelecionadoAdapter(getActivity(), pedidos);
+
+        pa.setArrayEscolhidosAdapter(pedidoArrayAdapter);
+
+        //pedidoArrayAdapter = new PedidosSelecionadoAdapter(getActivity(), pedidos);
 
         pedidosEscolhidos.setAdapter(pedidoArrayAdapter);
+
         /*fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +109,6 @@ public class PedidosEscolhidosFragment extends Fragment {
             }
         });*/
 
-
         DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
 
         databaseUsers.addValueEventListener(new ValueEventListener() {
@@ -101,13 +117,12 @@ public class PedidosEscolhidosFragment extends Fragment {
                 User user = dataSnapshot.getValue(User.class);
                 usuario.setPedidosAtendidos(user.getPedidosAtendidos());
                 premium = user.getPremiumUser();
-                System.out.println("PMPF:idPedidos "+usuario.getPedidosFeitos());
-
+                System.out.println("PMPF:idPedidos " + usuario.getPedidosFeitos());
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                System.out.println("ERROR GET PEDIDOS USER STRINGS: "+ databaseError);
+                System.out.println("ERROR GET PEDIDOS USER STRINGS: " + databaseError);
             }
         });
 
@@ -130,12 +145,12 @@ public class PedidosEscolhidosFragment extends Fragment {
                             pedidos.add(pedido);
                         }
                     }
-                    System.out.println("PMPF: pilha pedidos na view "+ pedidos);
+                    System.out.println("PMPF: pilha pedidos na view " + pedidos);
 
                 }
 
                 pedidoArrayAdapter.notifyDataSetChanged();
-                System.out.println("PMPF: pilha pedidos na view2 "+ pedidos);
+                System.out.println("PMPF: pilha pedidos na view2 " + pedidos);
 
             }
 
@@ -153,28 +168,27 @@ public class PedidosEscolhidosFragment extends Fragment {
 
                 Intent intent = new Intent(getActivity(), PedidoAtendidoActivity.class);
 
-                // recupera dados a serem passados
-                Pedido selectedPedido = pedidos.get(position);
+                //recupera dados a serem passados
+                Pedido selectedPedido = pedidosAdapter.getPedidosFiltrado().get(position);
 
+                if (selectedPedido.getStatus() == 2) {//finalizado
+                    Toast.makeText(getApplicationContext(), "Pedido finalizado", Toast.LENGTH_SHORT).show();
+                } else {
+                    //enviando dados para grupo activity
+                    //enviando dados para pedido activity
+                    intent.putExtra("status", selectedPedido.getStatus());
+                    intent.putExtra("titulo", selectedPedido.getTitulo());
+                    intent.putExtra("tagsCategoria", selectedPedido.getTagsCategoria());
+                    intent.putExtra("idPedido", selectedPedido.getIdPedido());
+                    intent.putExtra("criadorId", selectedPedido.getCriadorId());
+                    intent.putExtra("tipo", selectedPedido.getTipo());
+                    if (selectedPedido.getGrupo() != null) {
+                        intent.putExtra("tagsGrupo", selectedPedido.getGrupo());
+                    }
+                    intent.putExtra("descricao", selectedPedido.getDescricao());
 
-                if(selectedPedido.getStatus() == 2){//finalizado
-                    Toast.makeText(getApplicationContext(),"Pedido finalizado", Toast.LENGTH_SHORT).show();
-                } else{
-
-                // enviando dados para grupo activity
-                // enviando dados para pedido activity
-                intent.putExtra("status", selectedPedido.getStatus());
-                intent.putExtra("titulo", selectedPedido.getTitulo());
-                intent.putExtra("tagsCategoria", selectedPedido.getTagsCategoria());
-                intent.putExtra("idPedido", selectedPedido.getIdPedido());
-                intent.putExtra("criadorId", selectedPedido.getCriadorId());
-                intent.putExtra("tipo", selectedPedido.getTipo());
-                if (selectedPedido.getGrupo() != null) {
-                    intent.putExtra("tagsGrupo", selectedPedido.getGrupo());
+                    startActivity(intent);
                 }
-                intent.putExtra("descricao", selectedPedido.getDescricao());
-
-                startActivity(intent);}
 
             }
         });

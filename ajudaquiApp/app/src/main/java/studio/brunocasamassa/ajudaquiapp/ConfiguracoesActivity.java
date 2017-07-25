@@ -72,7 +72,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 distance = progress;
-                seekValue.setText(String.valueOf(progress)+" km");
+                seekValue.setText(String.valueOf(progress) + " km");
             }
 
             @Override
@@ -86,18 +86,19 @@ public class ConfiguracoesActivity extends AppCompatActivity {
             }
 
         });
+
         dbUser.child("usuarios").child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 name.setText(user.getName());
                 if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
-                    Glide.with(ConfiguracoesActivity.this).load(user.getProfileImg()).into(circleImageView);
+                    Glide.with(ConfiguracoesActivity.this).load(user.getProfileImg()).override(68, 68).into(circleImageView);
                 } else {
                     storage.child(userKey + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            Glide.with(ConfiguracoesActivity.this).load(uri).override(68, 68).into(circleImageView);
+                            Glide.with(ConfiguracoesActivity.this).load(uri).into(circleImageView);
                             System.out.println("my groups lets seee2 " + uri);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -135,7 +136,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(ConfiguracoesActivity.this);
 
                 alertDialog.setTitle("Alterar Dados Usuario");
-                alertDialog.setMessage("Deseja realmente alterar seus dados? A alteração é irreversivel");
+                alertDialog.setMessage("Deseja realmente alterar seus dados?");
                 alertDialog.setCancelable(false);
 
 
@@ -153,7 +154,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 User user = dataSnapshot.getValue(User.class);
-                                if(distance!=0){
+                                if (distance != 0) {
                                     user.setMaxDistance(distance);
                                 }
                                 if (user.getProfileImg() != null) {
@@ -163,7 +164,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                                 if (!name.getText().equals(user.getName())) {
                                     user.setName(name.getText().toString());
                                     user.save();
-                                }else System.out.println("username nao mudad0");
+                                } else System.out.println("username nao mudad0");
 
                                 if (photoWasChanged) {
                                     uploadImages();
