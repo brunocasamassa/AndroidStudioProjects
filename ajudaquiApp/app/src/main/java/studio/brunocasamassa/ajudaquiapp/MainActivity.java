@@ -1,6 +1,7 @@
 package studio.brunocasamassa.ajudaquiapp;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,12 +23,11 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -50,24 +50,24 @@ import studio.brunocasamassa.ajudaquiapp.helper.User;
 
 public class MainActivity extends AppCompatActivity {
 
-
     private ProfileTracker mProfileTracker;
     private ImageButton cadastrar;
     private ImageButton login;
     private LoginButton btnLogin;
     private CallbackManager callbackManager;
-    public static LoginResult lr;
     private static String userId;
     private static FirebaseAuth autenticacao;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference firebaseDatabase;
-    public static User usuario = new User();
     private StorageReference storage;
     private MyFirebaseInstanceIdService md = new MyFirebaseInstanceIdService();
-    public String facebookImg;
     private static String userName;
     private User pivotUsuario = new User();
-
+    public static LoginResult lr;
+    public static User usuario = new User();
+    public String facebookImg;
+    private ProgressDialog progress = null;
+    private boolean trigger = false;
 
     @Override
     public void onStart() {
@@ -87,9 +87,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(FirebaseAuth.getInstance().getCurrentUser() != null){
-        md.onTokenRefresh();
-    }}
+        if (checkVersion()) {
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                //verify if user db structure really exist
+                progress = ProgressDialog.show(this, "Aguarde...",
+                        "Verificando dados do usuario", true);
+            }
+        }
+    }
+
 
     // ...
     @Override
@@ -98,63 +104,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        DatabaseReference version = FirebaseConfig.getFireBase().child("version");
-        version.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Double versionDouble = dataSnapshot.getValue(Double.class);
-
-                String versionFromDb = versionDouble.toString();
-                PackageInfo pInfo = null;
-                try {
-                    pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                String version = pInfo.versionName;
-                System.out.println("version db "+ versionFromDb + "  version app "+ version);
-                if(!version.equals(versionFromDb)){
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-
-                    alertDialog.setTitle("Atualização Disponivel");
-                    alertDialog.setMessage("Esta versao esta desatualizada, deseja ir para a pagina de atualização?");
-                    alertDialog.setCancelable(false);
-
-                    alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
-                            try {
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                            } catch (android.content.ActivityNotFoundException anfe) {
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                            }
-                        }
-                    });
-                    alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    }).create().show();
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-        FirebaseOptions opts = FirebaseApp.getInstance().getOptions();
-        Log.i("SSS", "Bucket = " + opts.getStorageBucket());
-
+        //verify connection and check version
         if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+
+            if (!trigger) {
+                checkVersion();
+            }
 
         } else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
@@ -172,35 +128,51 @@ public class MainActivity extends AppCompatActivity {
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                final FirebaseUser authUser = firebaseAuth.getCurrentUser();
                 System.out.println("usuario conectado: " + firebaseAuth.getCurrentUser());
                 try {
-                    if (user != null) {
-                        DatabaseReference firebase = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(user.getEmail()));
-                        System.out.println("main email " + user.getEmail());
+                    if (authUser != null) {
+                        DatabaseReference firebase = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(authUser.getEmail()));
+                        System.out.println("main email " + authUser.getEmail());
                         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 User user = dataSnapshot.getValue(User.class);
-                                pivotUsuario.setName(user.getName());
-                                pivotUsuario.setEmail(user.getEmail());
-                                System.out.println("usernAME " + userName);
+                                if (user == null) {
+                                    authUser.delete();
+                                    if (progress != null) {
+                                        progress.dismiss();
+                                    }
+                                    LoginManager.getInstance().logOut();
+                                    Toast.makeText(getApplicationContext(), "Falha no login, por favor entre novamente ", Toast.LENGTH_SHORT).show();
+                                    refresh();
 
-                                preferencias.saveData(Base64Decoder.encoderBase64(pivotUsuario.getEmail()), pivotUsuario.getName());
-                                Toast.makeText(getApplicationContext(), "Bem vindo " + preferencias.getNome(), Toast.LENGTH_LONG).show();
+                                } else {
 
-                                String savedToken = preferencias.getToken();
+                                    pivotUsuario.setName(user.getName());
+                                    pivotUsuario.setEmail(user.getEmail());
+                                    System.out.println("usernAME " + userName);
 
-                                String token = FirebaseInstanceId.getInstance().getToken();
+                                    preferencias.saveData(Base64Decoder.encoderBase64(pivotUsuario.getEmail()), pivotUsuario.getName());
 
-                                md.onTokenRefresh();
+                                    Toast.makeText(getApplicationContext(), "Bem vindo " + preferencias.getNome(), Toast.LENGTH_LONG).show();
+
+                                    String savedToken = preferencias.getToken();
+
+                                    String token = FirebaseInstanceId.getInstance().getToken();
+
+                                    md.onTokenRefresh();
                                 /*if (token != savedToken) {
                                     md.sendRegistrationToServer(token);
                                 } else md.sendRegistrationToServer(savedToken);*/
 
-                                System.out.println("usuario name " + usuario.getName());
-                                startActivity(new Intent(MainActivity.this, PedidosActivity.class));
-                                //Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
+                                    System.out.println("usuario name " + usuario.getName());
+                                    if (progress != null) {
+                                        progress.dismiss();
+                                    }
+                                    startActivity(new Intent(MainActivity.this, PedidosActivity.class));
+                                    //Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
+                                }
                             }
 
                             @Override
@@ -257,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(final LoginResult loginResult) {
                 System.out.println("MESSAGE Sucesso no callback, integrando com o firebase, login result >>>>  " + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
-
+                preferencias.saveAccessToken(loginResult.getAccessToken());
             }
 
             @Override
@@ -279,6 +251,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
+        progress = ProgressDialog.show(this, "Aguarde...",
+                "Verificando dados do usuario", true);
         System.out.println("handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken()); //firebase-facebook bound-line
@@ -288,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull final Task<AuthResult> task) {
-                        DatabaseReference users = FirebaseConfig.getFireBase().child("usuarios");
+                        final DatabaseReference users = FirebaseConfig.getFireBase().child("usuarios");
                         users.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -304,6 +278,8 @@ public class MainActivity extends AppCompatActivity {
                                     System.out.println("CRIANDO USUARIO NO DATABASSE");
                                     // FirebaseUser usuarioFireBase = task.getResult().getUser();
                                     usuario.setName(name);
+                                    usuario.setPremiumUser(1);
+                                    usuario.setMaxDistance(10);
                                     usuario.setProfileImg(photo.toString());
                                     usuario.setEmail(email);
                                     usuario.setId(encodedFacebookEmailUser.toString());
@@ -396,6 +372,61 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
 
+    }
+
+    private boolean checkVersion() {
+        //=----------------------------
+
+        DatabaseReference version = FirebaseConfig.getFireBase().child("version");
+        version.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Double versionDouble = dataSnapshot.getValue(Double.class);
+                String versionFromDb = versionDouble.toString();
+                PackageInfo pInfo = null;
+                try {
+                    pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                String version = pInfo.versionName;
+                System.out.println("version db " + versionFromDb + "  version app " + version);
+
+                if (!version.equals(versionFromDb)) {
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+
+                    alertDialog.setTitle("Atualização Disponivel");
+                    alertDialog.setMessage("Esta versao esta desatualizada, deseja ir para a pagina de atualização?");
+                    alertDialog.setCancelable(false);
+
+                    alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                            try {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                            } catch (android.content.ActivityNotFoundException anfe) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                            }
+                        }
+                    });
+                    alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }).create().show();
+                } else trigger = true;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+//------------
+        return trigger;
     }
 }
 

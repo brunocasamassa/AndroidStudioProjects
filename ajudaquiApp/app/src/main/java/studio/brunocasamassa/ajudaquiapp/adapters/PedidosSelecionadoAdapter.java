@@ -131,7 +131,7 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
             // DOWNLOAD GROUP IMG FROM STORAGE
 
             if (pedido.getGrupo() != null) {
-                storage.child(pedido.getGrupo() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                storage.child(pedido.getGroupId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                     @Override
                     public void onSuccess(Uri uri) {

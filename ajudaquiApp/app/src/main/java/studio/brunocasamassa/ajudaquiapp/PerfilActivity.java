@@ -76,6 +76,7 @@ public class PerfilActivity extends AppCompatActivity {
     private ArrayList<String> listaGrupos;
     private ArrayList<String> listaKey;
     private String groupName;
+    private String groupKey;
     private String userName;
     private String userKeySolicitante;
     private String message;
@@ -86,6 +87,7 @@ public class PerfilActivity extends AppCompatActivity {
     private static int premium;
     private String encodedKeySolicitation;
     private ArrayList<String> listaSolicitationKey;
+    private ArrayList<String> listaGruposKeys;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -108,6 +110,7 @@ public class PerfilActivity extends AppCompatActivity {
         listaNotificacoes = new ArrayList();
         listaMessages = new ArrayList();
         listaGrupos = new ArrayList();
+        listaGruposKeys = new ArrayList();
         listaUserName = new ArrayList();
         listaKey = new ArrayList();
 
@@ -167,12 +170,19 @@ public class PerfilActivity extends AppCompatActivity {
                                 //msgCompleta = msgCompleta + " (MENSAGEM: "+message+" )";
                             }
 
+                            if (sentence.equals("GROUPKEY")) {
+                                groupKey = msg[11];
+                                System.out.println("GROUPKEY " + groupKey);
+                                //msgCompleta = msgCompleta + " (MENSAGEM: "+message+" )";
+                            }
+
                         }
 
                         System.out.println("CONCATENADO TOTAL " + msgCompleta);
                         listaSolicitationKey.add(listaSolicitationKey.size(), encodedKeySolicitation);
                         listaKey.add(listaKey.size(), userKeySolicitante);
                         listaGrupos.add(listaGrupos.size(), groupName);
+                        listaGruposKeys.add(listaGruposKeys.size(), groupKey);
                         listaUserName.add(listaUserName.size(), userName);
                         listaMessages.add(listaMessages.size(), message);
                         listaNotificacoes.add(listaNotificacoes.size(), msgCompleta);
@@ -226,14 +236,14 @@ public class PerfilActivity extends AppCompatActivity {
             public void onItemClick(final AdapterView<?> parent, View view, final int position, final long id) {
                 String mensagem = listaMessages.get(position);
                 String usuarioSolicitante = listaUserName.get(position);
-                final String grupoSolicitado = listaGrupos.get(position);
+                final String nomeGrupoSolicitado = listaGrupos.get(position);
+                final String grupoSolicitado= listaGruposKeys.get(position);
                 final String userKeySolicitante = listaKey.get(position);
                 final String encodedKeySolicitation = listaSolicitationKey.get(position);
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(PerfilActivity.this);
-
                 alertDialog.setTitle("Solicitação de Grupo");
-                alertDialog.setTitle("O usuario " + usuarioSolicitante + " deseja entrar no grupo " + grupoSolicitado);
+                alertDialog.setTitle("O usuario " + usuarioSolicitante + " deseja entrar no grupo " + nomeGrupoSolicitado);
                 alertDialog.setMessage(mensagem);
                 alertDialog.setCancelable(false);
 
@@ -262,7 +272,7 @@ public class PerfilActivity extends AppCompatActivity {
                         });
 
                         //ADD USER INTO GROUP
-                        DatabaseReference dbGroups = FirebaseConfig.getFireBase().child("grupos").child(Base64Decoder.encoderBase64(grupoSolicitado));
+                        DatabaseReference dbGroups = FirebaseConfig.getFireBase().child("grupos").child(grupoSolicitado);
                         dbGroups.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -287,7 +297,7 @@ public class PerfilActivity extends AppCompatActivity {
                             }
                         });
 
-                        removeSolicitationMessage(Base64Decoder.encoderBase64(grupoSolicitado), encodedKeySolicitation);
+                        removeSolicitationMessage(grupoSolicitado, encodedKeySolicitation);
 
                         Toast.makeText(getApplicationContext(), "Solicitação Aceita", Toast.LENGTH_LONG).show();
                         finish();
@@ -302,7 +312,7 @@ public class PerfilActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getApplicationContext(), "Solicitação Recusada ", Toast.LENGTH_LONG).show();
-                        removeSolicitationMessage(Base64Decoder.encoderBase64(grupoSolicitado), encodedKeySolicitation);
+                        removeSolicitationMessage(grupoSolicitado, encodedKeySolicitation);
 
 
                     }
@@ -312,7 +322,7 @@ public class PerfilActivity extends AppCompatActivity {
             }
         });
 
-        if (user.getMedalhas() != null) {
+        if (user.getMedalhas() == null) {
 
             System.out.println("laço de imagens");
             for (int i = 0; i < 10; i++) {
@@ -332,7 +342,6 @@ public class PerfilActivity extends AppCompatActivity {
                             getResources(), R.drawable.badge2));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
-
                 }
                 if (i == 2) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
@@ -389,15 +398,16 @@ public class PerfilActivity extends AppCompatActivity {
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
 
-                }
-                if (!user.getMedalhas().contains(i)) {
+                }/*
+                if (!user.getMedalhas().contains(i) || user.getMedalhas() ==null) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
                             getResources(), R.drawable.badge_back));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
-                }
+                }*/
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 layout.addView(imageView);
+
             }
         }
 
@@ -441,7 +451,7 @@ public class PerfilActivity extends AppCompatActivity {
                             ArrayList<String> userSolicitations = userAdmin.getMsgSolicitacoes();
                             //loop admin messsages
                             for (int j = 0; j < userSolicitations.size(); j++)
-                                if (userSolicitations.get(j).endsWith(keySolicitacao)) {
+                                if (userSolicitations.get(j).contains(keySolicitacao)) {
                                     userSolicitations.remove(j);
                                 }
 
@@ -484,7 +494,7 @@ public class PerfilActivity extends AppCompatActivity {
             System.out.println("USER SOLICITANTE SOLICITACOES: " + user.getGruposSolicitados());
             solicitacoes.addAll(user.getGruposSolicitados());
             System.out.println("USER SOLICITACOES: " + solicitacoes);
-            solicitacoes.remove(Base64Decoder.encoderBase64(grupoSolicitado));
+            solicitacoes.remove(grupoSolicitado);
             user.setGruposSolicitados(solicitacoes);
             System.out.println("USER SOLICITANTE SOLICITACOES: " + user.getGruposSolicitados());
             System.out.println("USER SOLICITACOES: " + solicitacoes);
@@ -492,9 +502,9 @@ public class PerfilActivity extends AppCompatActivity {
         ArrayList<String> grupos = new ArrayList<String>();
         if (user.getGrupos() != null) {
             grupos.addAll(user.getGrupos());
-            grupos.add(grupos.size(), Base64Decoder.encoderBase64(grupoSolicitado));
+            grupos.add(grupos.size(), grupoSolicitado);
         } else
-            grupos.add(0, Base64Decoder.encoderBase64(grupoSolicitado));
+            grupos.add(0, grupoSolicitado);
         user.setGrupos(grupos);
         user.setId(userKeySolicitante);
         user.save();

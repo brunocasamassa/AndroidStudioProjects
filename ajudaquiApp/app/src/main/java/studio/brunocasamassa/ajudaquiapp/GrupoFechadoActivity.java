@@ -70,7 +70,6 @@ public class GrupoFechadoActivity extends AppCompatActivity {
     private ArrayList<String> gruposUser = new ArrayList<>();
     private String userName = new String();
 
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
     @Override
@@ -112,6 +111,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
             grupo.setIdAdms(extra.getStringArrayList("idAdmins"));
             grupo.setDescricao(extra.getString("descricao"));
             grupo.setNome(extra.getString("nome"));
+            grupo.setId(extra.getString("groupId"));
             grupo.setQtdMembros(Integer.valueOf(extra.getString("qtdmembros")));
 
 
@@ -188,7 +188,6 @@ public class GrupoFechadoActivity extends AppCompatActivity {
             }
         });*/
 
-        grupo.setId(Base64Decoder.encoderBase64(grupo.getNome()));
         groupName.setText(grupo.getNome());
         qtdMembros.setText(String.valueOf(grupo.getQtdMembros()));
         // groupImg.setImageURI();
@@ -373,7 +372,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                     dbGroups.child(grupo.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            Grupo group = dataSnapshot.getValue(Grupo.class);
+                            final Grupo group = dataSnapshot.getValue(Grupo.class);
                             ArrayList<String> arrayAdmins = group.getIdAdms();
 
                             for (int i = 0; i < arrayAdmins.size(); i++) {
@@ -388,10 +387,10 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                                             System.out.println("mensagens solicitação usuario: " + user.getMsgSolicitacoes());
                                             msgSolicitacoes.addAll(dataUser.getMsgSolicitacoes());
                                             //padrao de mensagem na db
-                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:" + grupo.getNome() + ":USUARIO:" + userName + " :MENSAGEM: " + mensagemSolicitacao + ":USERKEY:" + userKey + ":SOLICITATIONKEY:" + userKey + grupo.getId());
+                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:" + grupo.getNome() + ":USUARIO:" + userName + " :MENSAGEM: " + mensagemSolicitacao + ":USERKEY:" + userKey + ":SOLICITATIONKEY:" + userKey + grupo.getId()+ ":GROUPKEY:"+ grupo.getId());
                                         } else {
                                             //padrao de mensagem na db
-                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:" + grupo.getNome() + ":USUARIO:" + userName + " :MENSAGEM: " + mensagemSolicitacao + ":USERKEY:" + userKey + ":SOLICITATIONKEY:" + userKey + grupo.getId());
+                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:" + grupo.getNome() + ":USUARIO:" + userName + " :MENSAGEM: " + mensagemSolicitacao + ":USERKEY:" + userKey + ":SOLICITATIONKEY:" + userKey + grupo.getId() +":GROUPKEY:"+ grupo.getId());
                                         }
 
                                         dataUser.setMsgSolicitacoes(msgSolicitacoes);

@@ -3,6 +3,8 @@ package studio.brunocasamassa.ajudaquiapp.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.facebook.AccessToken;
+
 /**
  * Created by bruno on 21/02/2017.
  */
@@ -16,6 +18,7 @@ public class Preferences {
     private SharedPreferences.Editor editor;
 
 
+    private  String ACCESS_TOKEN = "accesstoken";
     private String CHAVE_LATITUDE = "latitude";
     private String CHAVE_LONGITUDE = "longitude";
     private String CHAVE_ID = "idUser";
@@ -91,5 +94,14 @@ public class Preferences {
     public void saveToken(String refreshedToken) {
         editor.putString(TOKEN, refreshedToken);
         editor.commit();
+    }
+
+    public void saveAccessToken(AccessToken accessToken) {
+       editor.putString(ACCESS_TOKEN, String.valueOf(accessToken));
+    }
+
+    public String getAccessToken(){
+        return preferences.getString(ACCESS_TOKEN,null);
+
     }
 }

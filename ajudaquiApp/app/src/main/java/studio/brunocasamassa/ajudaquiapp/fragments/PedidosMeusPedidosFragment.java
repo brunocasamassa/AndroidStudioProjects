@@ -255,6 +255,8 @@ public class PedidosMeusPedidosFragment extends Fragment {
     private void apagaPedido(String idPedido) {
         DatabaseReference dbPedidos = FirebaseConfig.getFireBase().child("Pedidos");
         dbPedidos.child(idPedido).removeValue();
+        Toast.makeText(getApplicationContext(),"Pedido Apagado", Toast.LENGTH_SHORT).show();
+        getActivity().finish();
     }
 
 }

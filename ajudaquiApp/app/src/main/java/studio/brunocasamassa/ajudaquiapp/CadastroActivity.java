@@ -180,6 +180,7 @@ public class CadastroActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(CadastroActivity.this, "Usuario cadastrado com sucesso", Toast.LENGTH_LONG).show();
 
+                                    usuario.setPremiumUser(1);
                                     // FirebaseUser usuarioFireBase = task.getResult().getUser();
                                     usuario.save();
 

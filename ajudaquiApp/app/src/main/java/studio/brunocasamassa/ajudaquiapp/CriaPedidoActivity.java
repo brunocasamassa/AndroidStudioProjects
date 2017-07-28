@@ -50,6 +50,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
     private TextView add_grupos;
     private Double latitude;
     private Double longitude;
+    private String pedidoGroup;
     private TextView add_tags;
     private Pedido pedido;
     private int premium;
@@ -58,6 +59,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
     private String tipoPedido;   //doacao, servico, troca, emprestimo
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private String groupCaptured;
+    private String idGroupSelected;
 
     @Override
     protected void onStart() {
@@ -68,7 +70,11 @@ public class CriaPedidoActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Apenas 3 categorias podem ser selecionadas", Toast.LENGTH_SHORT).show();
             tagsCaptured.remove(tagCaptured);
         } else categorias.setTags(tagsCaptured);
-        if (groupCaptured != null) {
+
+        if(pedidoGroup != null){
+            grupos.setTags(pedidoGroup);
+        }
+        else if (groupCaptured != null) {
             grupos.setTags(groupCaptured);
         }
 
@@ -82,13 +88,20 @@ public class CriaPedidoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_criar_pedido);
+
         final Bundle extras = getIntent().getExtras();
         premium = (extras.getInt("premium")); //TODO =0 EVEN FIREBASE =1
         System.out.println("PREMIUM RECEBE" + premium);
 
         latitude = (extras.getDouble("latitude"));
         longitude = (extras.getDouble("longitude"));
-
+        pedidoGroup = (extras.getString("groupName"));
+        idGroupSelected = (extras.getString("idGroupSelected"));
+        if (extras.getString("idGroupSelected")!=null){
+            idGroupSelected = (extras.getString("idGroupSelected"));
+        } else if( extras.getString("groupId")!= null){
+            idGroupSelected = (extras.getString("groupId"));
+        }
         System.out.println("FUCK latitude  " + latitude);
         System.out.println("FUCK longitude " + longitude);
 
@@ -182,6 +195,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
 
             }
         });
+
         addTagButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -224,10 +238,10 @@ public class CriaPedidoActivity extends AppCompatActivity {
                                             tipoPedido = "Servicos";
                                             createPedido();
                                             break;
-                                        case 1:
+                                        case 1  :
                                             Toast.makeText(getApplicationContext(), "Emprestimos", Toast.LENGTH_SHORT).show();
                                             tipoPedido = "Emprestimos";
-                                            createPedido();
+                                                createPedido();
                                             break;
                                         case 2:
                                             Toast.makeText(getApplicationContext(), "Troca", Toast.LENGTH_SHORT).show();
@@ -259,13 +273,19 @@ public class CriaPedidoActivity extends AppCompatActivity {
 
         if (groupCaptured != null) {
             pedido.setGrupo(groupCaptured);
+            pedido.setGroupId(idGroupSelected);
         }
 
         pedido.setDescricao(descricao.getText().toString());
         pedido.setTitulo(pedidoName.getText().toString());
         pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo()));
         pedido.setCriadorId(userKey);
-        pedido.setGrupo(groupCaptured);
+        if(idGroupSelected!= null){
+        pedido.setGroupId(idGroupSelected);
+        }
+        if(pedidoGroup!= null ){
+            pedido.setGrupo(pedidoGroup);
+        }
         if (latitude == null) {
             pedido.setLatitude(0.0);
         } else {
@@ -290,10 +310,9 @@ public class CriaPedidoActivity extends AppCompatActivity {
     }
 
     private void savePedidoIntoGroup(final Pedido pedido) {
-        String groupKey = Base64Decoder.encoderBase64(pedido.getGrupo());
         final String tipoPedido = pedido.getTipo();
         final ArrayList<String> pedidosList = new ArrayList<>();
-        DatabaseReference dbGroup = FirebaseConfig.getFireBase().child("grupos").child(groupKey);
+        DatabaseReference dbGroup = FirebaseConfig.getFireBase().child("grupos").child(idGroupSelected);
         dbGroup.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -316,7 +335,6 @@ public class CriaPedidoActivity extends AppCompatActivity {
                         grupo.setTrocas(pedidosList);
                     } else {
                         pedidosList.add(0, pedido.getIdPedido());
-
                     }
 
                 }

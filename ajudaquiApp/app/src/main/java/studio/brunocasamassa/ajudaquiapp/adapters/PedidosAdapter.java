@@ -38,6 +38,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
     private Context context;
     private PedidosFiltro filtrador;
     private StorageReference storage;
+    private StorageReference storageDonation;
     private Preferences preferences;
     private String facebookPhoto;
 
@@ -114,6 +115,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
             }
             */
             storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
+            storageDonation = FirebaseConfig.getFirebaseStorage().child("donationImages");
 
             if (pedido.getDistanceInMeters() != null) {
                 distancia.setText(String.valueOf(pedido.getDistanceInMeters().intValue() / 1000000) + "km");
@@ -124,9 +126,31 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
             descricao.setText(String.valueOf(pedido.getDescricao()));
             tagsCategoria.setTags(pedido.getTagsCategoria());
             // DOWNLOAD GROUP IMG FROM STORAGE
-            if (pedido.getGrupo() != null) {
+            if(pedido.getTipo().equals("Doacoes")){
+                storageDonation.child(pedido.getIdPedido()+ ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
-                storage.child(pedido.getGrupo() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        System.out.println("grupo " + pedido.getGrupo());
+                        try {
+                            Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                        } catch (Exception e) {
+                            pedidoImg.setImageURI(uri);
+                            System.out.println("EXCEPTION PedidosAdapter " + e);
+                        }
+                        System.out.println("my pedidos lets seee2" + uri);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+
+                    }
+                });
+            }
+
+            else if (pedido.getGrupo() != null) {
+
+                storage.child(pedido.getGroupId()+ ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                     @Override
                     public void onSuccess(Uri uri) {

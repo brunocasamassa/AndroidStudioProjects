@@ -5,7 +5,6 @@ import android.support.v7.app.NotificationCompat;
 
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
 
@@ -85,6 +84,7 @@ public class User implements DatabaseReference.CompletionListener {
 
     private ArrayList<String> pedidosAtendidos;
 
+    private ArrayList<String> itensDoados;
     private ArrayList<String> pedidosFeitos;
 
     public String getMessageNotification() {
@@ -136,7 +136,6 @@ public class User implements DatabaseReference.CompletionListener {
         this.medalhas = medalhas;
     }
 
-    @Exclude
     public String getSenha() {
         return senha;
     }
@@ -299,5 +298,13 @@ public class User implements DatabaseReference.CompletionListener {
 
     public void setMaxDistance(int maxDistance) {
         this.maxDistance = maxDistance;
+    }
+
+    public ArrayList<String> getItensDoados() {
+        return itensDoados;
+    }
+
+    public void setItensDoados(ArrayList<String> itensDoados) {
+        this.itensDoados = itensDoados;
     }
 }

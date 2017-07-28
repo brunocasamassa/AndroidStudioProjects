@@ -22,7 +22,6 @@ import java.util.Collections;
 import studio.brunocasamassa.ajudaquiapp.PerfilGruposActivity;
 import studio.brunocasamassa.ajudaquiapp.R;
 import studio.brunocasamassa.ajudaquiapp.adapters.RankingAdapter;
-import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquiapp.helper.User;
 
@@ -60,7 +59,7 @@ public class GrupoAbertoRankingFragment extends Fragment {
                              final Bundle savedInstanceState) {
         Bundle extra = getActivity().getIntent().getExtras();
 
-        idGroup = Base64Decoder.encoderBase64(extra.getString("nome"));
+        idGroup = extra.getString("groupId");
 
         nomeGroup = extra.getString("nome");
 

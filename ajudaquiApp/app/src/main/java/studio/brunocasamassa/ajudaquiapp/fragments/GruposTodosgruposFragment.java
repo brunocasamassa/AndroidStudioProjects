@@ -63,7 +63,7 @@ public class GruposTodosgruposFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_allgroups, container, false);
 
@@ -73,6 +73,7 @@ public class GruposTodosgruposFragment extends Fragment {
         usuario.setName(GruposMeusgruposFragment.usuario.getName());
         System.out.println("grupos do usuario: " + usuario.getGrupos());
         System.out.println("Nome do usuario 2: " + usuario.getName());
+        userName = usuario.getName();
 
         listView = (GridView) view.findViewById(R.id.allgroups_list);
         adapter = new AllGroupsAdapter(getContext(), grupos);
@@ -144,8 +145,9 @@ public class GruposTodosgruposFragment extends Fragment {
                         }
 
                         intent.putExtra("isOpened", grupo.isOpened());
-                        intent.putExtra("userName", userName);
+                        intent.putExtra("userName", usuario.getName());
                         intent.putExtra("nome", grupo.getNome());
+                        intent.putExtra("groupId", grupo.getId());
                         intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()));
                         intent.putExtra("descricao", grupo.getDescricao());
 

@@ -61,7 +61,7 @@ public class GrupoAbertoPedidosFragment extends Fragment {
 
         Bundle extra = getActivity().getIntent().getExtras();
 
-        idGroup = Base64Decoder.encoderBase64(extra.getString("nome"));
+        idGroup = extra.getString("groupId");
 
         nomeGroup = extra.getString("nome");
 

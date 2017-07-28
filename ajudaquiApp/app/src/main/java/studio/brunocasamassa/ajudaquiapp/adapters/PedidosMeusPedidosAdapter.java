@@ -130,12 +130,16 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
             // DOWNLOAD GROUP IMG FROM STORAGE
 
             if (pedido.getGrupo() != null) {
-                storage.child(pedido.getGrupo() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                storage.child(pedido.getGroupId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                     @Override
                     public void onSuccess(Uri uri) {
                         System.out.println("grupo " + pedido.getGrupo());
-                        Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                        try {
+                            Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                        }catch (Exception e){
+                            pedidoImg.setImageResource(R.drawable.logo);
+                        }
                         System.out.println("my pedidos lets seee2" + uri);
                     }
                 }).addOnFailureListener(new OnFailureListener() {

@@ -3,6 +3,8 @@ package studio.brunocasamassa.ajudaquiapp.helper;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +29,6 @@ import studio.brunocasamassa.ajudaquiapp.ChatActivity;
 import studio.brunocasamassa.ajudaquiapp.ConversasActivity;
 import studio.brunocasamassa.ajudaquiapp.PedidosActivity;
 import studio.brunocasamassa.ajudaquiapp.R;
-import studio.brunocasamassa.ajudaquiapp.StarsBar;
 
 /**
  * Created by bruno on 04/06/2017.
@@ -341,28 +343,55 @@ public class PedidoCriadoActivity extends AppCompatActivity {
 
         if (trigger) {
 
-            System.out.println("trigger entrado");
-            keyAtendente = pedido.getAtendenteId();
-            Intent intent = new Intent(PedidoCriadoActivity.this, StarsBar.class);
-            intent.putExtra("keyAtendente", keyAtendente);
-            System.out.println("key nos pedidos " + keyAtendente);
+            final DatabaseReference dbConversa = FirebaseConfig.getFireBase().child("conversas");
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoCriadoActivity.this);
+            alertDialog.setTitle("     Avalie sua Experiência");
+            alertDialog.setMessage("Como se saiu a pessoa que te ajudou?");
+            alertDialog.setCancelable(false);
+            final RatingBar ratingBar = new RatingBar(getApplicationContext());
+            ratingBar.setNumStars(1);
+            ratingBar.setMax(5);
+            ratingBar.setDrawingCacheBackgroundColor(Color.BLUE);
+            Drawable progress = ratingBar.getProgressDrawable();
+
+            alertDialog.setView(ratingBar);
+            alertDialog.setPositiveButton("ENVIAR", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    final int rating = (int) (ratingBar.getRating() * 10);
+                    DatabaseReference atendenteUser = FirebaseConfig.getFireBase().child("usuarios");
+
+                    atendenteUser.child(pedido.getAtendenteId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User user = dataSnapshot.getValue(User.class);
+                            user.setPontos(user.getPontos() + rating);
+                            user.setId(pedido.getAtendenteId());
+                            user.save();
+                            //REMOVING CHAT FIELD
+                            dbConversa.child(userKey).child(pedido.getIdPedido()).removeValue();
+                            dbConversa.child(pedido.getAtendenteId()).child(pedido.getIdPedido()).removeValue();
+                            pedido.setStatus(2);
+                            pedido.save();
+                            finish();
+                            Toast.makeText(getApplicationContext(), "Pedido finalizado com sucesso", Toast.LENGTH_SHORT).show();
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
 
 
-            pedido.setStatus(2);
-            pedido.save();
-            finish();
-            startActivity(intent);
+                    finish();
+
+                }
+            }).create().show();
+
 
         }
     }
-/*
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
-                Toast.makeText(getApplicationContext(), rating, Toast.LENGTH_LONG).show();
-            }
-        }
-    }*/
 }

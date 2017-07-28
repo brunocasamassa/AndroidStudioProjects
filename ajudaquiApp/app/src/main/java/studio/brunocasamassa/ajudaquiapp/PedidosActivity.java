@@ -107,6 +107,7 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hello);
 
+
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
         toolbar.setTitle(getResources().getString(R.string.menu_pedidos));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
@@ -123,6 +124,7 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
                 boolean permissao = Permissao.validaPermissoes(1, PedidosActivity.this, permissoesNecessarias);
 
                 localizacao = new SimpleLocation(PedidosActivity.this);
+
 
                 if (permissao) {
 
@@ -271,7 +273,7 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
         arrayEscolhidosAdapter.notifyDataSetChanged();
 
         arrayMeusPedidosAdapter = getArrayMeusPedidosAdapter();
-        if(arrayMeusPedidosAdapter != null) { //fica null quando inicia a activity
+        if (arrayMeusPedidosAdapter != null) { //fica null quando inicia a activity
             arrayMeusPedidosAdapter.getFilter().filter(newText);
             arrayMeusPedidosAdapter.notifyDataSetChanged();
         }
@@ -285,7 +287,9 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
 
     public void setArrayAdapter(ArrayAdapter<Pedido> arrayAdapter) {
         this.arrayAdapter = arrayAdapter;
-    };
+    }
+
+    ;
 
     private void refresh() {
         Intent intent = new Intent(PedidosActivity.this, PedidosActivity.class);

@@ -155,6 +155,8 @@ public class GruposMeusgruposFragment extends Fragment {
                 intent.putExtra("premium", premium);
                 intent.putExtra("uri", grupo.getGrupoImg());
                 intent.putExtra("nome", grupo.getNome());
+                intent.putExtra("adminsList", grupo.getIdAdms());
+                intent.putExtra("groupId", grupo.getId());
                 intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()));
                 intent.putExtra("descricao", grupo.getDescricao());
                 startActivity(intent);

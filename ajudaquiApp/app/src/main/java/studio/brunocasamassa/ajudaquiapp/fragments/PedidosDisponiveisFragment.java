@@ -45,6 +45,7 @@ public class PedidosDisponiveisFragment extends Fragment {
     private static final String[] LOCATION_PERMS = {
             Manifest.permission.ACCESS_FINE_LOCATION
     };
+
     private FloatingActionButton fab;
     private int premium;
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
@@ -66,6 +67,7 @@ public class PedidosDisponiveisFragment extends Fragment {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+
     private PedidosActivity pa ;
 
     private PedidosAdapter pedidosAdapter;
@@ -98,6 +100,7 @@ public class PedidosDisponiveisFragment extends Fragment {
         pedidos = new ArrayList<>();
         pedidosPivot = new ArrayList<>();
         pedidosView = (ListView) view.findViewById(R.id.allpedidos_list);
+
 
         pedidosAdapter = new PedidosAdapter(getContext(),pedidos);
         if (pa.getArrayAdapter() != null) {
@@ -133,7 +136,7 @@ public class PedidosDisponiveisFragment extends Fragment {
                     user.save();
                 }
 
-                databasePedidos.addListenerForSingleValueEvent(new ValueEventListener() {
+                databasePedidos.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -173,20 +176,23 @@ public class PedidosDisponiveisFragment extends Fragment {
                                     if (usuario.getPedidosFeitos().contains(pedido.getIdPedido())) {
                                         System.out.println("pedidao " + pedido.getIdPedido());
                                         pedidos.remove(pedido);
-                                    }
+                                    }}
 
                                     if(pedido.getDistanceInMeters() > user.getMaxDistance()*1000000){
                                         pedidos.remove(pedido);
+                                        System.out.println("pedido removido " + pedido.getTitulo());
+
                                     }
 
                                     if (pedido.getTipo().equals("Doacoes")) {
                                         pedidos.remove(pedido);
+                                        System.out.println("pedido removido doacao" + pedido.getTitulo());
                                     }
-                                }
+
                             }
 
                             //remover pedidos do usuario na lista de pedidos geral
-                            System.out.println("PMPF: pilha pedidos na view " + pedidos);
+
 
                         }
 

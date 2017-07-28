@@ -32,6 +32,7 @@ public class Pedido {
         return longitude;
     }
 
+    private String groupId;
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
@@ -95,9 +96,7 @@ public class Pedido {
     }
 
     private String Titulo;
-
     private String Descricao;
-
     private ArrayList<String> tagsCategoria = new ArrayList<String>();
 
     public String getCriadorId() {
@@ -143,6 +142,14 @@ public class Pedido {
 
     public void setNaCabine(int naCabine) {
         this.naCabine = naCabine;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
 

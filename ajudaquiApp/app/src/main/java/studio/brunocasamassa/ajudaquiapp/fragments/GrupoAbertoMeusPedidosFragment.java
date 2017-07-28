@@ -62,7 +62,7 @@ public class GrupoAbertoMeusPedidosFragment extends Fragment {
 
         Bundle extra = getActivity().getIntent().getExtras();
 
-        idGroup = Base64Decoder.encoderBase64(extra.getString("nome"));
+        idGroup = extra.getString("groupId");
 
         nomeGroup = extra.getString("nome");
 
@@ -88,7 +88,7 @@ public class GrupoAbertoMeusPedidosFragment extends Fragment {
 
                     Pedido pedido = snapshot.getValue(Pedido.class);
 
-                    if (pedido.getGrupo() != null && pedido.getGrupo().equals(nomeGroup) && pedido.getCriadorId().equals(userKey)) {
+                    if (pedido.getGrupo() != null && pedido.getGroupId().equals(idGroup) && pedido.getCriadorId().equals(userKey)) {
                         adapter_nomes.add(pedido);
                         // arraylist_nomes.add(pedido);
                         System.out.println("adicionado pedido "+ pedido.getTitulo());

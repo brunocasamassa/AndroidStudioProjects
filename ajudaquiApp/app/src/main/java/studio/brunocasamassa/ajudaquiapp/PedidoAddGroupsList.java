@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
+import studio.brunocasamassa.ajudaquiapp.helper.Grupo;
 
 /**
  * Created by bruno on 24/05/2017.
@@ -31,6 +32,7 @@ public class PedidoAddGroupsList extends AppCompatActivity {
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private ArrayAdapter groupAdapter;
     private ArrayList<String> groups;
+    private ArrayList<String> idGroups;
     private DatabaseReference groupsRefs;
     public String selectedGroup;
     private ProgressDialog dialog = null;
@@ -41,8 +43,9 @@ public class PedidoAddGroupsList extends AppCompatActivity {
         setContentView(R.layout.activity_taglist);
 
         groups = new ArrayList<>();
+        idGroups = new ArrayList<>();
         groupView = (ListView) findViewById(R.id.tagsList);
-
+final DatabaseReference dbGroup =FirebaseConfig.getFireBase().child("grupos");
         groupsRefs = FirebaseConfig.getFireBase();
         groupsRefs.child("usuarios").child(userKey);
         //dialog.show(TagsList.this, "Por favor aguarde", "Recebendo Tags...", true);
@@ -51,15 +54,29 @@ public class PedidoAddGroupsList extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (final DataSnapshot dados : dataSnapshot.child("usuarios").child(userKey).child("grupos").getChildren()) {
                     System.out.println("group ADAPTER " + groupAdapter);
-
                     System.out.println("group EXTRAIDA NO grouplist " + dados.getValue());
-                    dados.getValue();
-                    String tagss = Base64Decoder.decoderBase64((String) dados.getValue());
-                    groups.add(tagss);
+                    String idGrupo= dados.getValue().toString();
+
+                    dbGroup.child(idGrupo).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Grupo grupo = dataSnapshot.getValue(Grupo.class);
+                            try {
+                                String nomeGrupo = grupo.getNome();
+                                groups.add(nomeGrupo);
+                                idGroups.add(grupo.getId());
+
+                                System.out.println("GRUPO ADICIONADO " + nomeGrupo);
+                                System.out.println("GRUPO ADICIONADO " + groups.size());
+                            } catch (Exception e){
+                                System.out.println("excepetion "+ e);
+                            }
+
+
+                    System.out.println("groups size "+ groups.size());
                     groupAdapter = new ArrayAdapter(getBaseContext(), android.R.layout.simple_list_item_2,
                             android.R.id.text1,
                             groups);
-
 
                     groupView.setAdapter(groupAdapter);
 
@@ -70,14 +87,23 @@ public class PedidoAddGroupsList extends AppCompatActivity {
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                             selectedGroup = (String) groupView.getItemAtPosition(position);
+                            String idSelectedGroup = idGroups.get(position);
                             System.out.println("selected group " + selectedGroup);
                             Intent intent = new Intent(PedidoAddGroupsList.this, CriaPedidoActivity.class);
                             intent.putExtra("groupSelected", selectedGroup);
+                            intent.putExtra("idGroupSelected", idSelectedGroup);
                             setResult(Activity.RESULT_OK, intent);
                             finish();
 
                         }
 
+                    });
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
                     });
 
                 }

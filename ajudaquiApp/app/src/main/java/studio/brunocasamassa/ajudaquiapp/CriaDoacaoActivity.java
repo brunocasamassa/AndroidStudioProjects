@@ -62,9 +62,7 @@ public class CriaDoacaoActivity extends AppCompatActivity {
     private Double longitude = 0.0;
     private TextView seekValue;
 
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,13 +218,13 @@ public class CriaDoacaoActivity extends AppCompatActivity {
             pedido.setTipo("Doacoes");
 
             pedido.setNaCabine(naCabine);
-            pedido.setGrupo(groupKey);
+            pedido.setGroupId(groupKey);
             pedido.setLongitude(longitude);
             pedido.setLatitude(latitude);
 
             pedido.setDescricao(descricao.getText().toString());
             pedido.setTitulo(pedidoName.getText().toString() + " Nº" + i + " ");
-            pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo() + i));
+            pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo()));
             pedido.setCriadorId(userKey);
             pedido.setGrupo(Base64Decoder.decoderBase64(groupKey));
 
@@ -245,7 +243,6 @@ public class CriaDoacaoActivity extends AppCompatActivity {
     }
 
     private void savePedidoIntoGroup(final Pedido pedido) {
-        String groupKey = Base64Decoder.encoderBase64(pedido.getGrupo());
         final String tipoPedido = pedido.getTipo();
         final ArrayList<String> pedidosList = new ArrayList<>();
         DatabaseReference dbGroup = FirebaseConfig.getFireBase().child("grupos").child(groupKey);

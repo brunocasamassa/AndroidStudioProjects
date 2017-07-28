@@ -207,7 +207,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:textAlignment="center"
-        tools:text="CANCELAR PEDIDO"
+        tools:text="CANCELAR AJUDA"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"

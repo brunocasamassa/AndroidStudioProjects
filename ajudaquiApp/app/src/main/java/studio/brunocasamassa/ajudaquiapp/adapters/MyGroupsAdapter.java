@@ -67,10 +67,9 @@ public class MyGroupsAdapter extends ArrayAdapter<Grupo> {
                 lock.setBackgroundResource(R.drawable.ic_lock);
             }
             // DOWNLOAD GROUP IMG FROM STORAGE
-            storage.child(grupo.getNome() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            storage.child(grupo.getId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
                 public void onSuccess(Uri uri) {
-
                     grupo.setGrupoImg(uri.toString());
                     Glide.with(getContext()).load(uri).override(68, 68).into(imgGrupo);
                     System.out.println("my groups lets seee2" + uri);

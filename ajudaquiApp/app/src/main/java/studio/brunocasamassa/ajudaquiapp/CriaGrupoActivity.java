@@ -84,7 +84,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
         groupName = (EditText) findViewById(R.id.create_group_name);
         descricao = (EditText) findViewById(R.id.create_group_description);
         createButton = (Button) findViewById(R.id.create_group_button);
-        img = (CircleImageView) findViewById(R.id.import_group_img);
+        img = (CircleImageView) findViewById(R.id.import_donation_img);
 
         switcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -151,7 +151,8 @@ public class CriaGrupoActivity extends AppCompatActivity {
                                 System.out.println("caraio validador> " + validatedName);
                             } else {
                                 Toast.makeText(getApplicationContext(), "Grupo Criado com sucesso", Toast.LENGTH_LONG).show();
-                                StorageReference imgRef = storage.child(groupName.getText() + ".jpg");
+                                //creating group
+                                StorageReference imgRef = storage.child(Base64Decoder.encoderBase64(groupName.getText().toString()) + ".jpg");
                                 //download img source
                                 img.setDrawingCacheEnabled(true);
                                 img.buildDrawingCache();

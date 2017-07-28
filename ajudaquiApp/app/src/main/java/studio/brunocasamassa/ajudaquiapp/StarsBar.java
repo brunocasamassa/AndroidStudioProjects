@@ -1,6 +1,5 @@
 package studio.brunocasamassa.ajudaquiapp;
 
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,19 +7,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RatingBar;
-import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
+import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
-import studio.brunocasamassa.ajudaquiapp.helper.User;
 
 public class StarsBar extends AppCompatActivity {
     private RatingBar ratingbar1;
     Button button;
+    private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
+    private DatabaseReference dbConversa = FirebaseConfig.getFireBase().child("conversas");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +28,7 @@ public class StarsBar extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         final String atendenteKey = extras.getString("keyAtendente");
+        final String pedidoId = extras.getString("pedidoId");
         System.out.println("key nas stars " + atendenteKey);
 
         //Performing action on Button Click
@@ -49,25 +47,6 @@ public class StarsBar extends AppCompatActivity {
                 setResult(Activity.RESULT_OK, intent);
                 */
 
-                DatabaseReference atendenteUser = FirebaseConfig.getFireBase().child("usuarios");
-
-                atendenteUser.child(atendenteKey).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        User user = dataSnapshot.getValue(User.class);
-                        user.setPontos(user.getPontos() + ratingPoints);
-                        user.setId(atendenteKey);
-                        user.save();
-                        finish();
-                        Toast.makeText(getApplicationContext(), "Pedido finalizado com sucesso", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(StarsBar.this, PedidosActivity.class));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
 
 
             }

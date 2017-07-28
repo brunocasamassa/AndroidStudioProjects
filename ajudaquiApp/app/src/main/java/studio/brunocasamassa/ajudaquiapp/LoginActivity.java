@@ -41,6 +41,8 @@ public class LoginActivity extends AppCompatActivity {
     private ValueEventListener valueEventListenerUsuario;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +63,17 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         });
+
+
+/*
+        Intent itSend = new Intent(android.content.Intent.ACTION_SEND);
+// vamos a enviar texto plano a menos que el checkbox esté marcado
+        itSend.setType("plain/text");
+        itSend.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{ etEmail.getText().toString()});
+        itSend.putExtra(android.content.Intent.EXTRA_SUBJECT, etSubject.getText().toString());
+        itSend.putExtra(android.content.Intent.EXTRA_TEXT, etBody.getText());
+        startActivity(itSend);*/
+
     }
 
     private void validarLogin() {

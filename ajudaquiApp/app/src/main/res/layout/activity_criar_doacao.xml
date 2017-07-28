@@ -47,20 +47,6 @@
         tools:layout_editor_absoluteY="-8dp">
     </android.support.v7.widget.Toolbar>
 
-    <me.gujun.android.taggroup.TagGroup
-        android:layout_width="306dp"
-        android:layout_height="40dp"
-        android:id="@+id/tagGroupGruposDoacao"
-        android:layout_marginTop="14dp"
-        app:atg_backgroundColor="@color/colorPrimary"
-        app:atg_borderColor="@color/colorPrimary"
-        app:atg_textColor="@color/md_white_1000"
-        app:layout_constraintTop_toBottomOf="@+id/word_add_groups"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/word_add_groups"
-        android:layout_marginStart="8dp">
-    </me.gujun.android.taggroup.TagGroup>
-
     <EditText
         android:id="@+id/create_pedido_description"
         android:layout_width="310dp"
@@ -74,13 +60,13 @@
         android:textAlignment="textStart"
         android:textColor="@color/md_black_1000"
         android:textSize="15dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="14dp"
         app:layout_constraintTop_toBottomOf="@+id/textView6"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="@+id/textView6"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.384"
         android:layout_marginEnd="8dp" />
 
     <Button
@@ -103,40 +89,9 @@
         tools:text="PRONTO PARA DOAR"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="8dp" />
-
-    <TextView
-        android:id="@+id/word_add_groups"
-        android:layout_width="67dp"
-        android:layout_height="28dp"
-        android:layout_alignLeft="@+id/create_group_description"
-        android:layout_alignStart="@+id/create_group_description"
-        android:layout_below="@+id/create_group_description"
-        android:text="Grupo"
-        android:textSize="20dp"
-        android:layout_marginStart="65dp"
-        android:layout_marginTop="14dp"
-        app:layout_constraintTop_toBottomOf="@+id/create_pedido_description"
-        android:layout_marginLeft="65dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView10"
-        android:layout_width="32dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="15dp"
-        app:srcCompat="@drawable/groups_icon"
-        android:layout_marginLeft="15dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="121dp"
-        app:layout_constraintTop_toBottomOf="@+id/imageView11"
-        app:layout_constraintBottom_toBottomOf="@+id/word_add_groups"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintVertical_bias="0.898"
-        app:layout_constraintRight_toLeftOf="@+id/word_add_groups"
-        android:layout_marginRight="8dp"
-        app:layout_constraintHorizontal_bias="0.058" />
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintHorizontal_bias="0.833" />
 
     <ImageView
         android:id="@+id/imageView11"
@@ -150,7 +105,8 @@
         app:layout_constraintRight_toLeftOf="@+id/textView6"
         android:layout_marginRight="8dp"
         app:layout_constraintHorizontal_bias="0.052"
-        app:layout_constraintBottom_toBottomOf="@+id/textView6" />
+        app:layout_constraintBottom_toBottomOf="@+id/textView6"
+        android:layout_marginBottom="-14dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -163,8 +119,9 @@
         android:layout_marginLeft="72dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        android:layout_marginTop="30dp"
-        app:layout_constraintTop_toBottomOf="@+id/imageView8" />
+        android:layout_marginTop="34dp"
+        app:layout_constraintTop_toBottomOf="@+id/import_donation_img"
+        android:layout_marginRight="8dp" />
 
     <ImageView
         android:layout_width="40dp"
@@ -173,10 +130,11 @@
         android:id="@+id/imageView"
         app:layout_constraintBottom_toBottomOf="@+id/seekBar"
         android:layout_marginBottom="11dp"
-        app:layout_constraintLeft_toLeftOf="@+id/imageView10"
+        app:layout_constraintLeft_toLeftOf="@+id/imageView11"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/tagGroupGruposDoacao"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/create_pedido_description"
+        app:layout_constraintVertical_bias="0.0"
+        android:layout_marginLeft="0dp" />
 <TextView
     android:layout_width="254dp"
     android:layout_height="wrap_content"
@@ -185,12 +143,13 @@
     app:layout_constraintRight_toRightOf="@+id/seekBar"
     android:layout_marginBottom="8dp"
     android:textSize="20dp"
-    app:layout_constraintVertical_bias="0.588"
+    app:layout_constraintVertical_bias="0.466"
     android:id="@+id/textView18"
     app:layout_constraintTop_toTopOf="@+id/imageView"
     app:layout_constraintBottom_toBottomOf="@+id/imageView"
     app:layout_constraintLeft_toRightOf="@+id/imageView"
-    app:layout_constraintHorizontal_bias="0.0" />
+    app:layout_constraintHorizontal_bias="0.0"
+    android:layout_marginLeft="8dp" />
 
     <TextView
         android:id="@+id/seekbar_value"
@@ -204,9 +163,9 @@
         app:layout_constraintRight_toRightOf="parent"
         tools:text="0"
         app:layout_constraintLeft_toRightOf="@+id/seekBar"
-        app:layout_constraintHorizontal_bias="0.675"
+        app:layout_constraintHorizontal_bias="0.785"
         app:layout_constraintTop_toTopOf="@+id/seekBar"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="13dp"
         android:layout_marginEnd="7dp" />
 
     <SeekBar
@@ -219,12 +178,34 @@
         android:progress="3"
         android:layout_marginRight="119dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="7dp"
         app:layout_constraintTop_toBottomOf="@+id/textView18"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/imageView"
+        app:layout_constraintLeft_toLeftOf="@+id/textView18"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="119dp" />
+
+    <co.lujun.androidtagview.TagContainerLayout
+        android:id="@+id/tagGroupGrupos"
+        android:layout_width="290dp"
+        android:background="@drawable/trans"
+        android:layout_height="47dp"
+        app:tag_enable_cross="true"
+        android:layout_below="@+id/word_add_tags"
+        app:tag_background_color="@color/colorBackground"
+        app:tag_cross_color="@android:color/white"
+        app:atg_backgroundColor="@color/colorBackground"
+        app:atg_textSize="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/create_pedido_button"
+        app:tag_text_size="25dp"
+        app:tag_text_color="@android:color/white"
+        app:tag_theme="none"
+        tools:ignore="MissingConstraints"
+        android:layout_marginBottom="21dp"
+        app:layout_constraintLeft_toRightOf="@+id/imageView10"
+        android:layout_marginLeft="34dp"
+        android:layout_marginStart="34dp"></co.lujun.androidtagview.TagContainerLayout>
+
 
     <android.support.v7.widget.CardView
         android:id="@+id/imageView8"
@@ -241,6 +222,47 @@
         app:srcCompat="@color/colorBackground"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="40dp" />
+
+
+    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/import_donation_img"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:src="@drawable/add_group_logo"
+        app:civ_border_color="@color/md_white_1000"
+        app:civ_border_width="2dp"
+        android:layout_below="@+id/toolbar_create_group"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/imageView8"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/create_pedido_button"
+        app:layout_constraintVertical_bias="0.042" />
+
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="179dp"
+        android:layout_height="22dp"
+        android:layout_alignLeft="@+id/import_donation_img"
+        android:layout_alignStart="@+id/import_donation_img"
+        android:layout_below="@+id/import_donation_img"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:text="Insira uma foto"
+        android:textAlignment="textStart"
+        android:textSize="12dp"
+        android:translationX="30dp"
+        app:layout_constraintLeft_toLeftOf="@+id/import_donation_img"
+        app:layout_constraintRight_toRightOf="@+id/import_donation_img"
+        app:layout_constraintTop_toBottomOf="@+id/import_donation_img"
+        app:layout_constraintHorizontal_bias="0.406" />
 
 
 </android.support.constraint.ConstraintLayout>
