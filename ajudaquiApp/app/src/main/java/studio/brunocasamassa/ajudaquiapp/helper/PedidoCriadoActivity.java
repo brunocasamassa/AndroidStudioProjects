@@ -126,7 +126,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             public boolean onLongClick(View v) {
                 final AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoCriadoActivity.this);
 
-                alertDialog.setTitle("Deseja alterar o status deste pedido?");
+                alertDialog.setTitle("Descrição do pedido");
                 alertDialog.setMessage("Escreva abaixo a nova descrição");
                 alertDialog.setCancelable(false);
 

@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import studio.brunocasamassa.ajudaquiapp.DoacaoCriadaActivity;
 import studio.brunocasamassa.ajudaquiapp.PedidosActivity;
 import studio.brunocasamassa.ajudaquiapp.R;
 import studio.brunocasamassa.ajudaquiapp.adapters.PedidosMeusPedidosAdapter;
@@ -168,6 +169,12 @@ public class PedidosMeusPedidosFragment extends Fragment {
                             pedidos.add(pedido);
                         }
                     }
+                    if (usuario.getItensDoados() != null) {
+                        if (!pedidos.contains(pedido.getIdPedido()) && usuario.getItensDoados().contains(pedido.getIdPedido())) {
+                            pedidos.add(pedido);
+                        }
+                    }
+
                     System.out.println("PMPF: pilha pedidos na view " + pedidos);
 
                 }
@@ -221,13 +228,14 @@ public class PedidosMeusPedidosFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Intent intent = new Intent(getActivity(), PedidoCriadoActivity.class);
+                Intent intentDonation = new Intent(getActivity(), DoacaoCriadaActivity.class);
 
                 // recupera dados a serem passados
                 Pedido selectedPedido = pedidosAdapter.getPedidosFiltrado().get(position);
 
                 if (selectedPedido.getStatus() == 2) {//finalizado
                     Toast.makeText(getApplicationContext(), "Pedido finalizado", Toast.LENGTH_SHORT).show();
-                } else {
+                } else if(!selectedPedido.getTipo().equals("Doacoes")){
 
                     // enviando dados para grupo activity
                     // enviando dados para pedido activity
@@ -243,6 +251,20 @@ public class PedidosMeusPedidosFragment extends Fragment {
                     }
                     intent.putExtra("descricao", selectedPedido.getDescricao());
                     startActivity(intent);
+                } else {
+                    intentDonation.putExtra("status", selectedPedido.getStatus());
+                    intentDonation.putExtra("titulo", selectedPedido.getTitulo());
+                    intentDonation.putExtra("tagsCategoria", selectedPedido.getTagsCategoria());
+                    intentDonation.putExtra("idPedido", selectedPedido.getIdPedido());
+                    intentDonation.putExtra("criadorId", selectedPedido.getCriadorId());
+                    intentDonation.putExtra("tipo", selectedPedido.getTipo());
+                    intentDonation.putExtra("atendenteId", selectedPedido.getAtendenteId());
+                    intentDonation.putExtra("endereco", selectedPedido.getEndereco());
+                    intentDonation.putExtra("donationContact", selectedPedido.getDonationContact());
+                    intentDonation.putExtra("descricao", selectedPedido.getDescricao());
+                    intentDonation.putExtra("cameFrom", 1);
+
+                    startActivity(intentDonation);
                 }
 
             }

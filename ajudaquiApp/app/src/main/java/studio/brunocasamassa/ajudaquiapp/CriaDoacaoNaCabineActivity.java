@@ -6,9 +6,11 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,11 +29,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import co.lujun.androidtagview.TagContainerLayout;
 import de.hdodenhof.circleimageview.CircleImageView;
-import me.gujun.android.taggroup.TagGroup;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquiapp.helper.Grupo;
@@ -52,7 +54,7 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
     private String tagCaptured;
     ArrayList<String> tagsCaptured = new ArrayList<String>();
     private TagContainerLayout categorias;
-    private TagGroup grupos;
+    private TagContainerLayout grupos;
     private TextView add_grupos;
     private TextView add_tags;
     private Pedido pedido;
@@ -73,6 +75,8 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
     private String groupCaptured;
     private String idGroupSelected;
     private String pedidoGroup;
+    private EditText donationContact;
+    private EditText endereco;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -80,12 +84,11 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(pedidoGroup != null){
+    /*    if (pedidoGroup != null) {
             grupos.setTags(pedidoGroup);
-        }
-        else if (groupCaptured != null) {
+        } else if (groupCaptured != null) {
             grupos.setTags(groupCaptured);
-        }
+        }*/
 
     }
 
@@ -99,12 +102,12 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
         longitude = (extras.getDouble("longitude"));
 
         storage = FirebaseConfig.getFirebaseStorage().child("donationImages");
-        if(latitude == null){
+        if (latitude == null) {
             latitude = 0.0;
             longitude = 0.0;
         }
         pedidoGroup = (extras.getString("groupName"));
-        if (extras.getString("idGroupSelected")!=null){
+        if (extras.getString("idGroupSelected") != null) {
             idGroupSelected = (extras.getString("idGroupSelected"));
         }
         System.out.println("CRIA DOACAO" + idGroupSelected);
@@ -119,33 +122,22 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
             }
         });
 
-        grupos = (TagGroup) findViewById(R.id.tagGroupGruposDoacao);
+        /*grupos = (TagContainerLayout) findViewById(R.id.tagGroupGruposDoacao);
+        grupos.setBackgroundColor(Color.TRANSPARENT);*/
 
         seekValue = (TextView) findViewById(R.id.seekbar_value);
         doacaoQtd = (SeekBar) findViewById(R.id.seekBar);
-        add_grupos = (TextView) findViewById(R.id.word_add_groups);
+        donationContact = (EditText) findViewById(R.id.donation_contact);
+        endereco = (EditText) findViewById(R.id.endereco);
         add_tags = (TextView) findViewById(R.id.word_add_tags);
         pedidoName = (EditText) findViewById(R.id.create_pedido_name);
         descricao = (EditText) findViewById(R.id.create_pedido_description);
         createButton = (Button) findViewById(R.id.create_pedido_button);
         addTagButton = (ImageButton) findViewById((R.id.add_tag_button));
-        addGroupButton = (ImageButton) findViewById((R.id.addGroup_tag_button));
+        /*add_grupos = (TextView) findViewById(R.id.word_add_groups);
+        addGroupButton = (ImageButton) findViewById((R.id.addGroup_tag_button));*/
         img = (CircleImageView) findViewById(R.id.import_donation_img);
 
-        addGroupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(CriaDoacaoNaCabineActivity.this, PedidoAddGroupsList.class), 2);
-            }
-        });
-
-
-        add_grupos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(CriaDoacaoNaCabineActivity.this, PedidoAddGroupsList.class), 2);
-            }
-        });
 
 
         img.setOnClickListener(new View.OnClickListener() {
@@ -161,144 +153,147 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
             }
         });
 
-        System.out.println("taggroup " + grupos.getTags().length);
+        //System.out.println("taggroup " + grupos.getTags().size());
         doacaoQtd.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                                                 @Override
-                                                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                                     qtd = progress+10;
-                                                     seekValue.setText(String.valueOf(progress+10));
-                                                 }
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                qtd = progress + 10;
+                seekValue.setText(String.valueOf(progress + 10));
+            }
 
-                                                 @Override
-                                                 public void onStartTrackingTouch(SeekBar seekBar) {
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
-                                                 }
+            }
 
-                                                 @Override
-                                                 public void onStopTrackingTouch(SeekBar seekBar) {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
-                                                 }
-                                             });
+            }
+        });
 
-                createButton.setOnClickListener(new View.OnClickListener() {
+        createButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (qtd < 10) {
+                    Toast.makeText(getApplicationContext(), "Insira um valor minimo de 10", Toast.LENGTH_LONG).show();
+                }
+                if (pedidoName.getText().toString().equals("")) {
+                    Toast.makeText(getApplicationContext(), "Insira um Titulo para o pedido", Toast.LENGTH_LONG).show();
+                    return;
+                } else if (descricao.getText().toString().equals("")) {
+                    Toast.makeText(getApplicationContext(), "Insira uma descricao para o pedido", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+
+                naCabine = 1;
+                createPedido();
+
+                StorageReference imgRef = storage.child(pedido.getIdPedido() + ".jpg");
+                //download img source
+                img.setDrawingCacheEnabled(true);
+                img.buildDrawingCache();
+                Bitmap bitmap = img.getDrawingCache();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] data = baos.toByteArray();
+                UploadTask uploadTask = imgRef.putBytes(data);
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
-                    public void onClick(View v) {
-                        if (qtd < 10){
-                            Toast.makeText(getApplicationContext(), "Insira um valor minimo de 10", Toast.LENGTH_LONG).show();
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
+                        System.out.println("huehuebrjava " + downloadUrl);
+                    }
+                });
+                DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
+                dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User usuario = dataSnapshot.getValue(User.class);
+                        usuario.setCreditos(usuario.getCreditos() + 5);
+                        ArrayList<String> totalPedidos = new ArrayList<String>();
+                        if (usuario.getPedidosFeitos() != null) {
+                            totalPedidos.addAll(usuario.getPedidosFeitos());
+                            totalPedidos.add(totalPedidos.size(), pedido.getIdPedido());
+                            usuario.setPedidosFeitos(totalPedidos);
+                        } else {
+                            totalPedidos.add(0, pedido.getIdPedido());
+                            usuario.setPedidosFeitos(totalPedidos);
                         }
-                        if (pedidoName.getText().toString().equals("")) {
-                            Toast.makeText(getApplicationContext(), "Insira um Titulo para o pedido", Toast.LENGTH_LONG).show();
-                            return;
-                        } else if (descricao.getText().toString().equals("")) {
-                            Toast.makeText(getApplicationContext(), "Insira uma descricao para o pedido", Toast.LENGTH_LONG).show();
-                            return;
-                        }
 
 
-                        naCabine = 1;
-                        createPedido();
-                        DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
-                        dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                User usuario = dataSnapshot.getValue(User.class);
-                                usuario.setCreditos(usuario.getCreditos() + 5);
-                                usuario.save();
-
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-
-
+                        usuario.save();
 
                     }
 
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
                 });
+
+
+            }
+
+        });
 
     }
 
     private void createPedido() {
+        pedido = new Pedido();
 
-        for (int i = 1; i <= qtd; i++) {
+        System.out.println("tipo de pedido: " + tipoPedido);
+        pedido.setTagsCategoria(tagsCaptured);
+        pedido.setTipo("Doacoes");
 
-            pedido = new Pedido();
-            System.out.println("tipo de pedido: " + tipoPedido);
-            pedido.setTagsCategoria(tagsCaptured);
-            pedido.setTipo("Doacoes");
+        pedido.setNaCabine(naCabine);
+        pedido.setLongitude(longitude);
+        pedido.setLatitude(latitude);
+        pedido.setQtdDoado(qtd);
+        pedido.setQtdAtual(qtd);
 
-            pedido.setNaCabine(naCabine);
-            pedido.setLongitude(longitude);
-            pedido.setLatitude(latitude);
-
-            pedido.setDescricao(descricao.getText().toString());
-            pedido.setTitulo("Nº" + i + " "+pedidoName.getText().toString());
-            pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo() + i));
-            pedido.setCriadorId(userKey);
-            pedido.setGrupo(groupCaptured);
-
-
-            StorageReference imgRef = storage.child(pedido.getIdPedido() + ".jpg");
-            //download img source
-            img.setDrawingCacheEnabled(true);
-            img.buildDrawingCache();
-            Bitmap bitmap = img.getDrawingCache();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] data = baos.toByteArray();
-            UploadTask uploadTask = imgRef.putBytes(data);
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                    Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
-                    System.out.println("huehuebrjava " + downloadUrl);
-                }
-            });
-
-            if (pedido.getGrupo() != null) {
-                savePedidoIntoGroup(pedido);
-            }
+        pedido.setStatus(5);
+        pedido.setDonationContact(donationContact.getText().toString());
+        pedido.setEndereco(endereco.getText().toString());
+        pedido.setDescricao(descricao.getText().toString());
+        pedido.setTitulo(pedidoName.getText().toString());
+        pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo()));
+        pedido.setCriadorId(userKey);
+  /*      pedido.setGroupId(idGroupSelected);
+        pedido.setGrupo(groupCaptured);*/
 
 
+        System.out.println("user id key " + userKey);
 
-            System.out.println("user id key " + userKey);
+        pedidoSaveIntoUser(true);
+        pedido.save();
 
-            pedido.save();
-            pedidoSaveIntoUser();
-            Toast.makeText(getApplicationContext(), "Doação gerada com sucesso", Toast.LENGTH_LONG).show();
-            refresh();
-        }
+        Toast.makeText(getApplicationContext(), "Doação gerada com sucesso", Toast.LENGTH_LONG).show();
+        refresh();
 
     }
 
-    private void savePedidoIntoGroup(final Pedido pedido) {
-        String groupKey = Base64Decoder.encoderBase64(pedido.getGrupo());
-        final String tipoPedido = pedido.getTipo();
-        final ArrayList<String> pedidosList = new ArrayList<>();
-        DatabaseReference dbGroup = FirebaseConfig.getFireBase().child("grupos").child(groupKey);
-        dbGroup.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void savePedidoIntoGroup(Pedido pedido) {
+        final String groupKey = pedido.getGroupId();
+        final String pedidoId = pedido.getIdPedido();
+        System.out.println("group id cabine " + groupKey);
+        final DatabaseReference dbGroup = FirebaseConfig.getFireBase().child("grupos");
+        dbGroup.child(groupKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Grupo grupo = dataSnapshot.getValue(Grupo.class);
-                if (tipoPedido.equals("Doacoes")) {
-                    if (grupo.getDoacoes() != null) {
-                        pedidosList.addAll(grupo.getDoacoes());
-                        pedidosList.add(pedidosList.size(), pedido.getIdPedido());
-                        grupo.setDoacoes(pedidosList);
-
-                    } else {
-
-                        pedidosList.add(0, pedido.getIdPedido());
-
-                    }
-
+                System.out.println("groupo " + grupo.getNome());
+                ArrayList<String> pedidosList = new ArrayList<>();
+                if (grupo.getDoacoes() != null) {
+                    pedidosList.addAll(grupo.getDoacoes());
+                    pedidosList.add(pedidosList.size(), pedidoId);
+                    grupo.setDoacoes(pedidosList);
+                } else {
+                    pedidosList.add(0, pedidoId);
                 }
-
-                grupo.save();
+                dbGroup.child(groupKey).setValue(grupo);
             }
 
             @Override
@@ -310,26 +305,22 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
 
     }
 
-    private void pedidoSaveIntoUser() {
-
+    private void pedidoSaveIntoUser(boolean b) {
+        if (b) {
             DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
             databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
                     user.setId(Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
-                    ArrayList<String> totalPedidos = new ArrayList<String>();
-                    if (user.getItensDoados() != null) {
-                        totalPedidos.addAll(user.getPedidosFeitos());
-                        totalPedidos.add(totalPedidos.size(), pedido.getIdPedido());
-                        user.setPedidosFeitos(totalPedidos);
-                    } else {
-                        totalPedidos.add(0, pedido.getIdPedido());
-                        user.setItensDoados(totalPedidos);
-                    }
+                    ArrayList<String> doacoes = new ArrayList<String>();
+                    if(user.getItensDoados() != null){
+                        doacoes.addAll(user.getItensDoados());
+                        doacoes.add(doacoes.size(), pedido.getIdPedido());
+                    }else doacoes.add(0, pedido.getIdPedido());
 
+                    user.setItensDoados(doacoes);
                     user.save();
-
                 }
 
                 @Override
@@ -338,6 +329,7 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
                 }
             });
 
+        }
     }
 
     private void refresh() {
@@ -354,11 +346,27 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
         if (requestCode == 2) {
             if (resultCode == Activity.RESULT_OK) {
                 groupCaptured = data.getStringExtra("groupSelected");
-                System.out.println("CRIA DOACAO grupo capturada " + groupCaptured);
+                idGroupSelected = data.getStringExtra("idGroupSelected");
+                System.out.println("CRIA DOACAO grupo capturada " + idGroupSelected);
 
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
+            }
+        }
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+
+            Uri uri = data.getData();
+
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                Log.d("image", String.valueOf(bitmap));
+
+                img.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e("error in get image ", e.toString());
             }
         }
 

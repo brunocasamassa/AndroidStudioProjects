@@ -26,7 +26,6 @@ import studio.brunocasamassa.ajudaquiapp.adapters.PedidosAdapter;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquiapp.helper.Pedido;
-import studio.brunocasamassa.ajudaquiapp.helper.PedidoActivity;
 import studio.brunocasamassa.ajudaquiapp.helper.User;
 
 /**
@@ -62,7 +61,6 @@ public class CabineFarturaActivity extends AppCompatActivity {
 
         listaDoacoes = new ArrayList<>();
 
-
         doacoes = (ListView) findViewById(R.id.cabine_fartura_list);
 
         dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -75,10 +73,14 @@ public class CabineFarturaActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         Location userLocation = new Location("my location");
-                        userLocation.setLatitude(user.getLatitude());
-                        userLocation.setLongitude(user.getLongitude());
-                        System.out.println("my location Lat> " + user.getLatitude() + "  LOn> " + user.getLongitude());
-
+                        if(user.getLatitude() != null) {
+                            userLocation.setLatitude(user.getLatitude());
+                            userLocation.setLongitude(user.getLongitude());
+                            System.out.println("my location Lat> " + user.getLatitude() + "  LOn> " + user.getLongitude());
+                        } else {
+                            userLocation.setLatitude(0.0);
+                            userLocation.setLongitude(0.0);
+                        }
                         for (DataSnapshot pedidos : dataSnapshot.getChildren()) {
                             Pedido pedido = pedidos.getValue(Pedido.class);
                             System.out.println("PEDIDO " + pedido.getTipo() + "  " + pedido.getNaCabine());
@@ -94,12 +96,14 @@ public class CabineFarturaActivity extends AppCompatActivity {
 
                             }
                             if (pedido.getTipo().equals("Doacoes") && pedido.getNaCabine() == 1 && !pedido.getCriadorId().equals(userKey)) {
-                                if (!listaDoacoes.isEmpty()) {
-                                    System.out.println("doacoes adicioandas " + pedido.getTitulo());
-                                    System.out.println("doacoes adicioandas " + pedido.getDistanceInMeters());
-                                    listaDoacoes.add(listaDoacoes.size(), pedido);
+                                if (pedido.getQtdAtual() > 0) {
+                                    if (!listaDoacoes.isEmpty()) {
+                                        System.out.println("doacoes adicioandas " + pedido.getTitulo());
+                                        System.out.println("doacoes adicioandas " + pedido.getDistanceInMeters());
+                                        listaDoacoes.add(listaDoacoes.size(), pedido);
 
-                                } else listaDoacoes.add(0, pedido);
+                                    } else listaDoacoes.add(0, pedido);
+                                }
                             }
 
                         }
@@ -118,7 +122,7 @@ public class CabineFarturaActivity extends AppCompatActivity {
                             }
                         });
 
-                        doacoesArrayAdapter = new PedidosAdapter(getApplicationContext(), listaDoacoes);
+                        doacoesArrayAdapter = new PedidosAdapter(CabineFarturaActivity.this, listaDoacoes);
 
                         if (!listaDoacoes.isEmpty()) {
                             doacoes.setAdapter(doacoesArrayAdapter);
@@ -127,7 +131,7 @@ public class CabineFarturaActivity extends AppCompatActivity {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                     try {
-                                        Intent intent = new Intent(CabineFarturaActivity.this, PedidoActivity.class);
+                                        Intent intent = new Intent(CabineFarturaActivity.this, DoacaoCriadaActivity.class);
 
                                         //recupera dados a serem passados
                                         Pedido pedido = listaDoacoes.get(position);
@@ -137,8 +141,16 @@ public class CabineFarturaActivity extends AppCompatActivity {
                                         intent.putExtra("titulo", pedido.getTitulo());
                                         intent.putExtra("tagsCategoria", pedido.getTagsCategoria());
                                         intent.putExtra("idPedido", pedido.getIdPedido());
+                                        intent.putExtra("latitude", pedido.getLatitude());
+                                        intent.putExtra("longitude", pedido.getLongitude());
+                                        intent.putExtra("qtdAtual", pedido.getQtdAtual());
+                                        intent.putExtra("qtdDoado", pedido.getQtdDoado());
                                         intent.putExtra("criadorId", pedido.getCriadorId());
                                         intent.putExtra("tipo", pedido.getTipo());
+                                        intent.putExtra("endereco", pedido.getEndereco());
+                                        intent.putExtra("donationContact", pedido.getDonationContact());
+                                        intent.putExtra("cameFrom", 2);
+
 
                                         if (pedido.getGrupo() != null) {
                                             intent.putExtra("tagsGrupo", pedido.getGrupo());

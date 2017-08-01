@@ -28,7 +28,7 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
     public void onTokenRefresh() {
         // Get updated InstanceID token.
 
-        System.out.println("INSTANCE ID  "+FirebaseInstanceId.getInstance().getId());
+        System.out.println("INSTANCE ID  " + FirebaseInstanceId.getInstance().getId());
         refreshedToken = FirebaseInstanceId.getInstance().getToken();
         System.out.println(TAG + " Refreshed token: " + refreshedToken);
 
@@ -38,15 +38,16 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
 /*      Preferences preferencias = new Preferences(MyFirebaseInstanceIdService.this);
         preferencias.saveToken(refreshedToken);*/
 
-        sendRegistrationToServer(refreshedToken);
-
+        if (refreshedToken != null) {
+            sendRegistrationToServer(refreshedToken);
+        }
     }
 
     // [END refresh_token]
 
     /**
      * Persist token to third-party servers.
-     *
+     * <p>
      * Modify this method to associate the user's FCM InstanceID token with any server-side account
      * maintained by your application.
      *
@@ -54,12 +55,13 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
      */
 
     public void sendRegistrationToServer(String token) {
+        if(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail()!=null) {
         String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
-        DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
-        dbUser.child(userKey).child("notificationToken").setValue(token);
+            DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
+            dbUser.child(userKey).child("notificationToken").setValue(token);
 
-        FirebaseConfig.getNotificationRef().setValue(token);
-
+            FirebaseConfig.getNotificationRef().setValue(token);
+        }
 
     }
 }

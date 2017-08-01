@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import studio.brunocasamassa.ajudaquiapp.DoacaoCriadaActivity;
 import studio.brunocasamassa.ajudaquiapp.PedidosActivity;
 import studio.brunocasamassa.ajudaquiapp.R;
 import studio.brunocasamassa.ajudaquiapp.adapters.PedidosSelecionadoAdapter;
@@ -75,7 +76,7 @@ public class PedidosEscolhidosFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pedidos_escolhidos, container, false);
@@ -167,13 +168,14 @@ public class PedidosEscolhidosFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Intent intent = new Intent(getActivity(), PedidoAtendidoActivity.class);
+                Intent intentDonation = new Intent(getActivity(), DoacaoCriadaActivity.class);
 
                 //recupera dados a serem passados
                 Pedido selectedPedido = pedidosAdapter.getPedidosFiltrado().get(position);
 
                 if (selectedPedido.getStatus() == 2) {//finalizado
                     Toast.makeText(getApplicationContext(), "Pedido finalizado", Toast.LENGTH_SHORT).show();
-                } else {
+                } else if (selectedPedido.getStatus() != 5){
                     //enviando dados para grupo activity
                     //enviando dados para pedido activity
                     intent.putExtra("status", selectedPedido.getStatus());
@@ -188,6 +190,21 @@ public class PedidosEscolhidosFragment extends Fragment {
                     intent.putExtra("descricao", selectedPedido.getDescricao());
 
                     startActivity(intent);
+                }  else{
+                    intentDonation.putExtra("status", selectedPedido.getStatus());
+                    intentDonation.putExtra("titulo", selectedPedido.getTitulo());
+                    intentDonation.putExtra("tagsCategoria", selectedPedido.getTagsCategoria());
+                    intentDonation.putExtra("idPedido", selectedPedido.getIdPedido());
+                    intentDonation.putExtra("criadorId", selectedPedido.getCriadorId());
+                    intentDonation.putExtra("tipo", selectedPedido.getTipo());
+                    intentDonation.putExtra("atendenteId", selectedPedido.getAtendenteId());
+                    intentDonation.putExtra("endereco", selectedPedido.getEndereco());
+                    intentDonation.putExtra("donationContact", selectedPedido.getDonationContact());
+                    intentDonation.putExtra("descricao", selectedPedido.getDescricao());
+                    intentDonation.putExtra("cameFrom", 3);
+
+                    startActivity(intentDonation);
+
                 }
 
             }

@@ -5,6 +5,7 @@ package studio.brunocasamassa.ajudaquiapp.adapters;
  */
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -39,6 +40,8 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
     private ArrayList<Pedido> pedidosFiltrado;
     private PedidosFiltro filtrador;
     private String facebookPhoto;
+    private StorageReference storageDonation;
+
 
     private MainActivity mainActivity = new MainActivity();
 
@@ -97,6 +100,7 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
             // recupera elemento para exibição
             ImageView statusPedido = (ImageView) view.findViewById(R.id.imageStatus);
             TextView nomePedido = (TextView) view.findViewById(R.id.nomePedido);
+            TextView donationqtd = (TextView) view.findViewById(R.id.qtd_pedido);
             TextView descricao = (TextView) view.findViewById(R.id.descricao_pedido);
             TagGroup tagsCategoria = (TagGroup) view.findViewById(R.id.tagPedidos);
             final CircleImageView pedidoImg = (CircleImageView) view.findViewById(R.id.imagePedido);
@@ -120,16 +124,45 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
                     Glide.with(getContext()).load(R.drawable.tag_finalizado).override(274, 274).into(statusPedido);
                 } else if (status == 3) {
                     Glide.with(getContext()).load(R.drawable.tag_cancelado).override(274, 274).into(statusPedido);
+                } else if (status == 5) {
+                    Glide.with(getContext()).load(R.drawable.tag_doacao).override(274, 274).into(statusPedido);
                 }
             }
             storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
+            storageDonation = FirebaseConfig.getFirebaseStorage().child("donationImages");
+
             nomePedido.setText(pedido.getTitulo());
             System.out.println("DADOS PEDIDO NO ADAPTER: " + pedido.getTitulo());
             descricao.setText(String.valueOf(pedido.getDescricao()));
             tagsCategoria.setTags(pedido.getTagsCategoria());
             // DOWNLOAD GROUP IMG FROM STORAGE
+            if(!pedido.getTipo().equals("Doacoes")){
+                donationqtd.setTextColor(Color.TRANSPARENT);
+            }
+            if(pedido.getTipo().equals("Doacoes")){
+                donationqtd.setText(String.valueOf(pedido.getQtdAtual())+"/"+String.valueOf(pedido.getQtdDoado()));
+                donationqtd.setTextColor(Color.argb(255,20,118,122));
+                storageDonation.child(pedido.getIdPedido()+ ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
-            if (pedido.getGrupo() != null) {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        System.out.println("grupo " + pedido.getGrupo());
+                        try {
+                            Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                        } catch (Exception e) {
+                            pedidoImg.setImageURI(uri);
+                            System.out.println("EXCEPTION PedidosAdapter " + e);
+                        }
+                        System.out.println("my pedidos lets seee2" + uri);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+
+                    }
+                });
+            }
+            else if (pedido.getGrupo() != null) {
                 storage.child(pedido.getGroupId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                     @Override

@@ -121,6 +121,8 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
                     Glide.with(getContext()).load(R.drawable.tag_finalizado).override(274, 274).into(statusPedido);
                 } else if (status == 3) {
                     Glide.with(getContext()).load(R.drawable.tag_cancelado).override(274, 274).into(statusPedido);
+                }else if (status == 5) {
+                    Glide.with(getContext()).load(R.drawable.tag_doacao).override(274, 274).into(statusPedido);
                 }
             }
             storage = FirebaseConfig.getFirebaseStorage().child("groupImages");

@@ -92,10 +92,11 @@
         android:id="@+id/imageView5"
         android:layout_width="wrap_content"
         android:layout_height="80dp"
+        android:translationX="25dp"
         app:srcCompat="@drawable/lockedgroup"
         android:layout_below="@+id/grupoDescricao"
-        android:layout_alignLeft="@+id/textView9"
-        android:layout_alignStart="@+id/textView9" />
+        android:layout_alignRight="@+id/qtdMembros"
+        android:layout_alignEnd="@+id/qtdMembros" />
 
     <TextView
         android:id="@+id/textView3"
@@ -115,9 +116,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SOLICITAR PARTICIPAÇÃO"
-        android:textColor="@color/colorBackground"
+        android:textColor="@color/md_white_1000"
         android:textSize="20dp"
-        android:background="@color/md_white_1000"
+        android:background="@color/colorBackground"
         android:textStyle="bold"
         tools:text="SOLICITAR PARTICIPAÇÃO"
         android:layout_alignParentBottom="true"

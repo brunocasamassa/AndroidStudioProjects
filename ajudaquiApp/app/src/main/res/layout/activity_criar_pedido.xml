@@ -209,25 +209,27 @@
         android:layout_marginRight="8dp"
         app:layout_constraintHorizontal_bias="0.0"
         android:layout_marginEnd="8dp"
-        tools:layout_editor_absoluteY="332dp" />
+        android:layout_marginTop="106dp"
+        app:layout_constraintTop_toBottomOf="@+id/imageView11"
+        app:layout_constraintBottom_toBottomOf="@+id/word_add_tags"
+        android:layout_marginBottom="0dp" />
 
     <ImageView
         android:id="@+id/imageView11"
         android:layout_width="30dp"
         android:layout_height="35dp"
-        android:layout_marginBottom="54dp"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView12"
+        android:layout_marginTop="64dp"
         app:layout_constraintTop_toBottomOf="@+id/imageView8"
-        app:layout_constraintVertical_bias="0.424"
         app:srcCompat="@drawable/pedidos_icon"
         android:layout_marginLeft="15dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/textView6"
         android:layout_marginRight="8dp"
         app:layout_constraintHorizontal_bias="0.052"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView6"
+        android:layout_marginBottom="0dp" />
 
     <TextView
         android:layout_width="wrap_content"

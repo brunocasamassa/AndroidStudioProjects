@@ -72,6 +72,7 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
     private String keyWord = null;
     private boolean trigger = true;
     private ArrayList<String> filter;
+    private String currentTime = null;
 
     @Override
     protected void onStart() {
@@ -112,7 +113,9 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
         toolbar.setTitle(getResources().getString(R.string.menu_pedidos));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
+        Bundle extras = getIntent().getExtras();
 
+        ;
         getLocalization = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
 
         getLocalization.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -122,6 +125,8 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
                 User user = dataSnapshot.getValue(User.class);
                 System.out.println("ENTREI ");
                 boolean permissao = Permissao.validaPermissoes(1, PedidosActivity.this, permissoesNecessarias);
+
+
 
                 localizacao = new SimpleLocation(PedidosActivity.this);
 

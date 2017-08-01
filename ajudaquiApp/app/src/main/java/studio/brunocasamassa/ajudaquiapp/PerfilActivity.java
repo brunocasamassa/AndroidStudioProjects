@@ -88,7 +88,6 @@ public class PerfilActivity extends AppCompatActivity {
     private String encodedKeySolicitation;
     private ArrayList<String> listaSolicitationKey;
     private ArrayList<String> listaGruposKeys;
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
     @Override
@@ -287,7 +286,6 @@ public class PerfilActivity extends AppCompatActivity {
                                 } else idMembros.add(0, userKeySolicitante);
 
                                 grupo.setIdMembros(idMembros);
-
                                 grupo.save();
                             }
 
@@ -318,15 +316,15 @@ public class PerfilActivity extends AppCompatActivity {
                     }
                 }).create().show();
 
-
             }
         });
 
-        if (user.getMedalhas() == null) {
+        if (user.getMedalhas() != null) {
 
             System.out.println("laço de imagens");
+
             for (int i = 0; i < 10; i++) {
-                ImageView imageView = new ImageView(PerfilActivity.this);
+                final ImageView imageView = new ImageView(PerfilActivity.this);
                 imageView.setId(i);
                 imageView.setPadding(0, 0, 0, 0);
                 imageView.setPaddingRelative(View.TEXT_ALIGNMENT_TEXT_START, View.SCROLL_INDICATOR_TOP, 0, 0);
@@ -369,6 +367,12 @@ public class PerfilActivity extends AppCompatActivity {
                             getResources(), R.drawable.badge6));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getApplicationContext(), "clicked", Toast.LENGTH_SHORT);
+                        }
+                    });
 
                 }
                 if (i == 6) {
@@ -387,7 +391,7 @@ public class PerfilActivity extends AppCompatActivity {
                 }
                 if (i == 8) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
-                            getResources(), R.drawable.badge4));
+                            getResources(), R.id.import_donation_img));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
 
@@ -398,13 +402,15 @@ public class PerfilActivity extends AppCompatActivity {
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
 
-                }/*
+                }
+                /*
                 if (!user.getMedalhas().contains(i) || user.getMedalhas() ==null) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
                             getResources(), R.drawable.badge_back));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
                 }*/
+
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 layout.addView(imageView);
 

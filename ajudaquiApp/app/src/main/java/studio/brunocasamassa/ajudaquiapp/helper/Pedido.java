@@ -12,11 +12,33 @@ public class Pedido {
 
     private String atendenteId;
 
+    public Pedido() {
+    }
+
     public String getIdPedido() {
         return idPedido;
     }
 
     private Double latitude;
+
+    private String donationContact;
+    private String endereco;
+
+    public String getDonationContact() {
+        return donationContact;
+    }
+
+    public void setDonationContact(String donationContact) {
+        this.donationContact = donationContact;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
 
     private Double longitude;
 
@@ -122,6 +144,8 @@ public class Pedido {
 
     private String tipo;
 
+    private int qtdAtual;
+    private int qtdDoado;
 
     public void save() {
         DatabaseReference referenciaFirebase = FirebaseConfig.getFireBase();
@@ -150,6 +174,22 @@ public class Pedido {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public void setQtdDoado(int qtdDoado) {
+        this.qtdDoado = qtdDoado;
+    }
+
+    public int getQtdDoado() {
+        return qtdDoado;
+    }
+
+    public int getQtdAtual() {
+        return qtdAtual;
+    }
+
+    public void setQtdAtual(int qtdAtual) {
+        this.qtdAtual = qtdAtual;
     }
 
 

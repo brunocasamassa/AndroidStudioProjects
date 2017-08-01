@@ -38,12 +38,12 @@ public class PedidoActivity extends AppCompatActivity {
     private TagGroup tagsGrupo;
     private Button atenderPedido;
     private Pedido pedido;
+    private String userName;
     private String criadorId;
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private User user = new User();
     private DatabaseReference firebase;
     private DatabaseReference dbUserDestinatario;
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -54,13 +54,19 @@ public class PedidoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido);
 
+
+
         final Bundle extra = getIntent().getExtras();
-        toolbar = (Toolbar) findViewById(R.id.toolbar_create_pedido);
-        nomePedido = (TextView) findViewById(R.id.nome_pedido_feito);
-        descricao = (TextView) findViewById(R.id.descricao_pedido_feito);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_donation_activity);
+        nomePedido = (TextView) findViewById(R.id.nome_doacao);
+        descricao = (TextView) findViewById(R.id.descricao_doacao);
         tagsCategoria = (TagGroup) findViewById(R.id.tags_pedido_categoria);
         tagsGrupo = (TagGroup) findViewById(R.id.tags_pedido_grupo);
-        atenderPedido = (Button) findViewById(R.id.atender_pedido_button);
+        atenderPedido = (Button) findViewById(R.id.donation_button);
+
+        Preferences preferencias = new Preferences(PedidoActivity.this);
+        userName = preferencias.getNome();
+
 
         if (extra != null) {
 
@@ -68,6 +74,12 @@ public class PedidoActivity extends AppCompatActivity {
             pedido.setIdPedido(extra.getString("idPedido"));
             pedido.setTagsCategoria(extra.getStringArrayList("tagsCategoria"));
             pedido.setDescricao(extra.getString("descricao"));
+            pedido.setQtdDoado(extra.getInt("qtdDoado"));
+            pedido.setQtdAtual(extra.getInt("qtdAtual"));
+            pedido.setDonationContact(extra.getString("donationContact"));
+            pedido.setEndereco(extra.getString("endereco"));
+            pedido.setLongitude(extra.getDouble("longitude"));
+            pedido.setLatitude(extra.getDouble("latitude"));
             pedido.setTitulo(extra.getString("titulo"));
             pedido.setGrupo(extra.getString("tagsGrupo"));
             pedido.setStatus(extra.getInt("status"));
@@ -97,15 +109,7 @@ public class PedidoActivity extends AppCompatActivity {
             tagsGrupo.setTags(pedido.getGrupo());
         }
 
-        if (pedido.getTipo().equals("Doacoes")) {
-            atenderPedido.setText("Receber Doacao");
-            atenderPedido.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    receberDoacao();
-                }
-            });
-        } else {
+
             atenderPedido.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -146,8 +150,9 @@ public class PedidoActivity extends AppCompatActivity {
 
                                     firebase.child(pedido.getIdPedido()).setValue(dbPedido);
 
+
                                     sendNotiication(pedido.getCriadorId());
-                                    Toast.makeText(PedidoActivity.this, "Parabéns, voce já pode conversar com o criador do pedido", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(PedidoActivity.this, "Parabéns, voce já pode conversar com o criador do pedido.", Toast.LENGTH_LONG).show();
                                     finish();
                                 }
 
@@ -164,6 +169,7 @@ public class PedidoActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     final User usuario = dataSnapshot.child(userKey).getValue(User.class);
+                                    user = usuario;
                                     user.setId(userKey);
                                     if (usuario.getMedalhas() != null) {
                                         user.setMedalhas(usuario.getMedalhas());
@@ -200,8 +206,8 @@ public class PedidoActivity extends AppCompatActivity {
                                         pedidosAtendidos.add(pedidosAtendidos.size(), extra.getString("idPedido"));
                                     } else pedidosAtendidos.add(0, extra.getString("idPedido"));
 
-                                    user.setPedidosAtendidos(pedidosAtendidos);
-                                    user.save();
+                                    usuario.setPedidosAtendidos(pedidosAtendidos);
+                                    usuario.save();
 
                                     DateFormat formatter = new SimpleDateFormat("HH:mm");
                                     formatter.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
@@ -266,8 +272,10 @@ public class PedidoActivity extends AppCompatActivity {
 
                 }
             });
-        }
+
     }
+
+
 
     private void sendNotiication(String criadorId) {
     DatabaseReference dbDestinatario =FirebaseConfig.getFireBase().child("usuarios");
@@ -296,149 +304,6 @@ public class PedidoActivity extends AppCompatActivity {
 
     }
 
-    private void receberDoacao() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoActivity.this);
-
-        alertDialog.setTitle("Receber Doacao");
-        alertDialog.setMessage("Deseja Receber esta doacao?");
-        alertDialog.setCancelable(false);
-
-        alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                final DatabaseReference firebase = FirebaseConfig.getFireBase().child("Pedidos");
-                firebase.child(pedido.getIdPedido());
-                System.out.println("pedido id " + pedido.getIdPedido());
-                firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Pedido dbPedido = dataSnapshot.getValue(Pedido.class);
-                        System.out.println("dbPedido " + dbPedido.getTitulo());
-                        dbPedido.setCriadorId(pedido.getCriadorId());
-                        dbPedido.setDescricao(pedido.getDescricao());
-                        dbPedido.setIdPedido(pedido.getIdPedido());
-                        dbPedido.setStatus(1);
-                        dbPedido.setTagsCategoria(pedido.getTagsCategoria());
-                        dbPedido.setTipo(pedido.getTipo());
-                        dbPedido.setTitulo(pedido.getTitulo());
-                        dbPedido.setAtendenteId(userKey);
-
-                        firebase.child(pedido.getIdPedido()).setValue(dbPedido);
-
-                        Toast.makeText(PedidoActivity.this, "Parabéns, voce já pode conversar com o doador do produto", Toast.LENGTH_LONG).show();
-                        finish();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        System.out.println("error create atendimento " + databaseError);
-                    }
-                });
-
-
-                final DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
-
-                dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        User usuario = dataSnapshot.child(userKey).getValue(User.class);
-                        user.setId(userKey);
-                        if (usuario.getMedalhas() != null) {
-                            user.setMedalhas(usuario.getMedalhas());
-                        }
-                        if (usuario.getMsgSolicitacoes() != null) {
-                            user.setMsgSolicitacoes(usuario.getMsgSolicitacoes());
-                        }
-                        if (usuario.getGrupos() != null) {
-                            user.setGrupos(usuario.getGrupos());
-                        }
-                        user.setCreditos(usuario.getCreditos() - 1);
-
-                        if (usuario.getEmail() != null) {
-                            user.setEmail(usuario.getEmail());
-                        }
-                        if (usuario.getName() != null) {
-                            user.setName(usuario.getName());
-                        }
-                        user.setPremiumUser(usuario.getPremiumUser());
-                        if (usuario.getProfileImageURL() != null) {
-                            user.setProfileImageURL(usuario.getProfileImageURL());
-                        }
-                        if (usuario.getProfileImg() != null) {
-                            user.setProfileImg(usuario.getProfileImg());
-                        }
-                        if (usuario.getPedidosFeitos() != null) {
-                            user.setPedidosFeitos(usuario.getPedidosFeitos());
-                        }
-                        user.setPontos(usuario.getPontos());
-
-                        if (usuario.getPedidosAtendidos() != null) {
-
-                            user.setPedidosAtendidos(usuario.getPedidosAtendidos());
-                        }
-                        user.save();
-
-                        // salvando Conversa para o remetente
-                        Conversa conversa = new Conversa();
-                        conversa.setIdUsuario(criadorId);
-                        conversa.setNome(pedido.getTitulo());
-                        conversa.setMensagem("bem vindo");
-                        Boolean retornoConversaRemetente = salvarConversa(userKey, criadorId, conversa);
-                        System.out.println("SALVANDO CONVERSA PARA O REMETENTE(atendente pedido): " + userKey);
-                        if (!retornoConversaRemetente) {
-                            System.out.println("PROBLEMA AO CRIAR CAMPO DE CONVERSA PARA O ATENDENTE");
-                        } else {
-
-                            // salvando Conversa para o Destinatario
-                            System.out.println("SALVANDO CONVERSA PARA O DESTINATARIO(criador pedido): " + criadorId);
-                            conversa = new Conversa();
-                            conversa.setIdUsuario(userKey);
-                            conversa.setNome(pedido.getTitulo());
-                            conversa.setMensagem("bem vindo");
-
-                            dbUserDestinatario = FirebaseConfig.getFireBase().child("usuarios");
-
-                            dbUserDestinatario.child(criadorId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    User user = dataSnapshot.getValue(User.class);
-                                    user.setPedidosNotificationCount(user.getPedidosNotificationCount() + 1);
-                                    user.setId(criadorId);
-                                    user.save();
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-
-                            Boolean retornoConversaDestinatario = salvarConversa(criadorId, userKey, conversa);
-                            if (!retornoConversaDestinatario) {
-                                System.out.println("PROBLEMA AO CRIAR CAMPO DE CONVERSA PARA O CRIADOR DO PEDIDO");
-                            }
-
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        }).create().show();
-
-
-    }
 
 
     private boolean salvarConversa(String idRemetente, String idDestinatario, Conversa conversa) {

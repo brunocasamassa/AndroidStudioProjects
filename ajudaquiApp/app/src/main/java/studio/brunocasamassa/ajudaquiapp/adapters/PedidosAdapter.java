@@ -5,6 +5,7 @@ package studio.brunocasamassa.ajudaquiapp.adapters;
  */
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -96,11 +97,12 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
 
             // Monta view a partir do xml
-            view = inflater.inflate(R.layout.model_pedido, parent, false);
+            view = inflater.inflate(R.layout.model_pedido3, parent, false);
 
             // recupera elemento para exibição
             TextView distancia = (TextView) view.findViewById(R.id.distance);
             TextView nomePedido = (TextView) view.findViewById(R.id.nomePedido);
+            TextView donationqtd = (TextView) view.findViewById(R.id.qtd_pedido);
             TextView descricao = (TextView) view.findViewById(R.id.descricao_pedido);
             TagGroup tagsCategoria = (TagGroup) view.findViewById(R.id.tagPedidos);
             final CircleImageView pedidoImg = (CircleImageView) view.findViewById(R.id.imagePedido);
@@ -119,14 +121,21 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
 
             if (pedido.getDistanceInMeters() != null) {
                 distancia.setText(String.valueOf(pedido.getDistanceInMeters().intValue() / 1000000) + "km");
-            }
+            } else{
+                distancia.setTextColor(Color.TRANSPARENT);
 
+            }
             nomePedido.setText(pedido.getTitulo());
             System.out.println("DADOS PEDIDO NO ADAPTER: " + pedido.getTitulo());
             descricao.setText(String.valueOf(pedido.getDescricao()));
             tagsCategoria.setTags(pedido.getTagsCategoria());
             // DOWNLOAD GROUP IMG FROM STORAGE
+            if(!pedido.getTipo().equals("Doacoes")){
+                donationqtd.setTextColor(Color.TRANSPARENT);
+            }
             if(pedido.getTipo().equals("Doacoes")){
+                donationqtd.setText(String.valueOf(pedido.getQtdAtual())+"/"+String.valueOf(pedido.getQtdDoado()));
+                donationqtd.setTextColor(Color.argb(255,20,118,122));
                 storageDonation.child(pedido.getIdPedido()+ ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                     @Override

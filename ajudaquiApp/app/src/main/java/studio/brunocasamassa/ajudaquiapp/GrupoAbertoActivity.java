@@ -174,10 +174,10 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         });
 
         groupImage = (CircleImageView) findViewById(R.id.circleImageView);
-        if (premium == 1) {
-            groupImage.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
+        groupImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (listaAdmins.contains(userKey)) {
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(GrupoAbertoActivity.this);
                     alertDialog.setTitle("Alterar Imagem do grupo");
 
@@ -200,11 +200,11 @@ public class GrupoAbertoActivity extends AppCompatActivity {
                     }).create().show();
 
 
-                    return false;
-                }
-            });
+                } else Toast.makeText(getApplicationContext(),"Apenas administradores podem alterar a imagem do grupo", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
 
-        }
 
         storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
 
@@ -228,7 +228,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final User user = dataSnapshot.getValue(User.class);
-                donationFAB.setOnClickListener(new View.OnClickListener() {
+               /* donationFAB.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(GrupoAbertoActivity.this, CriaDoacaoActivity.class);
@@ -238,7 +238,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
-
+*/
                 pedidoFAB.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

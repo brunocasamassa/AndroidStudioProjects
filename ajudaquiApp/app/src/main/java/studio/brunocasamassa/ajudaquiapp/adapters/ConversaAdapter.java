@@ -78,7 +78,8 @@ public class ConversaAdapter extends ArrayAdapter<Conversa> {
             ultimaMensagem.setText(conversa.getMensagem());
 
             if(conversa.getChatCount() >0){
-                chatCount.setBackgroundColor(Color.RED);
+               time.setTextColor(Color.argb(255,255,64,128));
+                chatCount.setBackgroundResource(R.drawable.layout_bg);
                 chatCount.setTextColor(Color.WHITE);
             }
             chatCount.setText(String.valueOf(conversa.getChatCount()));

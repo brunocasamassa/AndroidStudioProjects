@@ -8,7 +8,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_cabine_fartura"
         android:layout_width="446dp"
-        android:layout_height="71dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:elevation="20dp"
         android:layout_alignParentStart="true"
@@ -21,9 +21,10 @@
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.176"
+        app:layout_constraintHorizontal_bias="0.156"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"></android.support.v7.widget.Toolbar>
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="0dp"></android.support.v7.widget.Toolbar>
 
     <ListView
         android:id="@+id/cabine_fartura_list"
@@ -33,14 +34,13 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="37dp"
-        android:elevation="20dp"
+        android:layout_marginTop="13dp"
+        android:elevation="5dp"
         android:scrollbars="none"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_cabine_fartura" />
-
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_cabine"
@@ -50,7 +50,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginRight="8dp"
         android:layout_gravity="bottom|start"
-        android:elevation="5dp"
+        android:elevation="20dp"
         android:src="@drawable/fab_add"
         app:backgroundTint="@color/colorAccent"
         app:fabSize="normal"
@@ -62,7 +62,5 @@
         app:layout_constraintTop_toTopOf="@+id/cabine_fartura_list"
         android:layout_marginTop="8dp"
         app:layout_constraintVertical_bias="1.0" />
-
-
 
 </android.support.constraint.ConstraintLayout>

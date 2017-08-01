@@ -40,8 +40,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.TimeZone;
 
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
@@ -89,9 +92,17 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (checkVersion()) {
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                ConnectivityManager conMgr2 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                 //verify if user db structure really exist
                 progress = ProgressDialog.show(this, "Aguarde...",
                         "Verificando dados do usuario", true);
+
+                if (conMgr2.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
+                        || conMgr2.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
+
+                    Toast.makeText(getApplicationContext(), "Sem conexao com a internet", Toast.LENGTH_SHORT).show();
+                    progress.dismiss();
+                }
             }
         }
     }
@@ -138,14 +149,17 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 User user = dataSnapshot.getValue(User.class);
-                                if (user == null) {
+                                if (user.getName() == null) {
+
                                     authUser.delete();
+
                                     if (progress != null) {
                                         progress.dismiss();
                                     }
+
                                     LoginManager.getInstance().logOut();
                                     Toast.makeText(getApplicationContext(), "Falha no login, por favor entre novamente ", Toast.LENGTH_SHORT).show();
-                                    refresh();
+                                    //refresh();
 
                                 } else {
 
@@ -161,6 +175,23 @@ public class MainActivity extends AppCompatActivity {
 
                                     String token = FirebaseInstanceId.getInstance().getToken();
 
+                                    SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z");
+                                    format.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
+                                    String currentTime = format.format(new Date());
+
+                                    ArrayList<String> entradas = new ArrayList<String>();
+
+                                    if (currentTime != null) {
+                                        if (user.getEntradas() != null) {
+                                            entradas.addAll(user.getEntradas());
+                                            entradas.add(entradas.size(), currentTime);
+                                            user.setEntradas(entradas);
+                                        } else {
+                                            entradas.add(0, currentTime);
+                                            user.setEntradas(entradas);
+                                        }
+                                        user.save();
+                                    }
                                     md.onTokenRefresh();
                                 /*if (token != savedToken) {
                                     md.sendRegistrationToServer(token);
@@ -170,7 +201,10 @@ public class MainActivity extends AppCompatActivity {
                                     if (progress != null) {
                                         progress.dismiss();
                                     }
-                                    startActivity(new Intent(MainActivity.this, PedidosActivity.class));
+
+                                    //Toast.makeText(getApplicationContext(), currentTime, Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(MainActivity.this, PedidosActivity.class);
+                                    startActivity(intent);
                                     //Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
                                 }
                             }

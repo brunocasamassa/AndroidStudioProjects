@@ -154,9 +154,9 @@
         android:layout_height="60dp"
         android:scrollbars="none"
         android:requiresFadingEdge="horizontal"
+        android:layout_marginBottom="15dp"
         android:layout_alignBottom="@+id/view"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="13dp">
+        android:layout_centerHorizontal="true">
 
     <LinearLayout
         android:showDividers="beginning"

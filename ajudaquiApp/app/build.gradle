@@ -7,8 +7,8 @@ android {
                 applicationId 'studio.brunocasamassa.ajudaquiapp'
                 minSdkVersion 16
                 targetSdkVersion 23
-                versionCode 13
-                versionName "1.13"
+                versionCode 15
+                versionName "1.15"
                 testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
             }
 
@@ -73,6 +73,8 @@ dependencies {
     compile 'me.gujun.android.taggroup:library:1.4@aar'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.paypal.sdk:paypal-android-sdk:2.15.3'
+    compile 'com.sun.mail:android-mail:1.5.5'
+    compile 'com.sun.mail:android-activation:1.5.5'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
 

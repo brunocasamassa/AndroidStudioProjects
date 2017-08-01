@@ -5,10 +5,10 @@
     tools:context=".fragments.GrupoAbertoPedidosFragment">
 
     <!-- TODO: Update blank fragment layout -->
-<ListView
-    android:id="@+id/list_meuspedidos_groups"
-    android:layout_width="wrap_content"
-    android:layout_marginTop="10dp"
-    android:layout_height="wrap_content"></ListView>
+    <ListView
+        android:id="@+id/list_meuspedidos_groups"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"></ListView>
 
 </FrameLayout>

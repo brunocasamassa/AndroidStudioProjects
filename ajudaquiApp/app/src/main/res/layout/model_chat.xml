@@ -18,7 +18,6 @@
         android:layout_marginTop="9dp"
         app:srcCompat="@android:anim/accelerate_interpolator" />
 
-
     <TextView
         android:id="@+id/notification_count"
         android:layout_width="40dp"
@@ -27,13 +26,11 @@
         android:layout_alignEnd="@+id/time_chat"
         android:layout_alignRight="@+id/time_chat"
         android:layout_below="@+id/name_chat_contact"
-        android:background="@drawable/layout_bg"
         android:text="0"
         android:textAlignment="center"
         android:textColor="@drawable/trans"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:textStyle="bold" />
-
 
     <TextView
         android:id="@+id/name_chat_contact"
@@ -98,6 +95,5 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="15dp" />
-
 
 </RelativeLayout>

@@ -88,8 +88,8 @@ public class CriaDoacaoActivity extends AppCompatActivity {
             }
         });
 
-        grupos = (TagGroup) findViewById(R.id.tagGroupGruposDoacao);
-        grupos.setTags(Base64Decoder.decoderBase64(groupKey));
+        //grupos = (TagGroup) findViewById(R.id.tagGroupGruposDoacao);
+        //grupos.setTags(Base64Decoder.decoderBase64(groupKey));
 
         seekValue = (TextView) findViewById(R.id.seekbar_value);
         doacaoQtd = (SeekBar) findViewById(R.id.seekBar);

@@ -5,6 +5,8 @@ package studio.brunocasamassa.ajudaquiapp.adapters;
  */
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -65,12 +67,19 @@ public class AllGroupsAdapter extends ArrayAdapter<Grupo> {
             if (position == 0) {
 
                 cardView.setCardBackgroundColor(Color.parseColor("#1bb1b7"));
+                    cardView.setCardElevation(100);
                 nomeGrupo.setText("CABINE DA FARTURA");
                 nomeGrupo.setTextColor(Color.WHITE);
-                imgGrupo.setBackgroundResource(R.drawable.badge7);
+                //imgGrupo.setBackgroundResource(R.drawable.chest_icon_web);
                 qtdMmebros.setTextSize(16);
+                qtdMmebros.setGravity(5);
                 qtdMmebros.setTextColor(Color.RED);
                 qtdMmebros.setText("Confira!");
+
+                Bitmap bm = BitmapFactory.decodeResource(view.getResources(),
+                        R.drawable.chest_icon_web);
+                Bitmap resized = Bitmap.createScaledBitmap(bm, 200, 200, true);
+                imgGrupo.setImageBitmap(resized);
 
             } else {
                 final Grupo grupo = grupos.get(position);

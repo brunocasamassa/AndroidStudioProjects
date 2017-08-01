@@ -1,6 +1,5 @@
 package studio.brunocasamassa.ajudaquiapp.fragments;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,17 +18,15 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import studio.brunocasamassa.ajudaquiapp.R;
-import studio.brunocasamassa.ajudaquiapp.adapters.PedidosSelecionadoAdapter;
+import studio.brunocasamassa.ajudaquiapp.adapters.PedidosMeusPedidosAdapter;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquiapp.helper.Pedido;
 import studio.brunocasamassa.ajudaquiapp.helper.PedidoCriadoActivity;
 
-
 /**
  * A simple {@link Fragment} subclass.
  */
-
 
 public class GrupoAbertoMeusPedidosFragment extends Fragment {
 
@@ -55,7 +52,6 @@ public class GrupoAbertoMeusPedidosFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -68,13 +64,15 @@ public class GrupoAbertoMeusPedidosFragment extends Fragment {
 
         qtdMembros = extra.getInt("qtdmembros");
 
+        System.out.println("group id "+ idGroup);
+
         View v = inflater.inflate(R.layout.fragment_grupo_meuspedidos, container, false);
 
         listview_nomes = (ListView) v.findViewById(R.id.list_meuspedidos_groups);
 
         arraylist_nomes = new ArrayList<>();
 
-        adapter_nomes = new PedidosSelecionadoAdapter(getActivity(), arraylist_nomes);
+        adapter_nomes = new PedidosMeusPedidosAdapter(getActivity(), arraylist_nomes);
 
         listview_nomes.setAdapter(adapter_nomes);
 
@@ -84,17 +82,18 @@ public class GrupoAbertoMeusPedidosFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 arraylist_nomes.clear();
+                adapter_nomes.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     Pedido pedido = snapshot.getValue(Pedido.class);
 
-                    if (pedido.getGrupo() != null && pedido.getGroupId().equals(idGroup) && pedido.getCriadorId().equals(userKey)) {
+                    if (pedido.getGrupo() != null ){
+                        if(pedido.getGroupId().equals(idGroup) && pedido.getCriadorId().equals(userKey)){
                         adapter_nomes.add(pedido);
-                        // arraylist_nomes.add(pedido);
                         System.out.println("adicionado pedido "+ pedido.getTitulo());
                     }
                 }
-            }
+            }}
 
             @Override
             public void onCancelled(DatabaseError databaseError) {

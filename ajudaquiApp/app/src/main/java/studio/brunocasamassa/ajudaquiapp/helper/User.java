@@ -16,8 +16,8 @@ public class User implements DatabaseReference.CompletionListener {
 
     private String id;
 
-
     private int maxDistance;
+
     public int getPremiumUser() {
         return premiumUser;
     }
@@ -27,6 +27,8 @@ public class User implements DatabaseReference.CompletionListener {
     }
 
     private int premiumUser;  //0==free , 1==premium
+
+    private ArrayList<String> entradas;
 
     private Double latitude;
 
@@ -306,5 +308,13 @@ public class User implements DatabaseReference.CompletionListener {
 
     public void setItensDoados(ArrayList<String> itensDoados) {
         this.itensDoados = itensDoados;
+    }
+
+    public ArrayList<String> getEntradas() {
+        return entradas;
+    }
+
+    public void setEntradas(ArrayList<String> entradas) {
+        this.entradas = entradas;
     }
 }

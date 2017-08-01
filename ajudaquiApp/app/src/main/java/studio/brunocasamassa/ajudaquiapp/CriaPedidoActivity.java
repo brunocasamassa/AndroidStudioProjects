@@ -60,6 +60,19 @@ public class CriaPedidoActivity extends AppCompatActivity {
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private String groupCaptured;
     private String idGroupSelected;
+    private String groupCapturedId;
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Bundle extras = getIntent().getExtras();
+        idGroupSelected = (extras.getString("idGroupSelected"));
+        pedidoGroup = (extras.getString("groupName"));
+        if (pedidoGroup != null) {
+            System.out.println("pedido grupo no resume" + pedidoGroup);
+        }
+    }
 
     @Override
     protected void onStart() {
@@ -71,11 +84,12 @@ public class CriaPedidoActivity extends AppCompatActivity {
             tagsCaptured.remove(tagCaptured);
         } else categorias.setTags(tagsCaptured);
 
-        if(pedidoGroup != null){
+        if (pedidoGroup != null) {
             grupos.setTags(pedidoGroup);
-        }
-        else if (groupCaptured != null) {
+        } else if (groupCaptured != null) {
             grupos.setTags(groupCaptured);
+            pedidoGroup = groupCaptured;
+            idGroupSelected = groupCapturedId;
         }
 
         System.out.println("vamos ver " + groupCaptured);
@@ -96,10 +110,9 @@ public class CriaPedidoActivity extends AppCompatActivity {
         latitude = (extras.getDouble("latitude"));
         longitude = (extras.getDouble("longitude"));
         pedidoGroup = (extras.getString("groupName"));
-        idGroupSelected = (extras.getString("idGroupSelected"));
-        if (extras.getString("idGroupSelected")!=null){
+        if (extras.getString("idGroupSelected") != null) {
             idGroupSelected = (extras.getString("idGroupSelected"));
-        } else if( extras.getString("groupId")!= null){
+        } else if (extras.getString("groupId") != null) {
             idGroupSelected = (extras.getString("groupId"));
         }
         System.out.println("FUCK latitude  " + latitude);
@@ -142,6 +155,9 @@ public class CriaPedidoActivity extends AppCompatActivity {
             @Override
             public void onTagCrossClick(int position) {
                 grupos.removeTag(position);
+                idGroupSelected = null;
+                pedidoGroup = null;
+
 
             }
         });
@@ -238,10 +254,10 @@ public class CriaPedidoActivity extends AppCompatActivity {
                                             tipoPedido = "Servicos";
                                             createPedido();
                                             break;
-                                        case 1  :
+                                        case 1:
                                             Toast.makeText(getApplicationContext(), "Emprestimos", Toast.LENGTH_SHORT).show();
                                             tipoPedido = "Emprestimos";
-                                                createPedido();
+                                            createPedido();
                                             break;
                                         case 2:
                                             Toast.makeText(getApplicationContext(), "Troca", Toast.LENGTH_SHORT).show();
@@ -271,21 +287,12 @@ public class CriaPedidoActivity extends AppCompatActivity {
         pedido.setTagsCategoria(tagsCaptured);
         pedido.setTipo(tipoPedido);
 
-        if (groupCaptured != null) {
-            pedido.setGrupo(groupCaptured);
-            pedido.setGroupId(idGroupSelected);
-        }
-
         pedido.setDescricao(descricao.getText().toString());
         pedido.setTitulo(pedidoName.getText().toString());
         pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo()));
         pedido.setCriadorId(userKey);
-        if(idGroupSelected!= null){
-        pedido.setGroupId(idGroupSelected);
-        }
-        if(pedidoGroup!= null ){
-            pedido.setGrupo(pedidoGroup);
-        }
+
+
         if (latitude == null) {
             pedido.setLatitude(0.0);
         } else {
@@ -296,9 +303,20 @@ public class CriaPedidoActivity extends AppCompatActivity {
         } else {
             pedido.setLongitude(longitude);
         }
-        if (pedido.getGrupo() != null) {
+        if (pedidoGroup != null) {
+            pedido.setGrupo(pedidoGroup);
+        } else if (groupCaptured != null) {
+            pedido.setGrupo(groupCaptured);
+
+        }
+        if (idGroupSelected != null) {
+            pedido.setGroupId(idGroupSelected);
+            savePedidoIntoGroup(pedido);
+        } else if (groupCapturedId != null) {
+            pedido.setGroupId(groupCapturedId);
             savePedidoIntoGroup(pedido);
         }
+
 
         System.out.println("user id key " + userKey);
 
@@ -312,7 +330,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
     private void savePedidoIntoGroup(final Pedido pedido) {
         final String tipoPedido = pedido.getTipo();
         final ArrayList<String> pedidosList = new ArrayList<>();
-        DatabaseReference dbGroup = FirebaseConfig.getFireBase().child("grupos").child(idGroupSelected);
+        DatabaseReference dbGroup = FirebaseConfig.getFireBase().child("grupos").child(pedido.getGroupId());
         dbGroup.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -324,7 +342,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
                         grupo.setEmprestimos(pedidosList);
                     } else {
                         pedidosList.add(0, pedido.getIdPedido());
-
+                        grupo.setEmprestimos(pedidosList);
                     }
 
                 }
@@ -335,6 +353,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
                         grupo.setTrocas(pedidosList);
                     } else {
                         pedidosList.add(0, pedido.getIdPedido());
+                        grupo.setTrocas(pedidosList);
                     }
 
                 }
@@ -346,7 +365,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
                         grupo.setServicos(pedidosList);
                     } else {
                         pedidosList.add(0, pedido.getIdPedido());
-
+                        grupo.setServicos(pedidosList);
                     }
 
                 }
@@ -357,7 +376,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
                         grupo.setDoacoes(pedidosList);
                     } else {
                         pedidosList.add(0, pedido.getIdPedido());
-
+                        grupo.setDoacoes(pedidosList);
                     }
 
                 }
@@ -432,6 +451,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
         if (requestCode == 2) {
             if (resultCode == Activity.RESULT_OK) {
                 groupCaptured = data.getStringExtra("groupSelected");
+                groupCapturedId = data.getStringExtra("idGroupSelected");
                 System.out.println("CRIA PEDIDO grupo capturada " + groupCaptured);
 
             }

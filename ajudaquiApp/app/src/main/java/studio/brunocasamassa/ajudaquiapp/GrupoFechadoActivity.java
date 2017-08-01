@@ -69,6 +69,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
     private ArrayList<String> solicitacoesUser = new ArrayList<>();
     private ArrayList<String> gruposUser = new ArrayList<>();
     private String userName = new String();
+    private TextView groupNotification;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -97,6 +98,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
         descricao = (TextView) findViewById(R.id.grupoDescricao);
         groupImg = (CircleImageView) findViewById(R.id.groupImg);
         botaoSolicitar = (Button) findViewById(R.id.botaoSolicitar);
+        groupNotification = (TextView) findViewById(R.id.textView3) ;
 
         grupo = new Grupo();
 
@@ -131,6 +133,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
 
                 if (grupo.isOpened()) {
                     botaoSolicitar.setText("PARTICIPAR");
+                    groupNotification.setText("Este é um grupo aberto, ao clicar me participar voce fará parte dele");
                     botaoSolicitar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -193,7 +196,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
         // groupImg.setImageURI();
         storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
 
-        storage.child(grupo.getNome() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        storage.child(grupo.getId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 try {
