@@ -36,7 +36,7 @@ public class GruposActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
     private int posicao;
-    private com.github.clans.fab.FloatingActionButton fab;
+    private android.support.design.widget.FloatingActionButton fab;
     private Button donation;
     private FloatingActionMenu fabMenu;
     private com.github.clans.fab.FloatingActionButton fab2;
@@ -56,7 +56,7 @@ public class GruposActivity extends AppCompatActivity {
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
 
-        fabMenu = (FloatingActionMenu) findViewById(R.id.fab_open_menu);
+        //fabMenu = (FloatingActionMenu) findViewById(R.id.fab_open_menu);
     /*    fab2 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab2);
 
 
@@ -67,7 +67,7 @@ public class GruposActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });*/
-        fab = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab);
+        fab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

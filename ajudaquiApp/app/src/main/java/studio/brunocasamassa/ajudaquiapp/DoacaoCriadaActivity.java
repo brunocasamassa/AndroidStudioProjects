@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -64,7 +63,7 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
     private String ajudaquimail = Base64Decoder.encoderBase64("ajudaquisuporte@gmail.com");
     private String ajudaquipass = Base64Decoder.encoderBase64("ajudaqui931931931");
     private String userName;
-
+    private boolean userGetOrder = false;
 
     @Override
     protected void onStart() {
@@ -154,11 +153,11 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
             });
         }
         if (cameFrom == 3) {
-            donationButton.setText("AVALIAR DOADOR");
+            donationButton.setText("CONFIRMAR ENTREGA");
             donationButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    avaliarDoador();
+                    confirmarEntrega();
                 }
             });
 
@@ -166,21 +165,81 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
 
     }
 
-    private void avaliarDoador() {
+    private void confirmarEntrega() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(DoacaoCriadaActivity.this);
+
+        alertDialog.setTitle("Confirmar Entrega");
+        alertDialog.setMessage("Voce recebeu o produto doado?");
+        alertDialog.setCancelable(false);
+        alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startStars(true);
+                DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
+                dbUser.child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        user.getPedidosAtendidos().remove(pedido.getIdPedido());
+                        user.save();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+        alertDialog.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).create().show();
 
     }
 
     private void cancelarDoacao() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(DoacaoCriadaActivity.this);
-
         alertDialog.setTitle("Cancelar doação?");
         alertDialog.setMessage("Se voce cancelar, os itens serão zerados, todas as doações já feitas ainda deverão ser entregues");
         alertDialog.setCancelable(false);
-
         alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                startStars(true);
+                DatabaseReference dbPedidos = FirebaseConfig.getFireBase().child("Pedidos");
+                dbPedidos.child(pedido.getIdPedido()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Pedido order = dataSnapshot.getValue(Pedido.class);
+                        order.setQtdDoado(0);
+                        order.setQtdAtual(0);
+                        order.save();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+                DatabaseReference dbCriador = FirebaseConfig.getFireBase().child("usuarios").child(pedido.getCriadorId());
+                dbCriador.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User creator = dataSnapshot.getValue(User.class);
+                        creator.getPedidosFeitos().remove(pedido.getIdPedido());
+                        creator.save();
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                Toast.makeText(getApplicationContext(), "Voce cancelou as doações restantes", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -203,12 +262,14 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
             alertDialog.setTitle("     Avalie sua Experiência");
             alertDialog.setMessage("Como se saiu a pessoa que te ajudou?");
             alertDialog.setCancelable(false);
-            final RatingBar ratingBar = new RatingBar(getApplicationContext());
+            final RatingBar ratingBar = new RatingBar(getBaseContext());
             ratingBar.setNumStars(1);
             ratingBar.setMax(5);
             ratingBar.setDrawingCacheBackgroundColor(Color.BLUE);
+            ratingBar.setRating(5);
+            /*
             Drawable progress = ratingBar.getProgressDrawable();
-
+*/
             alertDialog.setView(ratingBar);
             alertDialog.setPositiveButton("ENVIAR", new DialogInterface.OnClickListener() {
                 @Override
@@ -222,7 +283,6 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             User user = dataSnapshot.getValue(User.class);
                             user.setPontos(user.getPontos() + rating);
-                            user.setId(pedido.getAtendenteId());
                             user.save();
 
                             finish();
@@ -267,47 +327,6 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                final DatabaseReference firebase = FirebaseConfig.getFireBase().child("Pedidos");
-                firebase.child(pedido.getIdPedido());
-                System.out.println("pedido id " + pedido.getIdPedido());
-                firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Pedido pedidoDoado = dataSnapshot.getValue(Pedido.class);
-                        System.out.println("dbPedido " + pedidoDoado.getTitulo());
-                        pedidoDoado.setCriadorId(pedido.getCriadorId());
-                        pedidoDoado.setDescricao(pedido.getDescricao());
-                        pedidoDoado.setIdPedido(pedido.getIdPedido());
-                        pedidoDoado.setStatus(1);
-                        pedidoDoado.setNaCabine(1);
-                        pedidoDoado.setEndereco(pedido.getEndereco());
-                        pedidoDoado.setDonationContact(pedido.getDonationContact());
-                        pedidoDoado.setQtdAtual(pedido.getQtdAtual() - 1);
-                        pedidoDoado.setQtdDoado(pedido.getQtdDoado());
-                        pedidoDoado.setLatitude(pedido.getLatitude());
-                        pedidoDoado.setLongitude(pedido.getLongitude());
-                        pedidoDoado.setTagsCategoria(pedido.getTagsCategoria());
-                        pedidoDoado.setTipo(pedido.getTipo());
-                        pedidoDoado.setTitulo(pedido.getTitulo());
-                        pedidoDoado.setAtendenteId(userKey);
-
-                        sendEmail(Base64Decoder.decoderBase64(pedido.getCriadorId()), userName, pedido.getTitulo(), edit.getText().toString());
-
-                        pedidoDoado.save();
-
-                        Toast.makeText(DoacaoCriadaActivity.this, "Parabéns, voce já pode retirar o pedido no local indicado", Toast.LENGTH_LONG).show();
-                        finish();
-                        startActivity(new Intent(DoacaoCriadaActivity.this, PedidosActivity.class));
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        System.out.println("error create atendimento " + databaseError);
-                    }
-                });
-
-
                 final DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
 
                 dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -315,66 +334,65 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User usuario = dataSnapshot.child(userKey).getValue(User.class);
                         ArrayList<String> pedidosAtendidosUser = new ArrayList<String>();
-
                         //tratando lista de pedidos atendidos
-                        if (usuario.getPedidosAtendidos() != null && !usuario.getPedidosAtendidos().contains(pedido.getIdPedido())) {
-                            pedidosAtendidosUser.addAll(usuario.getPedidosAtendidos());
-                            pedidosAtendidosUser.add(pedidosAtendidosUser.size(), pedido.getIdPedido());
-                            usuario.setPedidosAtendidos(pedidosAtendidosUser);
-                        } else if (usuario.getPedidosAtendidos().contains(pedido.getIdPedido())) {
+                        if (usuario.getPedidosAtendidos() != null && usuario.getPedidosAtendidos().contains(pedido.getIdPedido())) {
                             Toast.makeText(getApplicationContext(), "Você já requisitou esta doação, apenas uma doação por pessoa", Toast.LENGTH_SHORT).show();
+                            finish();
                         } else {
-                            pedidosAtendidosUser.add(0, pedido.getIdPedido());
+                            if (usuario.getPedidosAtendidos() == null) {
+                                pedidosAtendidosUser.add(0, pedido.getIdPedido());
+                            } else {
+                                pedidosAtendidosUser.addAll(usuario.getPedidosAtendidos());
+                                pedidosAtendidosUser.add(pedido.getIdPedido());
+                                usuario.setCreditos(usuario.getCreditos() - 1);
+                                usuario.setPedidosAtendidos(usuario.getPedidosAtendidos());
+                                dbUser.child(usuario.getId()).child("pedidosAtendidos").setValue(pedidosAtendidosUser);
+                                dbUser.child(usuario.getId()).child("creditos").setValue(usuario.getCreditos());
 
-                            usuario.setPedidosAtendidos(pedidosAtendidosUser);
+                                final DatabaseReference firebase = FirebaseConfig.getFireBase().child("Pedidos");
+                                firebase.child(pedido.getIdPedido());
+                                System.out.println("pedido id " + pedido.getIdPedido());
+                                firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Pedido pedidoDoado = dataSnapshot.getValue(Pedido.class);
+                                        System.out.println("dbPedido " + pedidoDoado.getTitulo());
+                                        pedidoDoado.setCriadorId(pedido.getCriadorId());
+                                        pedidoDoado.setDescricao(pedido.getDescricao());
+                                        pedidoDoado.setIdPedido(pedido.getIdPedido());
+                                        pedidoDoado.setStatus(5);
+                                        pedidoDoado.setNaCabine(1);
+                                        pedidoDoado.setEndereco(pedido.getEndereco());
+                                        pedidoDoado.setDonationContact(pedido.getDonationContact());
+                                        pedidoDoado.setQtdDoado(pedido.getQtdDoado());
+                                        pedidoDoado.setLatitude(pedido.getLatitude());
+                                        pedidoDoado.setLongitude(pedido.getLongitude());
+                                        pedidoDoado.setTagsCategoria(pedido.getTagsCategoria());
+                                        pedidoDoado.setTipo(pedido.getTipo());
+                                        pedidoDoado.setTitulo(pedido.getTitulo());
+
+                                        pedidoDoado.setAtendenteId(userKey);
+                                        pedidoDoado.setQtdAtual(pedido.getQtdAtual() - 1);
+                                        sendEmail(Base64Decoder.decoderBase64(pedido.getCriadorId()), userName, pedido.getTitulo(), edit.getText().toString());
+                                        Toast.makeText(DoacaoCriadaActivity.this, "Parabéns, voce já pode retirar o pedido no local indicado", Toast.LENGTH_LONG).show();
+
+                                        pedidoDoado.save();
+
+                                        finish();
+                                        startActivity(new Intent(DoacaoCriadaActivity.this, PedidosActivity.class));
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        System.out.println("error create atendimento " + databaseError);
+                                    }
+                                });
+
+
+                            }
                         }
 
-                        usuario.setCreditos(usuario.getCreditos() - 1);
-
-                        usuario.save();
-
-                        //THIS WAS THE CODE FOR CHAT DONATION --> 'MAYBE LATER'
-                   /*   // salvando Conversa para o remetente
-                        Conversa conversa = new Conversa();
-                        conversa.setIdUsuario(criadorId);
-                        conversa.setNome(pedido.getTitulo());
-                        conversa.setMensagem("bem vindo");
-                        Boolean retornoConversaRemetente = salvarConversa(userKey, criadorId, conversa);
-                        System.out.println("SALVANDO CONVERSA PARA O REMETENTE(atendente pedido): " + userKey);
-                        if (!retornoConversaRemetente) {
-                            System.out.println("PROBLEMA AO CRIAR CAMPO DE CONVERSA PARA O ATENDENTE");
-                        } else {
-
-                            // salvando Conversa para o Destinatario
-                            System.out.println("SALVANDO CONVERSA PARA O DESTINATARIO(criador pedido): " + criadorId);
-                            conversa = new Conversa();
-                            conversa.setIdUsuario(userKey);
-                            conversa.setNome(pedido.getTitulo());
-                            conversa.setMensagem("bem vindo");
-
-                            dbUserDestinatario = FirebaseConfig.getFireBase().child("usuarios");
-
-                            dbUserDestinatario.child(criadorId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    User user = dataSnapshot.getValue(User.class);
-                                    user.setPedidosNotificationCount(user.getPedidosNotificationCount() + 1);
-                                    user.setId(criadorId);
-                                    user.save();
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-
-                            Boolean retornoConversaDestinatario = salvarConversa(criadorId, userKey, conversa);
-                            if (!retornoConversaDestinatario) {
-                                System.out.println("PROBLEMA AO CRIAR CAMPO DE CONVERSA PARA O CRIADOR DO PEDIDO");
-                            }
-
-                        }*/
                     }
 
                     @Override
@@ -382,47 +400,46 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
 
                     }
                 });
+
             }
+
+
         }).create().show();
 
+        class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
+            Mail m;
+            LoginActivity activity;
 
-    }
+            public SendEmailAsyncTask() {
+            }
 
-    class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
-        Mail m;
-        LoginActivity activity;
-
-        public SendEmailAsyncTask() {
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            try {
-                if (m.send()) {
-                    // activity.displayMessage("Email sent.");
-                } else {
-                    // activity.displayMessage("Email failed to send.");
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                try {
+                    if (m.send()) {
+                        // activity.displayMessage("Email sent.");
+                    } else {
+                        // activity.displayMessage("Email failed to send.");
+                    }
+                    return true;
+                } catch (AuthenticationFailedException e) {
+                    System.out.println(SendEmailAsyncTask.class.getName() + "Bad account details");
+                    e.printStackTrace();
+                    // activity.displayMessage("Authentication failed.");
+                    return false;
+                } catch (MessagingException e) {
+                    System.out.println(SendEmailAsyncTask.class.getName() + "Email failed");
+                    e.printStackTrace();
+                    //  activity.displayMessage("Email failed to send.");
+                    return false;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // activity.displayMessage("Unexpected error occured.");
+                    return false;
                 }
-
-                return true;
-            } catch (AuthenticationFailedException e) {
-                System.out.println(SendEmailAsyncTask.class.getName() + "Bad account details");
-                e.printStackTrace();
-                // activity.displayMessage("Authentication failed.");
-                return false;
-            } catch (MessagingException e) {
-                System.out.println(SendEmailAsyncTask.class.getName() + "Email failed");
-                e.printStackTrace();
-                //  activity.displayMessage("Email failed to send.");
-                return false;
-            } catch (Exception e) {
-                e.printStackTrace();
-                // activity.displayMessage("Unexpected error occured.");
-                return false;
             }
         }
     }
-
 
     private void sendEmail(String donaterMail, String donationRecepterUser, String nomeDoacao, String docValidator) {
         String[] recipients = {donaterMail};

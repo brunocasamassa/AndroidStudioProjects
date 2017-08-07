@@ -189,7 +189,6 @@ public class PerfilGruposActivity extends AppCompatActivity {
                                                 ArrayList<String> groupsId = user.getGrupos();
                                                 if (groupsId != null) {
                                                     groupsId.remove(groupId);
-
                                                 }
                                                 user.save();
                                             }
@@ -201,7 +200,7 @@ public class PerfilGruposActivity extends AppCompatActivity {
                                         });
 
                                         group.setIdMembros(idMembros);
-                                        group.setQtdMembros(group.getQtdMembros()-1);
+                                        group.setQtdMembros(group.getQtdMembros() - 1);
                                         group.save();
                                         Toast.makeText(getApplicationContext(), "Usuario removido com sucesso", Toast.LENGTH_SHORT).show();
                                         finish();

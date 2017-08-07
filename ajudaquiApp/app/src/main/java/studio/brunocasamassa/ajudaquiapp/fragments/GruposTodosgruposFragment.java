@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 
 import studio.brunocasamassa.ajudaquiapp.CabineFarturaActivity;
 import studio.brunocasamassa.ajudaquiapp.GrupoFechadoActivity;
+import studio.brunocasamassa.ajudaquiapp.GruposActivity;
 import studio.brunocasamassa.ajudaquiapp.R;
 import studio.brunocasamassa.ajudaquiapp.adapters.AllGroupsAdapter;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
@@ -44,6 +46,7 @@ public class GruposTodosgruposFragment extends Fragment {
     private User usuario = new User();
     private String userName = new String();
     private ArrayList<String> gruposSolicitadosUser = new ArrayList<>();
+    private SwipeRefreshLayout refresh;
 
     public GruposTodosgruposFragment() {
 
@@ -69,6 +72,7 @@ public class GruposTodosgruposFragment extends Fragment {
 
         grupos = new ArrayList<>();
 
+        refresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
         usuario.setGrupos(GruposMeusgruposFragment.usuario.getGrupos());
         usuario.setName(GruposMeusgruposFragment.usuario.getName());
         System.out.println("grupos do usuario: " + usuario.getGrupos());
@@ -87,6 +91,15 @@ public class GruposTodosgruposFragment extends Fragment {
                 startActivity(new Intent (getActivity(), CriaGrupoActivity.class));
             }
         });*/
+
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+
+            }
+        });
+
 
         firebase = FirebaseConfig.getFireBase()
                 .child("grupos");
@@ -108,10 +121,15 @@ public class GruposTodosgruposFragment extends Fragment {
                     System.out.println("grupo " + grupo.getNome());
                     //remove user groups
                     if (usuario.getGrupos() == null || !usuario.getGrupos().contains(grupo.getId())) {
-                        if (grupos.size() == 0) {
-                            grupos.add(grupo);
+
+                        try {
+                            if (grupo.getId() != null) {
+                                grupos.add(grupo);
+                            }
+                        } catch (Exception e) {
+                            System.out.println("exception " + e);
                         }
-                        grupos.add(grupo);
+
                     }
 
                 }
@@ -165,6 +183,14 @@ public class GruposTodosgruposFragment extends Fragment {
         return view;
 
 
+    }
+
+
+
+    private void refresh() {
+        Intent intent = new Intent(getActivity(), GruposActivity.class);
+        getActivity().finish();
+        startActivity(intent);
     }
 
 

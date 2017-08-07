@@ -97,7 +97,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
 
             // Monta view a partir do xml
-            view = inflater.inflate(R.layout.model_pedido3, parent, false);
+            view = inflater.inflate(R.layout.model_pedido, parent, false);
 
             // recupera elemento para exibição
             TextView distancia = (TextView) view.findViewById(R.id.distance);
@@ -123,16 +123,27 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
                 distancia.setText(String.valueOf(pedido.getDistanceInMeters().intValue() / 1000000) + "km");
             } else{
                 distancia.setTextColor(Color.TRANSPARENT);
-
             }
-            nomePedido.setText(pedido.getTitulo());
-            System.out.println("DADOS PEDIDO NO ADAPTER: " + pedido.getTitulo());
-            descricao.setText(String.valueOf(pedido.getDescricao()));
-            tagsCategoria.setTags(pedido.getTagsCategoria());
+            try {
+                nomePedido.setText(String.valueOf(pedido.getTitulo().substring(0, 17) )+ "...");
+                System.out.println("DADOS PEDIDO NO ADAPTER: " + pedido.getTitulo());
+            } catch (Exception e){
+                nomePedido.setText(pedido.getTitulo() + "...");
+            }
+
+                try {
+                descricao.setText(String.valueOf(pedido.getDescricao().substring(0,27)) + "...");
+            }catch (Exception e){
+                descricao.setText(String.valueOf(pedido.getDescricao())+ "...");
+            }
+
+                tagsCategoria.setTags(pedido.getTagsCategoria());
+
             // DOWNLOAD GROUP IMG FROM STORAGE
             if(!pedido.getTipo().equals("Doacoes")){
                 donationqtd.setTextColor(Color.TRANSPARENT);
             }
+
             if(pedido.getTipo().equals("Doacoes")){
                 donationqtd.setText(String.valueOf(pedido.getQtdAtual())+"/"+String.valueOf(pedido.getQtdDoado()));
                 donationqtd.setTextColor(Color.argb(255,20,118,122));

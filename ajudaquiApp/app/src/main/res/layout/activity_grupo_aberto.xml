@@ -93,7 +93,7 @@
             android:layout_alignParentTop="true"
             android:background="@android:color/background_light"></android.support.v4.view.ViewPager>
 
-        <com.github.clans.fab.FloatingActionMenu
+        <!--<com.github.clans.fab.FloatingActionMenu
             android:id="@+id/fab_menu"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -131,7 +131,7 @@
             fab:menu_shadowRadius="4dp"
             fab:menu_shadowXOffset="1dp"
             fab:menu_shadowYOffset="4dp"
-            fab:menu_showShadow="true">
+            fab:menu_showShadow="true">-->
 
         <!--    <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/doacao_fab"
@@ -145,24 +145,29 @@
                 fab:fab_size="mini"
                 fab:rippleColor="@color/accent" />-->
 
-            <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/pedido_fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_gravity="bottom|start"
-                android:layout_marginEnd="12dp"
-                android:layout_marginRight="12dp"
-                android:elevation="20dp"
-                android:src="@drawable/fab_add"
-                app:backgroundTint="@color/accent"
-                fab:fab_label="Criar Pedido"
-                fab:fab_size="mini" />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/pedido_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:elevation="20dp"
+            app:backgroundTint="@color/colorAccent"
+            android:background="@color/colorAccent"
+            android:src="@drawable/fab_add"
+            fab:fab_label="Criar Pedido"
+            fab:fab_size="normal"
+            android:translationY="-10dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp"
+            android:layout_alignParentRight="true"
+             />
 
-        </com.github.clans.fab.FloatingActionMenu>
 
 
-    </RelativeLayout>
+
+</RelativeLayout>
 
 
 </LinearLayout>

@@ -26,6 +26,7 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
+import studio.brunocasamassa.ajudaquiapp.ConfiguracoesActivity;
 import studio.brunocasamassa.ajudaquiapp.ConversasActivity;
 import studio.brunocasamassa.ajudaquiapp.GruposActivity;
 import studio.brunocasamassa.ajudaquiapp.PedidosActivity;
@@ -106,7 +107,7 @@ public class NavigationDrawer {
                     item3 = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.menu_grupos).withIcon(R.drawable.groups_icon);
                     PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.menu_perfil).withIcon(R.drawable.profile_icon);
                     PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_sobre).withIcon(R.drawable.sobre_icon);
-
+                    PrimaryDrawerItem item6 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_configuracoes).withIcon(R.drawable.config_icon);
                     // Create the Navigation Drawer AccountHeader
 
                     AccountHeader headerResult = new AccountHeaderBuilder()
@@ -141,7 +142,9 @@ public class NavigationDrawer {
                                     new DividerDrawerItem(),//Divisor
                                     item4,
                                     new DividerDrawerItem(),//Divisor
-                                    item5
+                                    item5,
+                                    new DividerDrawerItem(),//Divisor
+                                    item6
                                     //Divisor
                             )
                             .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -204,6 +207,10 @@ public class NavigationDrawer {
             Intent sobreIntent = new Intent(classe, SobreActivity.class);
             sobreIntent.putExtra("NOME", nomeUser);
             sobreIntent.putExtra("EMAIL", FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
+            classe.startActivity(sobreIntent);
+        }
+        if (position == 11) {
+            Intent sobreIntent = new Intent(classe, ConfiguracoesActivity.class);
             classe.startActivity(sobreIntent);
 
         }

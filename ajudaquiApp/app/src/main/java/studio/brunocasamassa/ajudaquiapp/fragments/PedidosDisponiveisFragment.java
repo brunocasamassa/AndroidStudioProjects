@@ -6,6 +6,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +49,7 @@ public class PedidosDisponiveisFragment extends Fragment {
     };
 
     private FloatingActionButton fab;
+    private SwipeRefreshLayout refresh;
     private int premium;
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private ArrayList<Pedido> pedidos;
@@ -100,6 +103,7 @@ public class PedidosDisponiveisFragment extends Fragment {
         pedidos = new ArrayList<>();
         pedidosPivot = new ArrayList<>();
         pedidosView = (ListView) view.findViewById(R.id.allpedidos_list);
+        refresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
 
 
         pedidosAdapter = new PedidosAdapter(getContext(),pedidos);
@@ -109,6 +113,13 @@ public class PedidosDisponiveisFragment extends Fragment {
 
         System.out.println("inflei");
         pedidosView.setDivider(null);
+
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
 
         pa.setArrayAdapter(pedidosArrayAdapter);
 
@@ -147,13 +158,17 @@ public class PedidosDisponiveisFragment extends Fragment {
                             userLocation.setLatitude(user.getLatitude());
                             userLocation.setLongitude(user.getLongitude());
                         }
+
                         else {
                             userLocation.setLatitude(0.0);
                             userLocation.setLongitude(0.0);
                         }
+
+
                         System.out.println("user locations " + user.getLatitude() + "  " + user.getLongitude());
 
                         System.out.println("latitudes dos pedidos " + userLocation.getLatitude());
+
                         for (DataSnapshot dados : dataSnapshot.getChildren()) {
                             System.out.println("get children pedidos " + dados);
 
@@ -166,39 +181,58 @@ public class PedidosDisponiveisFragment extends Fragment {
                                 double distance = userLocation.distanceTo(pedidoLocation);
 
                                 pedido.setDistanceInMeters(distance);
-                                System.out.println("DISTANCIA " + distance + "USUARIO DISTANCE "+ usuario.getMaxDistance()*1000000);
-                            }
-                            if (pedido.getStatus() == 0) {
-                                pedidos.add(pedido);
-                                System.out.println("pedidao " + pedido.getTitulo());
 
-                                if (usuario.getPedidosFeitos() != null) {
-                                    if (usuario.getPedidosFeitos().contains(pedido.getIdPedido())) {
-                                        System.out.println("pedidao " + pedido.getIdPedido());
-                                        pedidos.remove(pedido);
-                                    }}
+                                System.out.println("DISTANCIA " + distance + "USUARIO DISTANCE " + usuario.getMaxDistance() * 1000000);
 
-                                    if(pedido.getDistanceInMeters() > user.getMaxDistance()*1000000){
+                            } else pedido.setDistanceInMeters(0.0);
+                            try {
+                                if (pedido.getStatus() == 0) {
+                                    pedidos.add(pedido);
+                                    System.out.println("pedidao " + pedido.getTitulo());
+
+                                    if (usuario.getPedidosFeitos() != null) {
+                                        if (usuario.getPedidosFeitos().contains(pedido.getIdPedido())) {
+                                            System.out.println("pedidao " + pedido.getIdPedido());
+                                            pedidos.remove(pedido);
+
+                                        }
+                                    }
+
+                                    if (pedido.getDistanceInMeters() > user.getMaxDistance() * 1000000) {
                                         pedidos.remove(pedido);
                                         System.out.println("pedido removido " + pedido.getTitulo());
 
                                     }
 
+                                    if(pedido.getDistanceInMeters() == null){
+                                        pedidos.remove(pedido);
+
+                                    }
+
                                     if (pedido.getTipo().equals("Doacoes")) {
                                         pedidos.remove(pedido);
+
                                         System.out.println("pedido removido doacao" + pedido.getTitulo());
                                     }
 
-                            }
+                                }
 
+
+
+                            } catch (Exception e) {
+                                Log.e("listPedidos", e.toString());
+                            }
                             //remover pedidos do usuario na lista de pedidos geral
 
 
                         }
 
+
+
                         Collections.sort(pedidos, new Comparator<Pedido>() {
                             @Override
                             public int compare(Pedido o1, Pedido o2) {
+
                                 return o1.getDistanceInMeters().compareTo(o2.getDistanceInMeters());
                             }
                         });
@@ -263,5 +297,11 @@ public class PedidosDisponiveisFragment extends Fragment {
 
     }
 
+    private void refresh() {
+        Intent intent = new Intent(getActivity(), PedidosActivity.class);
+        getActivity().finish();
+        startActivity(intent);
+    }
 }
+
 

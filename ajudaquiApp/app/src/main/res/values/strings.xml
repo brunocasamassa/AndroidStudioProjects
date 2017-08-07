@@ -7,7 +7,7 @@
     <string name="menu_configuracoes">Configuracoes</string>
     <string name="menu_sobre">Sobre</string>
     <string name="action_settings">Cofigurações</string>
-    <string name="exit">Sair</string>
+    <string name="exit">Logout</string>
     <string name="title_activity_navigation">Navigation</string>
     <string name="facebook_app_id">291063514653262</string>
 
@@ -18,4 +18,5 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search_hint">insira uma uma palavra</string>
+    <string name="menu_refresh">Atualizar</string>
 </resources>

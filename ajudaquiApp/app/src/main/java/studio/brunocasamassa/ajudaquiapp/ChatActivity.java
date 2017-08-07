@@ -277,7 +277,7 @@ public class ChatActivity extends AppCompatActivity {
                 notifs.setUid(userId);
                 notifs.setMessage(mensagem.getMensagem());
                 notifs.setCommand("chat");
-                notifs.setTitle("AJUDAQU]I - " + nomePedido);
+                notifs.setTitle("AJUDAQUI - " + nomePedido);
 
                 FirebaseConfig.getNotificationRef().child(userId).setValue(notifs);
 

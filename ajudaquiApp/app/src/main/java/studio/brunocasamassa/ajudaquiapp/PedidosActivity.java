@@ -1,8 +1,13 @@
 package studio.brunocasamassa.ajudaquiapp;
 
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -28,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import im.delight.android.location.SimpleLocation;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
@@ -61,7 +67,7 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
     private String[] permissoesNecessarias = new String[]{
             android.Manifest.permission.ACCESS_FINE_LOCATION,
     };
-
+    private String versionFromDb;
     private Double latitude = 0.0;
     private Double longitude = 0.0;
     private static NavigationDrawer navigator = new NavigationDrawer();
@@ -107,6 +113,7 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hello);
+
 
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
@@ -210,6 +217,7 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
 
         navigator.createDrawer(PedidosActivity.this, toolbar, 0);
 
+       // checkVersion();
     }
 
 
@@ -316,5 +324,79 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
 
     public void setArrayMeusPedidosAdapter(ArrayAdapter<Pedido> arrayMeusPedidosAdapter) {
         this.arrayMeusPedidosAdapter = arrayMeusPedidosAdapter;
+    }
+
+    private boolean checkVersion() {
+        //=----------------------------
+
+        /*DatabaseReference version = FirebaseConfig.getFireBase().child("version");
+        version.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Double versionDouble = dataSnapshot.getValue(Double.class);
+                String versionFromDb = versionDouble.toString();*/
+        VersionChecker versionChecker = new VersionChecker();
+
+
+        try {
+            versionFromDb = versionChecker.execute().get().toString();
+            System.out.println("version from web: "+versionFromDb);
+        } catch (InterruptedException e) {
+            System.out.println("version from web: ERROR "+e);
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            System.out.println("version from web: ERROR "+e);
+            e.printStackTrace();
+        }
+
+        PackageInfo pInfo = null;
+                try {
+                    pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                String version = String.valueOf(pInfo.versionCode);
+                System.out.println("version db " + versionFromDb + "  version app " + version);
+
+                if (!version.equals(versionFromDb)) {
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidosActivity.this);
+
+                    alertDialog.setTitle("Atualização Disponivel");
+                    alertDialog.setMessage("Esta versao esta desatualizada, deseja ir para a pagina de atualização?");
+                    alertDialog.setCancelable(false);
+                    alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                            try {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                            } catch (android.content.ActivityNotFoundException anfe) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                            }
+                        }
+                    });
+
+                    alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Preferences preferences = new Preferences(PedidosActivity.this);
+                            preferences.clearSession();
+                            FirebaseAuth.getInstance().signOut();
+                            LoginManager.getInstance().logOut();
+                            startActivity(new Intent(PedidosActivity.this, MainActivity.class));
+                        }
+                    }).create().show();
+                }
+
+/*            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+//------------
+        return true;
     }
 }

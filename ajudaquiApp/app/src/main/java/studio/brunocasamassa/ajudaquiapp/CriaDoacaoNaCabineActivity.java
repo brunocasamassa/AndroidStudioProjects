@@ -139,7 +139,6 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
         img = (CircleImageView) findViewById(R.id.import_donation_img);
 
 
-
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -189,90 +188,95 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
 
                 naCabine = 1;
                 createPedido();
+                if (createPedido()) {
+                    StorageReference imgRef = storage.child(pedido.getIdPedido() + ".jpg");
+                    //download img source
+                    img.setDrawingCacheEnabled(true);
+                    img.buildDrawingCache();
+                    Bitmap bitmap = img.getDrawingCache();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    byte[] data = baos.toByteArray();
+                    UploadTask uploadTask = imgRef.putBytes(data);
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                            Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
+                            System.out.println("huehuebrjava " + downloadUrl);
+                        }
+                    });
+                    DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
+                    dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User usuario = dataSnapshot.getValue(User.class);
+                            usuario.setCreditos(usuario.getCreditos() + 5);
+                            ArrayList<String> totalPedidos = new ArrayList<String>();
+                            if (usuario.getPedidosFeitos() != null) {
+                                totalPedidos.addAll(usuario.getPedidosFeitos());
+                                totalPedidos.add(totalPedidos.size(), pedido.getIdPedido());
+                                usuario.setPedidosFeitos(totalPedidos);
+                            } else {
+                                totalPedidos.add(0, pedido.getIdPedido());
+                                usuario.setPedidosFeitos(totalPedidos);
+                            }
 
-                StorageReference imgRef = storage.child(pedido.getIdPedido() + ".jpg");
-                //download img source
-                img.setDrawingCacheEnabled(true);
-                img.buildDrawingCache();
-                Bitmap bitmap = img.getDrawingCache();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] data = baos.toByteArray();
-                UploadTask uploadTask = imgRef.putBytes(data);
-                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                        Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
-                        System.out.println("huehuebrjava " + downloadUrl);
-                    }
-                });
-                DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
-                dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        User usuario = dataSnapshot.getValue(User.class);
-                        usuario.setCreditos(usuario.getCreditos() + 5);
-                        ArrayList<String> totalPedidos = new ArrayList<String>();
-                        if (usuario.getPedidosFeitos() != null) {
-                            totalPedidos.addAll(usuario.getPedidosFeitos());
-                            totalPedidos.add(totalPedidos.size(), pedido.getIdPedido());
-                            usuario.setPedidosFeitos(totalPedidos);
-                        } else {
-                            totalPedidos.add(0, pedido.getIdPedido());
-                            usuario.setPedidosFeitos(totalPedidos);
+
+                            usuario.save();
+
                         }
 
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                        usuario.save();
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                        }
+                    });
 
 
+                }
+                Toast.makeText(getApplicationContext(), "Doação gerada com sucesso", Toast.LENGTH_LONG).show();
+                refresh();
             }
-
         });
 
     }
 
-    private void createPedido() {
-        pedido = new Pedido();
+    private boolean createPedido() {
+        try {
+            pedido = new Pedido();
 
-        System.out.println("tipo de pedido: " + tipoPedido);
-        pedido.setTagsCategoria(tagsCaptured);
-        pedido.setTipo("Doacoes");
+            System.out.println("tipo de pedido: " + tipoPedido);
+            pedido.setTagsCategoria(tagsCaptured);
+            pedido.setTipo("Doacoes");
 
-        pedido.setNaCabine(naCabine);
-        pedido.setLongitude(longitude);
-        pedido.setLatitude(latitude);
-        pedido.setQtdDoado(qtd);
-        pedido.setQtdAtual(qtd);
+            pedido.setNaCabine(naCabine);
+            pedido.setLongitude(longitude);
+            pedido.setLatitude(latitude);
+            pedido.setQtdDoado(qtd);
+            pedido.setQtdAtual(qtd);
 
-        pedido.setStatus(5);
-        pedido.setDonationContact(donationContact.getText().toString());
-        pedido.setEndereco(endereco.getText().toString());
-        pedido.setDescricao(descricao.getText().toString());
-        pedido.setTitulo(pedidoName.getText().toString());
-        pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo()));
-        pedido.setCriadorId(userKey);
+            pedido.setStatus(5);
+            pedido.setDonationContact(donationContact.getText().toString());
+            pedido.setEndereco(endereco.getText().toString());
+            pedido.setDescricao(descricao.getText().toString());
+            pedido.setTitulo(pedidoName.getText().toString());
+            pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo()));
+            pedido.setCriadorId(userKey);
   /*      pedido.setGroupId(idGroupSelected);
         pedido.setGrupo(groupCaptured);*/
 
 
-        System.out.println("user id key " + userKey);
+            System.out.println("user id key " + userKey);
 
-        pedidoSaveIntoUser(true);
-        pedido.save();
+            pedidoSaveIntoUser(true);
 
-        Toast.makeText(getApplicationContext(), "Doação gerada com sucesso", Toast.LENGTH_LONG).show();
-        refresh();
-
+            pedido.save();
+            return true;
+        } catch (Exception e) {
+            System.out.println("exception CRIADOACAONACABINE " + e);
+        }
+        return false;
     }
 
     private void savePedidoIntoGroup(Pedido pedido) {
@@ -314,10 +318,10 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
                     User user = dataSnapshot.getValue(User.class);
                     user.setId(Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
                     ArrayList<String> doacoes = new ArrayList<String>();
-                    if(user.getItensDoados() != null){
+                    if (user.getItensDoados() != null) {
                         doacoes.addAll(user.getItensDoados());
                         doacoes.add(doacoes.size(), pedido.getIdPedido());
-                    }else doacoes.add(0, pedido.getIdPedido());
+                    } else doacoes.add(0, pedido.getIdPedido());
 
                     user.setItensDoados(doacoes);
                     user.save();

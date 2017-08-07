@@ -61,6 +61,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
+
+
         final String ajudaquimail = Base64Decoder.encoderBase64("ajudaquisuporte@gmail.com");
         final String ajudaquipass = Base64Decoder.encoderBase64("ajudaqui931931931");
 
@@ -224,8 +226,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void abrirTelaPrincipal() {
-
         Intent intent = new Intent(LoginActivity.this, PedidosActivity.class);
+        Preferences preferences = new Preferences(LoginActivity.this);
+        preferences.saveLogin(email.getText().toString(), senha.getText().toString());
 
         startActivity(intent);
         finish();
@@ -237,7 +240,7 @@ public class LoginActivity extends AppCompatActivity {
 }
 
 class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
-     Mail m;
+    Mail m;
     LoginActivity activity;
 
     public SendEmailAsyncTask() {

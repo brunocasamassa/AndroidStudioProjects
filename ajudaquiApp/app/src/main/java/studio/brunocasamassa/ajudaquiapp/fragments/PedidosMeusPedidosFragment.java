@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
     private DatabaseReference dbUser;
     private PedidosActivity pa;
     private PedidosMeusPedidosAdapter pedidosAdapter;
+    private SwipeRefreshLayout refresh;
 
 
     public PedidosMeusPedidosFragment() {
@@ -105,20 +107,29 @@ public class PedidosMeusPedidosFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pedidos_meuspedidos, container, false);
         pa = (PedidosActivity) getActivity();
         pedidos = new ArrayList<>();
+        refresh =  (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
         meusPedidos = (ListView) view.findViewById(R.id.meusPedidos_list);
         System.out.println("GRUPO NA POSICAO " + pedidos.isEmpty());
 
         pedidosAdapter = new PedidosMeusPedidosAdapter(getContext(), pedidos);
+
         if (pa.getArrayMeusPedidosAdapter() != null) {
             pedidoArrayAdapter = pa.getArrayMeusPedidosAdapter();
         } else pedidoArrayAdapter = pedidosAdapter;
-
 
         meusPedidos.setDivider(null);
 
         pa.setArrayMeusPedidosAdapter(pedidoArrayAdapter);
 
         meusPedidos.setAdapter(pedidoArrayAdapter);
+
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getActivity().finish();
+            }
+        });
+
 
         /*fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
@@ -208,7 +219,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
-                            apagaPedido(pedidoPressed.getIdPedido());
+                            apagaPedido(pedidoPressed);
 
                         }
                     });
@@ -274,9 +285,18 @@ public class PedidosMeusPedidosFragment extends Fragment {
 
     }
 
-    private void apagaPedido(String idPedido) {
+    private void refresh() {
+        Intent intent = new Intent(getActivity(), PedidosActivity.class);
+        getActivity().finish();
+        startActivity(intent);
+    }
+
+    private void apagaPedido(Pedido pedido) {
+        DatabaseReference dbConversa = FirebaseConfig.getFireBase().child("conversas");
         DatabaseReference dbPedidos = FirebaseConfig.getFireBase().child("Pedidos");
-        dbPedidos.child(idPedido).removeValue();
+        dbPedidos.child(pedido.getIdPedido()).removeValue();
+        dbConversa.child(userKey).child(pedido.getIdPedido()).removeValue();
+        dbConversa.child(pedido.getAtendenteId()).child(pedido.getIdPedido()).removeValue();
         Toast.makeText(getApplicationContext(),"Pedido Apagado", Toast.LENGTH_SHORT).show();
         getActivity().finish();
     }

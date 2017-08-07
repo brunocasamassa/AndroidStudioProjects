@@ -125,10 +125,21 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
                     Glide.with(getContext()).load(R.drawable.tag_doacao).override(274, 274).into(statusPedido);
                 }
             }
+
             storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
-            nomePedido.setText(pedido.getTitulo());
+            try {
+                nomePedido.setText(String.valueOf(pedido.getTitulo().substring(0, 17) )+ "...");
+                System.out.println("DADOS PEDIDO NO ADAPTER: " + pedido.getTitulo());
+            } catch (Exception e){
+                nomePedido.setText(pedido.getTitulo() + "...");
+            }
             System.out.println("DADOS PEDIDO NO ADAPTER: " + pedido.getTitulo());
-            descricao.setText(String.valueOf(pedido.getDescricao()));
+            try {
+                descricao.setText(String.valueOf(pedido.getDescricao().substring(0,27)) + "...");
+            }catch (Exception e){
+                descricao.setText(String.valueOf(pedido.getDescricao())+ "...");
+            }
+
             tagsCategoria.setTags(pedido.getTagsCategoria());
             // DOWNLOAD GROUP IMG FROM STORAGE
 

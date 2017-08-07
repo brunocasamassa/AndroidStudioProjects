@@ -95,8 +95,14 @@ public class ConversaAdapter extends ArrayAdapter<Conversa> {
             storage.child(idUser + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
                 public void onSuccess(Uri uri) {
-                    Glide.with(getContext()).load(uri).override(68, 68).into(img);
-                    System.out.println("user image chat " + uri);
+                    try {
+                        Glide.with(getContext()).load(uri).override(68, 68).into(img);
+                        System.out.println("user image chat " + uri);
+
+                    } catch (Exception e){
+                        img.setImageURI(uri);
+                        System.out.println("exception error" + e);
+                    }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override

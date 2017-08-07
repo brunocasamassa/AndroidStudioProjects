@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import studio.brunocasamassa.ajudaquiapp.GrupoAbertoActivity;
+import studio.brunocasamassa.ajudaquiapp.GruposActivity;
 import studio.brunocasamassa.ajudaquiapp.R;
 import studio.brunocasamassa.ajudaquiapp.adapters.MyGroupsAdapter;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
@@ -43,6 +45,7 @@ public class GruposMeusgruposFragment extends Fragment {
 
     public static User usuario = new User();
     private int premium;
+    private SwipeRefreshLayout refresh;
 
     public GruposMeusgruposFragment() {
         // Required empty public constructor
@@ -73,6 +76,7 @@ public class GruposMeusgruposFragment extends Fragment {
 
 
         listView = (GridView) view.findViewById(R.id.mygroups_list);
+        refresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
 
         adapter = new MyGroupsAdapter(getActivity(), grupos);
         listView.setAdapter(adapter);
@@ -84,7 +88,17 @@ public class GruposMeusgruposFragment extends Fragment {
                 startActivity(new Intent(getActivity(), CriaGrupoActivity.class));
             }
         });
+
+
 */
+
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
+
 
         final String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail()).toString();
 
@@ -159,6 +173,7 @@ public class GruposMeusgruposFragment extends Fragment {
                 intent.putExtra("groupId", grupo.getId());
                 intent.putExtra("qtdmembros", String.valueOf(grupo.getQtdMembros()));
                 intent.putExtra("descricao", grupo.getDescricao());
+                intent.putExtra("isOpened", grupo.isOpened());
                 startActivity(intent);
 
             }
@@ -168,5 +183,11 @@ public class GruposMeusgruposFragment extends Fragment {
         return view;
 
 
+    }
+
+    private void refresh() {
+        Intent intent = new Intent(getActivity(), GruposActivity.class);
+        getActivity().finish();
+        startActivity(intent);
     }
 }

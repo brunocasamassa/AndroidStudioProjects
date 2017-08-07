@@ -67,16 +67,16 @@ public class CriaPedidoActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Bundle extras = getIntent().getExtras();
-        idGroupSelected = (extras.getString("idGroupSelected"));
+        idGroupSelected = (extras.getString("groupId"));
         pedidoGroup = (extras.getString("groupName"));
         if (pedidoGroup != null) {
             System.out.println("pedido grupo no resume" + pedidoGroup);
+            System.out.println("pedido grupo no resume" + idGroupSelected);
         }
     }
 
     @Override
     protected void onStart() {
-
         super.onStart();
         System.out.println("vamos ver " + tagCaptured);
         if (tagsCaptured.size() > 3) {
@@ -93,6 +93,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
         }
 
         System.out.println("vamos ver " + groupCaptured);
+        System.out.println("vamos ver " + idGroupSelected);
 
     }
 
@@ -141,6 +142,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
         addGroupButton = (ImageButton) findViewById((R.id.addGroup_tag_button));
 
         grupos.setBackgroundColor(Color.TRANSPARENT);
+        grupos.setBorderColor(Color.TRANSPARENT);
         grupos.setOnTagClickListener(new TagView.OnTagClickListener() {
             @Override
             public void onTagClick(int position, String text) {
@@ -161,7 +163,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
 
             }
         });
-
+        categorias.setBorderColor(Color.TRANSPARENT);
         categorias.setBackgroundColor(Color.TRANSPARENT);
         categorias.setOnTagClickListener(new TagView.OnTagClickListener() {
 
@@ -307,8 +309,8 @@ public class CriaPedidoActivity extends AppCompatActivity {
             pedido.setGrupo(pedidoGroup);
         } else if (groupCaptured != null) {
             pedido.setGrupo(groupCaptured);
-
         }
+
         if (idGroupSelected != null) {
             pedido.setGroupId(idGroupSelected);
             savePedidoIntoGroup(pedido);

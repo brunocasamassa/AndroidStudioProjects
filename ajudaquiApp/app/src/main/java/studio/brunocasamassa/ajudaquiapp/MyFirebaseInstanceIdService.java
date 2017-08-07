@@ -55,13 +55,17 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
      */
 
     public void sendRegistrationToServer(String token) {
-        if(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail()!=null) {
-        String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
-            DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
-            dbUser.child(userKey).child("notificationToken").setValue(token);
+        try {
+            if (FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail() != null) {
+                String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
+                DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
+                dbUser.child(userKey).child("notificationToken").setValue(token);
 
-            FirebaseConfig.getNotificationRef().setValue(token);
+                FirebaseConfig.getNotificationRef().setValue(token);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Exception " + e);
         }
-
     }
 }

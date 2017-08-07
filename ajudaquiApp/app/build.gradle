@@ -7,8 +7,8 @@ android {
                 applicationId 'studio.brunocasamassa.ajudaquiapp'
                 minSdkVersion 16
                 targetSdkVersion 23
-                versionCode 15
-                versionName "1.15"
+                versionCode 21
+                versionName "1.21"
                 testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
             }
 
@@ -70,6 +70,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.android.support:recyclerview-v7:21.0.3'
     compile 'co.lujun:androidtagview:1.1.4'
+    compile 'org.jsoup:jsoup:1.10.3'
     compile 'me.gujun.android.taggroup:library:1.4@aar'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.paypal.sdk:paypal-android-sdk:2.15.3'
@@ -79,4 +80,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
 }
+
 apply plugin: 'com.google.gms.google-services'

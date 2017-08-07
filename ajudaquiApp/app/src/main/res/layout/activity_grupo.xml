@@ -8,7 +8,6 @@
     android:layout_height="match_parent"
     android:background="@android:color/background_light">
 
-
     <ImageView
         android:id="@+id/imageView6"
         style="@style/Animation.Design.BottomSheetDialog"

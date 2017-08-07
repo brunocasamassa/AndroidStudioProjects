@@ -3,8 +3,6 @@ package studio.brunocasamassa.ajudaquiapp.helper;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -57,6 +55,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
         super.onStart();
 
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -213,6 +212,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                 return false;
             }
         });*/
+
         if (pedido.getStatus() != 0) {
             int status = pedido.getStatus();
             System.out.println("status pedido " + pedido.getTitulo() + ": " + status);
@@ -227,8 +227,13 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             }
         }
 
-
-        toolbar.setTitle(pedido.getTitulo().toUpperCase());
+        String title;
+        try {
+            title = pedido.getTitulo().substring(1, 18) + "...";
+        } catch (Exception e){
+            title = pedido.getTitulo().toString();
+        }
+            toolbar.setTitle(title.toUpperCase());
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
 
@@ -351,8 +356,9 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             final RatingBar ratingBar = new RatingBar(getApplicationContext());
             ratingBar.setNumStars(1);
             ratingBar.setMax(5);
-            ratingBar.setDrawingCacheBackgroundColor(Color.BLUE);
-            Drawable progress = ratingBar.getProgressDrawable();
+            ratingBar.setRating(5);
+            //ratingBar.setDrawingCacheBackgroundColor(Color.BLUE);
+            /*Drawable progress = ratingBar.getProgressDrawable();*/
 
             alertDialog.setView(ratingBar);
             alertDialog.setPositiveButton("ENVIAR", new DialogInterface.OnClickListener() {
@@ -370,11 +376,11 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                             user.setId(pedido.getAtendenteId());
                             user.save();
                             //REMOVING CHAT FIELD
-                            dbConversa.child(userKey).child(pedido.getIdPedido()).removeValue();
-                            dbConversa.child(pedido.getAtendenteId()).child(pedido.getIdPedido()).removeValue();
+
                             pedido.setStatus(2);
                             pedido.save();
                             finish();
+                            startActivity(new Intent(PedidoCriadoActivity.this, PedidosActivity.class));
                             Toast.makeText(getApplicationContext(), "Pedido finalizado com sucesso", Toast.LENGTH_SHORT).show();
 
                         }

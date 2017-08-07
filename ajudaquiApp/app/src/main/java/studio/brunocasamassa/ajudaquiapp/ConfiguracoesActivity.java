@@ -3,6 +3,7 @@ package studio.brunocasamassa.ajudaquiapp;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,8 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +41,7 @@ import java.io.IOException;
 import de.hdodenhof.circleimageview.CircleImageView;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
+import studio.brunocasamassa.ajudaquiapp.helper.Preferences;
 import studio.brunocasamassa.ajudaquiapp.helper.User;
 
 /**
@@ -52,61 +60,98 @@ public class ConfiguracoesActivity extends AppCompatActivity {
     private SeekBar maxDistance;
     private StorageReference storage = FirebaseConfig.getFirebaseStorage();
     private DatabaseReference dbUser = FirebaseConfig.getFireBase();
+    private DatabaseReference dbUser2 = FirebaseConfig.getFireBase();
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
     private boolean photoWasChanged = false;
-
-
-
-    /*
-    * FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-// Get auth credentials from the user for re-authentication. The example below shows
-// email and password credentials but there are multiple possible providers,
-// such as GoogleAuthProvider or FacebookAuthProvider.
-AuthCredential credential = EmailAuthProvider
-        .getCredential("user@example.com", "password1234");
-
-// Prompt the user to re-provide their sign-in credentials
-user.reauthenticate(credential)
-        .addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    user.updatePassword(newPass).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d(TAG, "Password updated");
-                            } else {
-                                Log.d(TAG, "Error password not updated")
-                            }
-                        }
-                    });
-                } else {
-                    Log.d(TAG, "Error auth failed")
-                }
-            }
-        });
-    * */
+    private Button passButton;
+    private String email;
+    private String senha;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuracoes);
-
         maxDistance = (SeekBar) findViewById(R.id.max_distance_seekbar);
         seekValue = (TextView) findViewById(R.id.seekbar_distance);
         circleImageView = (CircleImageView) findViewById(R.id.photo_config);
         cam_config = (ImageView) findViewById(R.id.cam_config);
         name = (EditText) findViewById(R.id.name_config);
         salvar = (Button) findViewById(R.id.save_config);
+        passButton = (Button) findViewById(R.id.pass_button);
+
+        Preferences preferences = new Preferences(ConfiguracoesActivity.this);
+
+        if (preferences.getSenha() != null) {
+            email = preferences.getMail();
+            senha = preferences.getSenha();
+
+            System.out.println("senha "+senha);
+            passButton.setText("ALTERAR MINHA SENHA");
+            passButton.setBackgroundColor(Color.argb(255, 20, 118, 122));
+            passButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(ConfiguracoesActivity.this);
+                    alertDialog.setTitle("Alterar sua senha");
+                    alertDialog.setMessage("digite sua nova senha");
+                    final EditText edit = new EditText(ConfiguracoesActivity.this);
+                    alertDialog.setView(edit);
+                    alertDialog.setPositiveButton("ALTERAR", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+// Get auth credentials from the user for re-authentication. The example below shows
+// email and password credentials but there are multiple possible providers,
+// such as GoogleAuthProvider or FacebookAuthProvider.
+                            AuthCredential credential = EmailAuthProvider
+                                    .getCredential(email, senha);
+
+// Prompt the user to re-provide their sign-in credentials
+                            user.reauthenticate(credential)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                user.updatePassword(edit.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Log.d("CHANGEPASS", "Password updated");
+                                                            Toast.makeText(getApplicationContext(),"Senha alterada", Toast.LENGTH_SHORT).show();
+                                                            dbUser.child("usuarios").child(userKey).child("senha").setValue(edit.getText().toString());
+                                                            finish();
+                                                        } else {
+                                                            Log.d("CHANGEPASS", "Error password not updated");
+                                                        }
+                                                    }
+                                                });
+                                            } else {
+                                                Log.d("CHANGEPASS", "Error auth failed");
+                                            }
+                                        }
+                                    });
+
+
+                        }
+                    });
+
+                    alertDialog.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }).create().show();
+                }
+            });
+        }
 
 
         maxDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 distance = progress;
-                seekValue.setText(String.valueOf(progress) + " km");
+                seekValue.setText(String.valueOf(progress) + "km");
             }
 
             @Override
@@ -148,6 +193,7 @@ user.reauthenticate(credential)
 
             }
         });
+
 
         cam_config.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,7 +238,7 @@ user.reauthenticate(credential)
                                     user.setMaxDistance(distance);
                                 }
                                 if (user.getProfileImg() != null) {
-                                    user.setProfileImg(null);
+                                   // user.setProfileImg(null);
                                 }
                                 user.setId(userKey);
                                 if (!name.getText().equals(user.getName())) {
@@ -228,16 +274,16 @@ user.reauthenticate(credential)
 
     ;
 
-
     private void uploadImages() {
         StorageReference imgRef = storage.child("userImages").child(userKey + ".jpg");
         System.out.println("lei lei " + userKey);
         //download img source
         circleImageView.setDrawingCacheEnabled(true);
         circleImageView.buildDrawingCache();
+
         Bitmap bitmap = circleImageView.getDrawingCache();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] data = baos.toByteArray();
         UploadTask uploadTask = imgRef.putBytes(data);
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -259,12 +305,23 @@ user.reauthenticate(credential)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
             Uri uri = data.getData();
-
+            photoWasChanged = true;
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 Log.d("image", String.valueOf(bitmap));
+                //Bitmap resized = Bitmap.createScaledBitmap(bitmap, circleImageView.getWidth(), circleImageView.getHeight(), true);
 
-                circleImageView.setImageBitmap(bitmap);
+                try {
+                    Bitmap resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                    circleImageView.setBackgroundColor(Color.TRANSPARENT);
+                    circleImageView.setImageBitmap(resized);
+                } catch ( OutOfMemoryError e ){
+                    System.out.println("memory error "+ e);
+                    //resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                }
+
+
+
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.e("error in get image ", e.toString());
@@ -277,6 +334,6 @@ user.reauthenticate(credential)
         finish();
         startActivity(intent);
     }
+
+
 }
-
-

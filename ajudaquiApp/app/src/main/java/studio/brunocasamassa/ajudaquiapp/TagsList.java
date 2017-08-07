@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,6 +32,7 @@ public class TagsList extends AppCompatActivity {
     private DatabaseReference tagsRefs;
     public String selectedTag;
     private ProgressDialog dialog = null;
+    private TextView title;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -61,6 +63,8 @@ public class TagsList extends AppCompatActivity {
         tags = new ArrayList<>();
         tagView = (ListView) findViewById(R.id.tagsList);
 
+        title = (TextView) findViewById(R.id.list_title);
+        title.setText("Selecione uma Categoria");
         tagsRefs = FirebaseConfig.getFireBase();
         tagsRefs.child("tags").child("categorias");
         //dialog.show(TagsList.this, "Por favor aguarde", "Recebendo Tags...", true);

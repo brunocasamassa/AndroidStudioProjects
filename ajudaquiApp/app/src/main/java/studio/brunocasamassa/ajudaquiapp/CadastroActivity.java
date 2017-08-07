@@ -186,6 +186,7 @@ public class CadastroActivity extends AppCompatActivity {
 
                                     Preferences preferences = new Preferences(CadastroActivity.this);
                                     preferences.saveData(idUser, usuario.getName());
+                                    preferences.saveLogin(usuario.getEmail(), usuario.getSenha());
 
                                     uploadImages();
 

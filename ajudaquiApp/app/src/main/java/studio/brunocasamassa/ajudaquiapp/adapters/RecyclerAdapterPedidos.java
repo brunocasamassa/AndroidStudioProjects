@@ -33,7 +33,7 @@ public class RecyclerAdapterPedidos extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = null;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-        view = inflater.inflate(R.layout.model_pedido3, parent, false);
+        view = inflater.inflate(R.layout.model_pedido, parent, false);
         PedidosViewHolder holder = new PedidosViewHolder(view);
 
 

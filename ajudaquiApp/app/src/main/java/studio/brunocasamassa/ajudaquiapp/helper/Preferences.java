@@ -25,6 +25,8 @@ public class Preferences {
     private String CHAVE_NOME = "nameUser";
     private String FACEBOOK_PHOTO = "facebook_photo";
     private String TOKEN = "token";
+    private String CHAVE_SENHA = "senha";
+    private String CHAVE_EMAIL = "email";
 
 
     public Preferences(Context contextoParametro) {
@@ -48,7 +50,12 @@ public class Preferences {
         editor.putString(CHAVE_ID, idUser);
         editor.putString(CHAVE_NOME, nameUser);
         editor.commit();
+    }
 
+    public void saveLogin(String email, String senha) {
+        editor.putString(CHAVE_EMAIL, email);
+        editor.putString(CHAVE_SENHA, senha);
+        editor.commit();
     }
 
     public void saveDataImgFacebook(String idUser, String nameUser, String facebookPhoto) {
@@ -80,6 +87,14 @@ public class Preferences {
 
     public String getNome() {
         return preferences.getString(CHAVE_NOME, null);
+    }
+
+    public String getMail() {
+        return preferences.getString(CHAVE_EMAIL, null);
+    }
+
+    public String getSenha() {
+        return preferences.getString(CHAVE_SENHA, null);
     }
 
     public void clearSession() {

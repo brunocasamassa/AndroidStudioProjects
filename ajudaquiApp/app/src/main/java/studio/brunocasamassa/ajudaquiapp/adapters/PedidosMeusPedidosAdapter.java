@@ -131,9 +131,18 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
             storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
             storageDonation = FirebaseConfig.getFirebaseStorage().child("donationImages");
 
-            nomePedido.setText(pedido.getTitulo());
-            System.out.println("DADOS PEDIDO NO ADAPTER: " + pedido.getTitulo());
-            descricao.setText(String.valueOf(pedido.getDescricao()));
+            try {
+                nomePedido.setText(String.valueOf(pedido.getTitulo().substring(0, 17) )+ "...");
+                System.out.println("DADOS PEDIDO NO ADAPTER: " + pedido.getTitulo());
+            } catch (Exception e){
+                nomePedido.setText(pedido.getTitulo() + "...");
+            }            System.out.println("DADOS PEDIDO NO ADAPTER: " + pedido.getTitulo());
+            try {
+                descricao.setText(String.valueOf(pedido.getDescricao().substring(0,27)) + "...");
+            }catch (Exception e){
+                descricao.setText(String.valueOf(pedido.getDescricao())+ "...");
+            }
+
             tagsCategoria.setTags(pedido.getTagsCategoria());
             // DOWNLOAD GROUP IMG FROM STORAGE
             if(!pedido.getTipo().equals("Doacoes")){

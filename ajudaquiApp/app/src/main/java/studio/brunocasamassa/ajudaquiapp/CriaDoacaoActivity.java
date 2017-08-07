@@ -73,7 +73,6 @@ public class CriaDoacaoActivity extends AppCompatActivity {
         latitude = (extras.getDouble("latitude"));
         longitude = (extras.getDouble("longitude"));
 
-
         groupKey = extras.getString("groupKey");
 
         System.out.println("group key " + groupKey);

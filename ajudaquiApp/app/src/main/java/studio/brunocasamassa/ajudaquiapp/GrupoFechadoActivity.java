@@ -98,7 +98,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
         descricao = (TextView) findViewById(R.id.grupoDescricao);
         groupImg = (CircleImageView) findViewById(R.id.groupImg);
         botaoSolicitar = (Button) findViewById(R.id.botaoSolicitar);
-        groupNotification = (TextView) findViewById(R.id.textView3) ;
+        groupNotification = (TextView) findViewById(R.id.textView3);
 
         grupo = new Grupo();
 
@@ -108,14 +108,12 @@ public class GrupoFechadoActivity extends AppCompatActivity {
 
             System.out.println("userName " + userName);
 
-
             grupo.setOpened(extra.getBoolean("isOpened"));
             grupo.setIdAdms(extra.getStringArrayList("idAdmins"));
             grupo.setDescricao(extra.getString("descricao"));
             grupo.setNome(extra.getString("nome"));
             grupo.setId(extra.getString("groupId"));
             grupo.setQtdMembros(Integer.valueOf(extra.getString("qtdmembros")));
-
 
         }
 
@@ -130,7 +128,6 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                 if (user.getGrupos() != null) {
                     gruposUser.addAll(user.getGrupos());
                 }
-
                 if (grupo.isOpened()) {
                     botaoSolicitar.setText("PARTICIPAR");
                     groupNotification.setText("Este é um grupo aberto, ao clicar me participar voce fará parte dele");
@@ -139,18 +136,37 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                         public void onClick(View v) {
                             System.out.println("Solicitacao user " + solicitacoesUser);
                             if (!gruposUser.contains(grupo.getId())) {
-                                userInGroup();
-                                finish();
-                            } else
+                                AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(GrupoFechadoActivity.this);
+
+                                alertDialog2.setTitle("Participar do Grupo");
+                                alertDialog2.setMessage("Deseja participar deste grupo?");
+                                alertDialog2.setCancelable(false);
+
+                                alertDialog2.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+
+                                });
+                                alertDialog2.setPositiveButton("Entrar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        userInGroup();
+                                        finish();
+                                    }
+                                }).create().show();
+
+                            } else {
                                 Toast.makeText(GrupoFechadoActivity.this, "Voce já participa deste grupo", Toast.LENGTH_LONG).show();
                                 finish();
+                            }
                         }
                     });
                 } else {
                     botaoSolicitar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
                             System.out.println("Solicitacao user " + solicitacoesUser);
                             if (solicitacoesUser.contains(grupo.getId())) {
                                 Toast.makeText(GrupoFechadoActivity.this, "Pedido de solicitação para este grupo já enviado, aguarde resposta dos administradores", Toast.LENGTH_LONG).show();
@@ -201,10 +217,10 @@ public class GrupoFechadoActivity extends AppCompatActivity {
             public void onSuccess(Uri uri) {
                 try {
                     Glide.with(GrupoFechadoActivity.this).load(uri).override(68, 68).into(groupImg);
-                }catch (Exception e){
+                } catch (Exception e) {
                     groupImg.setImageURI(uri);
                 }
-                    System.out.println("group image chat " + uri);
+                System.out.println("group image chat " + uri);
             }
         });
 
@@ -227,79 +243,62 @@ public class GrupoFechadoActivity extends AppCompatActivity {
 
     private void userInGroup() {
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(GrupoFechadoActivity.this);
-
-        alertDialog.setTitle("Participar do Grupo");
-        alertDialog.setMessage("Deseja participar deste grupo?");
-        alertDialog.setCancelable(false);
-
-        alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+        //ADD USER INTO GROUP
+        DatabaseReference dbGroups = FirebaseConfig.getFireBase().child("grupos").child(grupo.getId());
+        dbGroups.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Grupo grupo = dataSnapshot.getValue(Grupo.class);
+                System.out.println("grupo " + grupo.getNome());
+                ArrayList<String> idMembros = new ArrayList<String>();
+                int qtdMembros = grupo.getQtdMembros() + 1;
+                grupo.setQtdMembros(qtdMembros);
+                if (grupo.getIdMembros() != null) {
+                    idMembros.addAll(grupo.getIdMembros());
+                    idMembros.add(idMembros.size(), userKey);
+                } else idMembros.add(0, userKey);
+
+                grupo.setIdMembros(idMembros);
+
+                grupo.save();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("SOLICITATION ERROR: " + databaseError);
+            }
+        });
+
+        //ADD GROUP INTO USER
+        databaseUsers.child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                ArrayList<String> gruposUserLogado = new ArrayList<String>();
+                if (user.getGrupos() != null) {  //populate groups
+                    gruposUserLogado.addAll(user.getGrupos());
+                    System.out.println("grupos user logado qtd " + gruposUserLogado.size());
+                    gruposUserLogado.add(gruposUserLogado.size(), grupo.getId());
+                    System.out.println("grupos caraio " + gruposUserLogado);
+                } else {
+                    gruposUserLogado.add(0, grupo.getId());
+                }
+                System.out.println("caraio Email user " + user.getEmail() + "nOME USER: " + user.getName());
+                user.setGrupos(gruposUserLogado);
+                System.out.println("refs2 usuario " + user.getGrupos());
+                user.setId(Base64Decoder.encoderBase64(user.getEmail()));
+                System.out.println("grupos do usuario que irão ser salvos" + user.getGrupos());
+                user.save();
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
 
         });
-        alertDialog.setPositiveButton("Entrar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //ADD USER INTO GROUP
-                DatabaseReference dbGroups = FirebaseConfig.getFireBase().child("grupos").child(grupo.getId());
-                dbGroups.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Grupo grupo = dataSnapshot.getValue(Grupo.class);
-                        System.out.println("grupo " + grupo.getNome());
-                        ArrayList<String> idMembros = new ArrayList<String>();
-                        int qtdMembros = grupo.getQtdMembros() + 1;
-                        grupo.setQtdMembros(qtdMembros);
-                        if (grupo.getIdMembros() != null) {
-                            idMembros.addAll(grupo.getIdMembros());
-                            idMembros.add(idMembros.size(), userKey);
-                        } else idMembros.add(0, userKey);
-
-                        grupo.setIdMembros(idMembros);
-
-                        grupo.save();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        System.out.println("SOLICITATION ERROR: " + databaseError);
-                    }
-                });
-
-                //ADD GROUP INTO USER
-                databaseUsers.child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        User user = dataSnapshot.getValue(User.class);
-                        ArrayList<String> gruposUserLogado = new ArrayList<String>();
-                        if (user.getGrupos() != null) {  //populate groups
-                            gruposUserLogado.addAll(user.getGrupos());
-                            System.out.println("grupos user logado qtd " + gruposUserLogado.size());
-                            gruposUserLogado.add(gruposUserLogado.size(), grupo.getId());
-                            System.out.println("grupos caraio " + gruposUserLogado);
-                        } else {
-                            gruposUserLogado.add(0, grupo.getId());
-                        }
-                        System.out.println("caraio Email user " + user.getEmail() + "nOME USER: " + user.getName());
-                        user.setGrupos(gruposUserLogado);
-                        System.out.println("refs2 usuario " + user.getGrupos());
-                        user.setId(Base64Decoder.encoderBase64(user.getEmail()));
-                        System.out.println("grupos do usuario que irão ser salvos" + user.getGrupos());
-                        user.save();
-
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        }).create().show();
     }
 
 
@@ -312,7 +311,6 @@ public class GrupoFechadoActivity extends AppCompatActivity {
     ;
 
     private void geraSolicitacao() {
-
 
         Log.i("Gera Solicitação", "entrei");
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(GrupoFechadoActivity.this);
@@ -390,10 +388,10 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                                             System.out.println("mensagens solicitação usuario: " + user.getMsgSolicitacoes());
                                             msgSolicitacoes.addAll(dataUser.getMsgSolicitacoes());
                                             //padrao de mensagem na db
-                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:" + grupo.getNome() + ":USUARIO:" + userName + " :MENSAGEM: " + mensagemSolicitacao + ":USERKEY:" + userKey + ":SOLICITATIONKEY:" + userKey + grupo.getId()+ ":GROUPKEY:"+ grupo.getId());
+                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:" + grupo.getNome() + ":USUARIO:" + userName + " :MENSAGEM: " + mensagemSolicitacao + ":USERKEY:" + userKey + ":SOLICITATIONKEY:" + userKey + grupo.getId() + ":GROUPKEY:" + grupo.getId());
                                         } else {
                                             //padrao de mensagem na db
-                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:" + grupo.getNome() + ":USUARIO:" + userName + " :MENSAGEM: " + mensagemSolicitacao + ":USERKEY:" + userKey + ":SOLICITATIONKEY:" + userKey + grupo.getId() +":GROUPKEY:"+ grupo.getId());
+                                            msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:" + grupo.getNome() + ":USUARIO:" + userName + " :MENSAGEM: " + mensagemSolicitacao + ":USERKEY:" + userKey + ":SOLICITATIONKEY:" + userKey + grupo.getId() + ":GROUPKEY:" + grupo.getId());
                                         }
 
                                         dataUser.setMsgSolicitacoes(msgSolicitacoes);

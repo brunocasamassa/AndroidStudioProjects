@@ -29,7 +29,6 @@ import studio.brunocasamassa.ajudaquiapp.helper.PedidoCriadoActivity;
  */
 
 public class GrupoAbertoMeusPedidosFragment extends Fragment {
-
     private ListView listview_nomes;
     private ArrayList<Pedido> arraylist_nomes = new ArrayList<>();
     private ArrayAdapter<Pedido> adapter_nomes;
@@ -87,12 +86,16 @@ public class GrupoAbertoMeusPedidosFragment extends Fragment {
 
                     Pedido pedido = snapshot.getValue(Pedido.class);
 
-                    if (pedido.getGrupo() != null ){
+                    if (pedido.getGrupo() != null && pedido.getGroupId() != null){
+                        try{
                         if(pedido.getGroupId().equals(idGroup) && pedido.getCriadorId().equals(userKey)){
                         adapter_nomes.add(pedido);
                         System.out.println("adicionado pedido "+ pedido.getTitulo());
                     }
+                } catch (Exception e ){
+                    System.out.println("exception "+ e);
                 }
+                    }
             }}
 
             @Override

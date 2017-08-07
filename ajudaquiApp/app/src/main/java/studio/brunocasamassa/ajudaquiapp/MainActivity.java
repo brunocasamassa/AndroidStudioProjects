@@ -1,12 +1,8 @@
 package studio.brunocasamassa.ajudaquiapp;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -90,21 +86,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (checkVersion()) {
-            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                ConnectivityManager conMgr2 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                //verify if user db structure really exist
-                progress = ProgressDialog.show(this, "Aguarde...",
-                        "Verificando dados do usuario", true);
 
-                if (conMgr2.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
-                        || conMgr2.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            ConnectivityManager conMgr2 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            //verify if user db structure really exist
+            progress = ProgressDialog.show(this, "Aguarde...",
+                    "Verificando dados do usuario", true);
 
-                    Toast.makeText(getApplicationContext(), "Sem conexao com a internet", Toast.LENGTH_SHORT).show();
-                    progress.dismiss();
-                }
+            if (conMgr2.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
+                    || conMgr2.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
+
+                Toast.makeText(getApplicationContext(), "Sem conexao com a internet", Toast.LENGTH_SHORT).show();
+                progress.dismiss();
             }
         }
+
     }
 
 
@@ -113,19 +109,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
+   /*     //Determine screen size
+        if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+            Toast.makeText(this, "Large screen", Toast.LENGTH_LONG).show();
+        } else if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+            Toast.makeText(this, "Normal sized screen", Toast.LENGTH_LONG).show();
+        } else if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) {
+            Toast.makeText(this, "Small sized screen", Toast.LENGTH_LONG).show();
+        } else if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
+            Toast.makeText(this, "Xlarge sized screen", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Screen size is neither large, normal or small", Toast.LENGTH_LONG).show();
+        }*/
+
+
+        ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         //verify connection and check version
         if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
 
-            if (!trigger) {
-                checkVersion();
-            }
-
         } else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
-
             Toast.makeText(getApplicationContext(), "Sem conexao com a internet", Toast.LENGTH_SHORT).show();
         }
 
@@ -166,8 +171,11 @@ public class MainActivity extends AppCompatActivity {
                                     pivotUsuario.setName(user.getName());
                                     pivotUsuario.setEmail(user.getEmail());
                                     System.out.println("usernAME " + userName);
-
                                     preferencias.saveData(Base64Decoder.encoderBase64(pivotUsuario.getEmail()), pivotUsuario.getName());
+
+                                    if (user.getSenha() != null) {
+                                        preferencias.saveLogin(user.getEmail(), user.getSenha());
+                                    }
 
                                     Toast.makeText(getApplicationContext(), "Bem vindo " + preferencias.getNome(), Toast.LENGTH_LONG).show();
 
@@ -227,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-
         cadastrar = (ImageButton) findViewById(R.id.entrar);
         login = (ImageButton) findViewById(R.id.loginButton);
 
@@ -277,7 +284,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-
         })
 
 
@@ -285,11 +291,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
-        progress = ProgressDialog.show(this, "Aguarde...",
-                "Verificando dados do usuario", true);
-        System.out.println("handleFacebookAccessToken:" + token);
+      /*  progress = ProgressDialog.show(this, "Aguarde...",
+          "Verificando dados do usuario", true);
+        System.out.println("handleFacebookAccessToken:" + token);*/
 
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken()); //firebase-facebook bound-line
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        //firebase-facebook bound-line
         autenticacao.removeAuthStateListener(mAuthListener);
 
         autenticacao.signInWithCredential(credential)
@@ -301,33 +308,46 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 System.out.println("login no firebase " + task);
+                                System.out.println("login no firebase " + task.getResult().getUser().getEmail());
+                                System.out.println("login no firebase " + task.getResult().getUser().getDisplayName());
                                 Toast.makeText(MainActivity.this, "Sucesso em fazer login, ola " + task.getResult().getUser().getDisplayName().toString(), Toast.LENGTH_LONG).show();
-                                final String encodedFacebookEmailUser = Base64Decoder.encoderBase64(task.getResult().getUser().getEmail());
-                                final String email = task.getResult().getUser().getEmail();
+                                final String encodedFacebookEmailUser;
+                                final String email;
+                                if (task.getResult().getUser().getEmail() != null) {
+                                    encodedFacebookEmailUser = Base64Decoder.encoderBase64(task.getResult().getUser().getEmail());
+                                    email = task.getResult().getUser().getEmail();
+                                } else {
+                                    encodedFacebookEmailUser = Base64Decoder.encoderBase64(task.getResult().getUser().getDisplayName() + "@facebook.com");
+                                    email = task.getResult().getUser().getDisplayName() + "@facebook.com";
+                                }
+
                                 final String name = task.getResult().getUser().getDisplayName();
                                 final Uri photo = task.getResult().getUser().getPhotoUrl();
 
                                 System.out.println("datasnapshot 2" + dataSnapshot);
                                 if (!dataSnapshot.child(encodedFacebookEmailUser).exists()) {
-                                    System.out.println("CRIANDO USUARIO NO DATABASSE");
-                                    // FirebaseUser usuarioFireBase = task.getResult().getUser();
-                                    usuario.setName(name);
-                                    usuario.setPremiumUser(1);
-                                    usuario.setMaxDistance(10);
-                                    usuario.setProfileImg(photo.toString());
-                                    usuario.setEmail(email);
-                                    usuario.setId(encodedFacebookEmailUser.toString());
-                                    ArrayList<Integer> badgesList = new ArrayList<Integer>();
-                                    usuario.setMedalhas(badgesList);
-                                    System.out.println("user name1 " + usuario.getName());
-                                    Preferences preferences = new Preferences(MainActivity.this);
-                                    preferences.saveDataImgFacebook(usuario.getId(), usuario.getName(), usuario.getProfileImg());
+                                   try {
+                                       System.out.println("CRIANDO USUARIO NO DATABASSE");
+                                       // FirebaseUser usuarioFireBase = task.getResult().getUser();
+                                       usuario.setName(name);
+                                       usuario.setPremiumUser(1);
+                                       usuario.setMaxDistance(10);
+                                       usuario.setProfileImg(photo.toString());
+                                       usuario.setEmail(email);
+                                       usuario.setId(encodedFacebookEmailUser.toString());
+                                       ArrayList<Integer> badgesList = new ArrayList<Integer>();
+                                       usuario.setMedalhas(badgesList);
+                                       System.out.println("user name1 " + usuario.getName());
+                                       Preferences preferences = new Preferences(MainActivity.this);
+                                       preferences.saveDataImgFacebook(usuario.getId(), usuario.getName(), usuario.getProfileImg());
 
-                                    facebookImg = usuario.getProfileImg();
+                                       facebookImg = usuario.getProfileImg();
 
-                                    usuario.save();
-                                    autenticacao.addAuthStateListener(mAuthListener);
-
+                                       usuario.save();
+                                       autenticacao.addAuthStateListener(mAuthListener);
+                                   }catch (Exception e){
+                                       Toast.makeText(getApplicationContext(), "Falha no Registro, por favor, valide seu e-mail facebook", Toast.LENGTH_SHORT).show();
+                                   }
                                     //refresh();
 
                                 } else {
@@ -354,6 +374,7 @@ public class MainActivity extends AppCompatActivity {
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
+
                         if (!task.isSuccessful()) {
                             System.out.println("erro login firebase");
                             Toast.makeText(MainActivity.this, "Authentication failed.",
@@ -408,59 +429,5 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private boolean checkVersion() {
-        //=----------------------------
-
-        DatabaseReference version = FirebaseConfig.getFireBase().child("version");
-        version.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Double versionDouble = dataSnapshot.getValue(Double.class);
-                String versionFromDb = versionDouble.toString();
-                PackageInfo pInfo = null;
-                try {
-                    pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                String version = pInfo.versionName;
-                System.out.println("version db " + versionFromDb + "  version app " + version);
-
-                if (!version.equals(versionFromDb)) {
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-
-                    alertDialog.setTitle("Atualização Disponivel");
-                    alertDialog.setMessage("Esta versao esta desatualizada, deseja ir para a pagina de atualização?");
-                    alertDialog.setCancelable(false);
-
-                    alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
-                            try {
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                            } catch (android.content.ActivityNotFoundException anfe) {
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                            }
-                        }
-                    });
-                    alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    }).create().show();
-                } else trigger = true;
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-//------------
-        return trigger;
-    }
 }
 

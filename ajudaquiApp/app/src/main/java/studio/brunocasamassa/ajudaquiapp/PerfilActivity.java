@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -64,6 +65,7 @@ public class PerfilActivity extends AppCompatActivity {
     private RecyclerView badges;
     private StorageReference storage;
     private TextView pontosConquistados;
+    private TextView userCredits;
     private TextView pedidosFeitos;
     private TextView pedidosAtendidos;
     private User user = new User();
@@ -104,6 +106,8 @@ public class PerfilActivity extends AppCompatActivity {
         pedidosFeitos = (TextView) findViewById(R.id.rankedPedidosFeitos);
         pontosConquistados = (TextView) findViewById(R.id.rankedUserPontosConquistados);
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
+        userCredits = (TextView) findViewById(R.id.user_credits);
+
 
         listaSolicitationKey = new ArrayList<>();
         listaNotificacoes = new ArrayList();
@@ -121,14 +125,16 @@ public class PerfilActivity extends AppCompatActivity {
 
         databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User usuario = dataSnapshot.getValue(User.class);
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                final User usuario = dataSnapshot.getValue(User.class);
                 user.setMedalhas(badgesList); //usuario.getMedalhas()
                 System.out.println("recebe usuario NAME: " + usuario.getName());
                 System.out.println("recebe usuario DATA: " + dataSnapshot.getValue());
                 int respPremium = usuario.getPremiumUser();
                 premium = respPremium;
 
+
+                userCredits.setText("Creditos disponiveis: "+ String.valueOf(usuario.getCreditos()));
                 if (premium == 1) {
                     Glide.with(PerfilActivity.this).load(R.drawable.premium_icon).into(premiumTag);
                 }
@@ -188,7 +194,6 @@ public class PerfilActivity extends AppCompatActivity {
                         adapter = new NotificacoesAdapter(getApplicationContext(), listaNotificacoes);
                         notificacoes.setDivider(null);
                         notificacoes.setAdapter(adapter);
-
                     }
                 }
 
@@ -200,21 +205,23 @@ public class PerfilActivity extends AppCompatActivity {
                     pedidosFeitos.setText("" + usuario.getPedidosFeitos().size());
                 } else pedidosFeitos.setText("" + 0);
                 pontosConquistados.setText(String.valueOf(usuario.getPontos()));
-                if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
-                    Glide.with(PerfilActivity.this).load(usuario.getProfileImg()).into(profileImg);
-                } else {
+
                     storage.child(userKey + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
+                            profileImg.setBackgroundColor(Color.TRANSPARENT);
                             Glide.with(PerfilActivity.this).load(uri).override(68, 68).into(profileImg);
                             System.out.println("my groups lets seee2 " + uri);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
+                            if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
+                                Glide.with(PerfilActivity.this).load(usuario.getProfileImg()).into(profileImg);
+                            }
                         }
                     });
-                }
+
                 /*
                 usuario.setId(userKey);
                 usuario.save();*/
@@ -322,7 +329,6 @@ public class PerfilActivity extends AppCompatActivity {
         if (user.getMedalhas() != null) {
 
             System.out.println("laço de imagens");
-
             for (int i = 0; i < 10; i++) {
                 final ImageView imageView = new ImageView(PerfilActivity.this);
                 imageView.setId(i);
@@ -346,8 +352,8 @@ public class PerfilActivity extends AppCompatActivity {
                             getResources(), R.drawable.badge3));
                     imageView.setScaleX((float) 0.5);
                     imageView.setScaleY((float) 1);
-
                 }
+
                 if (i == 3) {
                     imageView.setImageBitmap(BitmapFactory.decodeResource(
                             getResources(), R.drawable.badge4));
@@ -519,7 +525,7 @@ public class PerfilActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.activity_main, menu);
+        inflater.inflate(R.menu.menu_sobre, menu);
         return true;
     }
 
@@ -537,8 +543,8 @@ public class PerfilActivity extends AppCompatActivity {
                 startActivity(new Intent(PerfilActivity.this, MainActivity.class));
                 return true;
             case R.id.action_settings:
-                finish();
                 startActivity(new Intent(PerfilActivity.this, ConfiguracoesActivity.class));
+                finish();
                 return true;
 
             default:

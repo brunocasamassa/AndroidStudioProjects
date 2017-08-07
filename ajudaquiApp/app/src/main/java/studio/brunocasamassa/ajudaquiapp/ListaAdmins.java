@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +35,7 @@ public class ListaAdmins extends AppCompatActivity {
     public String selectedTag;
     private ProgressDialog dialog = null;
     private User user = new User();
+    private TextView title;
 
 
     @Override
@@ -45,6 +47,7 @@ public class ListaAdmins extends AppCompatActivity {
 
         final String userName = preferences.getNome();
         final String userId = preferences.getIdentificador();
+
 
         viewAdmins = (ListView) findViewById(R.id.adminsList);
 

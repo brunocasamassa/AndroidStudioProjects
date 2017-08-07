@@ -158,7 +158,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
                                 img.buildDrawingCache();
                                 Bitmap bitmap = img.getDrawingCache();
                                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                                 byte[] data = baos.toByteArray();
                                 UploadTask uploadTask = imgRef.putBytes(data);
                                 uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -172,13 +172,13 @@ public class CriaGrupoActivity extends AppCompatActivity {
 
                                 grupo.save();
 
-
-                                    groupSaveIntoUser(true);
-
+                                groupSaveIntoUser(true);
 
                                 /*if (!groupIsOpen){
                                         groupSaveAll();
                                 }*/
+
+
                             }
                         }
 
@@ -186,10 +186,11 @@ public class CriaGrupoActivity extends AppCompatActivity {
                         public void onCancelled(DatabaseError databaseError) {
 
                         }
+
                     });
 
-
                 }
+
             }
         });
     }

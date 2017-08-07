@@ -92,8 +92,12 @@ public class AllGroupsAdapter extends ArrayAdapter<Grupo> {
                 storage.child(grupo.getId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
+                        try{
                         grupo.setGrupoImg(uri.toString());
                         Glide.with(getContext()).load(uri).override(68, 68).into(imgGrupo);
+                        } catch (Exception e){
+                            imgGrupo.setImageURI(uri);
+                        }
                         System.out.println("my groups lets seee2" + uri);
 
                     }

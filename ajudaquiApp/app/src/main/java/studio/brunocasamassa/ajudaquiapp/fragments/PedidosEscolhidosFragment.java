@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ public class PedidosEscolhidosFragment extends Fragment {
     private ArrayAdapter pedidoArrayAdapter;
     private PedidosActivity pa;
     private PedidosSelecionadoAdapter pedidosAdapter;
+    private SwipeRefreshLayout refresh;
 
     public PedidosEscolhidosFragment() {
         //Required empty public constructor
@@ -83,7 +85,9 @@ public class PedidosEscolhidosFragment extends Fragment {
         pa = (PedidosActivity) getActivity();
         pedidos = new ArrayList<>();
         pedidosEscolhidos = (ListView) view.findViewById(R.id.pedidos_escolhidos_list);
+        refresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh) ;
         System.out.println("GRUPO NA POSICAO " + pedidos.isEmpty());
+
 
         pedidosAdapter = new PedidosSelecionadoAdapter(getContext(), pedidos);
         if (pa.getArrayEscolhidosAdapter() != null) {
@@ -110,58 +114,15 @@ public class PedidosEscolhidosFragment extends Fragment {
             }
         });*/
 
-        DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
-
-        databaseUsers.addValueEventListener(new ValueEventListener() {
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                usuario.setPedidosAtendidos(user.getPedidosAtendidos());
-                premium = user.getPremiumUser();
-                System.out.println("PMPF:idPedidos " + usuario.getPedidosFeitos());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("ERROR GET PEDIDOS USER STRINGS: " + databaseError);
+            public void onRefresh() {
+                refresh();
+                //startListSingle();
             }
         });
 
-        databasePedidos = FirebaseConfig.getFireBase()
-                .child("Pedidos");
-
-        valueEventListenerPedidos = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                pedidos.clear();
-
-                for (DataSnapshot dados : dataSnapshot.getChildren()) {
-                    System.out.println("get children pedidos " + dados);
-
-                    Pedido pedido = dados.getValue(Pedido.class);
-                    System.out.println("pedido " + pedido.getTitulo());
-                    if (usuario.getPedidosAtendidos() != null) {
-                        if (!pedidos.contains(pedido.getIdPedido()) && usuario.getPedidosAtendidos().contains(pedido.getIdPedido())) {
-                            pedidos.add(pedido);
-                        }
-                    }
-                    System.out.println("PMPF: pilha pedidos na view " + pedidos);
-
-                }
-
-                pedidoArrayAdapter.notifyDataSetChanged();
-                System.out.println("PMPF: pilha pedidos na view2 " + pedidos);
-
-            }
-
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                pedidos.clear();
-
-            }
-        };
+        startList();
 
         pedidosEscolhidos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -215,4 +176,67 @@ public class PedidosEscolhidosFragment extends Fragment {
 
     }
 
+
+    private void startList() {
+
+        DatabaseReference databaseUsers = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
+
+        databaseUsers.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                usuario.setPedidosAtendidos(user.getPedidosAtendidos());
+                premium = user.getPremiumUser();
+                System.out.println("PMPF:idPedidos " + usuario.getPedidosFeitos());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("ERROR GET PEDIDOS USER STRINGS: " + databaseError);
+            }
+        });
+
+        databasePedidos = FirebaseConfig.getFireBase()
+                .child("Pedidos");
+
+        valueEventListenerPedidos = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                pedidos.clear();
+
+                for (DataSnapshot dados : dataSnapshot.getChildren()) {
+                    System.out.println("get children pedidos " + dados);
+
+                    Pedido pedido = dados.getValue(Pedido.class);
+                    System.out.println("pedido " + pedido.getTitulo());
+                    if (usuario.getPedidosAtendidos() != null) {
+                        if (!pedidos.contains(pedido.getIdPedido()) && usuario.getPedidosAtendidos().contains(pedido.getIdPedido()) && pedido.getStatus()!= 2) {
+                            pedidos.add(pedido);
+                        }
+                    }
+                    System.out.println("PMPF: pilha pedidos na view " + pedidos);
+
+                }
+
+                pedidoArrayAdapter.notifyDataSetChanged();
+                System.out.println("PMPF: pilha pedidos na view2 " + pedidos);
+
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                pedidos.clear();
+
+            }
+        };
+
+    }
+
+    private void refresh() {
+        Intent intent = new Intent(getActivity(), PedidosActivity.class);
+        getActivity().finish();
+        startActivity(intent);
+    }
 }

@@ -146,8 +146,13 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(0, mBuilder.build());*/
 
-        toolbar.setTitle(pedido.getTitulo().toUpperCase());
-
+        String title;
+        try {
+            title = pedido.getTitulo().substring(1, 18) + "...";
+        } catch (Exception e){
+            title = pedido.getTitulo().toString();
+        }
+        toolbar.setTitle(title.toUpperCase());
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -172,7 +177,7 @@ public class PedidoAtendidoActivity extends AppCompatActivity {
                                                   AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoAtendidoActivity.this);
 
                                                   alertDialog.setTitle("Desistir do Pedido");
-                                                  alertDialog.setMessage("Deseja desistir deste pedido de ajuda? voce nao receberá creditos ou pontos por ele");
+                                                  alertDialog.setMessage("Deseja desistir deste pedido de ajuda? você não receberá créditos ou pontos por ele");
                                                   alertDialog.setCancelable(false);
 
                                                   alertDialog.setNegativeButton("Voltar", new DialogInterface.OnClickListener() {
