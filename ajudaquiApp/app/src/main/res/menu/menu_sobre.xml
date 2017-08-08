@@ -5,11 +5,11 @@
     tools:context=".MainActivity"
     >
 
-    <item
+<!--    <item
         android:id="@+id/action_settings"
         android:orderInCategory="103"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        app:showAsAction="never" />-->
 
     <item
         android:id="@+id/action_exit"

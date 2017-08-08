@@ -61,8 +61,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
-
-
         final String ajudaquimail = Base64Decoder.encoderBase64("ajudaquisuporte@gmail.com");
         final String ajudaquipass = Base64Decoder.encoderBase64("ajudaqui931931931");
 

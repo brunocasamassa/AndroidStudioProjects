@@ -92,7 +92,7 @@ public class CriaDoacaoActivity extends AppCompatActivity {
 
         seekValue = (TextView) findViewById(R.id.seekbar_value);
         doacaoQtd = (SeekBar) findViewById(R.id.seekBar);
-        add_grupos = (TextView) findViewById(R.id.word_add_groups);
+        add_grupos = (TextView) findViewById(R.id.textView5);
         add_tags = (TextView) findViewById(R.id.word_add_tags);
         pedidoName = (EditText) findViewById(R.id.create_pedido_name);
         descricao = (EditText) findViewById(R.id.create_pedido_description);

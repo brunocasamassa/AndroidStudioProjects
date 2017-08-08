@@ -203,7 +203,7 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
     private void cancelarDoacao() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(DoacaoCriadaActivity.this);
         alertDialog.setTitle("Cancelar doação?");
-        alertDialog.setMessage("Se voce cancelar, os itens serão zerados, todas as doações já feitas ainda deverão ser entregues");
+        alertDialog.setMessage("Se você cancelar, os itens serão zerados, todas as doações já feitas ainda deverão ser entregues");
         alertDialog.setCancelable(false);
         alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             @Override

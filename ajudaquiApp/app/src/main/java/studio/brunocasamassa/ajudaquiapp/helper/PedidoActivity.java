@@ -2,6 +2,7 @@ package studio.brunocasamassa.ajudaquiapp.helper;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +24,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import me.gujun.android.taggroup.TagGroup;
+import studio.brunocasamassa.ajudaquiapp.PedidosActivity;
 import studio.brunocasamassa.ajudaquiapp.R;
 
 /**
@@ -160,6 +162,7 @@ public class PedidoActivity extends AppCompatActivity {
                                     sendNotiication(pedido.getCriadorId());
                                     Toast.makeText(PedidoActivity.this, "Parabéns, voce já pode conversar com o criador do pedido.", Toast.LENGTH_LONG).show();
                                     finish();
+                                    startActivity(new Intent(PedidoActivity.this, PedidosActivity.class));
                                 }
 
                                 @Override

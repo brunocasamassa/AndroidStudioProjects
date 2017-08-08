@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:background="@color/colorBackground"
         android:visibility="visible"
-        app:layout_constraintLeft_toLeftOf="@+id/imageView8"
+        app:layout_constraintLeft_toLeftOf="@+id/cardview_create_doacao"
         app:titleTextColor="@android:color/white"
         tools:layout_editor_absoluteY="0dp"></android.support.v7.widget.Toolbar>
 

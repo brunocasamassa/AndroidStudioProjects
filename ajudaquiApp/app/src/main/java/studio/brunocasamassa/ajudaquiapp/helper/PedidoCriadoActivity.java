@@ -303,6 +303,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
+
                             }
                         });
 
@@ -375,7 +376,6 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                             user.setPontos(user.getPontos() + rating);
                             user.setId(pedido.getAtendenteId());
                             user.save();
-                            //REMOVING CHAT FIELD
 
                             pedido.setStatus(2);
                             pedido.save();
@@ -390,7 +390,6 @@ public class PedidoCriadoActivity extends AppCompatActivity {
 
                         }
                     });
-
 
                     finish();
 

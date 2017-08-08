@@ -133,13 +133,9 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
                 System.out.println("ENTREI ");
                 boolean permissao = Permissao.validaPermissoes(1, PedidosActivity.this, permissoesNecessarias);
 
-
-
                 localizacao = new SimpleLocation(PedidosActivity.this);
 
-
                 if (permissao) {
-
                     // if we can't access the location yet
 
                     if (!localizacao.hasLocationEnabled()) {

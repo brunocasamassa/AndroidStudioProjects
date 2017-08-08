@@ -4,16 +4,18 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
+import android.graphics.Point;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +55,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
     private String pedidoGroup;
     private TextView add_tags;
     private Pedido pedido;
+    private View constraintLayout;
     private int premium;
     private ImageButton addTagButton;
     private ImageButton addGroupButton;
@@ -61,6 +64,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
     private String groupCaptured;
     private String idGroupSelected;
     private String groupCapturedId;
+    private CardView cardview;
 
 
     @Override
@@ -97,12 +101,12 @@ public class CriaPedidoActivity extends AppCompatActivity {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_criar_pedido);
+
 
         final Bundle extras = getIntent().getExtras();
         premium = (extras.getInt("premium")); //TODO =0 EVEN FIREBASE =1
@@ -119,9 +123,57 @@ public class CriaPedidoActivity extends AppCompatActivity {
         System.out.println("FUCK latitude  " + latitude);
         System.out.println("FUCK longitude " + longitude);
 
+        cardview = (CardView) findViewById(R.id.cardview_create_doacao);
         toolbar = (Toolbar) findViewById(R.id.toolbar_create_group);
         toolbar.setTitle("Criar Pedido");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
+
+        categorias = (TagContainerLayout) findViewById(R.id.tagGroupCategoria);
+        grupos = (TagContainerLayout) findViewById(R.id.tagGroupGrupos);
+
+        add_grupos = (TextView) findViewById(R.id.textView5);
+        add_tags = (TextView) findViewById(R.id.word_add_tags);
+        pedidoName = (EditText) findViewById(R.id.create_pedido_name);
+        descricao = (EditText) findViewById(R.id.create_pedido_description);
+        createButton = (Button) findViewById(R.id.create_pedido_button);
+        addTagButton = (ImageButton) findViewById((R.id.add_tag_button));
+        addGroupButton = (ImageButton) findViewById((R.id.addGroup_tag_button));
+
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        Toast.makeText(getApplicationContext(), "width "+ width + " height "+ height , Toast.LENGTH_SHORT).show();
+
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+
+        if (currentapiVersion <= 19 ) {
+
+            TextView descr = (TextView) findViewById(R.id.textView6);
+            ImageView v = (ImageView) findViewById(R.id.imageView10);
+            ImageView w = (ImageView) findViewById(R.id.imageView11);
+            ImageView x = (ImageView) findViewById(R.id.imageView12);
+            cardview.setTranslationY(Float.valueOf(-58));
+            categorias.setTagTextSize(15);
+            grupos.setTagTextSize(30);
+            descricao.setTranslationY(Float.valueOf(-55));
+            add_grupos.setTranslationY(Float.valueOf(-55));
+            add_tags.setTranslationY(Float.valueOf(-55));
+            addGroupButton.setTranslationY(Float.valueOf(-55));
+            addTagButton.setTranslationY(Float.valueOf(-55));
+            x.setTranslationY(Float.valueOf(-55));
+            w.setTranslationY(Float.valueOf(-55));
+            v.setTranslationY(Float.valueOf(-55));
+            descr.setTranslationY(Float.valueOf(-55));
+            grupos.setTranslationY(Float.valueOf(-55));
+            categorias.setTranslationY(Float.valueOf(-55));
+
+        } else {
+
+
+        }
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,16 +182,6 @@ public class CriaPedidoActivity extends AppCompatActivity {
             }
         });
 
-        categorias = (TagContainerLayout) findViewById(R.id.tagGroupCategoria);
-        grupos = (TagContainerLayout) findViewById(R.id.tagGroupGrupos);
-
-        add_grupos = (TextView) findViewById(R.id.word_add_groups);
-        add_tags = (TextView) findViewById(R.id.word_add_tags);
-        pedidoName = (EditText) findViewById(R.id.create_pedido_name);
-        descricao = (EditText) findViewById(R.id.create_pedido_description);
-        createButton = (Button) findViewById(R.id.create_pedido_button);
-        addTagButton = (ImageButton) findViewById((R.id.add_tag_button));
-        addGroupButton = (ImageButton) findViewById((R.id.addGroup_tag_button));
 
         grupos.setBackgroundColor(Color.TRANSPARENT);
         grupos.setBorderColor(Color.TRANSPARENT);
@@ -245,7 +287,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
                         }
                     });
                     alertDialog.setItems(new CharSequence[]
-                                    {"Servicos", "Emprestimos", "Trocas"},
+                                    {"Servicos", "Emprestimos", "Trocas", "Doações"},
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     // The 'which' argument contains the index position
@@ -265,6 +307,11 @@ public class CriaPedidoActivity extends AppCompatActivity {
                                             Toast.makeText(getApplicationContext(), "Troca", Toast.LENGTH_SHORT).show();
                                             tipoPedido = "Troca";
                                             createPedido();
+                                            break;
+                                        case 3:
+                                            Toast.makeText(getApplicationContext(), "finalizando processo de backend, selecione outra opção", Toast.LENGTH_SHORT).show();
+                                            tipoPedido = "Doações";
+                                            //createPedido();
                                             break;
                                     }
                                 }

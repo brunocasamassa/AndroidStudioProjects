@@ -99,7 +99,6 @@ public class PedidosMeusPedidosFragment extends Fragment {
         //dbGroups.removeEventListener(valueEventListenerAllGroups);
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -107,7 +106,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pedidos_meuspedidos, container, false);
         pa = (PedidosActivity) getActivity();
         pedidos = new ArrayList<>();
-        refresh =  (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
+        refresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
         meusPedidos = (ListView) view.findViewById(R.id.meusPedidos_list);
         System.out.println("GRUPO NA POSICAO " + pedidos.isEmpty());
 
@@ -126,7 +125,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getActivity().finish();
+                refresh();
             }
         });
 
@@ -246,7 +245,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
 
                 if (selectedPedido.getStatus() == 2) {//finalizado
                     Toast.makeText(getApplicationContext(), "Pedido finalizado", Toast.LENGTH_SHORT).show();
-                } else if(!selectedPedido.getTipo().equals("Doacoes")){
+                } else if (!selectedPedido.getTipo().equals("Doacoes")) {
 
                     // enviando dados para grupo activity
                     // enviando dados para pedido activity
@@ -297,7 +296,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
         dbPedidos.child(pedido.getIdPedido()).removeValue();
         dbConversa.child(userKey).child(pedido.getIdPedido()).removeValue();
         dbConversa.child(pedido.getAtendenteId()).child(pedido.getIdPedido()).removeValue();
-        Toast.makeText(getApplicationContext(),"Pedido Apagado", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Pedido Apagado", Toast.LENGTH_SHORT).show();
         getActivity().finish();
     }
 

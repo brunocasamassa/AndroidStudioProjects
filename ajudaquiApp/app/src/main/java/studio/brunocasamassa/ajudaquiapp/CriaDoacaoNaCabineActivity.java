@@ -3,18 +3,22 @@ package studio.brunocasamassa.ajudaquiapp;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +62,7 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
     private TextView add_grupos;
     private TextView add_tags;
     private Pedido pedido;
+    private CardView cardView;
     private int premium;
     private ImageButton addTagButton;
     private ImageButton addGroupButton;
@@ -134,9 +139,53 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
         descricao = (EditText) findViewById(R.id.create_pedido_description);
         createButton = (Button) findViewById(R.id.create_pedido_button);
         addTagButton = (ImageButton) findViewById((R.id.add_tag_button));
+        cardView = (CardView) findViewById(R.id.cardview_create_doacao);
         /*add_grupos = (TextView) findViewById(R.id.word_add_groups);
         addGroupButton = (ImageButton) findViewById((R.id.addGroup_tag_button));*/
         img = (CircleImageView) findViewById(R.id.import_donation_img);
+
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        Toast.makeText(getApplicationContext(), "width "+ width + " height "+ height , Toast.LENGTH_SHORT).show();
+
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+
+        //manually fits layout in small devices --- i am really sorry for that
+
+        if (currentapiVersion <= 19 && width<=780 ) {
+            ImageView h = (ImageView) findViewById(R.id.imageView11);
+            ImageView i = (ImageView) findViewById(R.id.imageView10);
+            ImageView j = (ImageView) findViewById(R.id.imageView9);
+            ImageView k = (ImageView) findViewById(R.id.imageView);
+            TextView v = (TextView) findViewById(R.id.textView6);
+            TextView w = (TextView) findViewById(R.id.textView5);
+            TextView x = (TextView) findViewById(R.id.textView18);
+            TextView y = (TextView) findViewById(R.id.textView20);
+            TextView z = (TextView) findViewById(R.id.textView4);
+            h.setTranslationY(Float.valueOf(-55));
+            i.setTranslationY(Float.valueOf(-55));
+            j.setTranslationY(Float.valueOf(-55));
+            k.setTranslationY(Float.valueOf(-55));
+            v.setTranslationY(Float.valueOf(-55));
+            w.setTranslationY(Float.valueOf(-55));
+            x.setTranslationY(Float.valueOf(-55));
+            y.setTranslationY(Float.valueOf(-55));
+            z.setTranslationY(Float.valueOf(-55));
+            doacaoQtd.setTranslationY(Float.valueOf(-55));
+            donationContact.setTranslationY(Float.valueOf(-55));
+            endereco.setTranslationY(Float.valueOf(-55));
+            descricao.setTranslationY(Float.valueOf(-55));
+            img.setTranslationY(Float.valueOf(-55));
+            cardView.setTranslationY(Float.valueOf(-55));
+
+        } else if (currentapiVersion <= 19){
+            cardView.setTranslationY(Float.valueOf(-35));
+
+        }
 
 
         img.setOnClickListener(new View.OnClickListener() {
