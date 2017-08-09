@@ -54,7 +54,6 @@ public class LoginActivity extends AppCompatActivity {
     public static String idUser;
     private ValueEventListener valueEventListenerUsuario;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

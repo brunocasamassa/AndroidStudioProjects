@@ -287,9 +287,12 @@ public class PedidosDisponiveisFragment extends Fragment {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(getContext(), databaseError.toString(), Toast.LENGTH_LONG).show();
                 System.out.println("ERROR GET PEDIDOS USER STRINGS: " + databaseError);
 
             }
+
+
 
         });
 

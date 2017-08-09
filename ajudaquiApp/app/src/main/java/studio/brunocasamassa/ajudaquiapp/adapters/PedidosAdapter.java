@@ -116,6 +116,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
                 storage = FirebaseConfig.getFirebaseStorage().child("userImages");
             }
             */
+
             storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
             storageDonation = FirebaseConfig.getFirebaseStorage().child("donationImages");
 
@@ -132,7 +133,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
             }
 
                 try {
-                descricao.setText(String.valueOf(pedido.getDescricao().substring(0,27)) + "...");
+                descricao.setText(String.valueOf(pedido.getDescricao().substring(0,20)) + "...");
             }catch (Exception e){
                 descricao.setText(String.valueOf(pedido.getDescricao())+ "...");
             }

@@ -238,10 +238,11 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
                 startActivity(new Intent(PedidosActivity.this, MainActivity.class));
 
                 return true;
-
-            case R.id.action_settings:
-                startActivity(new Intent(PedidosActivity.this, ConfiguracoesActivity.class));
-                return true;
+/*
+            case R.id.item_filter:
+                //startActivity(new Intent(PedidosActivity.this, ConfiguracoesActivity.class));
+                Toast.makeText(getApplicationContext(), "Filtering", Toast.LENGTH_LONG).show();
+                return true;*/
 
             case R.id.item_search:
 

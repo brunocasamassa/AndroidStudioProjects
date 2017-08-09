@@ -294,24 +294,24 @@ public class CriaPedidoActivity extends AppCompatActivity {
                                     // of the selected item
                                     switch (which) {
                                         case 0:
-                                            Toast.makeText(getApplicationContext(), "Servicos", Toast.LENGTH_SHORT).show();
+                                           // Toast.makeText(getApplicationContext(), "Servicos", Toast.LENGTH_SHORT).show();
                                             tipoPedido = "Servicos";
                                             createPedido();
                                             break;
                                         case 1:
-                                            Toast.makeText(getApplicationContext(), "Emprestimos", Toast.LENGTH_SHORT).show();
+                                           // Toast.makeText(getApplicationContext(), "Emprestimos", Toast.LENGTH_SHORT).show();
                                             tipoPedido = "Emprestimos";
                                             createPedido();
                                             break;
                                         case 2:
-                                            Toast.makeText(getApplicationContext(), "Troca", Toast.LENGTH_SHORT).show();
+                                          //  Toast.makeText(getApplicationContext(), "Troca", Toast.LENGTH_SHORT).show();
                                             tipoPedido = "Troca";
                                             createPedido();
                                             break;
                                         case 3:
-                                            Toast.makeText(getApplicationContext(), "finalizando processo de backend, selecione outra opção", Toast.LENGTH_SHORT).show();
-                                            tipoPedido = "Doações";
-                                            //createPedido();
+                                           // Toast.makeText(getApplicationContext(), "finalizando processo de backend, selecione outra opção", Toast.LENGTH_SHORT).show();
+                                            tipoPedido = "Doacao";
+                                            createPedido();
                                             break;
                                     }
                                 }

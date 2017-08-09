@@ -356,7 +356,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             alertDialog.setCancelable(false);
             final RatingBar ratingBar = new RatingBar(getApplicationContext());
             ratingBar.setNumStars(1);
-            ratingBar.setMax(5);
+            //ratingBar.setMax(5);
             ratingBar.setRating(5);
             //ratingBar.setDrawingCacheBackgroundColor(Color.BLUE);
             /*Drawable progress = ratingBar.getProgressDrawable();*/

@@ -39,13 +39,10 @@ public class GruposDoacoesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
         View v = inflater.inflate(R.layout.activity_conversas, container, false);
 
 
         listview_nomes = (ListView) v.findViewById(R.id.ListContatos);
-
-
 
 
         // Inflate the layout for this fragment

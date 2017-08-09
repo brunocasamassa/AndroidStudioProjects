@@ -3,6 +3,7 @@ package studio.brunocasamassa.ajudaquiapp;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
@@ -103,6 +104,7 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_criar_doacao);
         final Bundle extras = getIntent().getExtras();
 
+
         latitude = (extras.getDouble("latitude"));
         longitude = (extras.getDouble("longitude"));
 
@@ -111,7 +113,9 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
             latitude = 0.0;
             longitude = 0.0;
         }
+
         pedidoGroup = (extras.getString("groupName"));
+
         if (extras.getString("idGroupSelected") != null) {
             idGroupSelected = (extras.getString("idGroupSelected"));
         }
@@ -144,48 +148,8 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
         addGroupButton = (ImageButton) findViewById((R.id.addGroup_tag_button));*/
         img = (CircleImageView) findViewById(R.id.import_donation_img);
 
+        fitLayoutForSmallDevices();
 
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
-        Toast.makeText(getApplicationContext(), "width "+ width + " height "+ height , Toast.LENGTH_SHORT).show();
-
-        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-
-        //manually fits layout in small devices --- i am really sorry for that
-
-        if (currentapiVersion <= 19 && width<=780 ) {
-            ImageView h = (ImageView) findViewById(R.id.imageView11);
-            ImageView i = (ImageView) findViewById(R.id.imageView10);
-            ImageView j = (ImageView) findViewById(R.id.imageView9);
-            ImageView k = (ImageView) findViewById(R.id.imageView);
-            TextView v = (TextView) findViewById(R.id.textView6);
-            TextView w = (TextView) findViewById(R.id.textView5);
-            TextView x = (TextView) findViewById(R.id.textView18);
-            TextView y = (TextView) findViewById(R.id.textView20);
-            TextView z = (TextView) findViewById(R.id.textView4);
-            h.setTranslationY(Float.valueOf(-55));
-            i.setTranslationY(Float.valueOf(-55));
-            j.setTranslationY(Float.valueOf(-55));
-            k.setTranslationY(Float.valueOf(-55));
-            v.setTranslationY(Float.valueOf(-55));
-            w.setTranslationY(Float.valueOf(-55));
-            x.setTranslationY(Float.valueOf(-55));
-            y.setTranslationY(Float.valueOf(-55));
-            z.setTranslationY(Float.valueOf(-55));
-            doacaoQtd.setTranslationY(Float.valueOf(-55));
-            donationContact.setTranslationY(Float.valueOf(-55));
-            endereco.setTranslationY(Float.valueOf(-55));
-            descricao.setTranslationY(Float.valueOf(-55));
-            img.setTranslationY(Float.valueOf(-55));
-            cardView.setTranslationY(Float.valueOf(-55));
-
-        } else if (currentapiVersion <= 19){
-            cardView.setTranslationY(Float.valueOf(-35));
-
-        }
 
 
         img.setOnClickListener(new View.OnClickListener() {
@@ -289,6 +253,56 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void fitLayoutForSmallDevices() {
+
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        Toast.makeText(getApplicationContext(), "width "+ width + " height "+ height , Toast.LENGTH_SHORT).show();
+
+        int currentapiVersion = Build.VERSION.SDK_INT;
+
+        //manually fits layout in small devices --- i am really sorry for that
+
+        if (currentapiVersion <= 19 && width<=790 ) {
+            System.out.println("entrei huehuebr");
+            ImageView h = (ImageView) findViewById(R.id.imageView11);
+            ImageView i = (ImageView) findViewById(R.id.imageView10);
+            ImageView j = (ImageView) findViewById(R.id.imageView9);
+            ImageView k = (ImageView) findViewById(R.id.imageView);
+            TextView v = (TextView) findViewById(R.id.textView6);
+            TextView w = (TextView) findViewById(R.id.textView5);
+            TextView x = (TextView) findViewById(R.id.textView18);
+            TextView y = (TextView) findViewById(R.id.textView20);
+            TextView z = (TextView) findViewById(R.id.textView4);
+            h.setTranslationY(Float.valueOf(-105));
+            i.setTranslationY(Float.valueOf(-105));
+            j.setTranslationY(Float.valueOf(-105));
+            k.setTranslationY(Float.valueOf(-105));
+            v.setTranslationY(Float.valueOf(-105));
+            w.setTranslationY(Float.valueOf(-105));
+            x.setTranslationY(Float.valueOf(-105));
+            y.setTranslationY(Float.valueOf(-105));
+            z.setTranslationY(Float.valueOf(-105));
+            doacaoQtd.setTranslationY(Float.valueOf(-105));
+            donationContact.setTranslationY(Float.valueOf(-105));
+            endereco.setTranslationY(Float.valueOf(-105));
+            seekValue.setTranslationY(Float.valueOf(-105));
+            descricao.setTranslationY(Float.valueOf(-105));
+            img.setTranslationY(Float.valueOf(-85));
+            img.setBorderColor(Color.TRANSPARENT);
+            pedidoName.setTranslationX(pedidoName.getTranslationX()-50);
+            cardView.setTranslationY(Float.valueOf(-25));
+
+        } else if (currentapiVersion <= 19){
+            cardView.setTranslationY(Float.valueOf(-35));
+
+        }
     }
 
     private boolean createPedido() {
