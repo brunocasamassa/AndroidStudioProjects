@@ -114,8 +114,6 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hello);
 
-
-
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
         toolbar.setTitle(getResources().getString(R.string.menu_pedidos));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
@@ -238,9 +236,9 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
                 startActivity(new Intent(PedidosActivity.this, MainActivity.class));
 
                 return true;
-/*
-            case R.id.item_filter:
-                //startActivity(new Intent(PedidosActivity.this, ConfiguracoesActivity.class));
+
+/*            case R.id.action_settings:
+                startActivity(new Intent(PedidosActivity.this, ConfiguracoesActivity.class));
                 Toast.makeText(getApplicationContext(), "Filtering", Toast.LENGTH_LONG).show();
                 return true;*/
 

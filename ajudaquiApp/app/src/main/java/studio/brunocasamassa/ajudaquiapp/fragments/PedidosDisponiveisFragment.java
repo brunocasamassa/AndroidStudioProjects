@@ -138,7 +138,7 @@ public class PedidosDisponiveisFragment extends Fragment {
 
                     //manual toast delay (nao me julgue)
                     for (int i = 0; i < 2; i++) {
-                        Toasty.warning(getContext(), user.getMessageNotification(), Toast.LENGTH_SHORT, true).show();
+                        Toasty.warning(getContext(), user.getMessageNotification(), Toast.LENGTH_LONG, true).show();
                     }
 
                     System.out.println("saindo listenerSingle para messages");
@@ -146,6 +146,8 @@ public class PedidosDisponiveisFragment extends Fragment {
                     user.setId(userKey);
                     user.save();
                 }
+
+
 
                 databasePedidos.addValueEventListener(new ValueEventListener() {
                     @Override

@@ -60,6 +60,7 @@ public class ConversaAdapter extends ArrayAdapter<Conversa> {
             } catch (Exception e) {
                 System.out.println("exception " + e);
             }
+
             // recupera elemento para exibição
             final CircleImageView img = (CircleImageView) view.findViewById(R.id.img_chat_contact);
             TextView nome = (TextView) view.findViewById(R.id.name_chat_contact);
@@ -67,14 +68,20 @@ public class ConversaAdapter extends ArrayAdapter<Conversa> {
             TextView chatCount = (TextView) view.findViewById(R.id.notification_count);
             TextView time = (TextView) view.findViewById(R.id.time_chat);
 
-
             DateFormat formatter = new SimpleDateFormat("HH:mm");
             formatter.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
             String currentTime = formatter.format(new Date());
             System.out.println("formatter: " + currentTime);
 
             Conversa conversa = conversas.get(position);
-            nome.setText(conversa.getNome());
+
+            try {
+                nome.setText(String.valueOf(conversa.getNome().substring(0,30) )+ "...");
+                System.out.println("DADOS PEDIDO NO ADAPTER: " + conversa.getNome());
+            } catch (Exception e){
+                nome.setText(conversa.getNome());
+            }
+
             ultimaMensagem.setText(conversa.getMensagem());
 
             if(conversa.getChatCount() >0){

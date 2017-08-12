@@ -180,16 +180,19 @@ public class CadastroActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(CadastroActivity.this, "Usuario cadastrado com sucesso", Toast.LENGTH_LONG).show();
 
-                                    usuario.setPremiumUser(1);
-                                    // FirebaseUser usuarioFireBase = task.getResult().getUser();
-                                    usuario.save();
-
                                     Preferences preferences = new Preferences(CadastroActivity.this);
                                     preferences.saveData(idUser, usuario.getName());
                                     preferences.saveLogin(usuario.getEmail(), usuario.getSenha());
 
-                                    uploadImages();
+                                    usuario.setPremiumUser(1);
 
+                                    // FirebaseUser usuarioFireBase = task.getResult().getUser();
+                                    //ENCRYPT USER PASSWORD INTO THE SERVER
+
+                                    usuario.setSenha(Base64Decoder.encoderBase64(usuario.getSenha()));
+                                    usuario.save();
+
+                                    uploadImages();
 
                                 } else {
 
@@ -217,7 +220,6 @@ public class CadastroActivity extends AppCompatActivity {
 
     }
 
-
     private void openProfieUser() {
         String nomeUser = usuario.getName().toString();
         Toast.makeText(CadastroActivity.this, "Olá " + nomeUser + ", bem vindo ao app Ajudaqui ", Toast.LENGTH_LONG).show();
@@ -234,7 +236,7 @@ public class CadastroActivity extends AppCompatActivity {
         userImg.buildDrawingCache();
         Bitmap bitmap = userImg.getDrawingCache();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] data = baos.toByteArray();
         UploadTask uploadTask = imgRef.putBytes(data);
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

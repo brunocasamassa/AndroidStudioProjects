@@ -57,7 +57,6 @@ public class PedidoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pedido);
 
 
-
         final Bundle extra = getIntent().getExtras();
         toolbar = (Toolbar) findViewById(R.id.toolbar_donation_activity);
         nomePedido = (TextView) findViewById(R.id.nome_doacao);

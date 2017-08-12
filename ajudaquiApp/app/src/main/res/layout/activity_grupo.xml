@@ -101,10 +101,10 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Este é um grupo fechado. Você pode pedir sa solicitação para o administrador do grupo"
+        android:text="Este é um grupo fechado. Você pode pedir sua solicitação para o administrador do grupo"
         android:textAlignment="center"
         android:textStyle="bold"
-        tools:text="Este é um grupo fechado. Você pode pedir sa solicitação para o administrador do grupo"
+        tools:text="Este é um grupo fechado. Você pode pedir sua solicitação para o administrador do grupo"
 
         android:layout_below="@+id/imageView5"
         android:layout_alignParentLeft="true"

@@ -97,8 +97,10 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
 
             // Monta view a partir do xml
-            view = inflater.inflate(R.layout.model_pedido, parent, false);
-
+            if(convertView == null) {
+                view = inflater.inflate(R.layout.model_pedido, parent, false);
+            } else view = convertView;
+            
             // recupera elemento para exibição
             TextView distancia = (TextView) view.findViewById(R.id.distance);
             TextView nomePedido = (TextView) view.findViewById(R.id.nomePedido);
@@ -148,7 +150,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
             if(pedido.getTipo().equals("Doacoes")){
                 donationqtd.setText(String.valueOf(pedido.getQtdAtual())+"/"+String.valueOf(pedido.getQtdDoado()));
                 donationqtd.setTextColor(Color.argb(255,20,118,122));
-                storageDonation.child(pedido.getIdPedido()+ ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    storageDonation.child(pedido.getIdPedido()+ ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                     @Override
                     public void onSuccess(Uri uri) {

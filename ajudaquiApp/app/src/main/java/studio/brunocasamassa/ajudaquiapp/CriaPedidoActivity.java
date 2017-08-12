@@ -280,7 +280,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
                     alertDialog.setTitle("Selecione o tipo de Pedido que deseja efetuar");
                     alertDialog.setCancelable(false);
 
-                    alertDialog.setNegativeButton("Cancelar:", new DialogInterface.OnClickListener() {
+                    alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 

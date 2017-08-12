@@ -5,16 +5,14 @@
     tools:context=".MainActivity">
 
 <!--
-
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="103"
         android:title="@string/action_settings"
         app:showAsAction="never" />
-
 -->
 
- <!--   <item
+  <!--  <item
         android:id="@+id/item_filter"
         android:icon="@drawable/ic_filter_list"
         android:orderInCategory="305"
@@ -22,15 +20,18 @@
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction,HardcodedText" />-->
 
+
     <item
         android:id="@+id/item_search"
         android:actionViewClass="android.support.v7.widget.SearchView"
-        android:icon="@drawable/ic_search"
-        android:orderInCategory="304"
-        android:title="Search"
+        android:orderInCategory="302"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction,HardcodedText" />
+        app:showAsAction="collapseActionView|ifRoom"
+        tools:ignore="AlwaysShowAction,HardcodedText"
+        android:icon="@drawable/ic_search"
+        android:title="Search"
+        />
+
 
     <item
         android:id="@+id/action_exit"

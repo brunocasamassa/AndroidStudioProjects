@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -41,13 +42,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.mail.AuthenticationFailedException;
+import javax.mail.MessagingException;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquiapp.helper.Grupo;
 import studio.brunocasamassa.ajudaquiapp.helper.GrupoAbertoTabAdapter;
+import studio.brunocasamassa.ajudaquiapp.helper.Mail;
 import studio.brunocasamassa.ajudaquiapp.helper.Pedido;
+import studio.brunocasamassa.ajudaquiapp.helper.Preferences;
 import studio.brunocasamassa.ajudaquiapp.helper.SlidingTabLayout;
 import studio.brunocasamassa.ajudaquiapp.helper.User;
 
@@ -75,11 +81,16 @@ public class GrupoAbertoActivity extends AppCompatActivity {
     private com.github.clans.fab.FloatingActionButton donationFAB;
     private FloatingActionButton pedidoFAB;
     private int premium;
+    private String link = "https://play.google.com/store/apps/details?id=studio.brunocasamassa.ajudaquiapp";
     private DatabaseReference dbPedido = FirebaseConfig.getFireBase().child("Pedidos");
     private DatabaseReference dbGroup = FirebaseConfig.getFireBase().child("grupos");
     private ArrayList<String> listaAdmins;
     private boolean isOpened;
     private String groupKey;
+    private String groupName;
+    private String userName;
+    private String ajudaquimail = Base64Decoder.encoderBase64("ajudaquisuporte@gmail.com");
+    private String ajudaquipass = Base64Decoder.encoderBase64("ajudaqui931931931");
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -87,6 +98,8 @@ public class GrupoAbertoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grupo_aberto);
+        Preferences preferences = new Preferences(getApplicationContext());
+        userName = preferences.getNome();
 
         //menuFAB = (FloatingActionMenu) findViewById(R.id.fab_menu);
         editName = (ImageButton) findViewById(R.id.edit_groupName_button);
@@ -106,6 +119,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         String uri = extra.getString("uri");
         final String titulo = extra.getString("nome").toString();
         firebase = FirebaseConfig.getFireBase().child("grupos").child(groupKey);
+        groupName = extra.getString("nome").toString();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal_grupoaberto);
         toolbar.setTitle(titulo);
@@ -360,10 +374,46 @@ public class GrupoAbertoActivity extends AppCompatActivity {
             case R.id.action_settings:
                 userGroupExclude(groupKey);
                 return true;
+            case R.id.action_invite:
+                inviteMember();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    private void inviteMember() {
+        AlertDialog.Builder invite = new AlertDialog.Builder(GrupoAbertoActivity.this);
+        invite.setTitle("Convidar Amigos");
+        invite.setMessage("Digite o e-mail dos seus amigos para que eles possam ajudar a todos que precisam");
+        final EditText editText = new EditText(GrupoAbertoActivity.this);
+        invite.setView(editText);
+        invite.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    String[] recipients = {editText.getText().toString()};
+                    SendEmailAsyncTask email = new SendEmailAsyncTask();
+                    email.m = new Mail(Base64Decoder.decoderBase64(ajudaquimail), Base64Decoder.decoderBase64(ajudaquipass));
+                    email.m.set_from("ajudaquisuporte@gmail.com");
+                    email.m.setBody("Seu amigo " + userName + " Te convida para participar do Aplicativo Ajudaqui, verifique também o grupo "+groupName+ " para que possam compartilhar de suas ajudas: \n\n LINK PARA O APP:\n "+ link);
+                    email.m.set_to(recipients);
+                    email.m.set_subject("AJUDAQUI - CONVITE");
+                    email.execute();
+                    Toast.makeText(getApplicationContext(), "Mensagem enviada", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Falha ao enviar mensagem, Verifique o email digitado", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        invite.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).create().show();
     }
 
     private void userGroupExclude(final String chaveGrupo) {
@@ -461,7 +511,6 @@ public class GrupoAbertoActivity extends AppCompatActivity {
                         });
 
 
-
                     }
 
                     @Override
@@ -469,7 +518,6 @@ public class GrupoAbertoActivity extends AppCompatActivity {
 
                     }
                 });
-
 
 
             }
@@ -619,4 +667,38 @@ public class GrupoAbertoActivity extends AppCompatActivity {
     }
 
 
+    class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
+        Mail m;
+        LoginActivity activity;
+
+        public SendEmailAsyncTask() {
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                if (m.send()) {
+                    // activity.displayMessage("Email sent.");
+                } else {
+                    // activity.displayMessage("Email failed to send.");
+                }
+
+                return true;
+            } catch (AuthenticationFailedException e) {
+                System.out.println(SendEmailAsyncTask.class.getName() + "Bad account details");
+                e.printStackTrace();
+                // activity.displayMessage("Authentication failed.");
+                return false;
+            } catch (MessagingException e) {
+                System.out.println(SendEmailAsyncTask.class.getName() + "Email failed");
+                e.printStackTrace();
+                //  activity.displayMessage("Email failed to send.");
+                return false;
+            } catch (Exception e) {
+                e.printStackTrace();
+                // activity.displayMessage("Unexpected error occured.");
+                return false;
+            }
+        }
+    }
 }

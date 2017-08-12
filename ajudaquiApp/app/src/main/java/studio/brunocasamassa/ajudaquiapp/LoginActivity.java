@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class LoginActivity extends AppCompatActivity {
     private DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
     public static String idUser;
     private ValueEventListener valueEventListenerUsuario;
+    private ImageButton backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
         final String ajudaquimail = Base64Decoder.encoderBase64("ajudaquisuporte@gmail.com");
         final String ajudaquipass = Base64Decoder.encoderBase64("ajudaqui931931931");
 
+        backButton = (ImageButton) findViewById(R.id.backButton);
         email = (EditText) findViewById(R.id.email);
         senha = (EditText) findViewById(R.id.senha);
         entrar = (Button) findViewById(R.id.entrar);
@@ -80,7 +83,12 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            }
+        });
 
         lostPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                                 User user = dataSnapshot.getValue(User.class);
                                 try {
                                     if (user.getSenha() != null) {
-                                        String password = user.getSenha();
+                                        String password = Base64Decoder.decoderBase64(user.getSenha());
                                         String[] recipients = {editText.getText().toString()};
                                         SendEmailAsyncTask email = new SendEmailAsyncTask();
                                         email.m = new Mail(Base64Decoder.decoderBase64(ajudaquimail), Base64Decoder.decoderBase64(ajudaquipass));
@@ -112,7 +120,8 @@ public class LoginActivity extends AppCompatActivity {
                                         email.m.set_subject("AJUDAQUI - RESGATE DE SENHA");
                                         email.execute();
                                         Toast.makeText(getApplicationContext(), "Mensagem enviada", Toast.LENGTH_SHORT).show();
-                                    } else Toast.makeText(getApplicationContext(), "Falha ao enviar mensagem, Verifique o email digitado", Toast.LENGTH_SHORT).show();
+                                    } else
+                                        Toast.makeText(getApplicationContext(), "Falha ao enviar mensagem, Verifique o email digitado", Toast.LENGTH_SHORT).show();
                                 } catch (Exception e) {
                                     System.out.println("exception " + e);
                                     Toast.makeText(getApplicationContext(), "Erro ao enviar mensagem", Toast.LENGTH_SHORT).show();
@@ -234,8 +243,10 @@ public class LoginActivity extends AppCompatActivity {
     public void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
-}
 
+
+
+}
 class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
     Mail m;
     LoginActivity activity;
@@ -247,25 +258,25 @@ class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
         try {
             if (m.send()) {
-               // activity.displayMessage("Email sent.");
+                // activity.displayMessage("Email sent.");
             } else {
-               // activity.displayMessage("Email failed to send.");
+                // activity.displayMessage("Email failed to send.");
             }
 
             return true;
         } catch (AuthenticationFailedException e) {
             System.out.println(SendEmailAsyncTask.class.getName() + "Bad account details");
             e.printStackTrace();
-           // activity.displayMessage("Authentication failed.");
+            // activity.displayMessage("Authentication failed.");
             return false;
         } catch (MessagingException e) {
             System.out.println(SendEmailAsyncTask.class.getName() + "Email failed");
             e.printStackTrace();
-          //  activity.displayMessage("Email failed to send.");
+            //  activity.displayMessage("Email failed to send.");
             return false;
         } catch (Exception e) {
             e.printStackTrace();
-           // activity.displayMessage("Unexpected error occured.");
+            // activity.displayMessage("Unexpected error occured.");
             return false;
         }
     }

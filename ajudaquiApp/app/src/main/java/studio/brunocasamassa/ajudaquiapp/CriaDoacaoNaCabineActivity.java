@@ -263,7 +263,7 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
         display.getSize(size);
         int width = size.x;
         int height = size.y;
-        Toast.makeText(getApplicationContext(), "width "+ width + " height "+ height , Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "width "+ width + " height "+ height , Toast.LENGTH_SHORT).show();
 
         int currentapiVersion = Build.VERSION.SDK_INT;
 

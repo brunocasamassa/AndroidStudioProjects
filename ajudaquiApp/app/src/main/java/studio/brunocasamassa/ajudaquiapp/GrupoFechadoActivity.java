@@ -130,7 +130,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                 }
                 if (grupo.isOpened()) {
                     botaoSolicitar.setText("PARTICIPAR");
-                    groupNotification.setText("Este é um grupo aberto, ao clicar me participar voce fará parte dele");
+                    groupNotification.setText("Este é um grupo aberto, ao clicar em participar voce fará parte dele");
                     botaoSolicitar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

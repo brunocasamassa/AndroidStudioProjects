@@ -3,7 +3,6 @@ package studio.brunocasamassa.ajudaquiapp;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -12,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -21,7 +21,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +39,8 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import es.dmoral.toasty.Toasty;
+import studio.brunocasamassa.ajudaquiapp.adapters.MedalhasAdapter;
 import studio.brunocasamassa.ajudaquiapp.adapters.NotificacoesAdapter;
 import studio.brunocasamassa.ajudaquiapp.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquiapp.helper.FirebaseConfig;
@@ -56,6 +57,7 @@ import studio.brunocasamassa.ajudaquiapp.helper.User;
 public class PerfilActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
+    private int NUMBER_BADGES = 10;
     private ListView listview_nomes;
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
@@ -90,6 +92,8 @@ public class PerfilActivity extends AppCompatActivity {
     private String encodedKeySolicitation;
     private ArrayList<String> listaSolicitationKey;
     private ArrayList<String> listaGruposKeys;
+    private RecyclerView horizontal;
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
     @Override
@@ -98,7 +102,6 @@ public class PerfilActivity extends AppCompatActivity {
         setContentView(R.layout.activity_perfil);
 
         final ListView notificacoes = (ListView) findViewById(R.id.perfil_notificacoes);
-        LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
         profileImg = (CircleImageView) findViewById(R.id.profileImg);
         profileName = (TextView) findViewById(R.id.profileName);
         premiumTag = (ImageView) findViewById(R.id.premiumTag);
@@ -107,7 +110,9 @@ public class PerfilActivity extends AppCompatActivity {
         pontosConquistados = (TextView) findViewById(R.id.rankedUserPontosConquistados);
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal);
         userCredits = (TextView) findViewById(R.id.user_credits);
-
+        horizontal = (RecyclerView) findViewById(R.id.horizontal_scroll);
+        final LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
 
         listaSolicitationKey = new ArrayList<>();
         listaNotificacoes = new ArrayList();
@@ -127,14 +132,11 @@ public class PerfilActivity extends AppCompatActivity {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
                 final User usuario = dataSnapshot.getValue(User.class);
-                user.setMedalhas(badgesList); //usuario.getMedalhas()
                 System.out.println("recebe usuario NAME: " + usuario.getName());
                 System.out.println("recebe usuario DATA: " + dataSnapshot.getValue());
                 int respPremium = usuario.getPremiumUser();
                 premium = respPremium;
 
-
-                userCredits.setText("Creditos disponiveis: "+ String.valueOf(usuario.getCreditos()));
                 if (premium == 1) {
                     Glide.with(PerfilActivity.this).load(R.drawable.premium_icon).into(premiumTag);
                 }
@@ -149,6 +151,7 @@ public class PerfilActivity extends AppCompatActivity {
 
                         //GRUPO: vamos ver: usuario: dGVzdGVAdGVzdGUuY29t :mensagem: osmanu: hashkey"
 
+                        //CONCATE NOTIFICATION STRING
                         for (String sentence : msg) {
                             if (sentence.equals("GRUPO")) {
                                 groupName = msg[1];
@@ -183,6 +186,7 @@ public class PerfilActivity extends AppCompatActivity {
 
                         }
 
+                        //PUTTING WORDS INTO THE NOTIFICATION ARRAY
                         System.out.println("CONCATENADO TOTAL " + msgCompleta);
                         listaSolicitationKey.add(listaSolicitationKey.size(), encodedKeySolicitation);
                         listaKey.add(listaKey.size(), userKeySolicitante);
@@ -192,11 +196,24 @@ public class PerfilActivity extends AppCompatActivity {
                         listaMessages.add(listaMessages.size(), message);
                         listaNotificacoes.add(listaNotificacoes.size(), msgCompleta);
                         adapter = new NotificacoesAdapter(getApplicationContext(), listaNotificacoes);
+
                         notificacoes.setDivider(null);
                         notificacoes.setAdapter(adapter);
+
                     }
                 }
 
+
+                //BADGES TREATMENT
+                ArrayList<Integer> array = new ArrayList<Integer>();
+                array.addAll(verifyMedals());
+                user.setMedalhas(array);
+                horizontal.setLayoutManager(llm);
+                horizontal.setAdapter(new MedalhasAdapter(array));
+
+
+                //SETTING VALUES TO THE VIEW
+                userCredits.setText("Creditos disponiveis: " + String.valueOf(usuario.getCreditos()));
                 profileName.setText(usuario.getName());
                 if (usuario.getPedidosAtendidos() != null) {
                     pedidosAtendidos.setText("" + usuario.getPedidosAtendidos().size());
@@ -206,21 +223,21 @@ public class PerfilActivity extends AppCompatActivity {
                 } else pedidosFeitos.setText("" + 0);
                 pontosConquistados.setText(String.valueOf(usuario.getPontos()));
 
-                    storage.child(userKey + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            profileImg.setBackgroundColor(Color.TRANSPARENT);
-                            Glide.with(PerfilActivity.this).load(uri).override(68, 68).into(profileImg);
-                            System.out.println("my groups lets seee2 " + uri);
+                storage.child(userKey + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        profileImg.setBackgroundColor(Color.TRANSPARENT);
+                        Glide.with(PerfilActivity.this).load(uri).override(68, 68).into(profileImg);
+                        System.out.println("my groups lets seee2 " + uri);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
+                            Glide.with(PerfilActivity.this).load(usuario.getProfileImg()).into(profileImg);
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
-                                Glide.with(PerfilActivity.this).load(usuario.getProfileImg()).into(profileImg);
-                            }
-                        }
-                    });
+                    }
+                });
 
                 /*
                 usuario.setId(userKey);
@@ -243,7 +260,7 @@ public class PerfilActivity extends AppCompatActivity {
                 String mensagem = listaMessages.get(position);
                 String usuarioSolicitante = listaUserName.get(position);
                 final String nomeGrupoSolicitado = listaGrupos.get(position);
-                final String grupoSolicitado= listaGruposKeys.get(position);
+                final String grupoSolicitado = listaGruposKeys.get(position);
                 final String userKeySolicitante = listaKey.get(position);
                 final String encodedKeySolicitation = listaSolicitationKey.get(position);
 
@@ -252,6 +269,7 @@ public class PerfilActivity extends AppCompatActivity {
                 alertDialog.setTitle("O usuario " + usuarioSolicitante + " deseja entrar no grupo " + nomeGrupoSolicitado);
                 alertDialog.setMessage(mensagem);
                 alertDialog.setCancelable(false);
+
 
                 alertDialog.setPositiveButton("ACEITAR", new DialogInterface.OnClickListener() {
                     @Override
@@ -312,8 +330,12 @@ public class PerfilActivity extends AppCompatActivity {
 */
                     }
                 });
+                alertDialog.setNeutralButton("CANCELAR", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }});
 
-                alertDialog.setNegativeButton("RECUSAR", new DialogInterface.OnClickListener() {
+                        alertDialog.setNegativeButton("RECUSAR", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getApplicationContext(), "Solicitação Recusada ", Toast.LENGTH_LONG).show();
@@ -325,104 +347,6 @@ public class PerfilActivity extends AppCompatActivity {
 
             }
         });
-
-        if (user.getMedalhas() != null) {
-
-            System.out.println("laço de imagens");
-            for (int i = 0; i < 10; i++) {
-                final ImageView imageView = new ImageView(PerfilActivity.this);
-                imageView.setId(i);
-                imageView.setPadding(0, 0, 0, 0);
-                imageView.setPaddingRelative(View.TEXT_ALIGNMENT_TEXT_START, View.SCROLL_INDICATOR_TOP, 0, 0);
-                imageView.isOpaque();
-                if (i == 0) {
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(
-                            getResources(), R.drawable.badge_back));
-                    imageView.setScaleX((float) 0.5);
-                    imageView.setScaleY((float) 1);
-                }
-                if (i == 1) {
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(
-                            getResources(), R.drawable.badge2));
-                    imageView.setScaleX((float) 0.5);
-                    imageView.setScaleY((float) 1);
-                }
-                if (i == 2) {
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(
-                            getResources(), R.drawable.badge3));
-                    imageView.setScaleX((float) 0.5);
-                    imageView.setScaleY((float) 1);
-                }
-
-                if (i == 3) {
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(
-                            getResources(), R.drawable.badge4));
-                    imageView.setScaleX((float) 0.5);
-                    imageView.setScaleY((float) 1);
-
-                }
-                if (i == 4) {
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(
-                            getResources(), R.layout.model_group));
-                    imageView.setScaleX((float) 0.5);
-                    imageView.setScaleY((float) 1);
-
-                }
-                if (i == 5) {
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(
-                            getResources(), R.drawable.badge6));
-                    imageView.setScaleX((float) 0.5);
-                    imageView.setScaleY((float) 1);
-                    imageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(getApplicationContext(), "clicked", Toast.LENGTH_SHORT);
-                        }
-                    });
-
-                }
-                if (i == 6) {
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(
-                            getResources(), R.drawable.badge7));
-                    imageView.setScaleX((float) 0.5);
-                    imageView.setScaleY((float) 1);
-
-                }
-                if (i == 7) {
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(
-                            getResources(), R.drawable.badge3));
-                    imageView.setScaleX((float) 0.5);
-                    imageView.setScaleY((float) 1);
-
-                }
-                if (i == 8) {
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(
-                            getResources(), R.id.import_donation_img));
-                    imageView.setScaleX((float) 0.5);
-                    imageView.setScaleY((float) 1);
-
-                }
-                if (i == 9) {
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(
-                            getResources(), R.drawable.badge5));
-                    imageView.setScaleX((float) 0.5);
-                    imageView.setScaleY((float) 1);
-
-                }
-                /*
-                if (!user.getMedalhas().contains(i) || user.getMedalhas() ==null) {
-                    imageView.setImageBitmap(BitmapFactory.decodeResource(
-                            getResources(), R.drawable.badge_back));
-                    imageView.setScaleX((float) 0.5);
-                    imageView.setScaleY((float) 1);
-                }*/
-
-                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                layout.addView(imageView);
-
-            }
-        }
-
         toolbar.setTitle(getResources().getString(R.string.menu_perfil));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
@@ -432,6 +356,122 @@ public class PerfilActivity extends AppCompatActivity {
 
         navigator.createDrawer(PerfilActivity.this, toolbar, 7);
 
+    }
+
+    private ArrayList<Integer> verifyMedals() {
+        final ArrayList<Integer> medals = new ArrayList<Integer>();
+        try {
+            if (user.getMedalhas() != null) {
+                medals.addAll(user.getMedalhas());
+                user.setMedalhas(medals);
+            }
+
+            for (int i = 0; i < NUMBER_BADGES; i++) {
+                try {
+                    if (medals.get(i).equals(i + 1)) {
+                        System.out.println("getting badge" + medals.get(i));
+                    } else medals.add(i, 0);
+                } catch (Exception e) {
+                    medals.add(i, 0);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("error getting medals " + e.getLocalizedMessage());
+        }
+        DatabaseReference db = FirebaseConfig.getFireBase().child("usuarios");
+        db.child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                try {
+                    if (user.getPedidosAtendidos() != null && user.getPedidosAtendidos().size() == 1) {
+                        if (user.getMedalhas() != null && !user.getMedalhas().contains(0)) {
+                            medals.add(0, 1); // primeiro pedido
+                            user.setMedalhas(medals);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                Toasty.custom(getApplicationContext(), "voce adquiriu a medalha de , parabáns.", getDrawable(R.drawable.logo),
+                                        Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
+                            }
+                        }
+                    }
+                    if (user.getPedidosAtendidos() != null && user.getPedidosAtendidos().size() == 3) {
+                        if (user.getMedalhas() != null && !user.getMedalhas().contains(1)) {
+                            medals.add(1, 2);   // 3 pedidos
+                            user.setMedalhas(medals);
+                        }
+                    }
+
+                    if (user.getPedidosAtendidos() != null && user.getPedidosAtendidos().size() == 10) {
+                        if (user.getMedalhas() != null && !user.getMedalhas().contains(2)) {
+                            medals.add(2, 3);   // 10 pedidos
+                            user.setMedalhas(medals);
+                        }
+                    }
+                    if (user.getPedidosFeitos() != null && user.getPedidosFeitos().size() == 1) {
+                        if (user.getMedalhas() != null && !user.getMessageNotification().equals("no message")) {
+                            medals.add(3, 4);   // primeiro pedido atendido
+                            user.setMedalhas(medals);
+                        }
+                    }
+                    if (user.getPedidosFeitos() != null && user.getPedidosFeitos().size() == 3) {
+                        if (user.getMedalhas() != null && !user.getMessageNotification().equals("no message")) {
+                            medals.add(4, 5);   // 3 pedidos atendidos
+                            user.setMedalhas(medals);
+                        }
+                    }
+
+                    /*if (user.getEmail().equals(Base64Decoder.decoderBase64(userKey))) {
+                        medals.add(5, 6);   // 10 pedidos atendidos
+                        user.setMedalhas(medals);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            Toasty.custom(getApplicationContext(), "voce adquiriu a medalha de , parabáns.", getDrawable(R.drawable.logo),
+                                    Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
+                        }
+
+                    }*/
+
+                    if (user.getPedidosFeitos() != null && user.getPedidosFeitos().size() == 10) {
+                        if (user.getMedalhas() != null && !user.getMessageNotification().isEmpty()) {
+                            medals.add(5, 6);   // 10 pedidos atendidos
+                            user.setMedalhas(medals);
+                        }
+                    }
+                    if (user.getGrupos() != null && user.getGrupos().size() == 1) {
+                        if (user.getMedalhas() != null) {
+                            medals.add(6, 7);   // primeiro grupo
+                            user.setMedalhas(medals);
+                        }
+                    }
+
+                    if (user.getGrupos() != null && user.getGrupos().size() == 3) {
+                        if (user.getMedalhas() != null) {
+                            medals.add(7, 8);   // primeiro grupo
+                            user.setMedalhas(medals);
+                        }
+                    }
+                    if (user.getGrupos() != null && user.getGrupos().size() == 10) {
+                        if (user.getMedalhas() != null) {
+                            medals.add(8, 9);   // primeiro grupo
+                            user.setMedalhas(medals);
+                        }
+                    }
+
+
+                    user.setMedalhas(medals);
+                    user.save();
+                } catch (Exception e) {
+                    System.out.println("exception medals " + e);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        return medals;
     }
 
 
@@ -466,7 +506,6 @@ public class PerfilActivity extends AppCompatActivity {
                                 if (userSolicitations.get(j).contains(keySolicitacao)) {
                                     userSolicitations.remove(j);
                                 }
-
                             userAdmin.setMsgSolicitacoes(userSolicitations);
                             userAdmin.save();
                         }
@@ -488,9 +527,9 @@ public class PerfilActivity extends AppCompatActivity {
             }
         });
 
-        //don't judge me
+        //don't judge me -- MANUAL DELAY FROM SERVER - TESTED AND NEEDED
         int timer = 2000;
-        while (timer>=0) {
+        while (timer >= 0) {
             if (timer == 0) {
                 finish();
             }

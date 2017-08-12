@@ -171,6 +171,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 name.setText(user.getName());
+                maxDistance.setProgress(user.getMaxDistance());
                 if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
                     Glide.with(ConfiguracoesActivity.this).load(user.getProfileImg()).override(68, 68).into(circleImageView);
                 } else {
