@@ -16,6 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_gravity="top"
         android:layout_marginTop="9dp"
+        android:src="@drawable/com_facebook_profile_picture_blank_square"
         app:srcCompat="@android:anim/accelerate_interpolator" />
 
     <TextView

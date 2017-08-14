@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="studio.brunocasamassa.ajudaquiapp">
+    package="studio.brunocasamassa.ajudaquioficial">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -24,34 +24,35 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.StarsBar"
+            android:name="studio.brunocasamassa.ajudaquioficial.StarsBar"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.payment.ConfirmationActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.payment.ConfirmationActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.DoacaoCriadaActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.DoacaoCriadaActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.LoginActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.TagsList"
+            android:name="studio.brunocasamassa.ajudaquioficial.TagsList"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.ListaAdmins"
+            android:name="studio.brunocasamassa.ajudaquioficial.ListaAdmins"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.PedidosActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.PedidosActivity"
             android:largeHeap="true"
             android:screenOrientation="portrait">
             <meta-data
@@ -61,27 +62,27 @@
         </activity>
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.FaqActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.FaqActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.helper.PedidoCriadoActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.helper.PedidoCriadoActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.CriaPedidoActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.CriaPedidoActivity"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.PerfilActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.PerfilActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.helper.PedidoAtendidoActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.helper.PedidoAtendidoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.CadastroActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.CadastroActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.ChatActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.ChatActivity"
             android:screenOrientation="portrait" />
 
         <fragment
@@ -92,56 +93,56 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.GrupoFechadoActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.GrupoFechadoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.ConfiguracoesActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.ConfiguracoesActivity"
             android:largeHeap="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.GruposActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.GruposActivity"
             android:largeHeap="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.PedidoAddGroupsList"
+            android:name="studio.brunocasamassa.ajudaquioficial.PedidoAddGroupsList"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.helper.PedidoActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.helper.PedidoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.GrupoAbertoActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.GrupoAbertoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.CriaGrupoActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.CriaGrupoActivity"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.CabineFarturaActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.CabineFarturaActivity"
             android:largeHeap="true"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.CriaDoacaoNaCabineActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.CriaDoacaoNaCabineActivity"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.SobreActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.SobreActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.PerfilGruposActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.PerfilGruposActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.ConversasActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.ConversasActivity"
             android:screenOrientation="portrait" />
         <!--.MainActivity-->
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.CriaDoacaoActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.CriaDoacaoActivity"
             android:screenOrientation="portrait"></activity>
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.MainActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -151,14 +152,14 @@
         </activity>
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.payment.PaymentActivity3"
+            android:name="studio.brunocasamassa.ajudaquioficial.payment.PaymentActivity3"
             android:screenOrientation="portrait"></activity>
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquiapp.payment.PagamentoTermosActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.payment.PagamentoTermosActivity"
             android:screenOrientation="portrait"></activity>
 
-        <activity android:name="studio.brunocasamassa.ajudaquiapp.SearchableActivity">
+        <activity android:name="studio.brunocasamassa.ajudaquioficial.SearchableActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -167,15 +168,15 @@
                 android:resource="@layout/searchable" />
         </activity>
 
-        <activity android:name="studio.brunocasamassa.ajudaquiapp.PurchaseActivity" />
+        <activity android:name="studio.brunocasamassa.ajudaquioficial.PurchaseActivity" />
 
-        <service android:name="studio.brunocasamassa.ajudaquiapp.MyFirebaseMessagingService">
+        <service android:name="studio.brunocasamassa.ajudaquioficial.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <service android:name="studio.brunocasamassa.ajudaquiapp.MyFirebaseInstanceIdService">
+        <service android:name="studio.brunocasamassa.ajudaquioficial.MyFirebaseInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>

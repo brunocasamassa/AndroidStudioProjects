@@ -9,13 +9,13 @@
     android:background="@android:color/background_light">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_principal"
+        android:id="@+id/toolbar_principal_configuracoes"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorBackground"
         app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
 
-    <studio.brunocasamassa.ajudaquiapp.helper.SlidingTabLayout
+    <studio.brunocasamassa.ajudaquioficial.helper.SlidingTabLayout
         android:id="@+id/stl_tabs"
         android:layout_width="match_parent"
         android:layout_height="46dp"
@@ -24,7 +24,7 @@
         android:background="@color/colorBackground"
         app:titleTextColor="@android:color/white">
 
-    </studio.brunocasamassa.ajudaquiapp.helper.SlidingTabLayout>
+    </studio.brunocasamassa.ajudaquioficial.helper.SlidingTabLayout>
 
     <RelativeLayout
         android:id="@+id/activity_crear_entrenamiento"

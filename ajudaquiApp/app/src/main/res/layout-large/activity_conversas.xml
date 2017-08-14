@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     android:background="@color/md_grey_200"
     android:layout_marginBottom="0dp"
-    tools:context="studio.brunocasamassa.ajudaquiapp.fragments.ContatosFragment">
+    tools:context="studio.brunocasamassa.ajudaquioficial.fragments.ContatosFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_principal"
+        android:id="@+id/toolbar_principal_configuracoes"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"

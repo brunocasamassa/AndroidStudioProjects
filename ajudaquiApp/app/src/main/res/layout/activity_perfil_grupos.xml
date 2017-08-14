@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="studio.brunocasamassa.ajudaquiapp.PerfilGruposActivity">
+    tools:context="studio.brunocasamassa.ajudaquioficial.PerfilGruposActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_principal"
+        android:id="@+id/toolbar_principal_configuracoes"
         android:layout_width="415dp"
         android:layout_height="54dp"
         android:background="@color/colorBackground"
@@ -24,7 +24,7 @@
         android:src="@mipmap/ic_launcher"
         app:civ_border_width="2dp"
         app:civ_border_color="#ffffff"
-        android:layout_below="@+id/toolbar_principal"
+        android:layout_below="@+id/toolbar_principal_configuracoes"
         android:layout_alignStart="@+id/premiumTag"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/rankedProfileName"
@@ -33,7 +33,7 @@
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="@+id/rankedProfileName"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_principal"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_principal_configuracoes"
         app:layout_constraintVertical_bias="0.571"
         app:layout_constraintHorizontal_bias="0.504" />
 

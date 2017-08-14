@@ -96,6 +96,8 @@
         android:layout_height="120dp"
         android:hint="Descricao do Grupo"
         android:textSize="15dp"
+        android:maxLines="7"
+        android:scrollbarThumbVertical="@drawable/custom_scroll"
         android:scrollbarAlwaysDrawVerticalTrack="true"
         android:translationX="10dp"
         android:requiresFadingEdge="vertical"

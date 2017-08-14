@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_mainactivity"
-    tools:context="studio.brunocasamassa.ajudaquiapp.MainActivity">
+    tools:context="studio.brunocasamassa.ajudaquioficial.MainActivity">
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"

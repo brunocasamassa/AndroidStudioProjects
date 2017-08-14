@@ -4,9 +4,9 @@
     <string name="menu_chats">Conversas</string>
     <string name="menu_grupos">Grupos</string>
     <string name="menu_perfil">Perfil</string>
-    <string name="menu_configuracoes">Configuracoes</string>
+    <string name="menu_configuracoes">Configurações</string>
     <string name="menu_sobre">Sobre</string>
-    <string name="action_settings">Cofigurações</string>
+    <string name="action_settings">Configurações</string>
     <string name="exit">Logout</string>
     <string name="title_activity_navigation">Navigation</string>
     <string name="facebook_app_id">291063514653262</string>

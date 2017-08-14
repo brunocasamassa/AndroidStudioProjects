@@ -4,11 +4,11 @@ android {
     buildToolsVersion '25.0.0'
     defaultConfig
             {
-                applicationId 'studio.brunocasamassa.ajudaquiapp'
+                applicationId 'studio.brunocasamassa.ajudaquioficial'
                 minSdkVersion 16
                 targetSdkVersion 23
-                versionCode 25
-                versionName "1.25"
+                versionCode 28
+                versionName "1.28"
                 testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
             }
 

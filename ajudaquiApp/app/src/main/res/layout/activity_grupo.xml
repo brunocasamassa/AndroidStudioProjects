@@ -18,14 +18,14 @@
         android:fadingEdge="vertical"
         android:requiresFadingEdge="vertical"
         app:srcCompat="@color/colorBackground"
-        android:layout_below="@+id/toolbar_principal"
+        android:layout_below="@+id/toolbar_principal_configuracoes"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_principal"
+        android:id="@+id/toolbar_principal_configuracoes"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorBackground"
@@ -39,9 +39,8 @@
         android:id="@+id/groupImg"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/add_group_logo"
         app:civ_border_color= "@android:color/transparent"
-        app:civ_border_width="2dp"
         android:layout_below="@+id/groupName"
         android:layout_centerHorizontal="true" />
 
@@ -49,7 +48,7 @@
         android:id="@+id/groupName"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar_principal"
+        android:layout_below="@+id/toolbar_principal_configuracoes"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="6dp"
         android:text="group example"
