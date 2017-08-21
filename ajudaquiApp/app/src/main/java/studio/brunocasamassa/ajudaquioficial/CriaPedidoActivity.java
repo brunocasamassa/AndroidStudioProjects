@@ -132,6 +132,8 @@ public class CriaPedidoActivity extends AppCompatActivity {
 
         categorias = (TagContainerLayout) findViewById(R.id.tagGroupCategoria);
         grupos = (TagContainerLayout) findViewById(R.id.tagGroupGrupos);
+      /*  grupos.setBackgroundColor(Color.TRANSPARENT);
+        grupos.setBackgroundResource(R.drawable.logo);*/
 
         add_grupos = (TextView) findViewById(R.id.textView5);
         add_tags = (TextView) findViewById(R.id.word_add_tags);
@@ -348,7 +350,6 @@ public class CriaPedidoActivity extends AppCompatActivity {
         pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo()));
         pedido.setCriadorId(userKey);
 
-
         if (latitude == null) {
             pedido.setLatitude(0.0);
         } else {
@@ -364,7 +365,6 @@ public class CriaPedidoActivity extends AppCompatActivity {
         } else if (groupCaptured != null) {
             pedido.setGrupo(groupCaptured);
         }
-
         if (idGroupSelected != null) {
             pedido.setGroupId(idGroupSelected);
             savePedidoIntoGroup(pedido);
@@ -372,7 +372,6 @@ public class CriaPedidoActivity extends AppCompatActivity {
             pedido.setGroupId(groupCapturedId);
             savePedidoIntoGroup(pedido);
         }
-
 
         System.out.println("user id key " + userKey);
 

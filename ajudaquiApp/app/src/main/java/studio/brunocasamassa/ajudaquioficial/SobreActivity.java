@@ -44,7 +44,7 @@ public class SobreActivity extends AppCompatActivity {
     private ArrayAdapter arrayAdapterSobre;
     private SlidingTabLayout slidingTabLayout;
     public int posicao;
-    private String SUPPORT_EMAIL = "contatoajudaqui@outlook.com";
+    private String SUPPORT_EMAIL = "contato@ajudaqui.com.br";
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -79,7 +79,6 @@ public class SobreActivity extends AppCompatActivity {
         listview_nomes.setDivider(null);
 
         listview_nomes.setAdapter(arrayAdapterSobre);
-
 
         listview_nomes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

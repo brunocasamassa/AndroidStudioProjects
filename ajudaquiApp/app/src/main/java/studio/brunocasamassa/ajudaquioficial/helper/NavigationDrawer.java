@@ -41,7 +41,6 @@ import studio.brunocasamassa.ajudaquioficial.payment.PaymentActivity3;
 
 public class NavigationDrawer {
 
-
     //NAVIGATION DRAWER
     private DatabaseReference firebaseData;
     private DatabaseReference dbConversa;
@@ -77,6 +76,7 @@ public class NavigationDrawer {
                     int chatNotification;
                     int groupNotification;
                     int pedidosNotification;
+                    int profileNotification;
 
 
                     System.out.println("DATASNAPSHOT " + dataSnapshot);
@@ -90,11 +90,12 @@ public class NavigationDrawer {
 
                     chatNotification = user.getChatNotificationCount();
                     pedidosNotification = user.getPedidosNotificationCount();
+                    profileNotification = user.getProfileNotificationCount();
 
                     PrimaryDrawerItem item1;
                     PrimaryDrawerItem item2;
                     PrimaryDrawerItem item3;
-
+                    PrimaryDrawerItem item4;
                     if (pedidosNotification != 0) {
                         item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos).withIcon(R.drawable.pedidos_icon).withBadge(String.valueOf(pedidosNotification)).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.colorAccent));
                     } else
@@ -105,7 +106,11 @@ public class NavigationDrawer {
                         item2 = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.menu_chats).withIcon(R.drawable.chat_icon);
 
                     item3 = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.menu_grupos).withIcon(R.drawable.groups_icon);
-                    PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.menu_perfil).withIcon(R.drawable.profile_icon);
+
+                    if(profileNotification != 0){
+                    item4 = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.menu_perfil).withIcon(R.drawable.profile_icon).withBadge(String.valueOf(profileNotification)).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.colorAccent));
+                    } else item4 = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.menu_perfil).withIcon(R.drawable.profile_icon);
+
                     PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_sobre).withIcon(R.drawable.sobre_icon);
                     PrimaryDrawerItem item6 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_configuracoes).withIcon(R.drawable.config_icon);
                     // Create the Navigation Drawer AccountHeader

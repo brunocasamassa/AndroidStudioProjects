@@ -11,6 +11,11 @@
         android:title="Convidar amigos"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_description"
+        android:orderInCategory="103"
+        android:title="Descrição do Grupo"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_settings"

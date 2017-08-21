@@ -46,6 +46,7 @@ public class PedidoActivity extends AppCompatActivity {
     private User user = new User();
     private DatabaseReference firebase;
     private DatabaseReference dbUserDestinatario;
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -55,7 +56,6 @@ public class PedidoActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido);
-
 
         final Bundle extra = getIntent().getExtras();
         toolbar = (Toolbar) findViewById(R.id.toolbar_donation_activity);
@@ -67,7 +67,6 @@ public class PedidoActivity extends AppCompatActivity {
 
         Preferences preferencias = new Preferences(PedidoActivity.this);
         userName = preferencias.getNome();
-
 
         if (extra != null) {
 
@@ -83,6 +82,7 @@ public class PedidoActivity extends AppCompatActivity {
             pedido.setLatitude(extra.getDouble("latitude"));
             pedido.setTitulo(extra.getString("titulo"));
             pedido.setGrupo(extra.getString("tagsGrupo"));
+            pedido.setGroupId(extra.getString("groupId"));
             pedido.setStatus(extra.getInt("status"));
             pedido.setTipo(extra.getString("tipo"));
             pedido.setCriadorId(extra.getString("criadorId"));
@@ -150,10 +150,16 @@ public class PedidoActivity extends AppCompatActivity {
                                     dbPedido.setDescricao(pedido.getDescricao());
                                     dbPedido.setIdPedido(pedido.getIdPedido());
                                     dbPedido.setStatus(1);
+                                    dbPedido.setLatitude(pedido.getLatitude());
+                                    dbPedido.setLongitude(pedido.getLongitude());
+                                    dbPedido.setGrupo(pedido.getGrupo());
+                                    dbPedido.setGroupId(pedido.getGroupId());
                                     dbPedido.setTagsCategoria(pedido.getTagsCategoria());
                                     dbPedido.setTipo(pedido.getTipo());
                                     dbPedido.setTitulo(pedido.getTitulo());
                                     dbPedido.setAtendenteId(userKey);
+
+
 
                                     firebase.child(pedido.getIdPedido()).setValue(dbPedido);
 
@@ -320,7 +326,6 @@ public class PedidoActivity extends AppCompatActivity {
             firebase.child(idRemetente)
                     .child(pedido.getIdPedido())
                     .setValue(conversa);
-
 
             return true;
 

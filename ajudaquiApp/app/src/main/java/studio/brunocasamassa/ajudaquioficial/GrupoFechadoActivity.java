@@ -20,7 +20,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -30,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -216,7 +216,8 @@ public class GrupoFechadoActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Uri uri) {
                 try {
-                    Glide.with(GrupoFechadoActivity.this).load(uri).override(68, 68).into(groupImg);
+                    //Glide.with(GrupoFechadoActivity.this).load(uri).override(68, 68).into(groupImg);
+                    Picasso.with(getApplicationContext()).load(uri).resize(groupImg.getWidth(), groupImg.getHeight()).into(groupImg);
                 } catch (Exception e) {
                     groupImg.setImageURI(uri);
                 }
@@ -388,6 +389,8 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                                             System.out.println("mensagens solicitação usuario: " + user.getMsgSolicitacoes());
                                             msgSolicitacoes.addAll(dataUser.getMsgSolicitacoes());
                                             //padrao de mensagem na db
+                                            dataUser.setProfileNotificationCount(dataUser.getProfileNotificationCount()+1);
+
                                             msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:" + grupo.getNome() + ":USUARIO:" + userName + " :MENSAGEM: " + mensagemSolicitacao + ":USERKEY:" + userKey + ":SOLICITATIONKEY:" + userKey + grupo.getId() + ":GROUPKEY:" + grupo.getId());
                                         } else {
                                             //padrao de mensagem na db

@@ -84,6 +84,16 @@ public class User implements DatabaseReference.CompletionListener {
 
     private int pedidosNotificationCount;
 
+    public int getProfileNotificationCount() {
+        return profileNotificationCount;
+    }
+
+    public void setProfileNotificationCount(int profileNotificationCount) {
+        this.profileNotificationCount = profileNotificationCount;
+    }
+
+    private int profileNotificationCount;
+
     private ArrayList<String> pedidosAtendidos;
 
     private ArrayList<String> itensDoados;

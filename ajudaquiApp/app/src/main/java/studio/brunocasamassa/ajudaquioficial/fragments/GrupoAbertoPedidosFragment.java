@@ -89,7 +89,7 @@ public class GrupoAbertoPedidosFragment extends Fragment {
 
                     Pedido pedido = snapshot.getValue(Pedido.class);
 
-                    if (pedido.getGrupo() != null && pedido.getGrupo().equals(nomeGroup) && !pedido.getCriadorId().equals(userKey)) {
+                    if (pedido.getGrupo() != null && pedido.getGrupo().equals(nomeGroup) && !pedido.getCriadorId().equals(userKey) && pedido.getAtendenteId() == null) {
                         adapter_nomes.add(pedido);
                        // arraylist_nomes.add(pedido);
                         System.out.println("adicionado pedido "+ pedido.getTitulo());

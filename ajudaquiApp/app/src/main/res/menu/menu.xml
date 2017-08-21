@@ -12,13 +12,13 @@
         app:showAsAction="never" />
 -->
 
-  <!--  <item
+    <item
         android:id="@+id/item_filter"
         android:icon="@drawable/ic_filter_list"
         android:orderInCategory="305"
         android:title="Filtrar"
         app:showAsAction="always"
-        tools:ignore="AlwaysShowAction,HardcodedText" />-->
+        tools:ignore="AlwaysShowAction,HardcodedText" />
 
 
     <item

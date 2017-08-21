@@ -61,6 +61,7 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
     private ArrayAdapter<Pedido> arrayMeusPedidosAdapter;
     private SlidingTabLayout slidingTabLayout;
     private int premium;
+    private AlertDialog.Builder alertDialog;
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
     private SimpleLocation localizacao;
     private User usuario;
@@ -121,6 +122,8 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
         Bundle extras = getIntent().getExtras();
 
         ;
+
+        final Preferences filterPreferences = new Preferences(PedidosActivity.this);
         getLocalization = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
 
         getLocalization.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -225,24 +228,75 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.action_exit:
-
-                Preferences preferences = new Preferences(PedidosActivity.this);
-                preferences.clearSession();
+                final Preferences exitPreferences = new Preferences(PedidosActivity.this);
+                exitPreferences.clearSession();
                 FirebaseAuth.getInstance().signOut();
                 LoginManager.getInstance().logOut();
                 startActivity(new Intent(PedidosActivity.this, MainActivity.class));
 
                 return true;
 
-/*            case R.id.action_settings:
-                startActivity(new Intent(PedidosActivity.this, ConfiguracoesActivity.class));
-                Toast.makeText(getApplicationContext(), "Filtering", Toast.LENGTH_LONG).show();
-                return true;*/
+            case R.id.item_filter:
+
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidosActivity.this);
+
+                final Preferences filterPreferences = new Preferences(PedidosActivity.this);
+                alertDialog.setTitle("Filtrar: \nSelecione o tipo de pedido:");
+                alertDialog.setCancelable(false);
+                alertDialog.setNeutralButton("Limpar Filtro", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        filterPreferences.saveFilterPedido(null);
+                        refresh();
+                    }
+                });
+                alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                alertDialog.setItems(new CharSequence[]
+                                {"Serviços", "Emprestimos", "Trocas", "Doações"},
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // The 'which' argument contains the index position
+                                // of the selected item
+                                switch (which) {
+                                    case 0:
+
+                                        filterPreferences.saveFilterPedido("Servicos");
+                                        refresh();
+                                        // Toast.makeText(getApplicationContext(), "Servicos", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 1:
+                                        filterPreferences.saveFilterPedido("Emprestimos");
+                                        refresh();
+                                        // Toast.makeText(getApplicationContext(), "Emprestimos", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 2:
+                                        filterPreferences.saveFilterPedido("Trocas");
+                                        refresh();
+                                        //  Toast.makeText(getApplicationContext(), "Troca", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 3:
+                                        filterPreferences.saveFilterPedido("Doacao");
+                                        refresh();
+                                        // Toast.makeText(getApplicationContext(), "finalizando processo de backend, selecione outra opção", Toast.LENGTH_SHORT).show();
+                                        break;
+                                }
+                            }
+                        });
+                alertDialog.create();
+                alertDialog.show();
+                return true;
 
             case R.id.item_search:
 
@@ -357,7 +411,7 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
                 System.out.println("version db " + versionFromDb + "  version app " + version);
 
                 if (!version.equals(versionFromDb)) {
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidosActivity.this);
+                    alertDialog = new AlertDialog.Builder(PedidosActivity.this);
 
                     alertDialog.setTitle("Atualização Disponivel");
                     alertDialog.setMessage("Esta versao esta desatualizada, deseja ir para a pagina de atualização?");

@@ -20,7 +20,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -29,12 +28,14 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -57,6 +58,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
     private EditText name;
     private Button salvar;
     private TextView seekValue;
+    private String auth = null;
     private int distance;
     private SeekBar maxDistance;
     private StorageReference storage = FirebaseConfig.getFirebaseStorage();
@@ -68,6 +70,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
     private String email;
     private String senha;
     private Toolbar toolbar;
+    private boolean isFromFacebook = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,11 +83,10 @@ public class ConfiguracoesActivity extends AppCompatActivity {
         name = (EditText) findViewById(R.id.name_config);
         salvar = (Button) findViewById(R.id.save_config);
         passButton = (Button) findViewById(R.id.pass_button);
-        toolbar = (Toolbar) findViewById( R.id.toolbar_principal_configuracoes);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_principal_configuracoes);
 
         toolbar.setTitle("Configurações");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
-
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,11 +97,20 @@ public class ConfiguracoesActivity extends AppCompatActivity {
 
         Preferences preferences = new Preferences(ConfiguracoesActivity.this);
 
-        if (preferences.getSenha() != null) {
+        for (UserInfo user: FirebaseAuth.getInstance().getCurrentUser().getProviderData()) {
+            if (user.getProviderId().equals("facebook.com")) {
+                System.out.println("User is signed in with Facebook");
+                isFromFacebook =true;
+            }
+        }
+
+        passButton.setVisibility(View.INVISIBLE);
+        if (!isFromFacebook) {
+            passButton.setVisibility(View.VISIBLE);
             email = preferences.getMail();
             senha = preferences.getSenha();
 
-            System.out.println("senha "+senha);
+            System.out.println("senha " + senha);
             passButton.setText("ALTERAR MINHA SENHA");
             passButton.setBackgroundColor(Color.argb(255, 20, 118, 122));
             passButton.setOnClickListener(new View.OnClickListener() {
@@ -132,7 +143,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if (task.isSuccessful()) {
                                                             Log.d("CHANGEPASS", "Password updated");
-                                                            Toast.makeText(getApplicationContext(),"Senha alterada", Toast.LENGTH_SHORT).show();
+                                                            Toast.makeText(getApplicationContext(), "Senha alterada", Toast.LENGTH_SHORT).show();
                                                             dbUser.child("usuarios").child(userKey).child("senha").setValue(edit.getText().toString());
                                                             finish();
                                                         } else {
@@ -182,25 +193,29 @@ public class ConfiguracoesActivity extends AppCompatActivity {
 
         dbUser.child("usuarios").child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                final User user = dataSnapshot.getValue(User.class);
                 name.setText(user.getName());
                 maxDistance.setProgress(user.getMaxDistance());
-                if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
-                    Glide.with(ConfiguracoesActivity.this).load(user.getProfileImg()).override(68, 68).into(circleImageView);
-                } else {
-                    storage.child(userKey + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Glide.with(ConfiguracoesActivity.this).load(uri).into(circleImageView);
-                            System.out.println("my groups lets seee2 " + uri);
+
+                storage.child(userKey + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        //Glide.with(ConfiguracoesActivity.this).load(uri).into(circleImageView);
+                        Picasso.with(ConfiguracoesActivity.this).load(uri).resize(680,680).into(circleImageView);
+                        System.out.println("my groups lets seee2 " + uri);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
+                            //Glide.with(ConfiguracoesActivity.this).load(user.getProfileImg()).override(68, 68).into(circleImageView);
+                            circleImageView.setBackgroundColor(Color.TRANSPARENT);
+                            Picasso.with(ConfiguracoesActivity.this).load(user.getProfileImg()).resize(680, 680).into(circleImageView);
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                        }
-                    });
-                }
+                    }
+                });
+
             }
 
             @Override
@@ -253,7 +268,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                                     user.setMaxDistance(distance);
                                 }
                                 if (user.getProfileImg() != null) {
-                                   // user.setProfileImg(null);
+                                    // user.setProfileImg(null);
                                 }
                                 user.setId(userKey);
                                 if (!name.getText().equals(user.getName())) {
@@ -310,7 +325,6 @@ public class ConfiguracoesActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     @Override
@@ -330,12 +344,10 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                     Bitmap resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
                     circleImageView.setBackgroundColor(Color.TRANSPARENT);
                     circleImageView.setImageBitmap(resized);
-                } catch ( OutOfMemoryError e ){
-                    System.out.println("memory error "+ e);
+                } catch (OutOfMemoryError e) {
+                    System.out.println("memory error " + e);
                     //resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
                 }
-
-
 
             } catch (IOException e) {
                 e.printStackTrace();

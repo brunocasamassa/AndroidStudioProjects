@@ -35,6 +35,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -141,6 +142,9 @@ public class PerfilActivity extends AppCompatActivity {
                 int respPremium = usuario.getPremiumUser();
                 premium = respPremium;
 
+                usuario.setProfileNotificationCount(0);
+                usuario.save();
+
                 if (premium == 1) {
                     Glide.with(PerfilActivity.this).load(R.drawable.premium_icon).into(premiumTag);
                 }
@@ -235,14 +239,14 @@ public class PerfilActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Uri uri) {
                         profileImg.setBackgroundColor(Color.TRANSPARENT);
-                        Glide.with(PerfilActivity.this).load(uri).override(68, 68).into(profileImg);
+                        Picasso.with(PerfilActivity.this).load(uri).resize(680, 680).into(profileImg);
                         System.out.println("my groups lets seee2 " + uri);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
                         if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
-                            Glide.with(PerfilActivity.this).load(usuario.getProfileImg()).into(profileImg);
+                            Picasso.with(PerfilActivity.this).load(usuario.getProfileImg()).into(profileImg);
                         }
                     }
                 });
@@ -358,8 +362,15 @@ public class PerfilActivity extends AppCompatActivity {
         });
         toolbar.setTitle(getResources().getString(R.string.menu_perfil));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
 
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        setSupportActionBar(toolbar);
         NavigationDrawer navigator = new NavigationDrawer();
 
         navigator.createDrawer(PerfilActivity.this, toolbar, 7);
@@ -402,6 +413,7 @@ public class PerfilActivity extends AppCompatActivity {
                             if (!user.getMedalhas().get(0).equals(1)) {
                                 medals.set(0,1); //primeiro pedido
                                 user.setMedalhas(medals);
+                                user.setPontos(user.getPontos()+10);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                     Toasty.custom(getApplicationContext(), "Yeah! Você atendeu o primeiro pedido. Que legal!!", getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
@@ -417,6 +429,7 @@ public class PerfilActivity extends AppCompatActivity {
                             if (!user.getMedalhas().get(1).equals(2)) {
                                 medals.set(1, 2);   // 3 pedidos
                                 user.setMedalhas(medals);
+                                user.setPontos(user.getPontos()+50);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                     Toasty.custom(getApplicationContext(), "Uau! Você já atendeu 3 pedidos. Continue assim :D", getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
@@ -432,6 +445,7 @@ public class PerfilActivity extends AppCompatActivity {
                             if (!user.getMedalhas().get(2).equals(3)) {
                                 medals.set(2, 3);   // 10 pedidos
                                 user.setMedalhas(medals);
+                                user.setPontos(user.getPontos()+100);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                     Toasty.custom(getApplicationContext(), "Você já é um expert! São 10 pedidos atendidos", getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
@@ -446,6 +460,7 @@ public class PerfilActivity extends AppCompatActivity {
                             if (!user.getMedalhas().get(3).equals(4)) {
                                 medals.set(3, 4);   // primeiro pedido meu ajudado
                                 user.setMedalhas(medals);
+                                user.setPontos(user.getPontos()+10);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                     Toasty.custom(getApplicationContext(), "Parabens, voce realizou seu primeiro pedido", getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
@@ -464,6 +479,7 @@ public class PerfilActivity extends AppCompatActivity {
                                 if (!user.getMedalhas().get(4).equals(5)) {
                                     medals.set(4, 5);   // 3 pedidos atendidos
                                     user.setMedalhas(medals);
+                                    user.setPontos(user.getPontos()+50);
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                         Toasty.custom(getApplicationContext(), "Você esta com tudo hein? Você já teve 3 pedidos atendidos", getDrawable(R.drawable.logo),
                                                 Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
@@ -483,6 +499,7 @@ public class PerfilActivity extends AppCompatActivity {
                                 if (!user.getMedalhas().get(5).equals(6)) {
                                     medals.set(5, 6);   // 10 pedidos atendidos
                                     user.setMedalhas(medals);
+                                    user.setPontos(user.getPontos()+100);
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                         Toasty.custom(getApplicationContext(), "Sensacional, 10 pessoas te ajudaram", getDrawable(R.drawable.logo),
                                                 Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
@@ -499,6 +516,7 @@ public class PerfilActivity extends AppCompatActivity {
                             if (!user.getMedalhas().get(6).equals(7)) {
                                 medals.set(6, 7);   // primeiro grupo
                                 user.setMedalhas(medals);
+                                user.setPontos(user.getPontos()+50);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                     Toasty.custom(getApplicationContext(), "Muito bem! Você entrou no seu primeiro grupo!", getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
@@ -514,6 +532,7 @@ public class PerfilActivity extends AppCompatActivity {
                             if (!user.getMedalhas().get(7).equals(8)) {
                                 medals.set(7, 8);   // 3 grupos
                                 user.setMedalhas(medals);
+                                user.setPontos(user.getPontos()+200);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                     Toasty.custom(getApplicationContext(), "Você está ficando bom nisso hein? Você já faz parte de 3 grupos", getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
@@ -528,6 +547,7 @@ public class PerfilActivity extends AppCompatActivity {
                             if (!user.getMedalhas().get(8).equals(9)) {
                                 medals.set(8, 9);   // primeiro grupo
                                 user.setMedalhas(medals);
+                                user.setPontos(user.getPontos()+500);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                     Toasty.custom(getApplicationContext(), "Que fantástico!São 10 grupos que você participa", getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
@@ -674,7 +694,7 @@ public class PerfilActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_sobre, menu);
+        inflater.inflate(R.menu.menu_profile, menu);
         return true;
     }
 

@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -18,6 +17,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -103,7 +103,8 @@ public class ConversaAdapter extends ArrayAdapter<Conversa> {
                 @Override
                 public void onSuccess(Uri uri) {
                     try {
-                        Glide.with(getContext()).load(uri).override(68, 68).into(img);
+                        //Glide.with(getContext()).load(uri).override(68, 68).into(img);
+                        Picasso.with(getContext()).load(uri).resize(68, 68).into(img);
                         System.out.println("user image chat " + uri);
 
                     } catch (Exception e){
@@ -121,7 +122,8 @@ public class ConversaAdapter extends ArrayAdapter<Conversa> {
                             User user = dataSnapshot.getValue(User.class);
 
                             if (user.getProfileImg() != null || user.getProfileImageURL() != null) {
-                                Glide.with(getContext()).load(user.getProfileImg()).into(img);
+                                //Glide.with(getContext()).load(user.getProfileImg()).into(img);
+                                Picasso.with(getContext()).load(user.getProfileImg()).into(img);
                                 System.out.println("user image chat " + user.getProfileImg());
 
                             }

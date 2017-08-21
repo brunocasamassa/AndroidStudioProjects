@@ -198,10 +198,11 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
                     return;
                 }
 
-
                 naCabine = 1;
                 createPedido();
+
                 if (createPedido()) {
+
                     StorageReference imgRef = storage.child(pedido.getIdPedido() + ".png");
                     //download img source
                     img.setDrawingCacheEnabled(true);
@@ -219,6 +220,7 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
                             System.out.println("huehuebrjava " + downloadUrl);
                         }
                     });
+
                     DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
                     dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -234,10 +236,7 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
                                 totalPedidos.add(0, pedido.getIdPedido());
                                 usuario.setPedidosFeitos(totalPedidos);
                             }
-
-
                             usuario.save();
-
                         }
 
                         @Override
@@ -245,7 +244,6 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
 
                         }
                     });
-
 
                 }
                 Toast.makeText(getApplicationContext(), "Doação gerada com sucesso", Toast.LENGTH_LONG).show();
@@ -256,8 +254,6 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
     }
 
     private void fitLayoutForSmallDevices() {
-
-
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);

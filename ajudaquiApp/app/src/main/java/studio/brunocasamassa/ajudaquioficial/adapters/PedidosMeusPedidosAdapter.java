@@ -13,13 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -98,7 +97,7 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
             view = inflater.inflate(R.layout.model_pedido_aceito, parent, false);
 
             // recupera elemento para exibição
-            ImageView statusPedido = (ImageView) view.findViewById(R.id.imageStatus);
+            TextView statusPedido = (TextView) view.findViewById(R.id.imageStatus);
             TextView nomePedido = (TextView) view.findViewById(R.id.nomePedido);
             TextView donationqtd = (TextView) view.findViewById(R.id.qtd_pedido);
             TextView descricao = (TextView) view.findViewById(R.id.descricao_pedido);
@@ -113,21 +112,32 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
                 storage = FirebaseConfig.getFirebaseStorage().child("userImages");
             }*/
 
-            if (pedido.getStatus() != 0) {
                 int status = pedido.getStatus();
                 System.out.println("status pedido " + pedido.getTitulo() + ": " + status);
                 if (status == 0) {
-                    Glide.with(getContext()).load(R.drawable.tag_aberto).override(274, 274).into(statusPedido);
+                    //Picasso.with(getContext()).load(R.drawable.tag_aberto).resize(274, 274).into(statusPedido);
+                    statusPedido.setText("  ABERTO  ");
+                    statusPedido.setBackgroundResource(R.drawable.rounded_background);
+                    statusPedido.setBackgroundColor(Color.parseColor("#1325ea"));
                 } else if (status == 1) {
-                    Glide.with(getContext()).load(R.drawable.tag_emandamento).override(274, 274).into(statusPedido);
+                    //Picasso.with(getContext()).load(R.drawable.tag_emandamento)/*.resize(274, 274)*/.into(statusPedido);
+                    statusPedido.setText("  EM ANDAMENTO  ");
+                    statusPedido.setBackgroundResource(R.drawable.rounded_background);
+                    statusPedido.setBackgroundColor(Color.parseColor("#ea8e04"));
                 } else if (status == 2) {
-                    Glide.with(getContext()).load(R.drawable.tag_finalizado).override(274, 274).into(statusPedido);
+                    //Picasso.with(getContext()).load(R.drawable.tag_finalizado).resize(274, 274).into(statusPedido);
+                    statusPedido.setText("  FINALIZADO  ");
+                    statusPedido.setBackgroundColor(Color.parseColor("#1e9b3f"));
                 } else if (status == 3) {
-                    Glide.with(getContext()).load(R.drawable.tag_cancelado).override(274, 274).into(statusPedido);
+                    //Picasso.with(getContext()).load(R.drawable.tag_cancelado).resize(274, 274).into(statusPedido);
+                    statusPedido.setText("  CANCELADO  ");
+                    statusPedido.setBackgroundColor(Color.parseColor("#c41717"));
                 } else if (status == 5) {
-                    Glide.with(getContext()).load(R.drawable.tag_doacao).override(274, 274).into(statusPedido);
+                    //Picasso.with(getContext()).load(R.drawable.tag_doacao).into(statusPedido);
+                    statusPedido.setText("  DOAÇÃO  ");
+                    statusPedido.setBackgroundColor(Color.parseColor("#7725e2"));
                 }
-            }
+
             storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
             storageDonation = FirebaseConfig.getFirebaseStorage().child("donationImages");
 
@@ -157,7 +167,8 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
                     public void onSuccess(Uri uri) {
                         System.out.println("grupo " + pedido.getGrupo());
                         try {
-                            Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                            //Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                            Picasso.with(getContext()).load(uri).resize(68, 68).into(pedidoImg);
                         } catch (Exception e) {
                             pedidoImg.setImageURI(uri);
                             System.out.println("EXCEPTION PedidosAdapter " + e);
@@ -178,7 +189,8 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
                     public void onSuccess(Uri uri) {
                         System.out.println("grupo " + pedido.getGrupo());
                         try {
-                            Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                            //Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                            Picasso.with(getContext()).load(uri).resize(68, 68).into(pedidoImg);
                         }catch (Exception e){
                             pedidoImg.setImageResource(R.drawable.logo);
                         }
@@ -190,7 +202,8 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
 
                     }
                 });
-            } else Glide.with(getContext()).load(R.drawable.logo).override(68, 68).into(pedidoImg);
+            } else Picasso.with(getContext()).load(R.drawable.logo).into(pedidoImg);
+                //Glide.with(getContext()).load(R.drawable.logo).override(68, 68).into(pedidoImg);
 
         }
 

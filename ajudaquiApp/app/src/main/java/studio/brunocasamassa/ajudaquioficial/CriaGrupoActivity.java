@@ -1,7 +1,10 @@
 package studio.brunocasamassa.ajudaquioficial;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,6 +58,9 @@ public class CriaGrupoActivity extends AppCompatActivity {
     private Button createButton;
     private static User usuario = new User();
     private StorageReference storage;
+    private EditText cidade;
+    private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
+    private EditText estado;
     private boolean validatedName = true;
     private ArrayList<String> adms = new ArrayList<>();
     private boolean groupIsOpen = true;
@@ -81,10 +87,13 @@ public class CriaGrupoActivity extends AppCompatActivity {
         storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
 
         switcher = (Switch) findViewById(R.id.switch1);
+
         groupName = (EditText) findViewById(R.id.create_group_name);
         descricao = (EditText) findViewById(R.id.create_group_description);
         createButton = (Button) findViewById(R.id.create_group_button);
         img = (CircleImageView) findViewById(R.id.import_donation_img);
+        cidade = (EditText) findViewById(R.id.create_group_city);
+        estado = (EditText) findViewById(R.id.create_group_estado);
 
         switcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -108,7 +117,6 @@ public class CriaGrupoActivity extends AppCompatActivity {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (groupName.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Insira um nome para o grupo", Toast.LENGTH_LONG).show();
                     return;
@@ -118,80 +126,111 @@ public class CriaGrupoActivity extends AppCompatActivity {
                 } else if (img.equals(null)) {
                     Toast.makeText(getApplicationContext(), "Insira uma imagem para o grupo", Toast.LENGTH_LONG).show();
                     return;
-                } else {
-                    grupo = new Grupo();
-                    groupId = Base64Decoder.encoderBase64(groupName.getText().toString());
-                    grupo.setNome(groupName.getText().toString());
-                    grupo.setDescricao(descricao.getText().toString());
-                    grupo.setId(groupId);
-                    if (groupIsOpen) {
-                        grupo.setOpened(true);
-                    }
+                } else if (cidade.getText().toString().equals("") || estado.getText().toString().equals("")) {
 
-                    FirebaseAuth autenticacao = FirebaseConfig.getFirebaseAuthentication();
+                        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CriaGrupoActivity.this);
 
-                    String userKey = Base64Decoder.encoderBase64(autenticacao.getCurrentUser().getEmail());
-                    databaseUsers = FirebaseConfig.getFireBase().child("usuarios");
-                    System.out.println("AUTH caraio" + userKey);
-
-                    adms.add(0, userKey);
-                    //grupo.setIdMembros(adms);
-                    grupo.setQtdMembros(1);
-                    grupo.setIdAdms(adms);
-
-                    //EVENTO DE LEITURA de IMAGEM
-                    databaseGroups.addListenerForSingleValueEvent(new ValueEventListener() {
+                    alertDialog.setTitle("Dados não preenchidos");
+                    alertDialog.setMessage("Alguns dados nao foram preenchidos, deseja continuar com a criação do grupo? ");
+                    alertDialog.setCancelable(false);
+                    alertDialog.setNegativeButton("Não", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            //verifica ID dos grupos e valida ID
-                            System.out.println("datasnapshot caraio BRUTO: " + dataSnapshot);
-                            System.out.println("ID MEU caraio GRUPO " + grupo.getId());
-                            if (dataSnapshot.child(groupId).exists()) {
-                                Toast.makeText(getApplicationContext(), "Nome de grupo Já utilizado", Toast.LENGTH_LONG).show();
-                                System.out.println("caraio validador> " + validatedName);
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Grupo Criado com sucesso", Toast.LENGTH_LONG).show();
-                                //creating group
-                                StorageReference imgRef = storage.child(Base64Decoder.encoderBase64(groupName.getText().toString()) + ".jpg");
-                                //download img source
-                                img.setDrawingCacheEnabled(true);
-                                img.buildDrawingCache();
-                                Bitmap bitmap = img.getDrawingCache();
-                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                                byte[] data = baos.toByteArray();
-                                UploadTask uploadTask = imgRef.putBytes(data);
-                                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                                        Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
-                                        System.out.println("huehuebrjava " + downloadUrl);
-                                    }
-                                });
+                        public void onClick(DialogInterface dialog, int which) {
 
-                                grupo.save();
+                        }
+                    });
 
-                                groupSaveIntoUser(true);
+                    alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            createGroup();
+                        }
+                    }).create().show();
+
+
+
+                }
+                else createGroup();
+
+            }
+        });
+    }
+
+    private void createGroup() {
+        grupo = new Grupo();
+
+        if (!cidade.getText().toString().equals("")) {
+            grupo.setCidade(cidade.getText().toString());
+        }
+        if (!estado.getText().toString().equals("")) {
+            grupo.setEstado(estado.getText().toString());
+        }
+        groupId = Base64Decoder.encoderBase64(groupName.getText().toString());
+        grupo.setNome(groupName.getText().toString());
+        grupo.setDescricao(descricao.getText().toString());
+        grupo.setId(groupId);
+        if (groupIsOpen) {
+            grupo.setOpened(true);
+        }
+
+
+        databaseUsers = FirebaseConfig.getFireBase().child("usuarios");
+        System.out.println("AUTH caraio" + userKey);
+
+        adms.add(0, userKey);
+        //grupo.setIdMembros(adms);
+        grupo.setQtdMembros(1);
+        grupo.setIdAdms(adms);
+
+        //EVENTO DE LEITURA de IMAGEM
+        databaseGroups.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //verifica ID dos grupos e valida ID
+                System.out.println("datasnapshot caraio BRUTO: " + dataSnapshot);
+                System.out.println("ID MEU caraio GRUPO " + grupo.getId());
+                if (dataSnapshot.child(groupId).exists()) {
+                    Toast.makeText(getApplicationContext(), "Nome de grupo Já utilizado", Toast.LENGTH_LONG).show();
+                    System.out.println("caraio validador> " + validatedName);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Grupo Criado com sucesso", Toast.LENGTH_LONG).show();
+                    //creating group
+                    StorageReference imgRef = storage.child(Base64Decoder.encoderBase64(groupName.getText().toString()) + ".jpg");
+                    //download img source
+                    img.setDrawingCacheEnabled(true);
+                    img.buildDrawingCache();
+                    img.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
+                    Bitmap bitmap = img.getDrawingCache();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    byte[] data = baos.toByteArray();
+                    UploadTask uploadTask = imgRef.putBytes(data);
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                            Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
+                            System.out.println("huehuebrjava " + downloadUrl);
+                        }
+                    });
+
+                    grupo.save();
+
+                    groupSaveIntoUser(true);
 
                                 /*if (!groupIsOpen){
                                         groupSaveAll();
                                 }*/
 
 
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-
-                    });
-
                 }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
+
         });
     }
 

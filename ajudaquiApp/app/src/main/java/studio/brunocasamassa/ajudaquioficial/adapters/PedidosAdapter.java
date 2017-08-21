@@ -16,10 +16,10 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -97,11 +97,12 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
 
             // Monta view a partir do xml
-            if(convertView == null) {
+            if (convertView == null) {
                 view = inflater.inflate(R.layout.model_pedido, parent, false);
             } else view = convertView;
-            
+
             // recupera elemento para exibição
+            TextView statusPedido = (TextView) view.findViewById(R.id.text_status);
             TextView distancia = (TextView) view.findViewById(R.id.distance);
             TextView nomePedido = (TextView) view.findViewById(R.id.nomePedido);
             TextView donationqtd = (TextView) view.findViewById(R.id.qtd_pedido);
@@ -122,43 +123,66 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
             storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
             storageDonation = FirebaseConfig.getFirebaseStorage().child("donationImages");
 
+            String status = pedido.getTipo();
+            System.out.println("status pedido " + pedido.getTitulo() + ": " + status);
+            if (status.equals("Servicos")) {
+                //Picasso.with(getContext()).load(R.drawable.tag_aberto).resize(274, 274).into(statusPedido);
+                statusPedido.setText(" SERVIÇOS ");
+                statusPedido.setBackgroundColor(Color.parseColor("#1bb1b7"));
+            } else if (status.equals("Troca")) {
+                //Picasso.with(getContext()).load(R.drawable.tag_emandameCibfnto)/*.resize(274, 274)*/.into(statusPedido);
+                statusPedido.setText(" TROCA ");
+                statusPedido.setBackgroundColor(Color.parseColor("#1bb1b7"));
+            } else if (status.equals("Doacao")) {
+                //Picasso.with(getContext()).load(R.drawable.tag_finalizado).resize(274, 274).into(statusPedido);
+                statusPedido.setText(" DOACÃO ");
+                statusPedido.setBackgroundColor(Color.parseColor("#1bb1b7"));
+            } else if (status.equals("Emprestimos")) {
+                //Picasso.with(getContext()).load(R.drawable.tag_cancelado).resize(274, 274).into(statusPedido);
+                statusPedido.setText(" EMPRÉSTIMO ");
+                statusPedido.setBackgroundColor(Color.parseColor("#1bb1b7"));
+            }
+
+
             if (pedido.getDistanceInMeters() != null) {
                 distancia.setText(String.valueOf(pedido.getDistanceInMeters().intValue() / 1000000) + "km");
-            } else{
+            } else {
                 distancia.setTextColor(Color.TRANSPARENT);
             }
             try {
-                nomePedido.setText(String.valueOf(pedido.getTitulo().substring(0, 17) )+ "...");
+                nomePedido.setText(String.valueOf(pedido.getTitulo().substring(0, 17)) + "...");
                 System.out.println("DADOS PEDIDO NO ADAPTER: " + pedido.getTitulo());
-            } catch (Exception e){
+            } catch (Exception e) {
                 nomePedido.setText(pedido.getTitulo() + "...");
             }
 
-                try {
-                descricao.setText(String.valueOf(pedido.getDescricao().substring(0,20)) + "...");
-            }catch (Exception e){
-                descricao.setText(String.valueOf(pedido.getDescricao())+ "...");
+            try {
+                descricao.setText(String.valueOf(pedido.getDescricao().substring(0, 20)) + "...");
+            } catch (Exception e) {
+                descricao.setText(String.valueOf(pedido.getDescricao()) + "...");
             }
 
-                tagsCategoria.setTags(pedido.getTagsCategoria());
+            tagsCategoria.setTags(pedido.getTagsCategoria());
 
             // DOWNLOAD GROUP IMG FROM STORAGE
-            if(!pedido.getTipo().equals("Doacoes")){
+            if (!pedido.getTipo().equals("Doacoes")) {
                 donationqtd.setTextColor(Color.TRANSPARENT);
             }
 
-            if(pedido.getTipo().equals("Doacoes")){
-                donationqtd.setText(String.valueOf(pedido.getQtdAtual())+"/"+String.valueOf(pedido.getQtdDoado()));
-                donationqtd.setTextColor(Color.argb(255,20,118,122));
-                    storageDonation.child(pedido.getIdPedido()+ ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            if (pedido.getTipo().equals("Doacoes")) {
+                donationqtd.setText(String.valueOf(pedido.getQtdAtual()) + "/" + String.valueOf(pedido.getQtdDoado()));
+                donationqtd.setTextColor(Color.argb(255, 20, 118, 122));
+                storageDonation.child(pedido.getIdPedido() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                     @Override
                     public void onSuccess(Uri uri) {
                         System.out.println("grupo " + pedido.getGrupo());
                         try {
-                            Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                            Picasso.with(context).load(uri).into(pedidoImg);
+                            //Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
                         } catch (Exception e) {
-                            pedidoImg.setImageURI(uri);
+                            Picasso.with(getContext()).load(uri).into(pedidoImg);
+                            //pedidoImg.setImageURI(uri);
                             System.out.println("EXCEPTION PedidosAdapter " + e);
                         }
                         System.out.println("my pedidos lets seee2" + uri);
@@ -169,19 +193,18 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
 
                     }
                 });
-            }
+            } else if (pedido.getGrupo() != null) {
 
-            else if (pedido.getGrupo() != null) {
-
-                storage.child(pedido.getGroupId()+ ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                storage.child(pedido.getGroupId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                     @Override
                     public void onSuccess(Uri uri) {
                         System.out.println("grupo " + pedido.getGrupo());
                         try {
-                            Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                            Picasso.with(context).load(uri).into(pedidoImg);
+                            //Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
                         } catch (Exception e) {
-                            pedidoImg.setImageURI(uri);
+                            Picasso.with(getContext()).load(R.drawable.logo).into(pedidoImg);
                             System.out.println("EXCEPTION PedidosAdapter " + e);
                         }
                         System.out.println("my pedidos lets seee2" + uri);
@@ -193,7 +216,9 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
                     }
                 });
 
-            } else Glide.with(getContext()).load(R.drawable.logo).override(68, 68).into(pedidoImg);
+            } else Picasso.with(getContext()).load(R.drawable.logo).into(pedidoImg);
+
+            //Glide.with(getContext()).load(R.drawable.logo).override(68, 68).into(pedidoImg);
 
         }
 
@@ -219,8 +244,12 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
                 ArrayList<Pedido> tempList = new ArrayList<>();
 
                 for (Pedido pedido : pedidos) {
-                    if (pedido.getTitulo().toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        tempList.add(pedido);
+                    try {
+                        if (pedido.getTitulo().toLowerCase().contains(constraint.toString().toLowerCase()) || pedido.getTagsCategoria().contains(constraint.toString().toLowerCase())) {
+                            tempList.add(pedido);
+                        }
+                    } catch (Exception e) {
+                        System.out.println("error populating filters in all pedidos: Pedido: "+pedido.getTitulo() + "error: "+ e);
                     }
                 }
 

@@ -65,13 +65,15 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintHorizontal_bias="0.0" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/imageStatus"
-                android:layout_width="126dp"
+                android:layout_width="wrap_content"
                 android:layout_height="25dp"
+                android:textAlignment="center"
                 android:layout_gravity="start"
-                app:srcCompat="@drawable/tag_aberto"
                 android:layout_marginRight="8dp"
+                android:textColor="@color/md_white_1000"
+                android:textStyle="bold"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 android:layout_marginTop="8dp"

@@ -1,6 +1,7 @@
 package studio.brunocasamassa.ajudaquioficial;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -56,11 +57,19 @@ public class LoginActivity extends AppCompatActivity {
     private ValueEventListener valueEventListenerUsuario;
     private ImageButton backButton;
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (autenticacao != null) {
+            autenticacao.signOut();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
 
         final String ajudaquimail = Base64Decoder.encoderBase64("ajudaquisuporte@gmail.com");
         final String ajudaquipass = Base64Decoder.encoderBase64("ajudaqui931931931");
@@ -86,7 +95,10 @@ public class LoginActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                if (autenticacao != null) {
+                    autenticacao.signOut();
+                }
+                finish();
             }
         });
 
@@ -161,75 +173,187 @@ public class LoginActivity extends AppCompatActivity {
                     usuario.getSenha()
             ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
+
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-
+                    //System.out.println("FIA EMAIL VERIFICADO " + autenticacao.getCurrentUser().isEmailVerified());
                     if (task.isSuccessful()) {
-                        Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_LONG).show();
+                        if (autenticacao.getCurrentUser().isEmailVerified()) {
 
-                        System.out.println("111USER EMAIL: " + usuario.getEmail() + "USER SENHA: " + usuario.getSenha());
+                            Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_LONG).show();
 
-                        idUser = Base64Decoder.encoderBase64(usuario.getEmail());
+                            System.out.println("111USER EMAIL: " + usuario.getEmail() + "USER SENHA: " + usuario.getSenha());
 
-                        System.out.println("LA: decoder 64 " + idUser);
-                        firebase = FirebaseConfig.getFireBase()
-                                .child("usuarios")
-                                .child(idUser);
+                            idUser = Base64Decoder.encoderBase64(usuario.getEmail());
 
-                        System.out.println("LA: FIREBASE " + firebase);
+                            System.out.println("LA: decoder 64 " + idUser);
+                            System.out.println("LA: FIREBASE " + firebase);
 
-                        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
+                            firebase = FirebaseConfig.getFireBase()
+                                    .child("usuarios");
 
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                User usuarioRecuperado = dataSnapshot.getValue(User.class);
-                                System.out.println("LA: Data Changed " + usuarioRecuperado);
-                                Preferences preferencias = new Preferences(LoginActivity.this);
-                                preferencias.saveData(idUser, usuarioRecuperado.getName());
-
-                                ArrayList<String> entradas = new ArrayList<String>();
-                                SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z");
-                                format.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
-                                String currentTime = format.format(new Date());
-                                //Toast.makeText(getApplicationContext(), currentTime, Toast.LENGTH_SHORT).show();
-
-                                if (currentTime != null) {
-                                    if (usuarioRecuperado.getEntradas() != null) {
-                                        entradas.addAll(usuarioRecuperado.getEntradas());
-                                        entradas.add(entradas.size(), currentTime);
-                                        usuarioRecuperado.setEntradas(entradas);
+                            firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.child(idUser).exists()) {
+                                        setLoggedUser();
+                                        System.out.println("USUARIOLOGADO");
+                                        abrirTelaPrincipal();
+                                        Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_LONG).show();
                                     } else {
-                                        entradas.add(0, currentTime);
-                                        usuarioRecuperado.setEntradas(entradas);
+                                        createUserInDB();
+                                        System.out.println("CRIAUSUARIO");
+
                                     }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
                                 }
-                                md.onTokenRefresh();
-                                usuarioRecuperado.save();
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                System.out.println("CANCELADO " + databaseError);
-                            }
-                        });
+                            });
 
 
-                        abrirTelaPrincipal();
-                        Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_LONG).show();
+                        } else if (!autenticacao.getCurrentUser().isEmailVerified()) {
+                            Toast.makeText(getApplicationContext(), "Email ainda nao verificado, favor confirmá-lo para entrar no Ajudaqui", Toast.LENGTH_LONG).show();
+                            showAnotherVerifyMessage();
+                        }
+
                     } else {
-
                         Toast.makeText(LoginActivity.this, "Erro ao fazer login!", Toast.LENGTH_LONG).show();
-                        System.out.println("TASK EXCEPTION" + task.getException());
+                        System.out.println("FIA TASK EXCEPTION" + task.getException());
 
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            System.out.println("FIA EXCEPTION " + e);
+        }
+    }
+
+    private void createUserInDB() {
+        android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(LoginActivity.this);
+
+        alertDialog.setTitle("Nome do Usuario:");
+        alertDialog.setMessage("Verificamos que esta é sua primeira entrada no Ajudaqui, como gostaria de ser chamado?");
+        alertDialog.setCancelable(false);
+        final EditText name = new EditText(LoginActivity.this);
+        alertDialog.setView(name);
+
+        alertDialog.setPositiveButton("ENTRAR", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ProgressDialog progress = new ProgressDialog(LoginActivity.this);
+                progress.show(LoginActivity.this, "Aguarde...",
+                        "Analisando dados do usuario", true);
+                usuario.setName(name.getText().toString());
+                usuario.setPremiumUser(1);
+                usuario.setMaxDistance(10);
+                usuario.setSenha(Base64Decoder.encoderBase64(usuario.getSenha()));
+                usuario.setEmail(usuario.getEmail());
+                usuario.setId(idUser);
+                ArrayList<Integer> badgesList = new ArrayList<Integer>();
+                usuario.setMedalhas(badgesList);
+                System.out.println("user name1 " + usuario.getName());
+                Preferences preferences = new Preferences(LoginActivity.this);
+                preferences.saveData(usuario.getId(), usuario.getName());
+
+                ArrayList<String> entradas = new ArrayList<String>();
+                SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z");
+                format.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
+                String currentTime = format.format(new Date());
+                //Toast.makeText(getApplicationContext(), currentTime, Toast.LENGTH_SHORT).show();
+
+                if (currentTime != null) {
+                    if (usuario.getEntradas() != null) {
+                        entradas.addAll(usuario.getEntradas());
+                        entradas.add(entradas.size(), currentTime);
+                        usuario.setEntradas(entradas);
+                    } else {
+                        entradas.add(0, currentTime);
+                        usuario.setEntradas(entradas);
                     }
 
                 }
-            });
-        } catch (Exception e) {
-            System.out.println("EXCEPTION " + e);
-        }
+                md.onTokenRefresh();
+
+                usuario.save();
+
+                abrirTelaPrincipal();
+                Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_LONG).show();
+            }
+
+        }).create().show();
+
+
+
     }
+
+    private void setLoggedUser() {
+
+        //IF EXISTS
+        DatabaseReference dbLogin = FirebaseConfig.getFireBase()
+                .child("usuarios");
+
+        dbLogin.child(idUser).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User usuarioRecuperado = dataSnapshot.getValue(User.class);
+                System.out.println("LA: Data Changed " + usuarioRecuperado);
+                Preferences preferencias = new Preferences(LoginActivity.this);
+                preferencias.saveData(idUser, usuarioRecuperado.getName());
+
+                ArrayList<String> entradas = new ArrayList<String>();
+                SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z");
+                format.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
+                String currentTime = format.format(new Date());
+                //Toast.makeText(getApplicationContext(), currentTime, Toast.LENGTH_SHORT).show();
+
+                if (currentTime != null) {
+                    if (usuarioRecuperado.getEntradas() != null) {
+                        entradas.addAll(usuarioRecuperado.getEntradas());
+                        entradas.add(entradas.size(), currentTime);
+                        usuarioRecuperado.setEntradas(entradas);
+                    } else {
+                        entradas.add(0, currentTime);
+                        usuarioRecuperado.setEntradas(entradas);
+                    }
+
+                }
+                md.onTokenRefresh();
+                usuarioRecuperado.save();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("CANCELADO " + databaseError);
+            }
+        });
+    }
+
+    private void showAnotherVerifyMessage() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(LoginActivity.this);
+        alertDialog.setTitle("Reenviar Email");
+        alertDialog.setMessage("Verificamos que você já tentou se cadastrar com a gente, mas ainda nao verificou seu e-mail, gostaria de reenviá-lo?");
+        alertDialog.setCancelable(false);
+
+
+        alertDialog.setPositiveButton("ENVIAR", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                autenticacao.getCurrentUser().sendEmailVerification();
+            }
+        }).setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                autenticacao.signOut();
+                finish();
+
+            }
+        }).create().show();
+    }
+
 
     private void abrirTelaPrincipal() {
         Intent intent = new Intent(LoginActivity.this, PedidosActivity.class);
@@ -240,13 +364,14 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+
     public void displayMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
 
-
 }
+
 class SendEmailAsyncTask extends AsyncTask<Void, Void, Boolean> {
     Mail m;
     LoginActivity activity;

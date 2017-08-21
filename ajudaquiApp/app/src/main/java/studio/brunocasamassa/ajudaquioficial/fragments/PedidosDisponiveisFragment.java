@@ -60,7 +60,7 @@ public class PedidosDisponiveisFragment extends Fragment {
     private SimpleLocation localizacao2;
     private Double latitude = 0.0;
     private Double longitude = 0.0;
-    private Preferences preferencias = new Preferences();
+
     private ValueEventListener valueEventListenerPedidos;
     private User usuario = new User();
     private ValueEventListener localizationListener;
@@ -71,7 +71,7 @@ public class PedidosDisponiveisFragment extends Fragment {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
-    private PedidosActivity pa ;
+    private PedidosActivity pa;
 
     private PedidosAdapter pedidosAdapter;
     private ArrayList<Pedido> pedidosPivot;
@@ -97,6 +97,7 @@ public class PedidosDisponiveisFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        final Preferences preferencias = new Preferences(getActivity().getApplicationContext());
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pedidos_disponiveis, container, false);
         pa = (PedidosActivity) getActivity();
@@ -106,7 +107,7 @@ public class PedidosDisponiveisFragment extends Fragment {
         refresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
 
 
-        pedidosAdapter = new PedidosAdapter(getContext(),pedidos);
+        pedidosAdapter = new PedidosAdapter(getContext(), pedidos);
         if (pa.getArrayAdapter() != null) {
             pedidosArrayAdapter = pa.getArrayAdapter();
         } else pedidosArrayAdapter = pedidosAdapter;
@@ -148,7 +149,6 @@ public class PedidosDisponiveisFragment extends Fragment {
                 }
 
 
-
                 databasePedidos.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -156,12 +156,10 @@ public class PedidosDisponiveisFragment extends Fragment {
                         pedidos.clear();
 
                         Location userLocation = new Location("my location");
-                        if(user.getLatitude() != null) {
+                        if (user.getLatitude() != null) {
                             userLocation.setLatitude(user.getLatitude());
                             userLocation.setLongitude(user.getLongitude());
-                        }
-
-                        else {
+                        } else {
                             userLocation.setLatitude(0.0);
                             userLocation.setLongitude(0.0);
                         }
@@ -200,13 +198,25 @@ public class PedidosDisponiveisFragment extends Fragment {
                                         }
                                     }
 
+                                        if(preferencias.getFilterPedido() != null) {
+                                            if (!pedido.getTipo().equals(preferencias.getFilterPedido())) {
+                                            pedidos.remove(pedido);
+                                        }
+                                    }
+                                    if (pedido.getGroupId() != null) {
+                                        if (!user.getGrupos().contains(pedido.getGroupId())){
+                                            pedidos.remove(pedido);
+                                        }
+
+                                    }
+
                                     if (pedido.getDistanceInMeters() > user.getMaxDistance() * 1000000) {
                                         pedidos.remove(pedido);
                                         System.out.println("pedido removido " + pedido.getTitulo());
 
                                     }
 
-                                    if(pedido.getDistanceInMeters() == null){
+                                    if (pedido.getDistanceInMeters() == null) {
                                         pedidos.remove(pedido);
 
                                     }
@@ -220,16 +230,12 @@ public class PedidosDisponiveisFragment extends Fragment {
                                 }
 
 
-
                             } catch (Exception e) {
                                 Log.e("listPedidos", e.toString());
                             }
                             //remover pedidos do usuario na lista de pedidos geral
 
-
                         }
-
-
 
                         Collections.sort(pedidos, new Comparator<Pedido>() {
                             @Override
@@ -262,6 +268,7 @@ public class PedidosDisponiveisFragment extends Fragment {
                                     intent.putExtra("tipo", pedido.getTipo());
                                     if (pedido.getGrupo() != null) {
                                         intent.putExtra("tagsGrupo", pedido.getGrupo());
+                                        intent.putExtra("groupId", pedido.getGroupId());
                                     }
                                     intent.putExtra("descricao", pedido.getDescricao());
 
@@ -293,7 +300,6 @@ public class PedidosDisponiveisFragment extends Fragment {
                 System.out.println("ERROR GET PEDIDOS USER STRINGS: " + databaseError);
 
             }
-
 
 
         });

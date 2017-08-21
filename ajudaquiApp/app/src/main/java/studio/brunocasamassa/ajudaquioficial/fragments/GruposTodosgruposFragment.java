@@ -47,6 +47,9 @@ public class GruposTodosgruposFragment extends Fragment {
     private String userName = new String();
     private ArrayList<String> gruposSolicitadosUser = new ArrayList<>();
     private SwipeRefreshLayout refresh;
+    private AllGroupsAdapter groupsAdapter;
+    private GruposActivity ga;
+
 
     public GruposTodosgruposFragment() {
 
@@ -55,6 +58,9 @@ public class GruposTodosgruposFragment extends Fragment {
 
     @Override
     public void onStart() {
+        if (ga.getArrayAdapterAllGroups() != null) {
+            adapter = ga.getArrayAdapterAllGroups();
+        }
         super.onStart();
         firebase.addValueEventListener(valueEventListenerAllGroups);
     }
@@ -69,6 +75,7 @@ public class GruposTodosgruposFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_allgroups, container, false);
+        ga = (GruposActivity) getActivity();
 
         grupos = new ArrayList<>();
 
@@ -80,17 +87,16 @@ public class GruposTodosgruposFragment extends Fragment {
         userName = usuario.getName();
 
         listView = (GridView) view.findViewById(R.id.allgroups_list);
-        adapter = new AllGroupsAdapter(getContext(), grupos);
-        //adapter = new AllGroupsAdapter(getActivity(), grupos );
-        listView.setAdapter(adapter);
 
-        /*fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent (getActivity(), CriaGrupoActivity.class));
-            }
-        });*/
+        groupsAdapter= new AllGroupsAdapter(getContext(), grupos);
+
+        if (ga.getArrayAdapterAllGroups() != null) {
+            adapter = ga.getArrayAdapterAllGroups();
+        } else adapter = groupsAdapter;
+
+        ga.setArrayAdapterAllGroups(adapter);
+
+        listView.setAdapter(adapter);
 
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -99,7 +105,6 @@ public class GruposTodosgruposFragment extends Fragment {
 
             }
         });
-
 
         firebase = FirebaseConfig.getFireBase()
                 .child("grupos");
@@ -110,8 +115,11 @@ public class GruposTodosgruposFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                //instantiate 'cabine da fartura' position
+                Grupo cabine = new Grupo();
                 //Limpar lista
                 grupos.clear();
+                grupos.add(0,cabine);
 
                 //Listar contatos
                 for (DataSnapshot dados : dataSnapshot.getChildren()) {
@@ -129,12 +137,10 @@ public class GruposTodosgruposFragment extends Fragment {
                         } catch (Exception e) {
                             System.out.println("exception " + e);
                         }
-
+                       adapter.notifyDataSetChanged();
                     }
 
                 }
-
-                adapter.notifyDataSetChanged();
 
             }
 
@@ -155,7 +161,7 @@ public class GruposTodosgruposFragment extends Fragment {
                 }
                 // enviando dados para grupo activity
                 else {
-                    Grupo grupo = grupos.get(position);
+                    Grupo grupo = groupsAdapter.getGruposFiltrado().get(position);
                     try {
                         Intent intent = new Intent(getActivity(), GrupoFechadoActivity.class);
                         if (grupo.getIdAdms() != null) {

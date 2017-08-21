@@ -1,11 +1,13 @@
 package studio.brunocasamassa.ajudaquioficial;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -56,6 +59,9 @@ public class CadastroActivity extends AppCompatActivity {
     public User usuario;
     private StorageReference storage;
     public static String idUser;
+    protected ProgressDialog progress ;
+
+
     private Base64Decoder decoder;
     private ArrayList<Integer> badgesList = new ArrayList<>();
     private CircleImageView userImg;
@@ -150,7 +156,7 @@ public class CadastroActivity extends AppCompatActivity {
                         } else {
                             usuario = new User();
                             usuario.setName(nome.getText().toString());
-                            usuario.setEmail(email.getText().toString());
+                            usuario.setEmail(email.getText().toString().toLowerCase());
                             usuario.setSenha(senha.getText().toString());
                             idUser = Base64Decoder.encoderBase64(usuario.getEmail());
                             System.out.println("BASE64 ENCODER: " + idUser);
@@ -171,45 +177,80 @@ public class CadastroActivity extends AppCompatActivity {
     }
 
     private void cadastrarUsuario() {
-
+        progress = new ProgressDialog(CadastroActivity.this);
+        //timerDelayRemoveDialog(4, progress);
         autenticacao = FirebaseConfig.getFirebaseAuthentication();
         autenticacao.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
                 .addOnCompleteListener(CadastroActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(CadastroActivity.this, "Usuario cadastrado com sucesso", Toast.LENGTH_LONG).show();
+                                    try {
+                                        progress.show(CadastroActivity.this, "Aguarde...",
+                                                "Cadastrando usuario", true);
+                                        Preferences preferences = new Preferences(CadastroActivity.this);
+                                        preferences.saveData(idUser, usuario.getName());
+                                        preferences.saveLogin(usuario.getEmail(), usuario.getSenha());
 
-                                    Preferences preferences = new Preferences(CadastroActivity.this);
-                                    preferences.saveData(idUser, usuario.getName());
-                                    preferences.saveLogin(usuario.getEmail(), usuario.getSenha());
+                                        usuario.setPremiumUser(1);
 
-                                    usuario.setPremiumUser(1);
+                                        // FirebaseUser usuarioFireBase = task.getResult().getUser();
+                                        //ENCRYPT USER PASSWORD INTO THE SERVER
 
-                                    // FirebaseUser usuarioFireBase = task.getResult().getUser();
-                                    //ENCRYPT USER PASSWORD INTO THE SERVER
+                                        usuario.setSenha(Base64Decoder.encoderBase64(usuario.getSenha()));
 
-                                    usuario.setSenha(Base64Decoder.encoderBase64(usuario.getSenha()));
-                                    usuario.save();
+                                        autenticacao.getCurrentUser().sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //Log.d("CadastroActivity", aVoid.toString());
+                                                Toast.makeText(getApplicationContext(), "Cadastro realizado, uma mensagem foi enviada para sua caixa de email. Por favor, acesse o link enviado", Toast.LENGTH_LONG).show();
+                                                //usuario.save();
+                                                if (progress.isShowing()) {
+                                                    progress.dismiss();
+                                                }
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(getApplicationContext(), "Falha no envio de email, verifique se o email digitado é um email valido e tente novamente ", Toast.LENGTH_LONG).show();
+                                                if (progress.isShowing()) {
+                                                    progress.dismiss();
+                                                }
 
-                                    uploadImages();
+                                            }
+                                        });
 
+                                        uploadImages();
+
+                                    } catch (Exception e) {
+                                        Toast.makeText(CadastroActivity.this, "Erro ao cadastrar usuário: Tente novamente mais tarde", Toast.LENGTH_LONG).show();
+                                        if (progress.isShowing()) {
+                                            progress.dismiss();
+                                        }
+                                        System.out.println("error in task suceesful cadastrar usuario: " + e);
+                                    }
                                 } else {
 
                                     String erro = "";
+
                                     try {
                                         throw task.getException();
                                     } catch (FirebaseAuthWeakPasswordException e) {
                                         erro = "Escolha uma senha que contenha, letras e números.";
+
                                     } catch (FirebaseAuthInvalidCredentialsException e) {
                                         erro = "Email indicado não é válido.";
+
                                     } catch (FirebaseAuthUserCollisionException e) {
                                         erro = "Já existe uma conta com esse e-mail.";
+
                                     } catch (Exception e) {
                                         e.printStackTrace();
+
                                     }
 
                                     Toast.makeText(CadastroActivity.this, "Erro ao cadastrar usuário: " + erro, Toast.LENGTH_LONG).show();
+
                                 }
 
                             }
@@ -223,7 +264,7 @@ public class CadastroActivity extends AppCompatActivity {
     private void openProfieUser() {
         String nomeUser = usuario.getName().toString();
         Toast.makeText(CadastroActivity.this, "Olá " + nomeUser + ", bem vindo ao app Ajudaqui ", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(CadastroActivity.this, PerfilActivity.class);
+        Intent intent = new Intent(CadastroActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
     }
@@ -270,6 +311,14 @@ public class CadastroActivity extends AppCompatActivity {
                 Log.e("error in get image ", e.toString());
             }
         }
+    }
+
+    public void timerDelayRemoveDialog(long time, final ProgressDialog d) {
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                d.dismiss();
+            }
+        }, time);
     }
 
 }

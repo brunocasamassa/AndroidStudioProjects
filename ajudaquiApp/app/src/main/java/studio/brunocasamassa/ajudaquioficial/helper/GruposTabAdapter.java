@@ -12,8 +12,6 @@ public class GruposTabAdapter extends FragmentStatePagerAdapter {
 
     private String[] tituloAbas = {"TODOS OS GRUPOS", "MEUS GRUPOS"};
 
-
-
     public GruposTabAdapter(FragmentManager fm) {
         super(fm);
     }
@@ -30,8 +28,7 @@ public class GruposTabAdapter extends FragmentStatePagerAdapter {
             case 1:
                 fragment = new GruposMeusgruposFragment();
                //notifyDataSetChanged();
-                break;
-
+               break;
 
         }
 

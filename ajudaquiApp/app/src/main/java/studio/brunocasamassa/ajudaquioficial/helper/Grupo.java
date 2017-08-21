@@ -26,6 +26,28 @@ public class Grupo {
     public String descricao;
     public ArrayList<String> idAdms;
 
+    private String cidade;
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    private String estado;
+
+
+
     public ArrayList<String> getIdMembros() {
         return idMembros;
     }

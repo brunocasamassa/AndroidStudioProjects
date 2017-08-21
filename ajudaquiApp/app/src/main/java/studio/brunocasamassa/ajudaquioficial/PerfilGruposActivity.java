@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -19,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -101,14 +101,17 @@ public class PerfilGruposActivity extends AppCompatActivity {
         dbImageUsers.child(targetUserId + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                Glide.with(getApplication()).load(uri).override(68, 68).into(img);
+                //Glide.with(getApplication()).load(uri).override(68, 68).into(img);
+                Picasso.with(getApplication()).load(uri).resize(68, 68).into(img);
                 System.out.println("user image chat " + uri);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
 
-                Glide.with(getApplication()).load(targetUserImg).into(img);
+                Picasso.with(getApplicationContext()).load(R.drawable.logo).into(img);
+
+                //Glide.with(getApplication()).load(targetUserImg).into(img);
 
             }
         });

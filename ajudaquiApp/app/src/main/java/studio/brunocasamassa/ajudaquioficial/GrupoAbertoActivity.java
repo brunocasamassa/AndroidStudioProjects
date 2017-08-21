@@ -1,6 +1,7 @@
 package studio.brunocasamassa.ajudaquioficial;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,7 +27,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,6 +37,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -64,6 +65,7 @@ import studio.brunocasamassa.ajudaquioficial.helper.User;
 public class GrupoAbertoActivity extends AppCompatActivity {
 
     private DatabaseReference firebase;
+    private ProgressDialog progress = null;
     private int PICK_IMAGE_REQUEST = 1;
     private boolean photoWasChanged = false;
     private DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
@@ -74,7 +76,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private CircleImageView groupImage;
     private int posicao;
-    private static Grupo grupo = new Grupo();
+    private Grupo grupo;
     private StorageReference storage;
     private ImageButton editName;
     private FloatingActionMenu menuFAB;
@@ -100,13 +102,25 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_grupo_aberto);
         Preferences preferences = new Preferences(getApplicationContext());
         userName = preferences.getNome();
-
         //menuFAB = (FloatingActionMenu) findViewById(R.id.fab_menu);
         editName = (ImageButton) findViewById(R.id.edit_groupName_button);
         //donationFAB = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.doacao_fab);
         pedidoFAB = (FloatingActionButton) findViewById(R.id.pedido_fab);
 
         Bundle extra = getIntent().getExtras();
+
+        grupo = new Grupo();
+        if (extra != null) {
+            System.out.println("userName " + userName);
+            grupo.setOpened(extra.getBoolean("isOpened"));
+            grupo.setIdAdms(extra.getStringArrayList("idAdmins"));
+            grupo.setDescricao(extra.getString("descricao"));
+            grupo.setNome(extra.getString("nome"));
+            grupo.setId(extra.getString("groupId"));
+            grupo.setQtdMembros(Integer.valueOf(extra.getString("qtdmembros")));
+            System.out.println("DESCRICAO 1 "+ grupo.getDescricao());
+
+        }
 
         groupKey = extra.getString("groupId").toString();
         System.out.println("group Name bundleded " + extra.getString("nome").toString());
@@ -133,6 +147,24 @@ public class GrupoAbertoActivity extends AppCompatActivity {
             }
         });
 
+        storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
+
+        storage.child(grupo.getId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                                                        @Override
+                                                                                        public void onSuccess(Uri uri) {
+                                                                                            //Glide.with(GrupoAbertoActivity.this).load(uri).override(68, 68).into(groupImage);
+                                                                                            try {
+                                                                                                Picasso.with(getApplicationContext()).load(uri).resize(680, 680).into(groupImage);
+                                                                                            } catch (Exception e) {
+                                                                                                groupImage.setImageURI(uri);
+                                                                                                //Picasso.with(getApplicationContext()).load(uri).resize(680, 680).into(groupImage);
+                                                                                            }
+
+                                                                                            System.out.println("group image chat " + uri);
+                                                                                        }
+                                                                                    }
+        );
+
 
         if (listaAdmins.contains(userKey)) {
             editName.setOnClickListener(new View.OnClickListener() {
@@ -141,7 +173,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(GrupoAbertoActivity.this);
                     alertDialog.setTitle("Alterar nome do Grupo");
                     alertDialog.setItems(new CharSequence[]
-                                    {"Alterar Nome", "Alterar privacidade"},
+                                    {"Alterar Nome", "Alterar privacidade", "Alterar Descrição"},
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     // The 'which' argument contains the index position
@@ -153,6 +185,9 @@ public class GrupoAbertoActivity extends AppCompatActivity {
                                         case 1:
                                             changePrivacy();
                                             break;
+                                        case 2:
+                                            changeDescription();
+                                            break;
                                     }
                                 }
                             }).create().show();
@@ -161,6 +196,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         } else
 
         {
+            editName.setImageResource(R.drawable.trans);
             Toast.makeText(getApplicationContext(), "Apenas Administradores podem alterar o nome do grupo", Toast.LENGTH_SHORT).show();
         }
 
@@ -181,6 +217,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         });
 
         groupImage = (CircleImageView) findViewById(R.id.circleImageView);
+
         groupImage.setOnLongClickListener(new View.OnLongClickListener()
 
         {
@@ -214,24 +251,6 @@ public class GrupoAbertoActivity extends AppCompatActivity {
             }
         });
 
-        storage = FirebaseConfig.getFirebaseStorage().
-
-                child("groupImages");
-
-        storage.child(grupo.getId() + ".jpg").
-
-                getDownloadUrl().
-
-                addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                         @Override
-                                         public void onSuccess(Uri uri) {
-
-                                             Glide.with(GrupoAbertoActivity.this).load(uri).override(68, 68).into(groupImage);
-
-                                             System.out.println("group image chat " + uri);
-                                         }
-                                     }
-                );
 
         System.out.println("titulo " + titulo);
 
@@ -269,7 +288,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
                                 Intent intent = new Intent(GrupoAbertoActivity.this, CriaPedidoActivity.class);
                                 intent.putExtra("premium", premium);
                                 intent.putExtra("groupName", titulo);
-                                intent.putExtra("creditos",user.getCreditos());
+                                intent.putExtra("creditos", user.getCreditos());
                                 intent.putExtra("groupId", groupKey);
                                 intent.putExtra("latitude", user.getLatitude());
                                 intent.putExtra("longitude", user.getLongitude());
@@ -290,12 +309,33 @@ public class GrupoAbertoActivity extends AppCompatActivity {
                         slidingTabLayout.setViewPager(viewPager);
                     }
 
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
                 });
+    }
+
+    private void changeDescription() {
+
+        final AlertDialog.Builder invite = new AlertDialog.Builder(GrupoAbertoActivity.this);
+        invite.setTitle("Alterar descrição ");
+        System.out.println("DESCRICAO 2 "+ grupo.getDescricao());
+        final EditText editText = new EditText(GrupoAbertoActivity.this);
+        editText.setText(grupo.getDescricao().toString());
+        invite.setView(editText);
+        invite.setPositiveButton("Alterar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).setNegativeButton("Nao", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).create().show();
+
     }
 
     private void changePrivacy() {
@@ -352,7 +392,21 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         // Always show the chooser (if there are multiple options available)
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
         photoWasChanged = true;
-        uploadImages();
+        AlertDialog.Builder editPhoto = new AlertDialog.Builder(GrupoAbertoActivity.this);
+        editPhoto.setTitle("Confirmar Alteração");
+        editPhoto.setMessage("Deseja alterar a imagem do grupo");
+        editPhoto.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                uploadImages();
+            }
+        }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).create().show();
+
     }
 
     @Override
@@ -378,10 +432,26 @@ public class GrupoAbertoActivity extends AppCompatActivity {
             case R.id.action_invite:
                 inviteMember();
                 return true;
+            case R.id.action_description:
+                verDescricao();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    private void verDescricao() {
+        final AlertDialog.Builder invite = new AlertDialog.Builder(GrupoAbertoActivity.this);
+        invite.setTitle("Descrição do grupo");
+        System.out.println("DESCRICAO 2 "+ grupo.getDescricao());
+        invite.setMessage(grupo.getDescricao().toString());
+        invite.setNeutralButton("FECHAR", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).create().show();
     }
 
     private void inviteMember() {
@@ -398,7 +468,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
                     SendEmailAsyncTask email = new SendEmailAsyncTask();
                     email.m = new Mail(Base64Decoder.decoderBase64(ajudaquimail), Base64Decoder.decoderBase64(ajudaquipass));
                     email.m.set_from("ajudaquisuporte@gmail.com");
-                    email.m.setBody("Seu amigo " + userName + " Te convida para participar do Aplicativo Ajudaqui, verifique também o grupo "+groupName+ " para que possam compartilhar de suas ajudas: \n\n LINK PARA O APP:\n "+ link);
+                    email.m.setBody("Seu amigo " + userName + " Te convida para participar do Aplicativo Ajudaqui, verifique também o grupo " + groupName + " para que possam compartilhar de suas ajudas: \n\n LINK PARA O APP:\n " + link);
                     email.m.set_to(recipients);
                     email.m.set_subject("AJUDAQUI - CONVITE");
                     email.execute();
@@ -543,8 +613,18 @@ public class GrupoAbertoActivity extends AppCompatActivity {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 Log.d("image", String.valueOf(bitmap));
 
-                groupImage.setImageBitmap(bitmap);
+                try {
+                    Picasso.with(getApplicationContext()).load(uri).resize(680, 680).into(groupImage);
+                } catch (OutOfMemoryError e) {
+
+                    System.out.println("memory error " + e);
+                    Bitmap resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                    groupImage.setBackgroundColor(Color.TRANSPARENT);
+                    groupImage.setImageBitmap(resized);
+
+                }
             } catch (IOException e) {
+
                 e.printStackTrace();
                 Log.e("error in get image ", e.toString());
             }
@@ -552,15 +632,20 @@ public class GrupoAbertoActivity extends AppCompatActivity {
     }
 
     private void uploadImages() {
-        StorageReference imgRef = storage.child(grupo.getId() + ".jpg");
+        progress = ProgressDialog.show(this, "Aguarde...",
+                "Alterando Imagem.", true);
+        StorageReference imgRef = storage.child(groupKey + ".jpg");
         System.out.println("lei lei " + userKey);
         //download img source
         groupImage.setDrawingCacheEnabled(true);
         groupImage.buildDrawingCache();
+
         Bitmap bitmap = groupImage.getDrawingCache();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 80, baos);
         byte[] data = baos.toByteArray();
+
+
         UploadTask uploadTask = imgRef.putBytes(data);
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -568,10 +653,13 @@ public class GrupoAbertoActivity extends AppCompatActivity {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
                 System.out.println("huehuebrjava " + downloadUrl);
+
+                progress.dismiss();
+                Toast.makeText(getApplicationContext(), "Alteraçoes Salvas", Toast.LENGTH_SHORT).show();
+                refresh();
             }
         });
     }
-
 
     private void changeGroupName() {
         AlertDialog.Builder edit = new AlertDialog.Builder(GrupoAbertoActivity.this);
@@ -702,4 +790,12 @@ public class GrupoAbertoActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void refresh() {
+        Intent intent = new Intent(GrupoAbertoActivity.this, GruposActivity.class);
+        finish();
+        startActivity(intent);
+    }
+
+
 }

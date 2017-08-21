@@ -20,6 +20,7 @@ public class Preferences {
 
     private  String ACCESS_TOKEN = "accesstoken";
     private String CHAVE_LATITUDE = "latitude";
+    private String CHAVE_TIPO_PEDIDO = "chavePedido";
     private String CHAVE_LONGITUDE = "longitude";
     private String CHAVE_ID = "idUser";
     private String CHAVE_NOME = "nameUser";
@@ -96,6 +97,16 @@ public class Preferences {
     public String getSenha() {
         return preferences.getString(CHAVE_SENHA, null);
     }
+
+    public String getFilterPedido() {
+        return preferences.getString(CHAVE_TIPO_PEDIDO, null);
+    }
+
+    public void saveFilterPedido(String tipoPedido) {
+        editor.putString(CHAVE_TIPO_PEDIDO, tipoPedido);
+        editor.commit();
+    }
+
 
     public void clearSession() {
         editor.clear();

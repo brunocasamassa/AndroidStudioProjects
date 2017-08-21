@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                     "Verificando dados do usuario", true);
 
             if (conMgr2.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
-                    || conMgr2.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
+                    && conMgr2.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
 
                 Toast.makeText(getApplicationContext(), "Sem conexao com a internet", Toast.LENGTH_SHORT).show();
                 progress.dismiss();
@@ -148,80 +148,80 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("usuario conectado: " + firebaseAuth.getCurrentUser());
                 try {
                     if (authUser != null) {
-                        DatabaseReference firebase = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(authUser.getEmail()));
-                        System.out.println("main email " + authUser.getEmail());
-                        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                User user = dataSnapshot.getValue(User.class);
-                                if (user == null) {
 
-                                    authUser.delete();
+                            DatabaseReference firebase = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(authUser.getEmail()));
+                            System.out.println("main email " + authUser.getEmail());
+                            firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    User user = dataSnapshot.getValue(User.class);
+                                    if (user == null) {
 
-                                    if (progress != null) {
-                                        progress.dismiss();
-                                    }
-
-                                    LoginManager.getInstance().logOut();
-                                    Toast.makeText(getApplicationContext(), "Falha no login, por favor entre novamente ", Toast.LENGTH_SHORT).show();
-                                    //refresh();
-
-                                } else {
-
-                                    pivotUsuario.setName(user.getName());
-                                    pivotUsuario.setEmail(user.getEmail());
-                                    System.out.println("usernAME " + userName);
-                                    preferencias.saveData(Base64Decoder.encoderBase64(pivotUsuario.getEmail()), pivotUsuario.getName());
-
-                                    if (user.getSenha() != null) {
-                                        preferencias.saveLogin(user.getEmail(), user.getSenha());
-                                    }
-
-                                    Toast.makeText(getApplicationContext(), "Bem vindo " + preferencias.getNome(), Toast.LENGTH_SHORT).show();
-
-                                    String savedToken = preferencias.getToken();
-
-                                    String token = FirebaseInstanceId.getInstance().getToken();
-
-                                    SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z");
-                                    format.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
-                                    String currentTime = format.format(new Date());
-
-                                    ArrayList<String> entradas = new ArrayList<String>();
-
-                                    if (currentTime != null) {
-                                        if (user.getEntradas() != null) {
-                                            entradas.addAll(user.getEntradas());
-                                            entradas.add(entradas.size(), currentTime);
-                                            user.setEntradas(entradas);
-                                        } else {
-                                            entradas.add(0, currentTime);
-                                            user.setEntradas(entradas);
+                                        if (progress != null) {
+                                            progress.dismiss();
                                         }
-                                        user.save();
-                                    }
-                                    md.onTokenRefresh();
+
+                                        LoginManager.getInstance().logOut();
+                                        Toast.makeText(getApplicationContext(), "Falha no login, por favor entre novamente ", Toast.LENGTH_SHORT).show();
+                                        //refresh();
+
+                                    } else {
+
+                                        pivotUsuario.setName(user.getName());
+                                        pivotUsuario.setEmail(user.getEmail());
+                                        System.out.println("usernAME " + userName);
+                                        preferencias.saveData(Base64Decoder.encoderBase64(pivotUsuario.getEmail()), pivotUsuario.getName());
+
+                                        if (user.getSenha() != null) {
+                                            preferencias.saveLogin(user.getEmail(), user.getSenha());
+                                        }
+
+                                        Toast.makeText(getApplicationContext(), "Bem vindo " + preferencias.getNome(), Toast.LENGTH_SHORT).show();
+
+                                        String savedToken = preferencias.getToken();
+
+                                        String token = FirebaseInstanceId.getInstance().getToken();
+
+                                        SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z");
+                                        format.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
+                                        String currentTime = format.format(new Date());
+
+                                        ArrayList<String> entradas = new ArrayList<String>();
+
+                                        if (currentTime != null) {
+                                            if (user.getEntradas() != null) {
+                                                entradas.addAll(user.getEntradas());
+                                                entradas.add(entradas.size(), currentTime);
+                                                user.setEntradas(entradas);
+                                            } else {
+                                                entradas.add(0, currentTime);
+                                                user.setEntradas(entradas);
+                                            }
+                                            user.save();
+                                        }
+                                        md.onTokenRefresh();
                                 /*if (token != savedToken) {
                                     md.sendRegistrationToServer(token);
                                 } else md.sendRegistrationToServer(savedToken);*/
 
-                                    System.out.println("usuario name " + usuario.getName());
-                                    if (progress != null) {
-                                        progress.dismiss();
+                                        System.out.println("usuario name " + usuario.getName());
+                                        if (progress != null) {
+                                            progress.dismiss();
+                                        }
+
+                                        //Toast.makeText(getApplicationContext(), currentTime, Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(MainActivity.this, PedidosActivity.class);
+                                        startActivity(intent);
+                                        //Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
                                     }
-
-                                    //Toast.makeText(getApplicationContext(), currentTime, Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(MainActivity.this, PedidosActivity.class);
-                                    startActivity(intent);
-                                    //Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
                                 }
-                            }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
-                            }
-                        });
+                                }
+                            });
+
 
                     } else {
                         // User is signed out
@@ -310,56 +310,52 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println("login no firebase " + task.getResult().getUser().getEmail());
                                 System.out.println("login no firebase " + task.getResult().getUser().getDisplayName());
                                 Toast.makeText(MainActivity.this, "Sucesso em fazer login, ola " + task.getResult().getUser().getDisplayName().toString(), Toast.LENGTH_LONG).show();
-                                final String encodedFacebookEmailUser;
-                                final String email;
-                                if (task.getResult().getUser().getEmail() != null) {
-                                    encodedFacebookEmailUser = Base64Decoder.encoderBase64(task.getResult().getUser().getEmail());
-                                    email = task.getResult().getUser().getEmail();
-                                } else {
-                                    encodedFacebookEmailUser = Base64Decoder.encoderBase64(task.getResult().getUser().getDisplayName() + "@facebook.com");
-                                    email = task.getResult().getUser().getDisplayName() + "@facebook.com";
-                                }
+                                String encodedFacebookEmailUser = null;
+                                String email = null;
+                                try {
+                                    if (task.getResult().getUser().getEmail() != null) {
+                                        encodedFacebookEmailUser = Base64Decoder.encoderBase64(task.getResult().getUser().getEmail());
+                                        email = task.getResult().getUser().getEmail();
+                                    }
+                                    final String name = task.getResult().getUser().getDisplayName();
+                                    final Uri photo = task.getResult().getUser().getPhotoUrl();
 
-                                final String name = task.getResult().getUser().getDisplayName();
-                                final Uri photo = task.getResult().getUser().getPhotoUrl();
+                                    System.out.println("datasnapshot 2" + dataSnapshot);
+                                    if (!dataSnapshot.child(encodedFacebookEmailUser).exists()) {
+                                            System.out.println("CRIANDO USUARIO NO DATABASSE");
+                                            // FirebaseUser usuarioFireBase = task.getResult().getUser();
+                                            usuario.setName(name);
+                                            usuario.setPremiumUser(1);
+                                            usuario.setMaxDistance(10);
+                                            usuario.setProfileImg(photo.toString());
+                                            usuario.setEmail(email);
+                                            usuario.setId(encodedFacebookEmailUser.toString());
+                                            ArrayList<Integer> badgesList = new ArrayList<Integer>();
+                                            usuario.setMedalhas(badgesList);
+                                            System.out.println("user name1 " + usuario.getName());
+                                            Preferences preferences = new Preferences(MainActivity.this);
+                                            preferences.saveDataImgFacebook(usuario.getId(), usuario.getName(), usuario.getProfileImg());
 
-                                System.out.println("datasnapshot 2" + dataSnapshot);
-                                if (!dataSnapshot.child(encodedFacebookEmailUser).exists()) {
-                                   try {
-                                       System.out.println("CRIANDO USUARIO NO DATABASSE");
-                                       // FirebaseUser usuarioFireBase = task.getResult().getUser();
-                                       usuario.setName(name);
-                                       usuario.setPremiumUser(1);
-                                       usuario.setMaxDistance(10);
-                                       usuario.setProfileImg(photo.toString());
-                                       usuario.setEmail(email);
-                                       usuario.setId(encodedFacebookEmailUser.toString());
-                                       ArrayList<Integer> badgesList = new ArrayList<Integer>();
-                                       usuario.setMedalhas(badgesList);
-                                       System.out.println("user name1 " + usuario.getName());
-                                       Preferences preferences = new Preferences(MainActivity.this);
-                                       preferences.saveDataImgFacebook(usuario.getId(), usuario.getName(), usuario.getProfileImg());
+                                            facebookImg = usuario.getProfileImg();
 
-                                       facebookImg = usuario.getProfileImg();
+                                            usuario.save();
+                                            autenticacao.addAuthStateListener(mAuthListener);
 
-                                       usuario.save();
-                                       autenticacao.addAuthStateListener(mAuthListener);
-                                   }catch (Exception e){
-                                       Toast.makeText(getApplicationContext(), "Falha no Registro, por favor, valide seu e-mail facebook", Toast.LENGTH_SHORT).show();
-                                   }
-                                    //refresh();
+                                        //refresh();
 
-                                } else {
+                                    } else {
 
-                                    Preferences preferences = new Preferences(MainActivity.this);
-                                    preferences.saveDataImgFacebook(encodedFacebookEmailUser, name, photo.toString());
-                                    preferences.saveData(encodedFacebookEmailUser, name);
-                                    System.out.println("username " + name);
-                                    autenticacao.addAuthStateListener(mAuthListener);
+                                        Preferences preferences = new Preferences(MainActivity.this);
+                                        preferences.saveDataImgFacebook(encodedFacebookEmailUser, name, photo.toString());
+                                        preferences.saveData(encodedFacebookEmailUser, name);
+                                        System.out.println("username " + name);
+                                        autenticacao.addAuthStateListener(mAuthListener);
 
+                                    }
+                                }catch (Exception e){
+                                    Toast.makeText(getApplicationContext(), "Falha no Registro, por favor, confirme seu e-mail facebook, ou faça o cadastro manualmente", Toast.LENGTH_LONG).show();
                                 }
                             }
-
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {

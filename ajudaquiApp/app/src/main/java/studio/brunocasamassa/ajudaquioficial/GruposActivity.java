@@ -1,5 +1,7 @@
 package studio.brunocasamassa.ajudaquioficial;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -7,11 +9,13 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -21,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import studio.brunocasamassa.ajudaquioficial.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquioficial.helper.FirebaseConfig;
+import studio.brunocasamassa.ajudaquioficial.helper.Grupo;
 import studio.brunocasamassa.ajudaquioficial.helper.GruposTabAdapter;
 import studio.brunocasamassa.ajudaquioficial.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaquioficial.helper.Preferences;
@@ -30,12 +35,15 @@ import studio.brunocasamassa.ajudaquioficial.helper.SlidingTabLayout;
  * Created by bruno on 24/04/2017.
  */
 
-public class GruposActivity extends AppCompatActivity {
+public class GruposActivity extends AppCompatActivity implements SearchView.OnQueryTextListener{
     private Toolbar toolbar;
     private ListView listview_nomes;
     private ViewPager viewPager;
     private SlidingTabLayout slidingTabLayout;
     private int posicao;
+    private ArrayAdapter<Grupo> arrayAdapterAllGroups;
+    private ArrayAdapter<Grupo> arrayAdapterMyGroups;
+
     private android.support.design.widget.FloatingActionButton fab;
     private Button donation;
     private FloatingActionMenu fabMenu;
@@ -117,15 +125,25 @@ public class GruposActivity extends AppCompatActivity {
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(GruposActivity.this, MainActivity.class));
                 return true;
-            case R.id.action_settings:
-                startActivity(new Intent(GruposActivity.this, ConfiguracoesActivity.class));
+
+            case R.id.item_search:
+
+                SearchManager searchManager = (SearchManager)
+                        getSystemService(Context.SEARCH_SERVICE);
+
+                SearchView searchView = (SearchView) item.getActionView();
+
+                searchView.setSearchableInfo(searchManager.
+                        getSearchableInfo(getComponentName()));
+                searchView.setSubmitButtonEnabled(true);
+                searchView.setOnQueryTextListener(this);
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
     }
-
 
     private void refresh() {
         Intent intent = new Intent(GruposActivity.this, GruposActivity.class);
@@ -134,4 +152,42 @@ public class GruposActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        refresh();
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+
+        arrayAdapterAllGroups= getArrayAdapterAllGroups();
+        arrayAdapterAllGroups.getFilter().filter(newText);
+        arrayAdapterAllGroups.notifyDataSetChanged();
+
+        arrayAdapterMyGroups = getArrayAdapterMyGroups();
+        if (arrayAdapterMyGroups != null) { //fica null quando inicia a activity
+            arrayAdapterMyGroups.getFilter().filter(newText);
+            arrayAdapterMyGroups.notifyDataSetChanged();
+        }
+
+        return true;
+    }
+
+
+    public ArrayAdapter<Grupo> getArrayAdapterAllGroups() {
+        return arrayAdapterAllGroups;
+    }
+
+    public void setArrayAdapterAllGroups(ArrayAdapter<Grupo> arrayAdapterAllGroups) {
+        this.arrayAdapterAllGroups = arrayAdapterAllGroups;
+    }
+
+    public ArrayAdapter<Grupo> getArrayAdapterMyGroups() {
+        return arrayAdapterMyGroups;
+    }
+
+    public void setArrayAdapterMyGroups(ArrayAdapter<Grupo> arrayAdapterMyGroups) {
+        this.arrayAdapterMyGroups = arrayAdapterMyGroups;
+    }
 }

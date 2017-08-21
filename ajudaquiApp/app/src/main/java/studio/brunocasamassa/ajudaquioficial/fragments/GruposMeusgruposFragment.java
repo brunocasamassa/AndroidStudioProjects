@@ -42,6 +42,9 @@ public class GruposMeusgruposFragment extends Fragment {
     private ArrayList<Grupo> grupos;
     private GridView listView;
     private ValueEventListener valueEventListenerAllGroups;
+    private MyGroupsAdapter groupsAdapter;
+    private GruposActivity ga;
+
 
     public static User usuario = new User();
     private int premium;
@@ -53,6 +56,9 @@ public class GruposMeusgruposFragment extends Fragment {
 
     @Override
     public void onStart() {
+        if (ga.getArrayAdapterMyGroups() != null) {
+            adapter = ga.getArrayAdapterMyGroups();
+        }
         super.onStart();
         firebase.addListenerForSingleValueEvent(valueEventListenerAll);
 //       dbGroups.addListenerForSingleValueEvent(valueEventListenerAllGroups);
@@ -72,13 +78,22 @@ public class GruposMeusgruposFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_mygroups, container, false);
+        ga = (GruposActivity) getActivity();
+
         grupos = new ArrayList<>();
-
-
         listView = (GridView) view.findViewById(R.id.mygroups_list);
         refresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
 
-        adapter = new MyGroupsAdapter(getActivity(), grupos);
+        groupsAdapter= new MyGroupsAdapter(getContext(), grupos);
+
+        if (ga.getArrayAdapterMyGroups() != null) {
+            adapter = ga.getArrayAdapterMyGroups();
+        } else adapter = groupsAdapter;
+
+        ga.setArrayAdapterMyGroups(adapter);
+
+
+        //adapter = new MyGroupsAdapter(getActivity(), grupos);
         listView.setAdapter(adapter);
 
        /* fab = (FloatingActionButton) view.findViewById(R.id.fab);
@@ -138,10 +153,9 @@ public class GruposMeusgruposFragment extends Fragment {
                         if (!grupos.contains(grupo) && usuario.getGrupos().contains(grupo.getId())) {
                             grupos.add(grupo);
                         }
-                    }
+                    }adapter.notifyDataSetChanged();
                 }
 
-                adapter.notifyDataSetChanged();
 
             }
 
@@ -155,15 +169,13 @@ public class GruposMeusgruposFragment extends Fragment {
 
         System.out.println("grupos usuario fora caraio " + usuario.getGrupos());
 
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 Intent intent = new Intent(getActivity(), GrupoAbertoActivity.class);
 
                 // recupera dados a serem passados
-                Grupo grupo = grupos.get(position);
+                Grupo grupo = groupsAdapter.getGruposFiltrado().get(position);
 
                 // enviando dados para grupo activity
                 intent.putExtra("premium", premium);
