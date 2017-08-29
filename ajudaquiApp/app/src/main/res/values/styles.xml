@@ -10,7 +10,19 @@
         <item name="android:textColorSecondary">@color/md_white_1000</item>
 
     </style>
+    <style name="AppThemeWithActionbar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorBackground</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorSecondary">@color/md_white_1000</item>
 
+    </style>
+
+    <style name="RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">@color/indigo</item>
+        <item name="colorControlActivated">@color/colorBackground</item>
+    </style>
 
     <style name="BezelImageView">
         <item name="biv_maskDrawable">@drawable/material_drawer_circle_mask</item>
@@ -28,6 +40,15 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="FullScreen.TextAppearance.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="FullScreen.TextAppearance.Title.Inverse" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 

@@ -91,7 +91,7 @@ public class PedidoActivity extends AppCompatActivity {
         }
 
         nomePedido.setText(pedido.getTitulo().toString());
-        toolbar.setTitle(pedido.getTitulo().toUpperCase());
+        toolbar.setTitle("Detalhe do Pedido");
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
 
@@ -101,13 +101,8 @@ public class PedidoActivity extends AppCompatActivity {
                 finish();
             }
         });
-        String title;
-        try {
-            title = pedido.getTitulo().substring(1, 18) + "...";
-        } catch (Exception e){
-            title = pedido.getTitulo().toString();
-        }
-        toolbar.setTitle(title.toUpperCase());
+
+
         descricao.setText(pedido.getDescricao());
 
         tagsCategoria.setTags(pedido.getTagsCategoria());
@@ -288,9 +283,6 @@ public class PedidoActivity extends AppCompatActivity {
             });
 
     }
-
-
-
     private void sendNotiication(String criadorId) {
     DatabaseReference dbDestinatario =FirebaseConfig.getFireBase().child("usuarios");
         dbDestinatario.child(criadorId).addListenerForSingleValueEvent(new ValueEventListener() {

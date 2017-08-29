@@ -190,7 +190,7 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
                         System.out.println("grupo " + pedido.getGrupo());
                         try {
                             //Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
-                            Picasso.with(getContext()).load(uri).resize(68, 68).into(pedidoImg);
+                            Picasso.with(getContext()).load(uri).into(pedidoImg);
                         }catch (Exception e){
                             pedidoImg.setImageResource(R.drawable.logo);
                         }

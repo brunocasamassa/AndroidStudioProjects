@@ -122,6 +122,7 @@ public class CriaPedidoActivity extends AppCompatActivity {
         } else if (extras.getString("groupId") != null) {
             idGroupSelected = (extras.getString("groupId"));
         }
+
         System.out.println("FUCK latitude  " + latitude);
         System.out.println("FUCK longitude " + longitude);
 
@@ -273,12 +274,12 @@ public class CriaPedidoActivity extends AppCompatActivity {
 
             public void onClick(View v) {
 
-                if(creditos <=0){
+               /* if(creditos <=0){
                 System.out.println("user creditos "+creditos);
                     Toast.makeText(getApplicationContext(), "Você não possui creditos suficientes para criar um pedido", Toast.LENGTH_LONG).show();
                     return;
                 }
-                else if (pedidoName.getText().toString().equals("")) {
+                else*/ if (pedidoName.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Insira um Titulo para o pedido", Toast.LENGTH_LONG).show();
                     return;
                 } else if (descricao.getText().toString().equals("")) {

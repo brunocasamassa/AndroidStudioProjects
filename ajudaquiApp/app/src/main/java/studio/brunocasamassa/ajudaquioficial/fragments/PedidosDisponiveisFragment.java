@@ -158,16 +158,16 @@ public class PedidosDisponiveisFragment extends Fragment {
                         Location userLocation = new Location("my location");
                         if (user.getLatitude() != null) {
                             userLocation.setLatitude(user.getLatitude());
+
                             userLocation.setLongitude(user.getLongitude());
                         } else {
                             userLocation.setLatitude(0.0);
                             userLocation.setLongitude(0.0);
                         }
 
+                        System.out.println("PedidosLocation user locations " + user.getLatitude() + "  " + user.getLongitude());
 
-                        System.out.println("user locations " + user.getLatitude() + "  " + user.getLongitude());
 
-                        System.out.println("latitudes dos pedidos " + userLocation.getLatitude());
 
                         for (DataSnapshot dados : dataSnapshot.getChildren()) {
                             System.out.println("get children pedidos " + dados);
@@ -178,18 +178,22 @@ public class PedidosDisponiveisFragment extends Fragment {
                                 pedidoLocation.setLongitude(pedido.getLongitude());
                                 pedidoLocation.setLatitude(pedido.getLatitude());
 
-                                double distance = userLocation.distanceTo(pedidoLocation);
+                                double distance = userLocation.bearingTo(pedidoLocation);
 
                                 pedido.setDistanceInMeters(distance);
 
-                                System.out.println("DISTANCIA " + distance + "USUARIO DISTANCE " + usuario.getMaxDistance() * 1000000);
+                                System.out.println("PedidosLocation DISTANCIA " + distance + "PEDIDO LATITUDE:  " + pedido.getLatitude() + " LONGITUDE: "+ pedido.getLongitude() + "NOME: "+pedido.getTitulo());
 
-                            } else pedido.setDistanceInMeters(0.0);
+                            } else pedido.setDistanceInMeters(2.0);
+
+                            System.out.println("PedidosLocation Distancia do pedido "+ pedido.getDistanceInMeters());
+
                             try {
                                 if (pedido.getStatus() == 0) {
                                     pedidos.add(pedido);
                                     System.out.println("pedidao " + pedido.getTitulo());
 
+                                    //elimina pedidos feitos pelo usuario
                                     if (usuario.getPedidosFeitos() != null) {
                                         if (usuario.getPedidosFeitos().contains(pedido.getIdPedido())) {
                                             System.out.println("pedidao " + pedido.getIdPedido());
@@ -197,30 +201,37 @@ public class PedidosDisponiveisFragment extends Fragment {
 
                                         }
                                     }
-
+                                        //Elimina pedidos fora do filtro
                                         if(preferencias.getFilterPedido() != null) {
                                             if (!pedido.getTipo().equals(preferencias.getFilterPedido())) {
                                             pedidos.remove(pedido);
                                         }
                                     }
+                                    //elimina pedidos de outros grupos(caso tenha grupo no pedido)
                                     if (pedido.getGroupId() != null) {
-                                        if (!user.getGrupos().contains(pedido.getGroupId())){
+                                        if(user.getGrupos() == null){
+                                            pedidos.remove(pedido);
+                                        }
+                                        else if (!user.getGrupos().contains(pedido.getGroupId())){
                                             pedidos.remove(pedido);
                                         }
 
                                     }
 
+                                    //elimina pedidos fora da distancia estabelecida
                                     if (pedido.getDistanceInMeters() > user.getMaxDistance() * 1000000) {
                                         pedidos.remove(pedido);
                                         System.out.println("pedido removido " + pedido.getTitulo());
 
                                     }
 
+                                    //pedidos sem distancia
                                     if (pedido.getDistanceInMeters() == null) {
                                         pedidos.remove(pedido);
 
                                     }
 
+                                    //elimina doações da cabine
                                     if (pedido.getTipo().equals("Doacoes")) {
                                         pedidos.remove(pedido);
 
@@ -228,7 +239,6 @@ public class PedidosDisponiveisFragment extends Fragment {
                                     }
 
                                 }
-
 
                             } catch (Exception e) {
                                 Log.e("listPedidos", e.toString());

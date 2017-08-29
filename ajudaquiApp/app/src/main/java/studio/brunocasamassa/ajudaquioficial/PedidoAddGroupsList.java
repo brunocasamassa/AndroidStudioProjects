@@ -89,6 +89,7 @@ final DatabaseReference dbGroup =FirebaseConfig.getFireBase().child("grupos");
                                         android.R.id.text1,
                                         groups);
 
+                                groupView.setDivider(null);
                                 groupView.setAdapter(groupAdapter);
 
                                 System.out.println("GROUP VIEW " + groupView);

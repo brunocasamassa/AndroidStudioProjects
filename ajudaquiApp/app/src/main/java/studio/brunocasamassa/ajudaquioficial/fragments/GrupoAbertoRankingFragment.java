@@ -22,6 +22,7 @@ import java.util.Collections;
 import studio.brunocasamassa.ajudaquioficial.PerfilGruposActivity;
 import studio.brunocasamassa.ajudaquioficial.R;
 import studio.brunocasamassa.ajudaquioficial.adapters.RankingAdapter;
+import studio.brunocasamassa.ajudaquioficial.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquioficial.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquioficial.helper.User;
 
@@ -40,9 +41,12 @@ public class GrupoAbertoRankingFragment extends Fragment {
     private String contactName;
     private String idGroup;
     private String nomeGroup;
+    private int userPlace = 0;
     private int qtdMembros;
     private ValueEventListener valueEventListenerRankingGroup;
     private Query query;
+    private ArrayList<String> adminsList;
+    private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
 
     @Override
     public void onStart() {
@@ -65,11 +69,12 @@ public class GrupoAbertoRankingFragment extends Fragment {
 
         qtdMembros = extra.getInt("qtdmembros");
 
+        adminsList = extra.getStringArrayList("adminsList");
         View v = inflater.inflate(R.layout.fragment_grupos_ranking, container, false);
 
         listview_nomes = (ListView) v.findViewById(R.id.ranking_list);
 
-        adapter_nomes = new RankingAdapter(getContext(), arraylist_nomes);
+        adapter_nomes = new RankingAdapter(getContext(), arraylist_nomes, userPlace);
 
         listview_nomes.setDivider(null);
 
@@ -91,7 +96,7 @@ public class GrupoAbertoRankingFragment extends Fragment {
                 } else
                     intent.putExtra("rankedUserPedidosAtendidos", arraylist_nomes.get(position).getPedidosAtendidos().size());
                 if (arraylist_nomes.get(position).getPedidosFeitos() == null) {
-                    intent.putExtra("rankedUserPedidosFeitos",0);
+                    intent.putExtra("rankedUserPedidosFeitos", 0);
                 } else
                     intent.putExtra("rankedUserPedidosFeitos", arraylist_nomes.get(position).getPedidosFeitos().size());
 
@@ -109,19 +114,39 @@ public class GrupoAbertoRankingFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 arraylist_nomes.clear();
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    User rankedUser = postSnapshot.getValue(User.class);
-                    System.out.println("idGROUP " + idGroup);
-                    if (rankedUser.getGrupos() != null && rankedUser.getGrupos().contains(idGroup)) {
-                        System.out.println("user no ranking " + rankedUser.getName());
-                        arraylist_nomes.add(rankedUser);
+                if (adminsList.contains(userKey)) { //admin ranking list
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        User rankedUser = postSnapshot.getValue(User.class);
+                        System.out.println("idGROUP " + idGroup);
+
+                        if (rankedUser.getGrupos() != null && rankedUser.getGrupos().contains(idGroup)) {
+                            System.out.println("user no ranking " + rankedUser.getName());
+                            arraylist_nomes.add(rankedUser);
+
+                        }
+                    }
+                } else {  //non admin ranking list
+                    int cont = 1;
+
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        User rankedUser = postSnapshot.getValue(User.class);
+                        System.out.println("idGROUP " + idGroup);
+
+                        if (rankedUser.getGrupos() != null && rankedUser.getGrupos().contains(idGroup) && cont <= 3) {
+                            System.out.println("user no ranking " + rankedUser.getName());
+                            arraylist_nomes.add(rankedUser);
+                            cont++;
+                        } else if (rankedUser.getGrupos() != null && rankedUser.getGrupos().contains(idGroup) && rankedUser.getId().equals(userKey)) {
+                            arraylist_nomes.add(rankedUser);
+                            userPlace = cont;
+                        }
+                        cont++;
 
                     }
 
+                    Collections.reverse(arraylist_nomes);
+                    adapter_nomes.notifyDataSetChanged();
                 }
-
-                Collections.reverse(arraylist_nomes);
-                adapter_nomes.notifyDataSetChanged();
             }
 
             @Override

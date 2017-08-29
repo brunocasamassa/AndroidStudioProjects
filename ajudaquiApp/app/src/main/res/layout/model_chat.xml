@@ -54,7 +54,7 @@
         android:layout_width="286dp"
         android:layout_height="35dp"
         android:layout_gravity="center"
-        android:maxLength="30"
+        android:maxLength="20"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="8dp"

@@ -8,4 +8,9 @@
     <dimen name="design_fab_size_normal">60dp</dimen>
     <dimen name="design_fab_size_auto">90dp</dimen>
     <dimen name="design_fab_size_mini">30dp</dimen>
+
+    <dimen name="size_avatar_toolbar">40dp</dimen>
+    <dimen name="spacing_double">16dp</dimen>
+    <dimen name="elevation_header">4dp</dimen>
+
 </resources>

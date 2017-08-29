@@ -1,12 +1,14 @@
 package studio.brunocasamassa.ajudaquioficial.helper;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -350,30 +352,26 @@ public class PedidoCriadoActivity extends AppCompatActivity {
         if (trigger) {
 
             final DatabaseReference dbConversa = FirebaseConfig.getFireBase().child("conversas");
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoCriadoActivity.this);
-            alertDialog.setTitle("     Avalie sua Experiência");
-            alertDialog.setMessage("Como se saiu a pessoa que te ajudou?");
-            alertDialog.setCancelable(false);
-            final RatingBar ratingBar = new RatingBar(getApplicationContext());
-            ratingBar.setNumStars(1);
-            //ratingBar.setMax(5);
-            ratingBar.setRating(5);
-            //ratingBar.setDrawingCacheBackgroundColor(Color.BLUE);
-            /*Drawable progress = ratingBar.getProgressDrawable();*/
+            final AlertDialog.Builder builder = new AlertDialog.Builder(PedidoCriadoActivity.this);
+            final AlertDialog alertDialog = builder.create();
+            View title = ((LayoutInflater) PedidoCriadoActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.rating_title, null);
+            View root = ((LayoutInflater) PedidoCriadoActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.rating, null);
+            alertDialog.setCustomTitle(title);
+            final RatingBar ratingBar = (RatingBar) root.findViewById(R.id.ratingbar);
+            final Button enviar = (Button) root.findViewById(R.id.buttonEnviar);
 
-            alertDialog.setView(ratingBar);
-            alertDialog.setPositiveButton("ENVIAR", new DialogInterface.OnClickListener() {
+            enviar.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(View v) {
 
-                    final int rating = (int) (ratingBar.getRating() * 10);
                     DatabaseReference atendenteUser = FirebaseConfig.getFireBase().child("usuarios");
-
+                    final int rating = (int) (ratingBar.getRating());
                     atendenteUser.child(pedido.getAtendenteId()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             User user = dataSnapshot.getValue(User.class);
                             user.setPontos(user.getPontos() + rating);
+                            //Toast.makeText(getApplicationContext(), String.valueOf(rating), Toast.LENGTH_SHORT).show();
                             user.setCreditos(user.getCreditos()+1);
                             user.setId(pedido.getAtendenteId());
                             user.save();
@@ -391,13 +389,21 @@ public class PedidoCriadoActivity extends AppCompatActivity {
 
                         }
                     });
-
-                    finish();
+                    alertDialog.cancel();
 
                 }
-            }).create().show();
+            });
+            alertDialog.setView(root);
+            alertDialog.show();
+           // alertDialog.setIcon(R.drawable.logo_big);
+
+
+
+
+
+                }
+            }
 
 
         }
-    }
-}
+

@@ -31,7 +31,6 @@ import studio.brunocasamassa.ajudaquioficial.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquioficial.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaquioficial.helper.Preferences;
 import studio.brunocasamassa.ajudaquioficial.helper.SlidingTabLayout;
-import studio.brunocasamassa.ajudaquioficial.payment.PagamentoTermosActivity;
 
 /**
  * Created by bruno on 24/04/2017.
@@ -71,7 +70,7 @@ public class SobreActivity extends AppCompatActivity {
         final NavigationDrawer navigator = new NavigationDrawer();
         navigator.createDrawer(SobreActivity.this, toolbar, 9);
 
-        String[] vector = {"Duvidas", "Fale Conosco", "Denuncie", "Curta no Facebook", "Acesse o site" , "Termos de Uso"};
+        String[] vector = {"Duvidas", "Fale Conosco", "Denuncie", "Curta no Facebook", "Acesse o site" /*, "Termos de Uso"*/};
         //ArrayList<String> listaSobre = new ArrayList<>();
 
         arrayAdapterSobre = new SobreAdapter(getApplicationContext(), vector);
@@ -96,10 +95,10 @@ public class SobreActivity extends AppCompatActivity {
 
                 if(position == 3){
                     //newFacebookIntent(getPackageManager(),"https://www.facebook.com/ajudaquiapp/");
-                    Uri uri = Uri.parse("https://www.facebook.com/ajudaquioficial/");
+                    Uri uri = Uri.parse("https://www.facebook.com/ajudaquiapp/");
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-
                     startActivity(intent);
+
                 }
 
                 if (position ==4){
@@ -109,12 +108,12 @@ public class SobreActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
 
-                if (position ==5){
-                    Intent intent = new Intent(SobreActivity.this, PagamentoTermosActivity.class);
+               /* if (position ==5){
+                    Intent intent = new Intent(SobreActivity.this, TermosActivity.class);
                     intent.putExtra("cameFrom" , 0);
                     finish();
                     startActivity(intent);
-                }
+                }*/
 
 
 
@@ -191,7 +190,7 @@ public class SobreActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_sobre, menu);
+        inflater.inflate(R.menu.menu_profile, menu);
         return true;
     }
 
@@ -200,8 +199,6 @@ public class SobreActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.action_exit:
-
-
                 Preferences preferences = new Preferences(SobreActivity.this);
                 preferences.clearSession();
                 FirebaseAuth.getInstance().signOut();

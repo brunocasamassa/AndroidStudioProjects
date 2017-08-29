@@ -131,7 +131,7 @@ public class PaymentActivity3 extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(PaymentActivity3.this, PagamentoTermosActivity.class);
+        Intent intent = new Intent(PaymentActivity3.this, TermosActivity.class);
         intent.putExtra("cameFrom", 1);
 
         startActivity(intent);

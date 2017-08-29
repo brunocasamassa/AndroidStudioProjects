@@ -96,6 +96,7 @@ public class NavigationDrawer {
                     PrimaryDrawerItem item2;
                     PrimaryDrawerItem item3;
                     PrimaryDrawerItem item4;
+
                     if (pedidosNotification != 0) {
                         item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos).withIcon(R.drawable.pedidos_icon).withBadge(String.valueOf(pedidosNotification)).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.colorAccent));
                     } else

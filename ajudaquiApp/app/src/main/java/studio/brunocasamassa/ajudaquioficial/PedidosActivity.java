@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,6 +48,8 @@ import studio.brunocasamassa.ajudaquioficial.helper.Preferences;
 import studio.brunocasamassa.ajudaquioficial.helper.SlidingTabLayout;
 import studio.brunocasamassa.ajudaquioficial.helper.User;
 
+//import com.google.android.gms.location.FusedLocationProviderClient;
+
 /**
  * Created by bruno on 24/04/2017.
  */
@@ -70,12 +74,16 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
     };
     private String versionFromDb;
     private Double latitude = 0.0;
+    //private FusedLocationProviderClient mFusedLocationClient;
     private Double longitude = 0.0;
+    private Location location;
     private static NavigationDrawer navigator = new NavigationDrawer();
     private FloatingActionButton fab;
     private DatabaseReference dbUser;
     private DatabaseReference getLocalization;
     private ValueEventListener localizationListener;
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+
     private String keyWord = null;
     private boolean trigger = true;
     private ArrayList<String> filter;
@@ -85,12 +93,26 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
     protected void onStart() {
         super.onStart();
         //getLocalization.addValueEventListener(localizationListener);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+    /*    localizacao.beginUpdates();
 
+
+        localizacao.setListener(new SimpleLocation.Listener() {
+
+            public void onPositionChanged() {
+                // new location data has been received and can be accessed
+                latitude = localizacao.getLatitude();
+                longitude = localizacao.getLongitude();
+                System.out.println("ENTREI RESUME "+ latitude + "  " + longitude);
+            }
+
+        });
+*/
     }
 
     @Override
@@ -99,6 +121,14 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
         // ...
         //localizacao.endUpdates();
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        localizacao.endUpdates();
+
+
     }
 
     @Override
@@ -115,88 +145,48 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hello);
 
+
+        localizacao = new SimpleLocation(PedidosActivity.this);
+
+        localizacao.beginUpdates();
+        boolean permissao = Permissao.validaPermissoes(1, PedidosActivity.this, permissoesNecessarias);
+
+        if (permissao) {
+            // if we can't access the location yet
+
+            if (!localizacao.hasLocationEnabled()) {
+                // ask the user to enable location access
+                SimpleLocation.openSettings(PedidosActivity.this);
+
+                /*location = new Location();
+                location.setLatitude(localizacao.getLatitude());
+                location.setLongitude(localizacao.getLongitude());*/
+                latitude = localizacao.getLatitude();
+                longitude = localizacao.getLongitude();
+
+                makeUseOfNewLocation(latitude, longitude);
+
+            } else if (localizacao.hasLocationEnabled()) {
+                //SimpleLocation.openSettings(PedidosActivity.this);
+
+                // SimpleLocation.openSettings(PedidosActivity.this);
+
+                System.out.println(" ENTREI tem permissao");
+
+                latitude = localizacao.getLatitude();
+                longitude = localizacao.getLongitude();
+
+                makeUseOfNewLocation(latitude, longitude);
+
+            }
+        }
+
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal_configuracoes);
         toolbar.setTitle(getResources().getString(R.string.menu_pedidos));
         //toolbar.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
         Bundle extras = getIntent().getExtras();
 
-        ;
-
-        final Preferences filterPreferences = new Preferences(PedidosActivity.this);
-        getLocalization = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
-
-        getLocalization.addListenerForSingleValueEvent(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(final DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                System.out.println("ENTREI ");
-                boolean permissao = Permissao.validaPermissoes(1, PedidosActivity.this, permissoesNecessarias);
-
-                localizacao = new SimpleLocation(PedidosActivity.this);
-
-                if (permissao) {
-                    // if we can't access the location yet
-
-                    if (!localizacao.hasLocationEnabled()) {
-                        // ask the user to enable location access
-                        SimpleLocation.openSettings(PedidosActivity.this);
-
-                        latitude = localizacao.getLatitude();
-                        longitude = localizacao.getLongitude();
-                    }
-
-                    latitude = localizacao.getLatitude();
-                    longitude = localizacao.getLongitude();
-                    System.out.println("LATITUDE> " + localizacao.getLatitude() + " LONGITUDE> " + longitude);
-
-                    //*preferencias.saveMyCoordinates(latitude,longitude);*//*
-
-                    user.setLatitude(localizacao.getLatitude());
-                    user.setLongitude(localizacao.getLongitude());
-                    user.save();
-                    localizacao.endUpdates();
-
-                    /*System.out.println("FIZ UPDATE " + gps.getLatitude());*/
-
-                    if (user.getPedidosNotificationCount() != 0) {
-
-                        Toast.makeText(getApplicationContext(), "Parabens, voce possui um pedido atendido", Toast.LENGTH_LONG).show();
-
-                    }
-
-                    final int premiumUser = user.getPremiumUser();
-                    final int creditos = user.getCreditos();
-                    final Intent intent = new Intent(PedidosActivity.this, CriaPedidoActivity.class);
-
-                    final Intent intent2 = new Intent(PedidosActivity.this, CriaDoacaoActivity.class);
-                    intent2.putExtra("latitude", latitude);
-                    intent2.putExtra("longitude", longitude);
-
-                    fab = (FloatingActionButton) findViewById(R.id.fab);
-                    fab.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            System.out.println("PREMIUM PASSA" + premiumUser);
-                            intent.putExtra("premium", premiumUser);
-                            intent.putExtra("creditos",creditos);
-                            intent.putExtra("latitude", localizacao.getLatitude());
-                            intent.putExtra("longitude", localizacao.getLongitude());
-                            startActivity(intent);
-                        }
-                    });
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-
-        });
 
         listview_nomes = (ListView) findViewById(R.id.ListContatos);
 
@@ -216,7 +206,7 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
 
         navigator.createDrawer(PedidosActivity.this, toolbar, 0);
 
-       // checkVersion();
+        // checkVersion();
     }
 
 
@@ -332,6 +322,7 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
         arrayAdapter.getFilter().filter(newText);
         arrayAdapter.notifyDataSetChanged();
 
+
         arrayEscolhidosAdapter = getArrayEscolhidosAdapter();
         arrayEscolhidosAdapter.getFilter().filter(newText);
         arrayEscolhidosAdapter.notifyDataSetChanged();
@@ -391,54 +382,54 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
 
         try {
             versionFromDb = versionChecker.execute().get().toString();
-            System.out.println("version from web: "+versionFromDb);
+            System.out.println("version from web: " + versionFromDb);
         } catch (InterruptedException e) {
-            System.out.println("version from web: ERROR "+e);
+            System.out.println("version from web: ERROR " + e);
             e.printStackTrace();
         } catch (ExecutionException e) {
-            System.out.println("version from web: ERROR "+e);
+            System.out.println("version from web: ERROR " + e);
             e.printStackTrace();
         }
 
         PackageInfo pInfo = null;
-                try {
-                    pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String version = String.valueOf(pInfo.versionCode);
+        System.out.println("version db " + versionFromDb + "  version app " + version);
+
+        if (!version.equals(versionFromDb)) {
+            alertDialog = new AlertDialog.Builder(PedidosActivity.this);
+
+            alertDialog.setTitle("Atualização Disponivel");
+            alertDialog.setMessage("Esta versao esta desatualizada, deseja ir para a pagina de atualização?");
+            alertDialog.setCancelable(false);
+            alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                    }
                 }
+            });
 
-                String version = String.valueOf(pInfo.versionCode);
-                System.out.println("version db " + versionFromDb + "  version app " + version);
-
-                if (!version.equals(versionFromDb)) {
-                    alertDialog = new AlertDialog.Builder(PedidosActivity.this);
-
-                    alertDialog.setTitle("Atualização Disponivel");
-                    alertDialog.setMessage("Esta versao esta desatualizada, deseja ir para a pagina de atualização?");
-                    alertDialog.setCancelable(false);
-                    alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
-                            try {
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                            } catch (android.content.ActivityNotFoundException anfe) {
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                            }
-                        }
-                    });
-
-                    alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Preferences preferences = new Preferences(PedidosActivity.this);
-                            preferences.clearSession();
-                            FirebaseAuth.getInstance().signOut();
-                            LoginManager.getInstance().logOut();
-                            startActivity(new Intent(PedidosActivity.this, MainActivity.class));
-                        }
-                    }).create().show();
+            alertDialog.setNegativeButton("Nao", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Preferences preferences = new Preferences(PedidosActivity.this);
+                    preferences.clearSession();
+                    FirebaseAuth.getInstance().signOut();
+                    LoginManager.getInstance().logOut();
+                    startActivity(new Intent(PedidosActivity.this, MainActivity.class));
                 }
+            }).create().show();
+        }
 
 /*            }
 
@@ -450,4 +441,115 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
 //------------
         return true;
     }
+
+    private void makeUseOfNewLocation(final Double latitude, final Double longitude) {
+
+
+        getLocalization = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
+
+        getLocalization.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user.getPedidosFeitos() != null) {
+                    ArrayList<String> userGuests = user.getPedidosFeitos();
+                    updatePedidosUsuarioCoordenadas(userGuests);
+                }
+
+                //localizacao.beginUpdates();
+                //*preferencias.saveMyCoordinates(latitude,longitude);*//*
+
+                System.out.println("ENTREI loxc");
+                System.out.println("ENTREI loxc" + latitude + "  " + longitude);
+                user.setLatitude(latitude);
+                user.setLongitude(longitude);
+                user.save();
+
+                    /*System.out.println("FIZ UPDATE " + gps.getLatitude());*/
+
+                if (user.getPedidosNotificationCount() != 0) {
+
+                    Toast.makeText(getApplicationContext(), "Parabens, voce possui um pedido atendido", Toast.LENGTH_LONG).show();
+
+                }
+
+                final int premiumUser = user.getPremiumUser();
+                final int creditos = user.getCreditos();
+                final Intent intent = new Intent(PedidosActivity.this, CriaPedidoActivity.class);
+
+                final Intent intent2 = new Intent(PedidosActivity.this, CriaDoacaoActivity.class);
+                intent2.putExtra("latitude", latitude);
+                intent2.putExtra("longitude", longitude);
+
+                fab = (FloatingActionButton) findViewById(R.id.fab);
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        System.out.println("PREMIUM PASSA" + premiumUser);
+                        intent.putExtra("premium", premiumUser);
+                        intent.putExtra("creditos", creditos);
+                        intent.putExtra("latitude", localizacao.getLatitude());
+                        intent.putExtra("longitude", localizacao.getLongitude());
+                        startActivity(intent);
+                    }
+                });
+
+
+                System.out.println("LATITUDE> " + localizacao.getLatitude() + " LONGITUDE> " + longitude);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        });
+    }
+
+    private void updatePedidosUsuarioCoordenadas (final ArrayList<String> userGuests) {
+
+//START UPDATE USER GUESTS COORDINATES
+        final DatabaseReference userPedidos = FirebaseConfig.getFireBase().child("Pedidos");
+        final ArrayList<String> pedidosAll = new ArrayList<>();
+        userPedidos.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //implementa lista dos pedidos
+                for (DataSnapshot post : dataSnapshot.getChildren()) {
+                    Pedido pedido = post.getValue(Pedido.class);
+                    pedidosAll.add(pedidosAll.size(), pedido.getIdPedido());
+                }
+                System.out.println("shuma " + pedidosAll.size());
+                for (int i = 0; i < userGuests.size(); i++) {
+                    if (pedidosAll.contains(userGuests.get(i))) {//pedido exists
+                        try {
+                            int index = pedidosAll.indexOf(userGuests.get(i));
+                            userPedidos.child(userGuests.get(i)).child("latitude").setValue(latitude);
+                            userPedidos.child(userGuests.get(i)).child("longitude").setValue(longitude);
+                            Log.i("TAG", "populated " + userGuests.get(i).toString());
+                        } catch (Exception e) {
+                            Log.e("TAG", "failed to update User guest coordinates " + e);
+                        }
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+    //-----END UPDATE
+
 }
+
+
+
+
+
+
+

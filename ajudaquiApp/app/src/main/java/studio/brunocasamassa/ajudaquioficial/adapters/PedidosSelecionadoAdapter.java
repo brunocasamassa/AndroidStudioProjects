@@ -161,7 +161,7 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
                     public void onSuccess(Uri uri) {
                         System.out.println("grupo " + pedido.getGrupo());
                         //Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
-                        Picasso.with(getContext()).load(uri).resize(68, 68).into(pedidoImg);
+                        Picasso.with(getContext()).load(uri).into(pedidoImg);
                         System.out.println("my pedidos lets seee2" + uri);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -170,7 +170,7 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
 
                     }
                 });
-            } else Picasso.with(getContext()).load(R.drawable.logo).resize(68, 68).into(pedidoImg); //Glide.with(getContext()).load(R.drawable.logo).override(68, 68).into(pedidoImg);
+            } else Picasso.with(getContext()).load(R.drawable.logo).into(pedidoImg); //Glide.with(getContext()).load(R.drawable.logo).override(68, 68).into(pedidoImg);
 
         }
 

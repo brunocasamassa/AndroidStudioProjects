@@ -135,7 +135,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
                 statusPedido.setBackgroundColor(Color.parseColor("#1bb1b7"));
             } else if (status.equals("Doacao")) {
                 //Picasso.with(getContext()).load(R.drawable.tag_finalizado).resize(274, 274).into(statusPedido);
-                statusPedido.setText(" DOACÃO ");
+                statusPedido.setText(" DOAÇÃO ");
                 statusPedido.setBackgroundColor(Color.parseColor("#1bb1b7"));
             } else if (status.equals("Emprestimos")) {
                 //Picasso.with(getContext()).load(R.drawable.tag_cancelado).resize(274, 274).into(statusPedido);
@@ -143,9 +143,13 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
                 statusPedido.setBackgroundColor(Color.parseColor("#1bb1b7"));
             }
 
-
             if (pedido.getDistanceInMeters() != null) {
-                distancia.setText(String.valueOf(pedido.getDistanceInMeters().intValue() / 1000000) + "km");
+                int km = pedido.getDistanceInMeters().intValue();
+                int dotIndex = String.valueOf(pedido.getDistanceInMeters()).indexOf(".");
+                String meters = String.valueOf(pedido.getDistanceInMeters()).substring(dotIndex,dotIndex+2);
+                System.out.println("see meters " + meters);
+
+                distancia.setText(km+meters+"km");
             } else {
                 distancia.setTextColor(Color.TRANSPARENT);
             }

@@ -7,12 +7,12 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <!--
  The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but are recommended.
     -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-feature android:name="android.hardware.location.gps" />
 
     <application
@@ -45,9 +45,14 @@
         <activity
             android:name="studio.brunocasamassa.ajudaquioficial.LoginActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name="studio.brunocasamassa.ajudaquioficial.TagsList"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="studio.brunocasamassa.ajudaquioficial.FullScreenImageActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name="studio.brunocasamassa.ajudaquioficial.ListaAdmins"
             android:screenOrientation="portrait" />
@@ -156,7 +161,8 @@
             android:screenOrientation="portrait"></activity>
 
         <activity
-            android:name="studio.brunocasamassa.ajudaquioficial.payment.PagamentoTermosActivity"
+            android:name="studio.brunocasamassa.ajudaquioficial.payment.TermosActivity"
+            android:theme="@style/AppThemeWithActionbar"
             android:screenOrientation="portrait"></activity>
 
         <activity android:name="studio.brunocasamassa.ajudaquioficial.SearchableActivity">

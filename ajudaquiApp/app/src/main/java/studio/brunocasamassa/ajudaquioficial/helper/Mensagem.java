@@ -5,6 +5,7 @@ public class Mensagem {
 
     private String idUsuario;
     private String mensagem;
+    private FileModel file;
 
     public Mensagem() {
     }
@@ -23,5 +24,13 @@ public class Mensagem {
 
     public void setMensagem(String mensagem) {
         this.mensagem = mensagem;
+    }
+
+    public FileModel getFile() {
+        return file;
+    }
+
+    public void setFile(FileModel file) {
+        this.file = file;
     }
 }

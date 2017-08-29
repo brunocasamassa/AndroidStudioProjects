@@ -5,7 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -19,6 +22,7 @@ public class MensagemAdapter extends ArrayAdapter<Mensagem> {
 
     private Context context;
     private ArrayList<Mensagem> mensagens;
+    private int trigger;
 
     public MensagemAdapter(Context c, ArrayList<Mensagem> objects) {
         super(c, 0, objects);
@@ -32,7 +36,7 @@ public class MensagemAdapter extends ArrayAdapter<Mensagem> {
         View view = null;
 
         // Verifica se a lista está preenchida
-        if( mensagens != null ){
+        if (mensagens != null) {
 
             // Recupera dados do usuario remetente
             Preferences preferencias = new Preferences(context);
@@ -41,22 +45,46 @@ public class MensagemAdapter extends ArrayAdapter<Mensagem> {
             // Inicializa objeto para montagem do layout
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
 
+
             // Recupera mensagem
-            Mensagem mensagem = mensagens.get( position );
+            Mensagem mensagem = mensagens.get(position);
 
             // Monta view a partir do xml
-            if(idUsuarioRementente.equals( mensagem.getIdUsuario() )  ){
-                view = inflater.inflate(R.layout.item_mensagem_direita, parent, false);
-            }else {
+            if (idUsuarioRementente.equals(mensagem.getIdUsuario())) {
+                if (mensagem.getFile() == null) {
+                    view = inflater.inflate(R.layout.item_mensagem_direita, parent, false);
+                    trigger = 1;
+                } else {
+                    view = inflater.inflate(R.layout.item_message_right_img, parent, false);
+                    trigger = 2;
+
+                }
+            } else if (mensagem.getFile() == null) {
                 view = inflater.inflate(R.layout.item_mensagem_esquerda, parent, false);
-
-
+                trigger = 3;
+            } else {
+                view = inflater.inflate(R.layout.item_message_left_img, parent, false);
+                trigger = 4;
             }
 
             // Recupera elemento para exibição
             TextView textoMensagem = (TextView) view.findViewById(R.id.tv_mensagem);
-            textoMensagem.setText( mensagem.getMensagem() );
+            ImageView image = (ImageView) view.findViewById(R.id.img_chat);
 
+            if (trigger == 1) {
+                textoMensagem.setText(mensagem.getMensagem());
+            }
+            if (trigger == 2) {
+                image.setBackgroundResource(R.drawable.squared_corner_message_right);
+                Glide.with(image.getContext()).load(mensagem.getFile().getUrl_file()).override(68, 68).fitCenter().into(image);
+            }
+            if (trigger == 3) {
+                textoMensagem.setText(mensagem.getMensagem());
+            } ;
+            if (trigger == 4) {
+                image.setBackgroundResource(R.drawable.squared_corner_message_left);
+                Glide.with(image.getContext()).load(mensagem.getFile().getUrl_file()).override(68, 68).fitCenter().into(image);
+            } ;
 
 
         }
@@ -64,4 +92,6 @@ public class MensagemAdapter extends ArrayAdapter<Mensagem> {
         return view;
 
     }
+
+
 }

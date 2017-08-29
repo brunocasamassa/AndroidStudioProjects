@@ -16,6 +16,9 @@ public class User implements DatabaseReference.CompletionListener {
 
     private String id;
 
+
+    private boolean termosAceitos =true;
+
     private int maxDistance;
 
     public int getPremiumUser() {
@@ -326,5 +329,14 @@ public class User implements DatabaseReference.CompletionListener {
 
     public void setEntradas(ArrayList<String> entradas) {
         this.entradas = entradas;
+    }
+
+
+    public boolean isTermosAceitos() {
+        return termosAceitos;
+    }
+
+    public void setTermosAceitos(boolean termosAceitos) {
+        this.termosAceitos = termosAceitos;
     }
 }

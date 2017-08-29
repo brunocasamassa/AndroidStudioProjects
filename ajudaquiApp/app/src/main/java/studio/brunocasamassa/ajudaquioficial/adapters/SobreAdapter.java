@@ -65,11 +65,11 @@ public class SobreAdapter extends ArrayAdapter {
             nomeSobre.setText(listaSobre[position]);
             Glide.with(getContext()).load(R.drawable.sobre_icon_site).override(68,68).into(image);
         }
-
-        if(position ==5){
+/*
+          if(position ==5){
             nomeSobre.setText(listaSobre[position]);
             Glide.with(getContext()).load(R.drawable.pedidos_icon).override(68,68).into(image);
-        }
+        }*/
         return view;
 
 

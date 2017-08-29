@@ -9,7 +9,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
@@ -20,7 +25,11 @@ import org.json.JSONException;
 
 import java.math.BigDecimal;
 
+import studio.brunocasamassa.ajudaquioficial.PedidosActivity;
 import studio.brunocasamassa.ajudaquioficial.R;
+import studio.brunocasamassa.ajudaquioficial.helper.Base64Decoder;
+import studio.brunocasamassa.ajudaquioficial.helper.FirebaseConfig;
+import studio.brunocasamassa.ajudaquioficial.helper.User;
 
 import static studio.brunocasamassa.ajudaquioficial.payment.PaymentActivity3.PAYPAL_REQUEST_CODE;
 
@@ -30,10 +39,11 @@ import static studio.brunocasamassa.ajudaquioficial.payment.PaymentActivity3.PAY
 
 
 
-public class PagamentoTermosActivity extends AppCompatActivity {
+public class TermosActivity extends AppCompatActivity {
     private String paymentAmount = "9.99";
     private int cameFrom = 0;
     private TextView titulo;
+    private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
 
     private static PayPalConfiguration config = new PayPalConfiguration()
             // Start with mock environment.  When ready, switch to sandbox (ENVIRONMENT_SANDBOX)
@@ -51,7 +61,6 @@ public class PagamentoTermosActivity extends AppCompatActivity {
 
         TextView text = (TextView) findViewById(R.id.texto_termos);
         titulo = (TextView) findViewById(R.id.titulo);
-
 
 
         text.setText("O AJUDAQUI estabelece nestes Termos De Uso e Política de Privacidade as\n" +
@@ -593,16 +602,30 @@ public class PagamentoTermosActivity extends AppCompatActivity {
 
 
 
+
         Button aceite = (Button) findViewById(R.id.aceite_termos);
+        Button recusar = (Button) findViewById(R.id.recuse_termos);
 
         text.setMovementMethod(new ScrollingMovementMethod());
         if(cameFrom == 0 ){//sobre activity
             titulo.setText("Termos de Uso");
-            aceite.setText("VOLTAR");
+            aceite.setText("ACEITAR");
             aceite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    updateUser(true);
                     finish();
+                    startActivity(new Intent(TermosActivity.this, PedidosActivity.class));
+
+                }
+            });
+
+            recusar.setText("RECUSAR");
+            recusar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(),"Você deve aceitar os termos de uso para continuar", Toast.LENGTH_SHORT).show();
+                    updateUser(false);
                 }
             });
         }
@@ -620,6 +643,25 @@ public class PagamentoTermosActivity extends AppCompatActivity {
 
 
     }
+
+    private void updateUser(final boolean b) {
+        DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
+        dbUser.child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                user.setTermosAceitos(b);
+                user.save();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void getPayment() {
         //Getting the amount from editText
 
@@ -630,7 +672,7 @@ public class PagamentoTermosActivity extends AppCompatActivity {
 
 
         //Creating Paypal Payment activity intent
-        Intent intent = new Intent(PagamentoTermosActivity.this, PaymentActivity.class);
+        Intent intent = new Intent(TermosActivity.this, PaymentActivity.class);
 
         //putting the paypal configuration to the intent
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
