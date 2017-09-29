@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        app:srcCompat="@drawable/home"
+        android:id="@+id/imageButton"
+        android:scaleType="fitCenter"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Contato:"
+        android:id="@+id/textView"
+        android:layout_height="50dp"
+        tools:text="Contato:"
+        android:layout_width="250dp"
+        android:textSize="30sp"
+        android:textColor="@color/contatoTitle"
+        android:textStyle="normal|bold"
+        android:layout_marginTop="33dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginStart="45dp"
+        android:layout_below="@+id/imageButton"
+        android:layout_toRightOf="@+id/imageView"
+        android:layout_toEndOf="@+id/imageView" />
+
+    <TextView
+        android:text="Email: contato@atmconsulting.com
+Telefone: +55 11 4563-7849
+
+                 @atmconsulting"
+        android:layout_width="300dp"
+        android:id="@+id/textView2"
+        android:layout_height="100dp"
+        android:textSize="18sp"
+        android:textStyle="normal|italic"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        app:srcCompat="@drawable/detalhe_contato"
+        android:id="@+id/imageView"
+        android:layout_marginTop="26dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+</RelativeLayout>

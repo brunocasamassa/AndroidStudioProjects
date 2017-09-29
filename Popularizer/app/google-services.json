@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "808508524404",
+    "firebase_url": "https://popularizer-ac81d.firebaseio.com",
+    "project_id": "popularizer-ac81d",
+    "storage_bucket": "popularizer-ac81d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808508524404:android:04248dca2d40679d",
+        "android_client_info": {
+          "package_name": "studio.brunocasamassa.popularizer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "808508524404-8md02et53ig5u8ghpnv67esl9gj3ie1r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

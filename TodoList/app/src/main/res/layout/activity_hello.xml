@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        app:srcCompat="@drawable/logo"
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:scaleType="centerCrop"
+        android:layout_height="300dp" />
+
+    <ImageButton
+        android:layout_width="100dp"
+        app:srcCompat="@android:drawable/ic_menu_agenda"
+        android:id="@+id/playButton"
+        style="@android:style/Widget.DeviceDefault.Light.ImageButton"
+        android:background="@color/colorBackground"
+        android:scaleType="fitEnd"
+        android:backgroundTint="@color/colorBackground"
+        android:layout_height="100dp"
+        android:layout_marginTop="21dp"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="MY TASKS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        tools:text="MY TASKS"
+        android:textSize="18sp"
+        android:textStyle="normal|bold|italic"
+        android:textAllCaps="true"
+        android:layout_below="@+id/playButton"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

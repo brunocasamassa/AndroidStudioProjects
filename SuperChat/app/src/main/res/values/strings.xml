@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">H4ck3rsChat</string>
+    <string name="action_settings">Settings</string>
+    <string name="exit">Exit</string>
+    <string name="app_title">H4ck3rsChat</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
