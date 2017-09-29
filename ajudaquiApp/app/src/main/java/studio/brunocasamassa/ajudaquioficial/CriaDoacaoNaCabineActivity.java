@@ -1,6 +1,8 @@
 package studio.brunocasamassa.ajudaquioficial;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -83,6 +85,7 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
     private String pedidoGroup;
     private EditText donationContact;
     private EditText endereco;
+    private boolean HAS_IMAGE;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -122,7 +125,7 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
         System.out.println("CRIA DOACAO" + idGroupSelected);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_create_group);
-        toolbar.setTitle("Criar doacao");
+        toolbar.setTitle("Criar doação");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,8 +153,6 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
 
         fitLayoutForSmallDevices();
 
-
-
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,7 +162,6 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 // Always show the chooser (if there are multiple options available)
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-
             }
         });
 
@@ -190,66 +190,85 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
                 if (qtd < 10) {
                     Toast.makeText(getApplicationContext(), "Insira um valor minimo de 10", Toast.LENGTH_LONG).show();
                 }
-                if (pedidoName.getText().toString().equals("")) {
+               else if (pedidoName.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Insira um Titulo para o pedido", Toast.LENGTH_LONG).show();
-                    return;
-                } else if (descricao.getText().toString().equals("")) {
+                    //return;
+                }
+                else if (descricao.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Insira uma descricao para o pedido", Toast.LENGTH_LONG).show();
-                    return;
+                    //return;
+                }
+                else if (!HAS_IMAGE){
+                    Toast.makeText(getApplicationContext(), "Insira uma Imagem para o pedido", Toast.LENGTH_LONG).show();
+                   // return;
+                }
+                else if(endereco.getText().toString().equals("")){
+                    Toast.makeText(getApplicationContext(), "Insira um endereço para as doações", Toast.LENGTH_LONG).show();
                 }
 
-                naCabine = 1;
-                createPedido();
-
-                if (createPedido()) {
-
-                    StorageReference imgRef = storage.child(pedido.getIdPedido() + ".png");
-                    //download img source
-                    img.setDrawingCacheEnabled(true);
-                    img.buildDrawingCache();
-                    Bitmap bitmap = img.getDrawingCache();
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                    byte[] data = baos.toByteArray();
-                    UploadTask uploadTask = imgRef.putBytes(data);
-                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                            Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
-                            System.out.println("huehuebrjava " + downloadUrl);
-                        }
-                    });
-
-                    DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
-                    dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            User usuario = dataSnapshot.getValue(User.class);
-                            usuario.setCreditos(usuario.getCreditos() + 5);
-                            ArrayList<String> totalPedidos = new ArrayList<String>();
-                            if (usuario.getPedidosFeitos() != null) {
-                                totalPedidos.addAll(usuario.getPedidosFeitos());
-                                totalPedidos.add(totalPedidos.size(), pedido.getIdPedido());
-                                usuario.setPedidosFeitos(totalPedidos);
-                            } else {
-                                totalPedidos.add(0, pedido.getIdPedido());
-                                usuario.setPedidosFeitos(totalPedidos);
-                            }
-                            usuario.save();
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
+                else if(donationContact.getText().toString().equals("")){
+                    Toast.makeText(getApplicationContext(), "Quem será o responsável pela entrega?", Toast.LENGTH_LONG).show();
                 }
-                Toast.makeText(getApplicationContext(), "Doação gerada com sucesso", Toast.LENGTH_LONG).show();
-                refresh();
+                else {
+                    naCabine = 1;
+                    createPedido();
+                }
+
             }
         });
+    }
+
+    private void uploadImageDonation() {
+
+
+            StorageReference imgRef = storage.child(pedido.getIdPedido() + ".png");
+            //download img source
+            img.setDrawingCacheEnabled(true);
+            img.buildDrawingCache();
+            Bitmap bitmap = img.getDrawingCache();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            byte[] data = baos.toByteArray();
+            UploadTask uploadTask = imgRef.putBytes(data);
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                    Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
+                    System.out.println("huehuebrjava " + downloadUrl);
+                }
+            });
+
+            DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
+            dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User usuario = dataSnapshot.getValue(User.class);
+                    usuario.setCreditos(usuario.getCreditos() + 5);
+                    ArrayList<String> totalPedidos = new ArrayList<String>();
+                    if (usuario.getPedidosFeitos() != null) {
+                        totalPedidos.addAll(usuario.getPedidosFeitos());
+                        totalPedidos.add(totalPedidos.size(), pedido.getIdPedido());
+                        usuario.setPedidosFeitos(totalPedidos);
+                    } else {
+                        totalPedidos.add(0, pedido.getIdPedido());
+                        usuario.setPedidosFeitos(totalPedidos);
+                    }
+                    usuario.save();
+
+                    Toast.makeText(getApplicationContext(), "Doação gerada com sucesso", Toast.LENGTH_LONG).show();
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
+        refresh();
+
 
     }
 
@@ -265,7 +284,7 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
 
         //manually fits layout in small devices --- i am really sorry for that
 
-        if (currentapiVersion <= 19 && width<=790 ) {
+        if (currentapiVersion <= 19 && width <= 790) {
             System.out.println("entrei huehuebr");
             ImageView h = (ImageView) findViewById(R.id.imageView11);
             ImageView i = (ImageView) findViewById(R.id.imageView10);
@@ -292,50 +311,77 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
             descricao.setTranslationY(Float.valueOf(-105));
             img.setTranslationY(Float.valueOf(-85));
             img.setBorderColor(Color.TRANSPARENT);
-            pedidoName.setTranslationX(pedidoName.getTranslationX()-50);
+            pedidoName.setTranslationX(pedidoName.getTranslationX() - 50);
             cardView.setTranslationY(Float.valueOf(-25));
 
-        } else if (currentapiVersion <= 19){
+        } else if (currentapiVersion <= 19) {
             cardView.setTranslationY(Float.valueOf(-35));
 
         }
     }
 
-    private boolean createPedido() {
-        try {
-            pedido = new Pedido();
+    private void createPedido() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(CriaDoacaoNaCabineActivity.this);
+        alert.setTitle("Dados para contato:");
+        alert.setMessage("O seu numero de telefone é um campo obrigatório para que as pessoas possam entrar em contato a fim de receber mais detalhes sobre a doação: ");
+        final EditText edit = new EditText(CriaDoacaoNaCabineActivity.this);
+        edit.setHint("0000-0000");
+        alert.setView(edit);
+        alert.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(edit.getText().toString().equals("")){
+                    Toast.makeText(getApplicationContext(), "Você deve especificar um número para contato", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else{
+                try {
+                    pedido = new Pedido();
 
-            System.out.println("tipo de pedido: " + tipoPedido);
-            pedido.setTagsCategoria(tagsCaptured);
-            pedido.setTipo("Doacoes");
+                    System.out.println("tipo de pedido: " + tipoPedido);
+                    pedido.setTagsCategoria(tagsCaptured);
+                    pedido.setTipo("Doacoes");
 
-            pedido.setNaCabine(naCabine);
-            pedido.setLongitude(longitude);
-            pedido.setLatitude(latitude);
-            pedido.setQtdDoado(qtd);
-            pedido.setQtdAtual(qtd);
+                    pedido.setDadosDoador(String.valueOf(edit.getText()));
+                    pedido.setNaCabine(naCabine);
+                    pedido.setLongitude(longitude);
+                    pedido.setLatitude(latitude);
+                    pedido.setQtdDoado(qtd);
+                    pedido.setQtdAtual(qtd);
 
-            pedido.setStatus(5);
-            pedido.setDonationContact(donationContact.getText().toString());
-            pedido.setEndereco(endereco.getText().toString());
-            pedido.setDescricao(descricao.getText().toString());
-            pedido.setTitulo(pedidoName.getText().toString());
-            pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo()));
-            pedido.setCriadorId(userKey);
-  /*      pedido.setGroupId(idGroupSelected);
-        pedido.setGrupo(groupCaptured);*/
+                    pedido.setStatus(5);
+                    pedido.setDonationContact(donationContact.getText().toString());
+                    pedido.setEndereco(endereco.getText().toString());
+                    pedido.setDescricao(descricao.getText().toString());
+                    pedido.setTitulo(pedidoName.getText().toString());
+                    pedido.setIdPedido(Base64Decoder.encoderBase64(pedido.getTitulo()));
+                    pedido.setCriadorId(userKey);
+
+                    /*pedido.setGroupId(idGroupSelected);
+                    pedido.setGrupo(groupCaptured);*/
 
 
-            System.out.println("user id key " + userKey);
+                    System.out.println("user id key " + userKey);
 
-            pedidoSaveIntoUser(true);
+                    uploadImageDonation();
 
-            pedido.save();
-            return true;
-        } catch (Exception e) {
-            System.out.println("exception CRIADOACAONACABINE " + e);
-        }
-        return false;
+                    pedidoSaveIntoUser(true);
+
+                    pedido.save();
+
+                } catch (Exception e) {
+                    System.out.println("exception CRIADOACAONACABINE " + e);
+                }}
+
+
+            }
+        }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).create().show();
+
     }
 
     private void savePedidoIntoGroup(Pedido pedido) {
@@ -427,6 +473,8 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
                 Log.d("image", String.valueOf(bitmap));
 
                 img.setImageBitmap(bitmap);
+
+                HAS_IMAGE = true;
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.e("error in get image ", e.toString());
@@ -435,10 +483,8 @@ public class CriaDoacaoNaCabineActivity extends AppCompatActivity {
 
     }
 
-    ;
+
 }
-
-
 
 
 

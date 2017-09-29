@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
@@ -42,6 +43,7 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
 
 
     private MainActivity mainActivity = new MainActivity();
+    private StorageReference storageDonation;
 
     public PedidosSelecionadoAdapter(Context c, ArrayList<Pedido> objects) {
         super(c, 0, objects);
@@ -137,6 +139,8 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
                     statusPedido.setBackgroundColor(Color.parseColor("#7725e2"));
                 }
             }
+            storageDonation = FirebaseConfig.getFirebaseStorage().child("donationImages");
+
             storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
             try {
                 nomePedido.setText(String.valueOf(pedido.getTitulo().substring(0, 17) )+ "...");
@@ -153,8 +157,36 @@ public class PedidosSelecionadoAdapter extends ArrayAdapter<Pedido> {
 
             tagsCategoria.setTags(pedido.getTagsCategoria());
             // DOWNLOAD GROUP IMG FROM STORAGE
+            if(!pedido.getTipo().equals("Doacoes")){
+                //donationqtd.setTextColor(Color.TRANSPARENT);
+            }
+            if(pedido.getTipo().equals("Doacoes")){
+               /* donationqtd.setText(String.valueOf(pedido.getQtdAtual())+"/"+String.valueOf(pedido.getQtdDoado()));
+                donationqtd.setTextColor(Color.argb(255,20,118,122));
+                */storageDonation.child(pedido.getIdPedido()+ ".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
-            if (pedido.getGrupo() != null) {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        System.out.println("grupo " + pedido.getGrupo());
+                        try {
+                            Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                            // Picasso.with(getContext()).load(uri).resize(680, 680).into(pedidoImg);
+                        } catch (Exception e) {
+                            pedidoImg.setImageURI(uri);
+                            System.out.println("EXCEPTION PedidosAdapter " + e);
+                        }
+                        System.out.println("my pedidos lets seee2" + uri);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+
+                    }
+                });
+            }
+
+
+            else if (pedido.getGrupo() != null) {
                 storage.child(pedido.getGroupId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                     @Override

@@ -2,6 +2,7 @@ package studio.brunocasamassa.ajudaquioficial;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -46,6 +47,7 @@ public class PerfilGruposActivity extends AppCompatActivity {
     private CircleImageView img;
     private TextView rankedUserName;
     private DatabaseReference groupDb;
+    private DatabaseReference userDb;
     private StorageReference dbImageUsers;
     private TextView becomeAdminButton;
     private String groupId;
@@ -97,21 +99,84 @@ public class PerfilGruposActivity extends AppCompatActivity {
             }
         });
 
-        dbImageUsers = FirebaseConfig.getFirebaseStorage().child("userImages");
-        dbImageUsers.child(targetUserId + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                //Glide.with(getApplication()).load(uri).override(68, 68).into(img);
-                Picasso.with(getApplication()).load(uri).resize(68, 68).into(img);
-                System.out.println("user image chat " + uri);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
 
-                Picasso.with(getApplicationContext()).load(R.drawable.logo).into(img);
+        userDb = FirebaseConfig.getFireBase().child("usuarios");
+        userDb.child(targetUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final User userDb = dataSnapshot.getValue(User.class);
+                    dbImageUsers = FirebaseConfig.getFirebaseStorage().child("userImages");
 
-                //Glide.with(getApplication()).load(targetUserImg).into(img);
+                    try {
+
+                        dbImageUsers.child(targetUserId + ".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                //Glide.with(getApplication()).load(uri).override(68, 68).into(img);
+                                Picasso.with(getApplication()).load(uri).resize(1000, 1000).into(img);
+                                System.out.println("user image chat " + uri);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+
+
+                                dbImageUsers.child(targetUserId + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        //Glide.with(getApplication()).load(uri).override(68, 68).into(img);
+                                        Picasso.with(getApplication()).load(uri).resize(1000, 1000).into(img);
+                                        System.out.println("user image chat " + uri);
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+
+                                        if (userDb.getProfileImg() != null ) { //todo bug manual register or facebook register
+                                            //Glide.with(ConfiguracoesActivity.this).load(user.getProfileImg()).override(68, 68).into(circleImageView);
+                                            img.setBackgroundColor(Color.TRANSPARENT);
+                                            Picasso.with(PerfilGruposActivity.this).load(userDb.getProfileImg()).resize(1000, 1000).onlyScaleDown().into(img);
+                                        }
+                                        //Glide.with(getApplication()).load(targetUserImg).into(img);
+
+                                    }
+                                });
+                            }
+                        });
+                    } catch (Exception e){
+
+                        dbImageUsers.child(targetUserId + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                //Glide.with(getApplication()).load(uri).override(68, 68).into(img);
+                                Picasso.with(getApplication()).load(uri).resize(1000, 1000).into(img);
+                                System.out.println("user image chat " + uri);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+
+                                if (userDb.getProfileImg() != null ) { //todo bug manual register or facebook register
+                                    //Glide.with(ConfiguracoesActivity.this).load(user.getProfileImg()).override(68, 68).into(circleImageView);
+                                    img.setBackgroundColor(Color.TRANSPARENT);
+                                    Picasso.with(PerfilGruposActivity.this).load(userDb.getProfileImg()).resize(1000, 1000).onlyScaleDown().into(img);
+                                }
+                                //Glide.with(getApplication()).load(targetUserImg).into(img);
+
+                            }
+                        });
+
+
+
+                    }
+
+                }
+
+
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
@@ -182,33 +247,38 @@ public class PerfilGruposActivity extends AppCompatActivity {
                             alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if (idMembros.contains(targetUserId)) {
-                                        idMembros.remove(targetUserId);
-                                        DatabaseReference dbTargetUser = FirebaseConfig.getFireBase().child("usuarios");
-                                        dbTargetUser.child(targetUserId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                User user = dataSnapshot.getValue(User.class);
-                                                ArrayList<String> groupsId = user.getGrupos();
-                                                if (groupsId != null) {
-                                                    groupsId.remove(groupId);
+                                    if (idMembros != null) {
+                                        if (idMembros.contains(targetUserId)) {
+                                            idMembros.remove(targetUserId);
+                                            DatabaseReference dbTargetUser = FirebaseConfig.getFireBase().child("usuarios");
+                                            dbTargetUser.child(targetUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                    User user = dataSnapshot.getValue(User.class);
+                                                    ArrayList<String> groupsId = user.getGrupos();
+                                                    if (groupsId != null) {
+                                                        groupsId.remove(groupId);
+                                                    }
+                                                    user.save();
                                                 }
-                                                user.save();
-                                            }
 
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
 
-                                            }
-                                        });
+                                                }
+                                            });
 
-                                        group.setIdMembros(idMembros);
-                                        group.setQtdMembros(group.getQtdMembros() - 1);
-                                        group.save();
-                                        Toast.makeText(getApplicationContext(), "Usuario removido com sucesso", Toast.LENGTH_SHORT).show();
-                                        finish();
+                                            group.setIdMembros(idMembros);
+                                            group.setQtdMembros(group.getQtdMembros() - 1);
+                                            group.save();
+                                            Toast.makeText(getApplicationContext(), "Removido com sucesso", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        }
                                     } else if (idAdmins.contains(targetUserId)) {
                                         Toast.makeText(getApplicationContext(), "Nao é possivel remover outro administrador", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        Toast.makeText(getApplicationContext(), "Nao é possivel este usuario", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }).create().show();

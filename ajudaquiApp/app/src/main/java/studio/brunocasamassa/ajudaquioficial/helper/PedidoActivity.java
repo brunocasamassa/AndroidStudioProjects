@@ -3,7 +3,9 @@ package studio.brunocasamassa.ajudaquioficial.helper;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -11,11 +13,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -23,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import me.gujun.android.taggroup.TagGroup;
 import studio.brunocasamassa.ajudaquioficial.PedidosActivity;
 import studio.brunocasamassa.ajudaquioficial.R;
@@ -46,6 +53,8 @@ public class PedidoActivity extends AppCompatActivity {
     private User user = new User();
     private DatabaseReference firebase;
     private DatabaseReference dbUserDestinatario;
+    private CircleImageView circleImgGroup;
+    private TextView textNameGroup;
 
     @Override
     protected void onStart() {
@@ -61,6 +70,8 @@ public class PedidoActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar_donation_activity);
         nomePedido = (TextView) findViewById(R.id.nome_doacao);
         descricao = (TextView) findViewById(R.id.descricao_doacao);
+        circleImgGroup = (CircleImageView) findViewById(R.id.circle_img_group);
+        textNameGroup = (TextView) findViewById(R.id.text_name_group);
         tagsCategoria = (TagGroup) findViewById(R.id.tags_pedido_categoria);
         tagsGrupo = (TagGroup) findViewById(R.id.tags_pedido_grupo);
         atenderPedido = (Button) findViewById(R.id.donation_button);
@@ -88,10 +99,15 @@ public class PedidoActivity extends AppCompatActivity {
             pedido.setCriadorId(extra.getString("criadorId"));
             criadorId = pedido.getCriadorId();
 
+            if(pedido.getTipo().equals("Doacao")){
+                pedido.setDonationType(extra.getInt("donationType"));
+            }
+
         }
 
         nomePedido.setText(pedido.getTitulo().toString());
         toolbar.setTitle("Detalhe do Pedido");
+
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
 
@@ -102,15 +118,13 @@ public class PedidoActivity extends AppCompatActivity {
             }
         });
 
-
         descricao.setText(pedido.getDescricao());
 
         tagsCategoria.setTags(pedido.getTagsCategoria());
 
         if (pedido.getGrupo() != null) {
-            tagsGrupo.setTags(pedido.getGrupo());
+            insertGroupData(pedido.getGrupo(), pedido.getGroupId());
         }
-
 
             atenderPedido.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -154,10 +168,11 @@ public class PedidoActivity extends AppCompatActivity {
                                     dbPedido.setTitulo(pedido.getTitulo());
                                     dbPedido.setAtendenteId(userKey);
 
-
-
+                                    if(dbPedido.getTipo().equals("Doacao")){
+                                        dbPedido.setDonationType(pedido.getDonationType());
+                                    }
+                                    dbPedido.save();
                                     firebase.child(pedido.getIdPedido()).setValue(dbPedido);
-
 
                                     sendNotiication(pedido.getCriadorId());
                                     Toast.makeText(PedidoActivity.this, "Parabéns, voce já pode conversar com o criador do pedido.", Toast.LENGTH_LONG).show();
@@ -172,43 +187,13 @@ public class PedidoActivity extends AppCompatActivity {
                             });
 
 
-                            final DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
+                            DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
 
-                            dbUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                            dbUser.child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    final User usuario = dataSnapshot.child(userKey).getValue(User.class);
+                                    final User usuario = dataSnapshot.getValue(User.class);
                                     user = usuario;
-                                    user.setId(userKey);
-                                    if (usuario.getMedalhas() != null) {
-                                        user.setMedalhas(usuario.getMedalhas());
-                                    }
-                                    if (usuario.getMsgSolicitacoes() != null) {
-                                        user.setMsgSolicitacoes(usuario.getMsgSolicitacoes());
-                                    }
-                                    if (usuario.getGrupos() != null) {
-                                        user.setGrupos(usuario.getGrupos());
-                                    }
-                                    user.setCreditos(usuario.getCreditos());
-                                    if (usuario.getEmail() != null) {
-                                        user.setEmail(usuario.getEmail());
-                                    }
-                                    if (usuario.getName() != null) {
-                                        user.setName(usuario.getName());
-                                    }
-                                    user.setPremiumUser(usuario.getPremiumUser());
-                                    if (usuario.getProfileImageURL() != null) {
-                                        user.setProfileImageURL(usuario.getProfileImageURL());
-                                    }
-                                    if (usuario.getProfileImg() != null) {
-                                        user.setProfileImg(usuario.getProfileImg());
-                                    }
-                                    if (usuario.getPedidosFeitos() != null) {
-                                        user.setPedidosFeitos(usuario.getPedidosFeitos());
-                                    }
-                                    user.setPontos(usuario.getPontos());
-
-
                                     ArrayList<String> pedidosAtendidos = new ArrayList<String>();
                                     if (usuario.getPedidosAtendidos() != null) {
                                         pedidosAtendidos = usuario.getPedidosAtendidos();
@@ -283,6 +268,26 @@ public class PedidoActivity extends AppCompatActivity {
             });
 
     }
+
+    private void insertGroupData(String grupo, String groupId) {
+
+        StorageReference storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
+        storage.child(groupId+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.with(getApplicationContext()).load(uri).resize(68, 68).into(circleImgGroup);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Picasso.with(getApplicationContext()).load(R.drawable.add_group_logo).resize(68, 68).into(circleImgGroup);
+            }
+        });
+
+        textNameGroup.setText(grupo.toString());
+
+    }
+
     private void sendNotiication(String criadorId) {
     DatabaseReference dbDestinatario =FirebaseConfig.getFireBase().child("usuarios");
         dbDestinatario.child(criadorId).addListenerForSingleValueEvent(new ValueEventListener() {

@@ -74,8 +74,8 @@ public class CabineFarturaActivity extends AppCompatActivity {
 
                         Location userLocation = new Location("my location");
                         if(user.getLatitude() != null) {
-                            userLocation.setLatitude(user.getLatitude());
-                            userLocation.setLongitude(user.getLongitude());
+                            userLocation.setLatitude(user.getLatitude() / 1e6);
+                            userLocation.setLongitude(user.getLongitude()/ 1e6);
                             System.out.println("my location Lat> " + user.getLatitude() + "  LOn> " + user.getLongitude());
                         } else {
                             userLocation.setLatitude(0.0);
@@ -86,13 +86,15 @@ public class CabineFarturaActivity extends AppCompatActivity {
                             System.out.println("PEDIDO " + pedido.getTipo() + "  " + pedido.getNaCabine());
                             if (pedido.getLongitude() != null && pedido.getLatitude() != null) {
                                 Location pedidoLocation = new Location(" pedido " + pedido.getTitulo() + " Location: ");
-                                pedidoLocation.setLongitude(pedido.getLongitude());
-                                pedidoLocation.setLatitude(pedido.getLatitude());
+                                pedidoLocation.setLongitude(pedido.getLongitude()/ 1e6);
+                                pedidoLocation.setLatitude(pedido.getLatitude()/ 1e6);
+                                System.out.println("doacao location Lat> " + pedidoLocation.getLatitude() + "  LOn> " + pedidoLocation.getLongitude());
 
-                                double distance = userLocation.distanceTo(pedidoLocation);
+                                double distance = distFrom(userLocation.getLatitude(),userLocation.getLongitude(),pedidoLocation.getLatitude(),pedidoLocation.getLongitude());
 
                                 pedido.setDistanceInMeters(distance);
-                                System.out.println("distance in meters " + pedido.getDistanceInMeters());
+                                System.out.println("distance in meters 2" + distance);
+                                System.out.println("distance in meters 2" + pedido.getDistanceInMeters());
 
                             }
                             if (pedido.getTipo().equals("Doacoes") && pedido.getNaCabine() == 1 && !pedido.getCriadorId().equals(userKey)) {
@@ -147,10 +149,10 @@ public class CabineFarturaActivity extends AppCompatActivity {
                                         intent.putExtra("qtdDoado", pedido.getQtdDoado());
                                         intent.putExtra("criadorId", pedido.getCriadorId());
                                         intent.putExtra("tipo", pedido.getTipo());
+                                        intent.putExtra("dadosDoador", pedido.getDadosDoador());
                                         intent.putExtra("endereco", pedido.getEndereco());
                                         intent.putExtra("donationContact", pedido.getDonationContact());
                                         intent.putExtra("cameFrom", 2);
-
 
                                         if (pedido.getGrupo() != null) {
                                             intent.putExtra("tagsGrupo", pedido.getGrupo());
@@ -195,6 +197,22 @@ public class CabineFarturaActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    private double distFrom(double lat1, double lng1, double lat2, double lng2) {
+
+            double earthRadius = 6371000; //meters
+            double dLat = Math.toRadians(lat2-lat1);
+            double dLng = Math.toRadians(lng2-lng1);
+            double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                            Math.sin(dLng/2) * Math.sin(dLng/2);
+            double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            float dist = (float) (earthRadius * c);
+
+            return dist;
+
 
     }
 }

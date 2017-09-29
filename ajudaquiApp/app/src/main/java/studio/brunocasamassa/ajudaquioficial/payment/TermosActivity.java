@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -42,14 +43,16 @@ import static studio.brunocasamassa.ajudaquioficial.payment.PaymentActivity3.PAY
 public class TermosActivity extends AppCompatActivity {
     private String paymentAmount = "9.99";
     private int cameFrom = 0;
-    private TextView titulo;
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
+    private TextView naif;
+    private TextView text;
 
     private static PayPalConfiguration config = new PayPalConfiguration()
             // Start with mock environment.  When ready, switch to sandbox (ENVIRONMENT_SANDBOX)
             // or live (ENVIRONMENT_PRODUCTION)
             .environment(PayPalConfiguration.ENVIRONMENT_PRODUCTION)
             .clientId(PayPalConfig.PAYPAL_CLIENT_ID);
+    private Toolbar toolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,11 +62,12 @@ public class TermosActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         cameFrom = extras.getInt("cameFrom");
 
-        TextView text = (TextView) findViewById(R.id.texto_termos);
-        titulo = (TextView) findViewById(R.id.titulo);
+        text = (TextView) findViewById(R.id.texto_termos);
+        naif = (TextView) findViewById(R.id.titulo_termos);
 
+        //naif.setText("Termos de Uso");
 
-        text.setText("O AJUDAQUI estabelece nestes Termos De Uso e Política de Privacidade as\n" +
+        text.setText("\n\nO AJUDAQUI estabelece nestes Termos De Uso e Política de Privacidade as\n" +
                 "condições para utilização da plataforma/site/blog e fanpage denominado\n" +
                 "AJUDAQUI, por meio dos quais o Usuário poderá fazer uso desta ferramenta\n" +
                 "que disponibiliza atividades que envolvam empréstimos, trocas, doações de\n" +
@@ -606,15 +610,16 @@ public class TermosActivity extends AppCompatActivity {
         Button aceite = (Button) findViewById(R.id.aceite_termos);
         Button recusar = (Button) findViewById(R.id.recuse_termos);
 
+
         text.setMovementMethod(new ScrollingMovementMethod());
+
         if(cameFrom == 0 ){//sobre activity
-            titulo.setText("Termos de Uso");
+
             aceite.setText("ACEITAR");
             aceite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     updateUser(true);
-                    finish();
                     startActivity(new Intent(TermosActivity.this, PedidosActivity.class));
 
                 }
@@ -625,13 +630,13 @@ public class TermosActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(getApplicationContext(),"Você deve aceitar os termos de uso para continuar", Toast.LENGTH_SHORT).show();
-                    updateUser(false);
+                    //updateUser(false);
                 }
             });
         }
         else if(cameFrom == 1) { //payment activity
-            titulo.setText("Termos de Compra");
-            aceite.setText("ACEIAR");
+            naif.setText("Termos de Compra");
+            aceite.setText("ACEITAR");
             aceite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -650,7 +655,7 @@ public class TermosActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                user.setTermosAceitos(b);
+                user.setTermosAceitos(true);
                 user.save();
 
             }

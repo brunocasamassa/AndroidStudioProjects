@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,7 +28,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import es.dmoral.toasty.Toasty;
-import im.delight.android.location.SimpleLocation;
 import studio.brunocasamassa.ajudaquioficial.PedidosActivity;
 import studio.brunocasamassa.ajudaquioficial.R;
 import studio.brunocasamassa.ajudaquioficial.adapters.PedidosAdapter;
@@ -50,21 +50,14 @@ public class PedidosDisponiveisFragment extends Fragment {
 
     private FloatingActionButton fab;
     private SwipeRefreshLayout refresh;
-    private int premium;
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private ArrayList<Pedido> pedidos;
     public ArrayAdapter pedidosArrayAdapter;
     private ListView pedidosView;
     private DatabaseReference databasePedidos = FirebaseConfig.getFireBase().child("Pedidos");
-    private SimpleLocation localizacao;
-    private SimpleLocation localizacao2;
-    private Double latitude = 0.0;
-    private Double longitude = 0.0;
 
-    private ValueEventListener valueEventListenerPedidos;
     private User usuario = new User();
-    private ValueEventListener localizationListener;
-    private DatabaseReference getLocalization;
+
     private String[] permissoesNecessarias = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -75,6 +68,7 @@ public class PedidosDisponiveisFragment extends Fragment {
 
     private PedidosAdapter pedidosAdapter;
     private ArrayList<Pedido> pedidosPivot;
+    private ImageView iconEmpty;
 
     public PedidosDisponiveisFragment() {
         // Required empty public constructor
@@ -96,18 +90,19 @@ public class PedidosDisponiveisFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         final Preferences preferencias = new Preferences(getActivity().getApplicationContext());
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pedidos_disponiveis, container, false);
         pa = (PedidosActivity) getActivity();
         pedidos = new ArrayList<>();
         pedidosPivot = new ArrayList<>();
+        iconEmpty = (ImageView) view.findViewById(R.id.icon_empty_list);
         pedidosView = (ListView) view.findViewById(R.id.allpedidos_list);
         refresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
 
-
         pedidosAdapter = new PedidosAdapter(getContext(), pedidos);
+
         if (pa.getArrayAdapter() != null) {
             pedidosArrayAdapter = pa.getArrayAdapter();
         } else pedidosArrayAdapter = pedidosAdapter;
@@ -118,6 +113,8 @@ public class PedidosDisponiveisFragment extends Fragment {
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                final Preferences filterPreferences = new Preferences(getActivity());
+                filterPreferences.saveFilterPedido(null);
                 refresh();
             }
         });
@@ -134,7 +131,6 @@ public class PedidosDisponiveisFragment extends Fragment {
                 final User user = dataSnapshot.getValue(User.class);
                 System.out.println("entrei listenerSingle para messages");
                 usuario.setPedidosFeitos(user.getPedidosFeitos());
-                premium = user.getPremiumUser();
                 if (user.getMessageNotification() != null && !user.getMessageNotification().equals("no message")) {
 
                     //manual toast delay (nao me julgue)
@@ -167,8 +163,6 @@ public class PedidosDisponiveisFragment extends Fragment {
 
                         System.out.println("PedidosLocation user locations " + user.getLatitude() + "  " + user.getLongitude());
 
-
-
                         for (DataSnapshot dados : dataSnapshot.getChildren()) {
                             System.out.println("get children pedidos " + dados);
 
@@ -178,13 +172,17 @@ public class PedidosDisponiveisFragment extends Fragment {
                                 pedidoLocation.setLongitude(pedido.getLongitude());
                                 pedidoLocation.setLatitude(pedido.getLatitude());
 
-                                double distance = userLocation.bearingTo(pedidoLocation);
+                                double distance = userLocation.distanceTo(pedidoLocation)/1000;
+
+                                //double distance = distFrom(userLocation.getLatitude(), userLocation.getLongitude(), pedidoLocation.getLatitude(), pedidoLocation.getLongitude())/*userLocation.distanceTo(pedidoLocation)*/;
+
+                                if( distance < 0 ) {distance = distance*-1;}
 
                                 pedido.setDistanceInMeters(distance);
 
                                 System.out.println("PedidosLocation DISTANCIA " + distance + "PEDIDO LATITUDE:  " + pedido.getLatitude() + " LONGITUDE: "+ pedido.getLongitude() + "NOME: "+pedido.getTitulo());
 
-                            } else pedido.setDistanceInMeters(2.0);
+                            } else pedido.setDistanceInMeters(10.0);
 
                             System.out.println("PedidosLocation Distancia do pedido "+ pedido.getDistanceInMeters());
 
@@ -198,8 +196,8 @@ public class PedidosDisponiveisFragment extends Fragment {
                                         if (usuario.getPedidosFeitos().contains(pedido.getIdPedido())) {
                                             System.out.println("pedidao " + pedido.getIdPedido());
                                             pedidos.remove(pedido);
-
                                         }
+
                                     }
                                         //Elimina pedidos fora do filtro
                                         if(preferencias.getFilterPedido() != null) {
@@ -219,7 +217,7 @@ public class PedidosDisponiveisFragment extends Fragment {
                                     }
 
                                     //elimina pedidos fora da distancia estabelecida
-                                    if (pedido.getDistanceInMeters() > user.getMaxDistance() * 1000000) {
+                                    if (pedido.getDistanceInMeters().intValue() > user.getMaxDistance()) {
                                         pedidos.remove(pedido);
                                         System.out.println("pedido removido " + pedido.getTitulo());
 
@@ -247,6 +245,9 @@ public class PedidosDisponiveisFragment extends Fragment {
 
                         }
 
+
+                        pedidosArrayAdapter.notifyDataSetChanged();
+
                         Collections.sort(pedidos, new Comparator<Pedido>() {
                             @Override
                             public int compare(Pedido o1, Pedido o2) {
@@ -255,9 +256,11 @@ public class PedidosDisponiveisFragment extends Fragment {
                             }
                         });
 
-
-                        pedidosArrayAdapter.notifyDataSetChanged();
-
+                        /*if(pedidos.isEmpty()){
+                            iconEmpty.setVisibility(View.VISIBLE);
+                        } else {
+                            iconEmpty.setVisibility(View.INVISIBLE);
+                        }*/
 
                         pedidosView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
@@ -276,6 +279,9 @@ public class PedidosDisponiveisFragment extends Fragment {
                                     intent.putExtra("criadorId", pedido.getCriadorId());
                                     //intent.putExtra("distanceMeters", Integer.valueOf(String.valueOf(pedido.getDistanceInMeters())));
                                     intent.putExtra("tipo", pedido.getTipo());
+                                    if(pedido.getTipo().equals("Doacao")){
+                                        intent.putExtra("donationType", pedido.getDonationType());
+                                    }
                                     if (pedido.getGrupo() != null) {
                                         intent.putExtra("tagsGrupo", pedido.getGrupo());
                                         intent.putExtra("groupId", pedido.getGroupId());
@@ -322,6 +328,24 @@ public class PedidosDisponiveisFragment extends Fragment {
         Intent intent = new Intent(getActivity(), PedidosActivity.class);
         getActivity().finish();
         startActivity(intent);
+    }
+
+
+
+    private double distFrom(double lat1, double lng1, double lat2, double lng2) {
+
+        double earthRadius = 6371000; //meters
+        double dLat = Math.toRadians(lat2-lat1);
+        double dLng = Math.toRadians(lng2-lng1);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLng/2) * Math.sin(dLng/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        float dist = (float) (earthRadius * c);
+
+        return dist;
+
+
     }
 }
 

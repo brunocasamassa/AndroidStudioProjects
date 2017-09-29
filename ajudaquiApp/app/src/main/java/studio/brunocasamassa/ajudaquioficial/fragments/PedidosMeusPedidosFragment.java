@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
     private PedidosActivity pa;
     private PedidosMeusPedidosAdapter pedidosAdapter;
     private SwipeRefreshLayout refresh;
+    private ImageView iconEmpty;
 
 
     public PedidosMeusPedidosFragment() {
@@ -109,8 +111,13 @@ public class PedidosMeusPedidosFragment extends Fragment {
         refresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
         meusPedidos = (ListView) view.findViewById(R.id.meusPedidos_list);
         System.out.println("GRUPO NA POSICAO " + pedidos.isEmpty());
+        iconEmpty = (ImageView) view.findViewById(R.id.icon_empty_list);
+
 
         pedidosAdapter = new PedidosMeusPedidosAdapter(getContext(), pedidos);
+
+
+
 
         if (pa.getArrayMeusPedidosAdapter() != null) {
             pedidoArrayAdapter = pa.getArrayMeusPedidosAdapter();
@@ -149,6 +156,7 @@ public class PedidosMeusPedidosFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 usuario.setPedidosFeitos(user.getPedidosFeitos());
+                usuario.setItensDoados(user.getItensDoados());
                 premium = user.getPremiumUser();
                 System.out.println("PMPF:idPedidos " + usuario.getPedidosFeitos());
 
@@ -172,25 +180,36 @@ public class PedidosMeusPedidosFragment extends Fragment {
                 for (DataSnapshot dados : dataSnapshot.getChildren()) {
                     System.out.println("get children pedidos " + dados);
 
-                    Pedido pedido = dados.getValue(Pedido.class);
-                    System.out.println("pedido " + pedido.getTitulo());
-                    if (usuario.getPedidosFeitos() != null) {
-                        if (!pedidos.contains(pedido.getIdPedido()) && usuario.getPedidosFeitos().contains(pedido.getIdPedido())) {
-                            pedidos.add(pedido);
+                    try {
+                        Pedido pedido = dados.getValue(Pedido.class);
+                        if (usuario.getPedidosFeitos() != null) {
+                            if (!pedidos.contains(pedido.getIdPedido()) && usuario.getPedidosFeitos().contains(pedido.getIdPedido())) {
+                                pedidos.add(pedido);
+                                System.out.println("pedido meus pedidos " + pedido.getTitulo());
+
+                            }
                         }
-                    }
-                    if (usuario.getItensDoados() != null) {
-                        if (!pedidos.contains(pedido.getIdPedido()) && usuario.getItensDoados().contains(pedido.getIdPedido())) {
-                            pedidos.add(pedido);
+                        if (usuario.getItensDoados() != null) {
+                            System.out.println("crazy beast "+usuario.getItensDoados().toArray());
+                            if (!pedidos.contains(pedido.getIdPedido()) && usuario.getItensDoados().contains(pedido.getIdPedido())) {
+                                if(pedido.getQtdAtual() > 0) {
+                                    pedidos.add(pedido);
+                                    System.out.println("pedido meus pedidos " + pedido.getTitulo());
+                                }
+                                }
                         }
+
+                        System.out.println("PMPF: pilha pedidos na view " + pedidos);
+
+                    } catch (Exception e){
+                         System.out.println("exception getting order "+ pedidos.get(pedidos.size()-1).getTitulo()+"  : "+ e);
                     }
 
-                    System.out.println("PMPF: pilha pedidos na view " + pedidos);
-
-                }
+                        }
 
 
-                pedidoArrayAdapter.notifyDataSetChanged();
+                    pedidoArrayAdapter.notifyDataSetChanged();
+
                 System.out.println("PMPF: pilha pedidos na view2 " + pedidos);
 
             }
@@ -201,6 +220,12 @@ public class PedidosMeusPedidosFragment extends Fragment {
 
             }
         };
+/*
+        if(pedidos.isEmpty()){
+            iconEmpty.setVisibility(View.VISIBLE);
+        } else {
+            iconEmpty.setVisibility(View.INVISIBLE);
+        }*/
 
         meusPedidos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -258,16 +283,25 @@ public class PedidosMeusPedidosFragment extends Fragment {
                     intent.putExtra("atendenteId", selectedPedido.getAtendenteId());
                     if (selectedPedido.getGrupo() != null) {
                         intent.putExtra("tagsGrupo", selectedPedido.getGrupo());
+                        intent.putExtra("groupId", selectedPedido.getGroupId());
                     }
+
+                    if(selectedPedido.getTipo().equals("Doacao")){
+                        intent.putExtra("donationType", selectedPedido.getDonationType());
+                    }
+
                     intent.putExtra("descricao", selectedPedido.getDescricao());
                     startActivity(intent);
+
                 } else {
                     intentDonation.putExtra("status", selectedPedido.getStatus());
                     intentDonation.putExtra("titulo", selectedPedido.getTitulo());
                     intentDonation.putExtra("tagsCategoria", selectedPedido.getTagsCategoria());
                     intentDonation.putExtra("idPedido", selectedPedido.getIdPedido());
                     intentDonation.putExtra("criadorId", selectedPedido.getCriadorId());
+                    intentDonation.putExtra("dadosDoador", selectedPedido.getDadosDoador());
                     intentDonation.putExtra("tipo", selectedPedido.getTipo());
+
                     intentDonation.putExtra("atendenteId", selectedPedido.getAtendenteId());
                     intentDonation.putExtra("endereco", selectedPedido.getEndereco());
                     intentDonation.putExtra("donationContact", selectedPedido.getDonationContact());

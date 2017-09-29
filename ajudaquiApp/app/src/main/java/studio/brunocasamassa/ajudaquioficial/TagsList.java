@@ -2,9 +2,16 @@ package studio.brunocasamassa.ajudaquioficial;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,7 +34,7 @@ import studio.brunocasamassa.ajudaquioficial.helper.FirebaseConfig;
  */
 
 
-public class TagsList extends AppCompatActivity {
+public class TagsList extends AppCompatActivity implements SearchView.OnQueryTextListener {
     private ListView tagView;
     private ArrayAdapter tagAdapter;
     private ArrayList<String> tags;
@@ -35,44 +42,43 @@ public class TagsList extends AppCompatActivity {
     public String selectedTag;
     private ProgressDialog dialog = null;
     private TextView title;
+    private Toolbar toolbar;
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_taglist);
-
-        /*Categoria categorias = new Categoria();
-        ArrayList<String> txtTags = new ArrayList<String>();
-
-        Scanner scan = null;    //TODO FILE READER TAGS
-        try {
-            scan = new Scanner(new FileInputStream("C:\\users\\bruno\\Documentos\\BitBucket\\ajudaaqui\\ajudaquiApp\\app\\tags.txt"));
-        }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("scanner input "+ e);
-        }
-        int i = 0;
-        while (scan.hasNext()) {
-            String s = scan.nextLine();
-            txtTags.add(i, s);
-            i++;
-        }
-
-        categorias.setCategorias(tags);
-        categorias.save();
-*/
         tags = new ArrayList<>();
         tagView = (ListView) findViewById(R.id.tagsList);
 
-        title = (TextView) findViewById(R.id.list_title);
-        title.setText("Selecione uma Categoria");
+        toolbar = (Toolbar) findViewById(R.id.toolbar_taglist);
+        toolbar.setTitle("Selecione uma Categoria");
+
+        setSupportActionBar(toolbar);
+
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         tagsRefs = FirebaseConfig.getFireBase();
         tagsRefs.child("tags").child("categorias");
         //dialog.show(TagsList.this, "Por favor aguarde", "Recebendo Tags...", true);
         tagsRefs.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                tags.clear();
+
                 for (final DataSnapshot dados : dataSnapshot.child("tags").getChildren()) {
                     System.out.println("TAG ADAPTER " + tagAdapter);
 
@@ -80,6 +86,9 @@ public class TagsList extends AppCompatActivity {
                     dados.getValue();
                     ArrayList tagss = (ArrayList) dados.getValue();
                     tags.addAll(tagss);
+                    tagAdapter = new ArrayAdapter(getBaseContext(), android.R.layout.simple_list_item_2,
+                            android.R.id.text1,
+                            tags);
 
                     Collections.sort(tags, new Comparator<String>() {
                         @Override
@@ -88,11 +97,9 @@ public class TagsList extends AppCompatActivity {
                         }
                     });
 
-                    tagAdapter = new ArrayAdapter(getBaseContext(), android.R.layout.simple_list_item_2,
-                            android.R.id.text1,
-                            tags);
-
                     tagView.setAdapter(tagAdapter);
+
+                    tagView.setDivider(null);
 
                     System.out.println("TAG VIEW " + tagView);
 
@@ -125,6 +132,7 @@ public class TagsList extends AppCompatActivity {
 
     }
 
+
     public String getSelectedTag() {
         return selectedTag;
     }
@@ -132,5 +140,46 @@ public class TagsList extends AppCompatActivity {
     public void setSelectedTag(String selectedTag) {
         this.selectedTag = selectedTag;
     }
-}
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_sobre, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_search:
+                SearchManager searchManager = (SearchManager)
+                        getSystemService(Context.SEARCH_SERVICE);
+
+                SearchView searchView = (SearchView) item.getActionView();
+
+                searchView.setSearchableInfo(searchManager.
+                        getSearchableInfo(getComponentName()));
+                searchView.setSubmitButtonEnabled(true);
+                searchView.setOnQueryTextListener(this);
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        TagsList.this.tagAdapter.getFilter().filter(newText);
+        return true;
+    }
+}

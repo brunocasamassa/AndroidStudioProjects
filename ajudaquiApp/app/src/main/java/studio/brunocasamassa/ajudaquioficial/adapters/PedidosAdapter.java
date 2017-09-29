@@ -21,6 +21,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import org.afinal.simplecache.ACache;
+
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -42,6 +44,8 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
     private StorageReference storageDonation;
     private Preferences preferences;
     private String facebookPhoto;
+    private ACache mCache;
+
 
     private MainActivity mainActivity = new MainActivity();
 
@@ -81,6 +85,8 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View view = null;
+        mCache = ACache.get(getContext());
+
 
         // Verifica se a lista está vazia
         if (pedidos != null) {
@@ -109,6 +115,17 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
             TextView descricao = (TextView) view.findViewById(R.id.descricao_pedido);
             TagGroup tagsCategoria = (TagGroup) view.findViewById(R.id.tagPedidos);
             final CircleImageView pedidoImg = (CircleImageView) view.findViewById(R.id.imagePedido);
+            int width =  context.getResources().getDisplayMetrics().widthPixels;
+            //Toast.makeText(getContext(), width +" ADAPTER ", Toast.LENGTH_SHORT).show();
+
+            if(width <= 480){
+                nomePedido.setTextSize(15);
+                nomePedido.setTranslationX(30);
+                descricao.setTextSize(15);
+                descricao.setTranslationX(30);
+                tagsCategoria.setTranslationX(Float.valueOf(-10));
+
+            }
 
             final Pedido pedido = pedidosFiltrado.get(position);
 
@@ -128,6 +145,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
             if (status.equals("Servicos")) {
                 //Picasso.with(getContext()).load(R.drawable.tag_aberto).resize(274, 274).into(statusPedido);
                 statusPedido.setText(" SERVIÇOS ");
+                statusPedido.setBackgroundResource(R.drawable.rounded_background);
                 statusPedido.setBackgroundColor(Color.parseColor("#1bb1b7"));
             } else if (status.equals("Troca")) {
                 //Picasso.with(getContext()).load(R.drawable.tag_emandameCibfnto)/*.resize(274, 274)*/.into(statusPedido);
@@ -136,6 +154,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
             } else if (status.equals("Doacao")) {
                 //Picasso.with(getContext()).load(R.drawable.tag_finalizado).resize(274, 274).into(statusPedido);
                 statusPedido.setText(" DOAÇÃO ");
+                statusPedido.setBackgroundResource(R.drawable.rounded_background);
                 statusPedido.setBackgroundColor(Color.parseColor("#1bb1b7"));
             } else if (status.equals("Emprestimos")) {
                 //Picasso.with(getContext()).load(R.drawable.tag_cancelado).resize(274, 274).into(statusPedido);
@@ -145,16 +164,19 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
 
             if (pedido.getDistanceInMeters() != null) {
                 int km = pedido.getDistanceInMeters().intValue();
+                //if(km < 0){km = (km *-1); }
                 int dotIndex = String.valueOf(pedido.getDistanceInMeters()).indexOf(".");
                 String meters = String.valueOf(pedido.getDistanceInMeters()).substring(dotIndex,dotIndex+2);
                 System.out.println("see meters " + meters);
 
-                distancia.setText(km+meters+"km");
+                distancia.setText(km + meters+" km");
+
             } else {
                 distancia.setTextColor(Color.TRANSPARENT);
             }
+
             try {
-                nomePedido.setText(String.valueOf(pedido.getTitulo().substring(0, 17)) + "...");
+                nomePedido.setText(String.valueOf(pedido.getTitulo().substring(0, 15)) + "...");
                 System.out.println("DADOS PEDIDO NO ADAPTER: " + pedido.getTitulo());
             } catch (Exception e) {
                 nomePedido.setText(pedido.getTitulo() + "...");
@@ -173,19 +195,26 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
                 donationqtd.setTextColor(Color.TRANSPARENT);
             }
 
-            if (pedido.getTipo().equals("Doacoes")) {
+            final String imgKey = "imgkey: "+pedido.getIdPedido();
+            String cacheData = mCache.getAsString(imgKey);
+            if (cacheData != null) {
+                Picasso.with(getContext()).load(cacheData).resize(680, 680).into(pedidoImg);
+            } else {
+                if (pedido.getTipo().equals("Doacoes")) {
                 donationqtd.setText(String.valueOf(pedido.getQtdAtual()) + "/" + String.valueOf(pedido.getQtdDoado()));
                 donationqtd.setTextColor(Color.argb(255, 20, 118, 122));
-                storageDonation.child(pedido.getIdPedido() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-
+                storageDonation.child(pedido.getIdPedido() + ".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
                         System.out.println("grupo " + pedido.getGrupo());
                         try {
                             Picasso.with(context).load(uri).into(pedidoImg);
+                            mCache.put(imgKey, uri.toString(),2 * ACache.TIME_DAY);
                             //Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
                         } catch (Exception e) {
                             Picasso.with(getContext()).load(uri).into(pedidoImg);
+                            mCache.put(imgKey, uri.toString(),2 * ACache.TIME_DAY);
+
                             //pedidoImg.setImageURI(uri);
                             System.out.println("EXCEPTION PedidosAdapter " + e);
                         }
@@ -197,7 +226,9 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
 
                     }
                 });
-            } else if (pedido.getGrupo() != null) {
+            }
+
+            if (pedido.getGrupo() != null) {
 
                 storage.child(pedido.getGroupId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
@@ -206,9 +237,13 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
                         System.out.println("grupo " + pedido.getGrupo());
                         try {
                             Picasso.with(context).load(uri).into(pedidoImg);
+                            mCache.put(imgKey, uri.toString(),2 * ACache.TIME_DAY);
+
                             //Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
                         } catch (Exception e) {
                             Picasso.with(getContext()).load(R.drawable.logo).into(pedidoImg);
+                            mCache.put(imgKey, uri.toString(),2 * ACache.TIME_DAY);
+
                             System.out.println("EXCEPTION PedidosAdapter " + e);
                         }
                         System.out.println("my pedidos lets seee2" + uri);
@@ -224,7 +259,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
 
             //Glide.with(getContext()).load(R.drawable.logo).override(68, 68).into(pedidoImg);
 
-        }
+        }}
 
         return view;
 
@@ -249,9 +284,19 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> implements Filterable {
 
                 for (Pedido pedido : pedidos) {
                     try {
-                        if (pedido.getTitulo().toLowerCase().contains(constraint.toString().toLowerCase()) || pedido.getTagsCategoria().contains(constraint.toString().toLowerCase())) {
+
+                        if (pedido.getTitulo().toLowerCase().contains(constraint.toString().toLowerCase())) {
                             tempList.add(pedido);
                         }
+                        else if(pedido.getTagsCategoria() != null){
+                            for (int i=0; i<pedido.getTagsCategoria().size();i++){
+                                System.out.println("pedido tag filtered "+ pedido.getTagsCategoria().get(i).toString());
+                                if(pedido.getTagsCategoria().get(i).contains(constraint.toString())){
+                                    tempList.add(pedido);
+                                }
+                            }
+                        }
+
                     } catch (Exception e) {
                         System.out.println("error populating filters in all pedidos: Pedido: "+pedido.getTitulo() + "error: "+ e);
                     }

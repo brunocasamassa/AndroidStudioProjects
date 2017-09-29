@@ -118,6 +118,7 @@ public class GrupoAbertoPedidosFragment extends Fragment {
                 intent.putExtra("tipo", pedido.getTipo());
                 if (pedido.getGrupo() != null) {
                     intent.putExtra("tagsGrupo", pedido.getGrupo());
+                    intent.putExtra("groupId", pedido.getGroupId());
                 }
                 intent.putExtra("descricao", pedido.getDescricao());
                 arraylist_nomes.clear();

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -51,6 +52,7 @@ public class PedidosEscolhidosFragment extends Fragment {
     private PedidosActivity pa;
     private PedidosSelecionadoAdapter pedidosAdapter;
     private SwipeRefreshLayout refresh;
+    private ImageView iconEmpty;
 
     public PedidosEscolhidosFragment() {
         //Required empty public constructor
@@ -86,10 +88,14 @@ public class PedidosEscolhidosFragment extends Fragment {
         pedidos = new ArrayList<>();
         pedidosEscolhidos = (ListView) view.findViewById(R.id.pedidos_escolhidos_list);
         refresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh) ;
+        iconEmpty = (ImageView) view.findViewById(R.id.icon_empty_list);
         System.out.println("GRUPO NA POSICAO " + pedidos.isEmpty());
 
 
         pedidosAdapter = new PedidosSelecionadoAdapter(getContext(), pedidos);
+
+
+
         if (pa.getArrayEscolhidosAdapter() != null) {
             pedidoArrayAdapter = pa.getArrayEscolhidosAdapter();
         } else pedidoArrayAdapter = pedidosAdapter;
@@ -124,6 +130,12 @@ public class PedidosEscolhidosFragment extends Fragment {
 
         startList();
 
+/*
+        if(pedidos.isEmpty()){
+            iconEmpty.setVisibility(View.VISIBLE);
+        } else {
+            iconEmpty.setVisibility(View.INVISIBLE);
+        }*/
         pedidosEscolhidos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -136,7 +148,7 @@ public class PedidosEscolhidosFragment extends Fragment {
 
                 if (selectedPedido.getStatus() == 2) {//finalizado
                     Toast.makeText(getApplicationContext(), "Pedido finalizado", Toast.LENGTH_SHORT).show();
-                } else if (selectedPedido.getStatus() != 5){
+                } else if (!selectedPedido.getTipo().equals("Doacoes")){
                     //enviando dados para grupo activity
                     //enviando dados para pedido activity
                     intent.putExtra("status", selectedPedido.getStatus());
@@ -144,9 +156,16 @@ public class PedidosEscolhidosFragment extends Fragment {
                     intent.putExtra("tagsCategoria", selectedPedido.getTagsCategoria());
                     intent.putExtra("idPedido", selectedPedido.getIdPedido());
                     intent.putExtra("criadorId", selectedPedido.getCriadorId());
+                    intent.putExtra("atendenteId", selectedPedido.getAtendenteId());
                     intent.putExtra("tipo", selectedPedido.getTipo());
+
+                    if(selectedPedido.getTipo().equals("Doacao")){
+                        intent.putExtra("donationType", selectedPedido.getDonationType());
+                    }
                     if (selectedPedido.getGrupo() != null) {
+
                         intent.putExtra("tagsGrupo", selectedPedido.getGrupo());
+                        intent.putExtra("groupId", selectedPedido.getGroupId());
                     }
                     intent.putExtra("descricao", selectedPedido.getDescricao());
 
@@ -156,10 +175,12 @@ public class PedidosEscolhidosFragment extends Fragment {
                     intentDonation.putExtra("titulo", selectedPedido.getTitulo());
                     intentDonation.putExtra("tagsCategoria", selectedPedido.getTagsCategoria());
                     intentDonation.putExtra("idPedido", selectedPedido.getIdPedido());
+                    intentDonation.putExtra("dadosDoador", selectedPedido.getDadosDoador());
                     intentDonation.putExtra("criadorId", selectedPedido.getCriadorId());
                     intentDonation.putExtra("tipo", selectedPedido.getTipo());
                     intentDonation.putExtra("atendenteId", selectedPedido.getAtendenteId());
                     intentDonation.putExtra("endereco", selectedPedido.getEndereco());
+                    intentDonation.putExtra("dadosDoador", selectedPedido.getDadosDoador());
                     intentDonation.putExtra("donationContact", selectedPedido.getDonationContact());
                     intentDonation.putExtra("descricao", selectedPedido.getDescricao());
                     intentDonation.putExtra("cameFrom", 3);
@@ -211,7 +232,7 @@ public class PedidosEscolhidosFragment extends Fragment {
                     Pedido pedido = dados.getValue(Pedido.class);
                     System.out.println("pedido " + pedido.getTitulo());
                     if (usuario.getPedidosAtendidos() != null) {
-                        if (!pedidos.contains(pedido.getIdPedido()) && usuario.getPedidosAtendidos().contains(pedido.getIdPedido()) && pedido.getStatus()!= 2) {
+                        if (!pedidos.contains(pedido.getIdPedido()) && usuario.getPedidosAtendidos().contains(pedido.getIdPedido())) {
                             pedidos.add(pedido);
                         }
                     }

@@ -97,10 +97,10 @@ public class ConfiguracoesActivity extends AppCompatActivity {
 
         Preferences preferences = new Preferences(ConfiguracoesActivity.this);
 
-        for (UserInfo user: FirebaseAuth.getInstance().getCurrentUser().getProviderData()) {
+        for (UserInfo user : FirebaseAuth.getInstance().getCurrentUser().getProviderData()) {
             if (user.getProviderId().equals("facebook.com")) {
                 System.out.println("User is signed in with Facebook");
-                isFromFacebook =true;
+                isFromFacebook = true;
             }
         }
 
@@ -198,24 +198,126 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                 name.setText(user.getName());
                 maxDistance.setProgress(user.getMaxDistance());
 
-                storage.child(userKey + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        //Glide.with(ConfiguracoesActivity.this).load(uri).into(circleImageView);
-                        Picasso.with(ConfiguracoesActivity.this).load(uri).resize(680,680).into(circleImageView);
-                        System.out.println("my groups lets seee2 " + uri);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
-                            //Glide.with(ConfiguracoesActivity.this).load(user.getProfileImg()).override(68, 68).into(circleImageView);
+                try {
+                    storage.child("userImages").child(userKey + ".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            //Glide.with(ConfiguracoesActivity.this).load(uri).into(circleImageView);
                             circleImageView.setBackgroundColor(Color.TRANSPARENT);
-                            Picasso.with(ConfiguracoesActivity.this).load(user.getProfileImg()).resize(680, 680).into(circleImageView);
-                        }
-                    }
-                });
+                            Picasso.with(ConfiguracoesActivity.this).load(uri).resize(680, 680).onlyScaleDown().into(circleImageView);
+                            System.out.println("my groups lets seee2 " + uri);
+                        /*try {
+                            InputStream streamUri = getApplicationContext().getContentResolver().openInputStream(uri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(streamUri);
+                            Log.d("image", String.valueOf(bitmap));
+                            //Bitmap resized = Bitmap.createScaledBitmap(bitmap, circleImageView.getWidth(), circleImageView.getHeight(), true);
 
+                            try {
+                                Bitmap resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                                circleImageView.setBackgroundColor(Color.TRANSPARENT);
+                                circleImageView.setImageBitmap(resized);
+                            } catch (OutOfMemoryError e) {
+                                System.out.println("memory error " + e);
+                                //resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.e("error in get image ", e.toString());
+                        }*/
+
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+
+                            storage.child("userImages").child(userKey + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    //Glide.with(ConfiguracoesActivity.this).load(uri).into(circleImageView);
+                                    circleImageView.setBackgroundColor(Color.TRANSPARENT);
+                                    Picasso.with(ConfiguracoesActivity.this).load(uri).resize(1000, 1000).onlyScaleDown().into(circleImageView);
+                                    System.out.println("my groups lets seee2 " + uri);
+                        /*try {
+                            InputStream streamUri = getApplicationContext().getContentResolver().openInputStream(uri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(streamUri);
+                            Log.d("image", String.valueOf(bitmap));
+                            //Bitmap resized = Bitmap.createScaledBitmap(bitmap, circleImageView.getWidth(), circleImageView.getHeight(), true);
+
+                            try {
+                                Bitmap resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                                circleImageView.setBackgroundColor(Color.TRANSPARENT);
+                                circleImageView.setImageBitmap(resized);
+                            } catch (OutOfMemoryError e) {
+                                System.out.println("memory error " + e);
+                                //resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.e("error in get image ", e.toString());
+                        }*/
+
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
+                                        //Glide.with(ConfiguracoesActivity.this).load(user.getProfileImg()).override(68, 68).into(circleImageView);
+                                        circleImageView.setBackgroundColor(Color.TRANSPARENT);
+                                        Picasso.with(ConfiguracoesActivity.this).load(user.getProfileImg()).resize(1000, 1000).onlyScaleDown().into(circleImageView);
+                                    }
+                                }
+                            });
+                        }
+
+                    });
+                    ;
+                } catch (Exception e) {
+                    storage.child("userImages").child(userKey + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            //Glide.with(ConfiguracoesActivity.this).load(uri).into(circleImageView);
+                            circleImageView.setBackgroundColor(Color.TRANSPARENT);
+                            Picasso.with(ConfiguracoesActivity.this).load(uri).resize(1000, 1000).onlyScaleDown().into(circleImageView);
+                            System.out.println("my groups lets seee2 " + uri);
+                        /*try {
+                            InputStream streamUri = getApplicationContext().getContentResolver().openInputStream(uri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(streamUri);
+                            Log.d("image", String.valueOf(bitmap));
+                            //Bitmap resized = Bitmap.createScaledBitmap(bitmap, circleImageView.getWidth(), circleImageView.getHeight(), true);
+
+                            try {
+                                Bitmap resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                                circleImageView.setBackgroundColor(Color.TRANSPARENT);
+                                circleImageView.setImageBitmap(resized);
+                            } catch (OutOfMemoryError e) {
+                                System.out.println("memory error " + e);
+                                //resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.e("error in get image ", e.toString());
+                        }*/
+
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
+                                //Glide.with(ConfiguracoesActivity.this).load(user.getProfileImg()).override(68, 68).into(circleImageView);
+                                circleImageView.setBackgroundColor(Color.TRANSPARENT);
+                                Picasso.with(ConfiguracoesActivity.this).load(user.getProfileImg()).resize(1000, 1000).onlyScaleDown().into(circleImageView);
+                            }
+                        }
+                    });
+
+
+                }
             }
 
             @Override
@@ -305,7 +407,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
     ;
 
     private void uploadImages() {
-        StorageReference imgRef = storage.child("userImages").child(userKey + ".jpg");
+        StorageReference imgRef = storage.child("userImages").child(userKey + ".png");
         System.out.println("lei lei " + userKey);
         //download img source
         circleImageView.setDrawingCacheEnabled(true);

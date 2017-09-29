@@ -26,6 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import co.lujun.androidtagview.TagContainerLayout;
 import co.lujun.androidtagview.TagView;
@@ -66,7 +67,8 @@ public class CriaPedidoActivity extends AppCompatActivity {
     private String idGroupSelected;
     private String groupCapturedId;
     private CardView cardview;
-
+    private String groupConcat;
+    private int donationType;
 
     @Override
     protected void onResume() {
@@ -74,7 +76,9 @@ public class CriaPedidoActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         idGroupSelected = (extras.getString("groupId"));
         pedidoGroup = (extras.getString("groupName"));
+
         if (pedidoGroup != null) {
+
             System.out.println("pedido grupo no resume" + pedidoGroup);
             System.out.println("pedido grupo no resume" + idGroupSelected);
         }
@@ -90,9 +94,13 @@ public class CriaPedidoActivity extends AppCompatActivity {
         } else categorias.setTags(tagsCaptured);
 
         if (pedidoGroup != null) {
-            grupos.setTags(pedidoGroup);
+            if (pedidoGroup.length() > 13) {
+                groupConcat = pedidoGroup.substring(0, 13);
+                grupos.setTags(groupConcat);
+            } else grupos.setTags(pedidoGroup);
+
         } else if (groupCaptured != null) {
-            grupos.setTags(groupCaptured);
+            grupos.setTags(groupConcat);
             pedidoGroup = groupCaptured;
             idGroupSelected = groupCapturedId;
         }
@@ -150,11 +158,11 @@ public class CriaPedidoActivity extends AppCompatActivity {
         display.getSize(size);
         int width = size.x;
         int height = size.y;
-       // Toast.makeText(getApplicationContext(), "width "+ width + " height "+ height , Toast.LENGTH_SHORT).show();
+        // Toast.makeText(getApplicationContext(), "width "+ width + " height "+ height , Toast.LENGTH_SHORT).show();
 
         final int currentapiVersion = android.os.Build.VERSION.SDK_INT;
 
-        if (currentapiVersion <= 19 ) {
+        if (currentapiVersion <= 19) {
 
             TextView descr = (TextView) findViewById(R.id.textView6);
             ImageView v = (ImageView) findViewById(R.id.imageView10);
@@ -279,7 +287,8 @@ public class CriaPedidoActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Você não possui creditos suficientes para criar um pedido", Toast.LENGTH_LONG).show();
                     return;
                 }
-                else*/ if (pedidoName.getText().toString().equals("")) {
+                else*/
+                if (pedidoName.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Insira um Titulo para o pedido", Toast.LENGTH_LONG).show();
                     return;
                 } else if (descricao.getText().toString().equals("")) {
@@ -305,24 +314,41 @@ public class CriaPedidoActivity extends AppCompatActivity {
                                     // of the selected item
                                     switch (which) {
                                         case 0:
-                                           // Toast.makeText(getApplicationContext(), "Servicos", Toast.LENGTH_SHORT).show();
+                                            // Toast.makeText(getApplicationContext(), "Servicos", Toast.LENGTH_SHORT).show();
                                             tipoPedido = "Servicos";
                                             createPedido();
                                             break;
                                         case 1:
-                                           // Toast.makeText(getApplicationContext(), "Emprestimos", Toast.LENGTH_SHORT).show();
+                                            // Toast.makeText(getApplicationContext(), "Emprestimos", Toast.LENGTH_SHORT).show();
                                             tipoPedido = "Emprestimos";
                                             createPedido();
                                             break;
                                         case 2:
-                                          //  Toast.makeText(getApplicationContext(), "Troca", Toast.LENGTH_SHORT).show();
+                                            //  Toast.makeText(getApplicationContext(), "Troca", Toast.LENGTH_SHORT).show();
                                             tipoPedido = "Troca";
                                             createPedido();
                                             break;
                                         case 3:
-                                           // Toast.makeText(getApplicationContext(), "finalizando processo de backend, selecione outra opção", Toast.LENGTH_SHORT).show();
+                                            // Toast.makeText(getApplicationContext(), "finalizando processo de backend, selecione outra opção", Toast.LENGTH_SHORT).show();
                                             tipoPedido = "Doacao";
-                                            createPedido();
+                                            final AlertDialog.Builder donationAlert = new AlertDialog.Builder(CriaPedidoActivity.this);
+                                            donationAlert.setTitle("Você esta pedindo ou oferecendo esta doação?");
+                                            donationAlert.setItems(new CharSequence[]
+                                                    {"Oferecendo", "Pedindo"}, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    switch (which) {
+                                                        case 0:
+                                                            donationType = 0;
+                                                            createPedido();
+                                                            break;
+                                                        case 1:
+                                                            donationType = 1;
+                                                            createPedido();
+                                                            break;
+                                                    }
+                                                }
+                                            }).create().show();
                                             break;
                                     }
                                 }
@@ -330,7 +356,6 @@ public class CriaPedidoActivity extends AppCompatActivity {
 
                     alertDialog.create();
                     alertDialog.show();
-
 
                 }
             }
@@ -340,8 +365,15 @@ public class CriaPedidoActivity extends AppCompatActivity {
     }
 
     private void createPedido() {
-
         pedido = new Pedido();
+        if (tipoPedido.equals("Doacao")) {
+            pedido.setDonationType(donationType);
+
+        }
+
+        Random randomizer = new Random();
+        int r = randomizer.nextInt(1000);
+
         System.out.println("tipo de pedido: " + tipoPedido);
         pedido.setTagsCategoria(tagsCaptured);
         pedido.setTipo(tipoPedido);
@@ -507,6 +539,11 @@ public class CriaPedidoActivity extends AppCompatActivity {
         if (requestCode == 2) {
             if (resultCode == Activity.RESULT_OK) {
                 groupCaptured = data.getStringExtra("groupSelected");
+                if (groupCaptured != null) {
+                    if (groupCaptured.length() > 13) {
+                        groupConcat = groupCaptured.substring(0, 10) + "...";
+                    } else groupConcat = groupCaptured;
+                }
                 groupCapturedId = data.getStringExtra("idGroupSelected");
                 System.out.println("CRIA PEDIDO grupo capturada " + groupCaptured);
 

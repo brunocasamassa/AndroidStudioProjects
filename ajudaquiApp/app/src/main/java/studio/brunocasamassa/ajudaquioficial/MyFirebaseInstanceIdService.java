@@ -24,6 +24,7 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
      */
 
     // [START refresh_token]
+
     @Override
     public void onTokenRefresh() {
         // Get updated InstanceID token.

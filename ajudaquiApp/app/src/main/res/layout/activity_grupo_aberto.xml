@@ -12,6 +12,7 @@
     <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/toolbar_principal_grupoaberto"
         android:layout_width="match_parent"
+        android:elevation="20dp"
         android:layout_height="50dp"
         android:background="@color/colorBackground"
         android:weightSum="1"
@@ -38,6 +39,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        android:elevation="20dp"
         android:background="@color/colorBackground">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -58,6 +60,7 @@
         android:layout_height="46dp"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/vp_pagina"
+        android:elevation="20dp"
         android:background="@color/colorBackground"
         app:titleTextColor="@android:color/white"></studio.brunocasamassa.ajudaquioficial.helper.SlidingTabLayout>
 
@@ -76,79 +79,23 @@
             android:layout_alignParentTop="true"
             android:background="@android:color/background_light"></android.support.v4.view.ViewPager>
 
-        <!--<com.github.clans.fab.FloatingActionMenu
-            android:id="@+id/fab_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="11dp"
-            android:layout_marginRight="15dp"
-            android:elevation="19dp"
-            android:src="@drawable/fab_add"
-            app:backgroundTint="@color/accent"
-            fab:menu_animationDelayPerItem="55"
-            fab:menu_backgroundColor="@android:color/transparent"
-            fab:menu_buttonSpacing="5dp"
-            fab:menu_colorNormal="@color/accent"
-            fab:menu_colorPressed="@color/accent"
-            fab:menu_colorRipple="#99d4d4d4"
-            fab:menu_fab_size="normal"
-            fab:menu_labels_colorNormal="#333"
-            fab:menu_labels_colorPressed="#444"
-            fab:menu_labels_colorRipple="#66efecec"
-            fab:menu_labels_cornerRadius="3dp"
-            fab:menu_labels_ellipsize="none"
-            fab:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
-            fab:menu_labels_margin="0dp"
-            fab:menu_labels_maxLines="-1"
-            fab:menu_labels_padding="8dp"
-            fab:menu_labels_position="left"
-            fab:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
-            fab:menu_labels_showShadow="true"
-            fab:menu_labels_singleLine="false"
-            fab:menu_labels_textColor="#f2f1f1"
-            fab:menu_labels_textSize="15sp"
-            fab:menu_openDirection="up"
-            fab:menu_shadowColor="#66aff198"
-            fab:menu_shadowRadius="4dp"
-            fab:menu_shadowXOffset="1dp"
-            fab:menu_shadowYOffset="4dp"
-            fab:menu_showShadow="true">-->
-
-        <!--    <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/doacao_fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|start"
-                android:elevation="20dp"
-                android:src="@drawable/fab_add"
-                app:backgroundTint="@color/accent"
-                fab:fab_label="Gerar Doação"
-                fab:fab_size="mini"
-                fab:rippleColor="@color/accent" />-->
-
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/pedido_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:visibility="visible"
             android:layout_gravity="bottom|start"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:elevation="20dp"
-            app:backgroundTint="@color/colorAccent"
-            android:background="@color/colorAccent"
+            android:elevation="5dp"
             android:src="@drawable/fab_add"
-            fab:fab_label="Criar Pedido"
-            fab:fab_size="normal"
-            android:translationY="-10dp"
+            app:backgroundTint="@color/colorAccent"
+            app:fabSize="normal"
+            android:layout_marginBottom="10dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="8dp"
             android:layout_alignParentRight="true"
+            android:translationY="-10dp"
+            android:translationX="-10dp"
              />
-
-
-
 
 </RelativeLayout>
 

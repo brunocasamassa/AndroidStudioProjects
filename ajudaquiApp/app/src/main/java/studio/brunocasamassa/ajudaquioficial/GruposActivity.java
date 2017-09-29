@@ -67,7 +67,6 @@ public class GruposActivity extends AppCompatActivity implements SearchView.OnQu
         //fabMenu = (FloatingActionMenu) findViewById(R.id.fab_open_menu);
     /*    fab2 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.fab2);
 
-
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,6 +74,7 @@ public class GruposActivity extends AppCompatActivity implements SearchView.OnQu
                 startActivity(intent);
             }
         });*/
+
         fab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {

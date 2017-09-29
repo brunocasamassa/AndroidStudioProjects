@@ -37,8 +37,6 @@ public class MyGroupsAdapter extends ArrayAdapter<Grupo> {
     private GruposFiltro filtrador;
     private StorageReference storage;
 
-
-
     public MyGroupsAdapter(Context c, ArrayList<Grupo> objects) {
         super(c, 0, objects);
         this.grupos = objects;
@@ -46,7 +44,10 @@ public class MyGroupsAdapter extends ArrayAdapter<Grupo> {
         this.context = c;
 
         getFilter();
+
     }
+
+
 
     public ArrayList<Grupo> getGruposFiltrado() {
         return gruposFiltrado;
@@ -110,7 +111,7 @@ public class MyGroupsAdapter extends ArrayAdapter<Grupo> {
                 @Override
                 public void onSuccess(Uri uri) {
                     try {
-                        Picasso.with(getContext()).load(uri).resize(68, 68).into(imgGrupo);
+                        Picasso.with(getContext()).load(uri).resize(680, 680).into(imgGrupo);
                         //Glide.with(getContext()).load(uri).override(68, 68).into(imgGrupo);
                         //grupo.setGrupoImg(uri.toString());
                     } catch (Exception e) {

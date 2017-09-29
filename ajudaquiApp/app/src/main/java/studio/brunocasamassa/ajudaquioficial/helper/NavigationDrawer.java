@@ -97,24 +97,25 @@ public class NavigationDrawer {
                     PrimaryDrawerItem item3;
                     PrimaryDrawerItem item4;
 
-                    if (pedidosNotification != 0) {
+                    if (pedidosNotification > 0) {
                         item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos).withIcon(R.drawable.pedidos_icon).withBadge(String.valueOf(pedidosNotification)).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.colorAccent));
                     } else
                         item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.menu_pedidos).withIcon(R.drawable.pedidos_icon);
-                    if (chatNotification != 0) {
+                    if (chatNotification > 0) {
                         item2 = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.menu_chats).withIcon(R.drawable.chat_icon).withBadge(String.valueOf(chatNotification)).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.colorAccent));
                     } else
                         item2 = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.menu_chats).withIcon(R.drawable.chat_icon);
 
                     item3 = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.menu_grupos).withIcon(R.drawable.groups_icon);
 
-                    if(profileNotification != 0){
+                    if(profileNotification > 0){
                     item4 = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.menu_perfil).withIcon(R.drawable.profile_icon).withBadge(String.valueOf(profileNotification)).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.colorAccent));
                     } else item4 = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.menu_perfil).withIcon(R.drawable.profile_icon);
 
                     PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_sobre).withIcon(R.drawable.sobre_icon);
                     PrimaryDrawerItem item6 = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.menu_configuracoes).withIcon(R.drawable.config_icon);
                     // Create the Navigation Drawer AccountHeader
+                    PrimaryDrawerItem item7 = new PrimaryDrawerItem().withIdentifier(5).withName("Passo-à-Passo").withIcon(R.drawable.ic_passoapasso);
 
                     AccountHeader headerResult = new AccountHeaderBuilder()
                             .withActivity(classe)
@@ -150,7 +151,9 @@ public class NavigationDrawer {
                                     new DividerDrawerItem(),//Divisor
                                     item5,
                                     new DividerDrawerItem(),//Divisor
-                                    item6
+                                    item6,
+                                    new DividerDrawerItem(),//Divisor
+                                    item7
                                     //Divisor
                             )
                             .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -189,6 +192,8 @@ public class NavigationDrawer {
     private void verifyActivity(Activity classe, int position) {
         if (position == 1) {
             Intent intent = new Intent(classe, PedidosActivity.class);
+            final Preferences filterPreferences = new Preferences(classe);
+            filterPreferences.saveFilterPedido(null);
             classe.startActivity(intent);
         }
         if (position == 3) {
@@ -217,6 +222,11 @@ public class NavigationDrawer {
         }
         if (position == 11) {
             Intent sobreIntent = new Intent(classe, ConfiguracoesActivity.class);
+            classe.startActivity(sobreIntent);
+
+        }
+        if (position == 13) {
+            Intent sobreIntent = new Intent(classe, MainIntroActivity.class);
             classe.startActivity(sobreIntent);
 
         }

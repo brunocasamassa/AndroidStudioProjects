@@ -2,6 +2,7 @@
 package studio.brunocasamassa.ajudaquioficial.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +36,7 @@ public class RankingAdapter extends ArrayAdapter<User> {
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
 
 
-    public RankingAdapter(Context c, ArrayList<User> objects , int userPlace) {
+    public RankingAdapter(Context c, ArrayList<User> objects, int userPlace) {
         super(c, 0, objects);
         this.usersGroup = objects;
         this.context = c;
@@ -68,10 +69,24 @@ public class RankingAdapter extends ArrayAdapter<User> {
             nome.setText(usuario.getName());
             pontos.setText(String.valueOf(usuario.getPontos()));
 
-            if (usuario.getId().equals(userKey) && userPlace != 0){
+            //adjust position after 100º place
+            if(ranked_place.getText().length() > 2){
+                ranked_place.setTextSize(15);
+            }
+
+            if (usuario.getId().equals(userKey) && userPlace != 0) {
                 ranked_place.setText(userPlace);
+                ranked_place.setTextColor(Color.WHITE);
+                pontos.setTextColor(Color.WHITE);
+                nome.setTextColor(Color.WHITE);
                 linear.setBackgroundResource(R.color.colorBackground);
-            } else ranked_place.setText(String.valueOf(position+1));
+            } else if (usuario.getId().equals(userKey)) {
+                linear.setBackgroundResource(R.color.colorBackground);
+                nome.setTextColor(Color.WHITE);
+                ranked_place.setTextColor(Color.WHITE);
+                pontos.setTextColor(Color.WHITE);
+                ranked_place.setText(String.valueOf(position + 1));
+            } else ranked_place.setText(String.valueOf(position + 1));
 
         }
         ;

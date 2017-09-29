@@ -1,11 +1,13 @@
 package studio.brunocasamassa.ajudaquioficial;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -32,6 +34,7 @@ import studio.brunocasamassa.ajudaquioficial.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquioficial.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaquioficial.helper.Preferences;
 import studio.brunocasamassa.ajudaquioficial.helper.SlidingTabLayout;
+import studio.brunocasamassa.ajudaquioficial.helper.User;
 
 /**
  * Created by bruno on 24/04/2017.
@@ -49,6 +52,7 @@ public class ConversasActivity extends AppCompatActivity {
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
     private SlidingTabLayout slidingTabLayout;
     private int posicao;
+    private int chatCount = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
@@ -106,10 +110,13 @@ public class ConversasActivity extends AppCompatActivity {
                 for (DataSnapshot dados : dataSnapshot.getChildren()) {
                     Conversa conversa = dados.getValue(Conversa.class);
                     conversas.add(conversa);
+                    chatCount+=conversa.getChatCount();
                 }
+
 
                 adapter.notifyDataSetChanged();
 
+                verifyUserChatCount(chatCount);
             }
 
             @Override
@@ -118,8 +125,31 @@ public class ConversasActivity extends AppCompatActivity {
             }
         };
 
-
         //Adicionar evento de clique na lista
+        listview_nomes.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final Conversa conversa = conversas.get(position);
+                AlertDialog.Builder alert = new AlertDialog.Builder(ConversasActivity.this);
+                alert.setTitle("Apagar Conversa");
+                alert.setMessage("Deseja Apagar esta conversa?");
+                alert.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FirebaseConfig.getFireBase().child("conversas").child(userKey).child(Base64Decoder.encoderBase64(conversa.getNome())).removeValue();
+                    }
+                }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+
+                    }
+                }).create().show();
+
+                return false;
+            }
+        });
+
         listview_nomes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -134,6 +164,28 @@ public class ConversasActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    private void verifyUserChatCount(final int chatCount) {
+
+        DatabaseReference userDb =  FirebaseConfig.getFireBase().child("usuarios").child(userKey);
+
+        userDb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                user.setChatNotificationCount(chatCount);
+                user.save();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
     }
 

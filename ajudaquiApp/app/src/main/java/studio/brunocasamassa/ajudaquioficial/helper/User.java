@@ -16,8 +16,7 @@ public class User implements DatabaseReference.CompletionListener {
 
     private String id;
 
-
-    private boolean termosAceitos =true;
+    private boolean termosAceitos = true;
 
     private int maxDistance;
 

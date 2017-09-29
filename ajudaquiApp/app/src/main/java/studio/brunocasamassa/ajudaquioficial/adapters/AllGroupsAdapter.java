@@ -25,6 +25,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import org.afinal.simplecache.ACache;
+
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -37,7 +39,7 @@ public class AllGroupsAdapter extends ArrayAdapter<Grupo> {
 
     private ArrayList<Grupo> grupos;
     private ArrayList<Grupo> gruposFiltrado;
-
+    private ACache mCache;
 
 
     private Context context;
@@ -53,7 +55,9 @@ public class AllGroupsAdapter extends ArrayAdapter<Grupo> {
 
         getFilter();
 
-    }    public ArrayList<Grupo> getGruposFiltrado() {
+    }
+
+    public ArrayList<Grupo> getGruposFiltrado() {
         return gruposFiltrado;
     }
 
@@ -82,6 +86,7 @@ public class AllGroupsAdapter extends ArrayAdapter<Grupo> {
 
         storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
         View view = null;
+        mCache = ACache.get(getContext());
 
         // Verifica se a lista está vazia
         if (grupos != null) {
@@ -99,6 +104,7 @@ public class AllGroupsAdapter extends ArrayAdapter<Grupo> {
             final CircleImageView imgGrupo = (CircleImageView) view.findViewById(R.id.groupImg);
             CardView cardView = (CardView) view.findViewById(R.id.cardview_group);
             if (position == 0) {
+
                 cardView.setCardBackgroundColor(Color.parseColor("#1bb1b7"));
                 cardView.setCardElevation(100);
                 nomeGrupo.setText("CABINE DA FARTURA");
@@ -107,11 +113,6 @@ public class AllGroupsAdapter extends ArrayAdapter<Grupo> {
                 lock.setScaleY(9);
                 nomeGrupo.setTextColor(Color.WHITE);
                 qtdMmebros.setTextColor(Color.TRANSPARENT);
-                //imgGrupo.setBackgroundResource(R.drawable.chest_icon_web);
-              /*  qtdMmebros.setTextSize(16);
-                //qtdMmebros.setGravity(5);
-                qtdMmebros.setTranslationY(Float.valueOf(-30));
-                qtdMmebros.setText("Confira!");*/
 
                 Bitmap bm = BitmapFactory.decodeResource(view.getResources(),
                         R.drawable.chest_icon_web);
@@ -132,26 +133,37 @@ public class AllGroupsAdapter extends ArrayAdapter<Grupo> {
                     lock.setBackgroundResource(R.drawable.ic_lock);
                 }
                 // DOWNLOAD GROUP IMG FROM STORAGE
-                storage.child(grupo.getId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        try {
-                            //grupo.setGrupoImg(uri.toString());
-                            //Glide.with(getContext()).load(uri).override(68, 68).into(imgGrupo);
-                            Picasso.with(getContext()).load(uri).resize(680, 680).into(imgGrupo);
-                        } catch (Exception e) {
-                            imgGrupo.setImageURI(uri);
+                final String imgKey = "imgKey: " + grupo.getId();
+                String cacheData = mCache.getAsString(imgKey);
+
+                System.out.println("my cache ? " + cacheData);
+
+                if (cacheData != null) {
+                    Picasso.with(getContext()).load(cacheData).resize(680, 680).into(imgGrupo);
+                } else {
+                    storage.child(grupo.getId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            try {
+                                //grupo.setGrupoImg(uri.toString());
+                                //Glide.with(getContext()).load(uri).override(68, 68).into(imgGrupo);
+                                Picasso.with(getContext()).load(uri).resize(680, 680).into(imgGrupo);
+                                 mCache.put(imgKey, uri.toString(), 2 * ACache.TIME_DAY);
+
+                            } catch (Exception e) {
+                                imgGrupo.setImageURI(uri);
+                            }
+                            System.out.println("my groups lets seee2" + uri);
+
                         }
-                        System.out.println("my groups lets seee2" + uri);
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
+                        }
+                    });
 
-                    }
-                });
-
+                }
             }
         }
 
@@ -177,13 +189,13 @@ public class AllGroupsAdapter extends ArrayAdapter<Grupo> {
                 ArrayList<Grupo> tempList = new ArrayList<>();
 
                 for (Grupo grupo : grupos) {
-                    try{
-                    if (grupo.getNome().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                    try {
+                        if (grupo.getNome().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                            tempList.add(grupo);
+                        }
+                    } catch (Exception e) {
                         tempList.add(grupo);
                     }
-                } catch (Exception e){
-                        tempList.add(grupo);
-                }
                 }
 
                 filterResults.count = tempList.size();

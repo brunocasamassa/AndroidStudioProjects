@@ -98,7 +98,6 @@ public class ChatActivity extends AppCompatActivity {
         btFoto = (ImageButton) findViewById(R.id.bt_enviarImagem);
         listView = (ListView) findViewById(R.id.lv_conversas);
 
-
         // dados do usuário logado
         Preferences preferencias = new Preferences(ChatActivity.this);
         userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
@@ -114,6 +113,7 @@ public class ChatActivity extends AppCompatActivity {
             nomePedido = extra.getString("nome");
 
         }
+
         // Configura toolbar
         toolbar.setTitle(nomePedido);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
@@ -126,6 +126,8 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        //VERIFICA CONTAGEM DO CHAT E ZERA AO ENTRAR
+
         dbUserRemetente = FirebaseConfig.getFireBase().child("conversas");
         FirebaseConfig.getFireBase().child("usuarios").child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -136,15 +138,22 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Conversa conversa = dataSnapshot.getValue(Conversa.class);
-                        user.setChatNotificationCount(user.getChatNotificationCount() - conversa.getChatCount());
-                        conversa.setChatCount(0);
+                        try {
+                            user.setChatNotificationCount(user.getChatNotificationCount() - conversa.getChatCount());
+                            conversa.setChatCount(0);
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                         DatabaseReference saveDb = FirebaseConfig.getFireBase().child("conversas").child(userKey);
                         saveDb.child(idPedido).setValue(conversa);
-                        System.out.println("Chat activity update chat count no userKey (null == zerou(precisa conversa.save))" + conversa.getMensagem());
+                       // System.out.println("Chat activity update chat count no userKey (null == zerou(precisa conversa.save))" + conversa.getMensagem());
+
                         //caso algum erro diminua o valor do count para <0
                         if (user.getChatNotificationCount() < 0) {
                             user.setChatNotificationCount(0);
                         }
+
                         user.save();
                     }
 
@@ -342,8 +351,6 @@ public class ChatActivity extends AppCompatActivity {
 
 
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

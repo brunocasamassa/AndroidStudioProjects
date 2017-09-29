@@ -82,6 +82,12 @@ public class GrupoFechadoActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         //firebase.removeEventListener(valueEventListenerUser);
@@ -291,7 +297,6 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                 System.out.println("grupos do usuario que irão ser salvos" + user.getGrupos());
                 user.save();
 
-
             }
 
             @Override
@@ -300,6 +305,8 @@ public class GrupoFechadoActivity extends AppCompatActivity {
             }
 
         });
+
+        Toast.makeText(getApplicationContext(), "Parabéns, você entrou no grupo " + grupo.getNome(), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -389,7 +396,7 @@ public class GrupoFechadoActivity extends AppCompatActivity {
                                             System.out.println("mensagens solicitação usuario: " + user.getMsgSolicitacoes());
                                             msgSolicitacoes.addAll(dataUser.getMsgSolicitacoes());
                                             //padrao de mensagem na db
-                                            dataUser.setProfileNotificationCount(dataUser.getProfileNotificationCount()+1);
+                                            dataUser.setProfileNotificationCount(dataUser.getProfileNotificationCount() + 1);
 
                                             msgSolicitacoes.add(msgSolicitacoes.size(), "GRUPO:" + grupo.getNome() + ":USUARIO:" + userName + " :MENSAGEM: " + mensagemSolicitacao + ":USERKEY:" + userKey + ":SOLICITATIONKEY:" + userKey + grupo.getId() + ":GROUPKEY:" + grupo.getId());
                                         } else {

@@ -8,27 +8,18 @@
     android:layout_height="match_parent"
     android:weightSum="1">
 
-    <ImageView
-    android:layout_width="450dp"
-    android:layout_height="100dp"
-    android:src="@color/colorBackground"
-    android:id="@+id/imageView3"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_taglist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBackground"
+        app:titleTextColor="@android:color/white"
         android:layout_alignParentTop="true"
+        android:elevation="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:layout_width="350dp"
-        android:layout_height="40dp"
-        android:textSize="30dp"
-        android:text="Selecione uma categoria"
-        android:textColor="@android:color/white"
-        tools:text="Selecione uma categoria"
-        android:textStyle="bold"
-        android:id="@+id/list_title"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="27dp" />
+        android:layout_alignParentEnd="true"></android.support.v7.widget.Toolbar>
 
 
     <ListView
@@ -37,11 +28,9 @@
         android:layout_height="510dp"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:layout_centerInParent="true"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="-13dp"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/imageView3"
+        android:layout_below="@+id/toolbar_taglist"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"></ListView>
 

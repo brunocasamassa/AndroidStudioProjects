@@ -17,6 +17,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
+import java.io.ByteArrayOutputStream;
+
 public class FullScreenImageActivity extends AppCompatActivity {
 
     private TouchImageView mImageView;
@@ -85,8 +87,12 @@ public class FullScreenImageActivity extends AppCompatActivity {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 progressDialog.dismiss();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                resource.compress(Bitmap.CompressFormat.PNG, 80, stream);
+                //Glide.with(FullScreenImageActivity.this).load(resource).asBitmap().into(mImageView);
                 mImageView.setImageBitmap(resource);
-                //refresh();
+
+
             }
 
             @Override
@@ -97,9 +103,8 @@ public class FullScreenImageActivity extends AppCompatActivity {
         });
     }
 
-
     private void refresh() {
-        Intent intent = getIntent();
+        Intent intent = new Intent(FullScreenImageActivity.this, FullScreenImageActivity.class);
         finish();
         System.out.println("REFRESHED");
         startActivity(intent);

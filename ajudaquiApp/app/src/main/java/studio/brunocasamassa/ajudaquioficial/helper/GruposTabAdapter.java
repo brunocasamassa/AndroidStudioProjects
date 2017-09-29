@@ -44,6 +44,7 @@ public class GruposTabAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
+
         return tituloAbas[position];
     }
 

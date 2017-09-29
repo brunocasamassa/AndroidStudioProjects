@@ -102,6 +102,7 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
             pedido.setDescricao(extra.getString("descricao"));
             pedido.setTitulo(extra.getString("titulo"));
             pedido.setGrupo(extra.getString("tagsGrupo"));
+            pedido.setDadosDoador(extra.getString("dadosDoador"));
             pedido.setLongitude(extra.getDouble("longitude"));
             pedido.setLatitude(extra.getDouble("latitude"));
             pedido.setStatus(extra.getInt("status"));
@@ -115,11 +116,10 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
 
             // --> came from which activity
             cameFrom = extra.getInt("cameFrom");
-
         }
 
         System.out.println("donation " + pedido.getTitulo());
-        toolbar.setTitle(pedido.getTitulo().toUpperCase());
+        toolbar.setTitle("Detalhe da Doação");
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
 
@@ -132,7 +132,7 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
         nomePedido.setText(pedido.getTitulo());
 
         endereco.setText(pedido.getEndereco());
-        donationContact.setText(pedido.getDonationContact());
+        donationContact.setText(pedido.getDonationContact() + "  -  "+ String.valueOf(pedido.getDadosDoador()));
         descricao.setText(pedido.getDescricao());
 
         if (cameFrom == 1) {
@@ -141,6 +141,7 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     cancelarDoacao();
+
                 }
             });
         }
@@ -153,6 +154,7 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
                 }
             });
         }
+
         if (cameFrom == 3) {
             donationButton.setText("CONFIRMAR ENTREGA");
             donationButton.setOnClickListener(new View.OnClickListener() {
@@ -200,7 +202,6 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
         }).create().show();
 
     }
-
     private void cancelarDoacao() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(DoacaoCriadaActivity.this);
         alertDialog.setTitle("Cancelar doação?");
@@ -241,6 +242,7 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
                     }
                 });
                 Toast.makeText(getApplicationContext(), "Voce cancelou as doações restantes", Toast.LENGTH_SHORT).show();
+                finish();
             }
 
         });
@@ -308,12 +310,10 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
         }
     }
 
-
     private void receberDoacao() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(DoacaoCriadaActivity.this);
-
         alertDialog.setTitle("Receber Doação");
-        alertDialog.setMessage("Digite o CPF do receptor da doação:");
+        alertDialog.setMessage("Digite o RG do recebedor da doação:");
         alertDialog.setCancelable(false);
 
         final EditText edit = new EditText(DoacaoCriadaActivity.this);
@@ -373,6 +373,7 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
                                         pedidoDoado.setTagsCategoria(pedido.getTagsCategoria());
                                         pedidoDoado.setTipo(pedido.getTipo());
                                         pedidoDoado.setTitulo(pedido.getTitulo());
+                                        pedidoDoado.setDadosDoador(pedido.getDadosDoador());
 
                                         pedidoDoado.setAtendenteId(userKey);
                                         pedidoDoado.setQtdAtual(pedido.getQtdAtual() - 1);
@@ -449,9 +450,9 @@ public class DoacaoCriadaActivity extends AppCompatActivity {
         SendEmailAsyncTask email = new SendEmailAsyncTask();
         email.m = new Mail(Base64Decoder.decoderBase64(ajudaquimail), Base64Decoder.decoderBase64(ajudaquipass));
         email.m.set_from("ajudaquisuporte@gmail.com");
-        email.m.setBody("Voce recebeu este email pois o usuario " + donationRecepterUser + " solicitou sua doacao de " + nomeDoacao + ".\n" + "Documento do usuario para validação: " + docValidator);
+        email.m.setBody("Você recebeu este email pois o usuario " + donationRecepterUser + " solicitou sua doação de " + nomeDoacao + ".\n" + "Documento do usuario para validação: " + docValidator);
         email.m.set_to(recipients);
-        email.m.set_subject("AJUDAQUI - ALGUEM ACEITOU SUA DOAÇÃO");
+        email.m.set_subject("AJUDAQUI - CABINE DA FARTURA - ALGUÉM ACEITOU SUA DOAÇÃO");
         email.execute();
 
     }

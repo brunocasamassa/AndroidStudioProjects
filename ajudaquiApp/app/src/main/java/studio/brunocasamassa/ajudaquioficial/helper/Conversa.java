@@ -3,60 +3,52 @@ package studio.brunocasamassa.ajudaquioficial.helper;
 
 public class Conversa {
 
-    
+    private String idUsuario;
 
-	private String idUsuario;
-    
-	private String nome;
-    
-	private String mensagem;
+    private String nome;
+
+    private String mensagem;
 
     private String time;
 
     private int chatCount = 0;
 
 
-public Conversa() {
+    public Conversa() {
     }
 
-
-public String getIdUsuario() {
+    public String getIdUsuario() {
         return idUsuario;
     }
 
-    
 
-public void setIdUsuario(String idUsuario) {
+    public void setIdUsuario(String idUsuario) {
         this.idUsuario = idUsuario;
     }
 
-    
 
-public String getNome() {
+    public String getNome() {
         return nome;
     }
 
-    
 
-public void setNome(String nome) {
+    public void setNome(String nome) {
         this.nome = nome;
     }
 
-    
 
-public String getMensagem() {
-        
-return mensagem;
-    
-}
+    public String getMensagem() {
 
-    
+        return mensagem;
 
-public void setMensagem(String mensagem) {
-        
-this.mensagem = mensagem;
-    
-}
+    }
+
+
+    public void setMensagem(String mensagem) {
+
+        this.mensagem = mensagem;
+
+    }
 
 
     public String getTime() {

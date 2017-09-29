@@ -21,8 +21,10 @@
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profileImg"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:layout_width="104dp"
+        android:layout_height="99dp"
+        android:background="@drawable/layout_bg"
+        android:backgroundTint="@color/md_white_1000"
         android:layout_alignStart="@+id/premiumTag"
         android:layout_below="@+id/toolbar_principal_configuracoes"
         android:src="@drawable/com_facebook_profile_picture_blank_square"
@@ -276,7 +278,8 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView12"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.51"></ListView>
+        app:layout_constraintVertical_bias="0.95"
+        app:layout_constraintHorizontal_bias="0.478"></ListView>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/horizontal_scroll"

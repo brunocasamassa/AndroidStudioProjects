@@ -52,12 +52,12 @@ public class LoginActivity extends AppCompatActivity {
     private EditText senha;
     private MyFirebaseInstanceIdService md = new MyFirebaseInstanceIdService();
     private FirebaseAuth autenticacao;
+    private boolean termosAceitos = true;
     private DatabaseReference firebase;
     private DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
     public static String idUser;
     private ValueEventListener valueEventListenerUsuario;
     private ImageButton backButton;
-
 
 
     @Override
@@ -198,9 +198,7 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.child(idUser).exists()) {
-                                        boolean termosAceitos = setLoggedUser();
-                                        System.out.println("USUARIOLOGADO");
-                                        abrirTelaPrincipal(termosAceitos);
+                                        setLoggedUser();
                                         Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_LONG).show();
                                     } else {
                                         createUserInDB();
@@ -251,7 +249,7 @@ public class LoginActivity extends AppCompatActivity {
                         "Analisando dados do usuario", true);
                 usuario.setName(name.getText().toString());
                 usuario.setPremiumUser(1);
-                usuario.setMaxDistance(10);
+                usuario.setMaxDistance(30);
                 usuario.setTermosAceitos(false);
                 usuario.setSenha(Base64Decoder.encoderBase64(usuario.getSenha()));
                 usuario.setEmail(usuario.getEmail());
@@ -292,8 +290,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private boolean setLoggedUser() {
-        final boolean[] termosAceitos = new boolean[1];
+    public void setLoggedUser() {
         //IF EXISTS
         DatabaseReference dbLogin = FirebaseConfig.getFireBase()
                 .child("usuarios");
@@ -302,8 +299,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User usuarioRecuperado = dataSnapshot.getValue(User.class);
-                termosAceitos[0] = usuarioRecuperado.isTermosAceitos();
-                System.out.println("LA: Data Changed " + usuarioRecuperado);
+                termosAceitos = usuarioRecuperado.isTermosAceitos();
+                usuarioRecuperado.setMaxDistance(30);
+                System.out.println("LA: Data Changed " + usuarioRecuperado + "termos aceitos: "+ termosAceitos );
                 Preferences preferencias = new Preferences(LoginActivity.this);
                 preferencias.saveData(idUser, usuarioRecuperado.getName());
 
@@ -327,6 +325,8 @@ public class LoginActivity extends AppCompatActivity {
                 md.onTokenRefresh();
                 usuarioRecuperado.save();
 
+                abrirTelaPrincipal(termosAceitos);
+
             }
 
             @Override
@@ -334,7 +334,6 @@ public class LoginActivity extends AppCompatActivity {
                 System.out.println("CANCELADO " + databaseError);
             }
         });
-        return termosAceitos[0];
     }
 
     private void showAnotherVerifyMessage() {
@@ -363,14 +362,17 @@ public class LoginActivity extends AppCompatActivity {
     private void abrirTelaPrincipal(boolean termosAceitos) {
         Intent intent = new Intent(LoginActivity.this, PedidosActivity.class);
         Intent termos = new Intent(LoginActivity.this, TermosActivity.class);
-        termos.putExtra("cameFrom",0);
+        termos.putExtra("cameFrom", 0);
+
+        System.out.println("termos abrir tela principal "+ termosAceitos);
         Preferences preferences = new Preferences(LoginActivity.this);
         preferences.saveLogin(email.getText().toString(), senha.getText().toString());
         try {
             if (termosAceitos) {
                 startActivity(intent);
+            } else if (!termosAceitos) {
+                startActivity(termos);
             }
-            startActivity(termos);
         } catch (Exception e) {
             startActivity(intent);
         }

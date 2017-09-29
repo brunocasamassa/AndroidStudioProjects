@@ -1,6 +1,9 @@
 package studio.brunocasamassa.ajudaquioficial.fragments;
 
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,6 +31,7 @@ import studio.brunocasamassa.ajudaquioficial.adapters.MyGroupsAdapter;
 import studio.brunocasamassa.ajudaquioficial.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquioficial.helper.FirebaseConfig;
 import studio.brunocasamassa.ajudaquioficial.helper.Grupo;
+import studio.brunocasamassa.ajudaquioficial.helper.Pedido;
 import studio.brunocasamassa.ajudaquioficial.helper.User;
 
 /**
@@ -84,7 +89,7 @@ public class GruposMeusgruposFragment extends Fragment {
         listView = (GridView) view.findViewById(R.id.mygroups_list);
         refresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
 
-        groupsAdapter= new MyGroupsAdapter(getContext(), grupos);
+        groupsAdapter = new MyGroupsAdapter(getContext(), grupos);
 
         if (ga.getArrayAdapterMyGroups() != null) {
             adapter = ga.getArrayAdapterMyGroups();
@@ -124,7 +129,7 @@ public class GruposMeusgruposFragment extends Fragment {
                 User user = dataSnapshot.getValue(User.class);
                 usuario.setGrupos(user.getGrupos());
                 usuario.setName(user.getName());
-                    premium = user.getPremiumUser();
+                premium = user.getPremiumUser();
             }
 
             @Override
@@ -149,11 +154,12 @@ public class GruposMeusgruposFragment extends Fragment {
 
                     Grupo grupo = dados.getValue(Grupo.class);
                     System.out.println("grupo " + grupo.getNome());
-                    if (usuario.getGrupos() != null ) {
+                    if (usuario.getGrupos() != null) {
                         if (!grupos.contains(grupo) && usuario.getGrupos().contains(grupo.getId())) {
                             grupos.add(grupo);
                         }
-                    }adapter.notifyDataSetChanged();
+                    }
+                    adapter.notifyDataSetChanged();
                 }
 
 
@@ -168,6 +174,66 @@ public class GruposMeusgruposFragment extends Fragment {
         };
 
         System.out.println("grupos usuario fora caraio " + usuario.getGrupos());
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final Grupo target = groupsAdapter.getGruposFiltrado().get(position);
+                final String groupId = target.getId();
+
+
+                    if (userKey.equals("bHVjaWFuYS4zMDIwMDlAaG90bWFpbC5jb20=") || userKey.equals("YnJ1bm9fMTk5NEBob3RtYWlsLmNvbQ==") || userKey.equals("YnJ1bm9jYXNhbWFzc2FAaG90bWFpbC5jb20=")) {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                        alert.setTitle("Apagar Grupo");
+                        alert.setMessage("Deseja apagar o grupo " + target.getNome());
+                        alert.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                final ProgressDialog progress = ProgressDialog.show(getActivity(), "Aguarde...",
+                                        "Apagando Grupo ", true); try {
+
+                                    FirebaseConfig.getFireBase().child("Pedidos").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot post : dataSnapshot.getChildren()){
+                                                Pedido pedidoComGrupo = post.getValue(Pedido.class);
+                                                if(pedidoComGrupo.getGroupId()!= null){
+                                                    if(pedidoComGrupo.getGroupId().equals(groupId)){
+                                                        pedidoComGrupo.setGroupId(null);
+                                                        pedidoComGrupo.setGrupo(null);
+                                                        pedidoComGrupo.save();
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                    Toast.makeText(getActivity(), "Grupo removido com sucesso", Toast.LENGTH_SHORT).show();
+                                    FirebaseConfig.getFireBase().child("grupos").child(target.getId()).removeValue();
+                                    FirebaseConfig.getFirebaseStorage().child("groupImages").child(target.getId() + ".jpg").delete();
+                                    refresh();
+
+                                } catch (Exception e) {
+                                    Toast.makeText(getActivity(), "Não foi possivel apagar o grupo, por favor tente novamente mais tarde", Toast.LENGTH_SHORT).show();
+                                    progress.dismiss();
+                                }
+                            }
+                        }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).create().show();
+                    }
+
+
+                return false;
+            }
+        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -190,7 +256,6 @@ public class GruposMeusgruposFragment extends Fragment {
 
             }
         });
-
 
         return view;
 

@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
@@ -139,8 +140,8 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
                 }
 
             storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
-            storageDonation = FirebaseConfig.getFirebaseStorage().child("donationImages");
 
+            storageDonation = FirebaseConfig.getFirebaseStorage().child("donationImages");
             try {
                 nomePedido.setText(String.valueOf(pedido.getTitulo().substring(0, 17) )+ "...");
                 System.out.println("DADOS PEDIDO NO ADAPTER: " + pedido.getTitulo());
@@ -161,14 +162,14 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
             if(pedido.getTipo().equals("Doacoes")){
                 donationqtd.setText(String.valueOf(pedido.getQtdAtual())+"/"+String.valueOf(pedido.getQtdDoado()));
                 donationqtd.setTextColor(Color.argb(255,20,118,122));
-                storageDonation.child(pedido.getIdPedido()+ ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                storageDonation.child(pedido.getIdPedido()+ ".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                     @Override
                     public void onSuccess(Uri uri) {
                         System.out.println("grupo " + pedido.getGrupo());
                         try {
-                            //Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
-                            Picasso.with(getContext()).load(uri).resize(68, 68).into(pedidoImg);
+                            Glide.with(getContext()).load(uri).override(68, 68).into(pedidoImg);
+                           // Picasso.with(getContext()).load(uri).resize(680, 680).into(pedidoImg);
                         } catch (Exception e) {
                             pedidoImg.setImageURI(uri);
                             System.out.println("EXCEPTION PedidosAdapter " + e);
@@ -199,7 +200,7 @@ public class PedidosMeusPedidosAdapter extends ArrayAdapter<Pedido> {
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-
+                        Picasso.with(getContext()).load(R.drawable.logo).into(pedidoImg);
                     }
                 });
             } else Picasso.with(getContext()).load(R.drawable.logo).into(pedidoImg);

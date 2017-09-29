@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,6 +40,7 @@ public class PedidoAddGroupsList extends AppCompatActivity {
     public String selectedGroup;
     private ProgressDialog dialog = null;
     private TextView title;
+    private Toolbar toolbar;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -48,9 +50,18 @@ public class PedidoAddGroupsList extends AppCompatActivity {
         groups = new ArrayList<>();
         idGroups = new ArrayList<>();
         groupView = (ListView) findViewById(R.id.tagsList);
-        title = (TextView) findViewById(R.id.list_title);
-        title.setText("  Selecione um Grupo");
-final DatabaseReference dbGroup =FirebaseConfig.getFireBase().child("grupos");
+        toolbar = (Toolbar) findViewById(R.id.toolbar_taglist);
+
+        toolbar.setTitle("  Selecione um Grupo");
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        final DatabaseReference dbGroup = FirebaseConfig.getFireBase().child("grupos");
         groupsRefs = FirebaseConfig.getFireBase();
         groupsRefs.child("usuarios").child(userKey);
         //dialog.show(TagsList.this, "Por favor aguarde", "Recebendo Tags...", true);
@@ -58,11 +69,10 @@ final DatabaseReference dbGroup =FirebaseConfig.getFireBase().child("grupos");
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if(dataSnapshot.child("usuarios").child(userKey).child("grupos").getChildren() == null){
+                if (dataSnapshot.child("usuarios").child(userKey).child("grupos").getChildren() == null) {
                     Toast.makeText(getApplicationContext(), "Você não possui nenhum Grupo", Toast.LENGTH_SHORT).show();
                     finish();
-                }
-                else{
+                } else {
                     for (final DataSnapshot dados : dataSnapshot.child("usuarios").child(userKey).child("grupos").getChildren()) {
                         System.out.println("group ADAPTER " + groupAdapter);
                         System.out.println("group EXTRAIDA NO grouplist " + dados.getValue());
@@ -83,8 +93,8 @@ final DatabaseReference dbGroup =FirebaseConfig.getFireBase().child("grupos");
                                     System.out.println("excepetion " + e);
                                 }
 
-
                                 System.out.println("groups size " + groups.size());
+
                                 groupAdapter = new ArrayAdapter(getBaseContext(), android.R.layout.simple_list_item_2,
                                         android.R.id.text1,
                                         groups);

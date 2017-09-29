@@ -48,7 +48,8 @@
         app:layout_constraintTop_toBottomOf="@+id/textView5"
         app:layout_constraintLeft_toLeftOf="@+id/textView5"
         app:layout_constraintVertical_bias="0.0"
-        app:layout_constraintBottom_toBottomOf="parent"></co.lujun.androidtagview.TagContainerLayout>
+        android:layout_marginLeft="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/create_pedido_button"></co.lujun.androidtagview.TagContainerLayout>
 
     <EditText
         android:id="@+id/create_pedido_description"

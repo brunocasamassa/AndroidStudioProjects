@@ -43,9 +43,11 @@ public class Utils {
 
             return pessoa;
         }catch (JSONException e){
+
             System.out.println("JSON EXCEPTION CARAIO:" +e);
             e.printStackTrace();
             return null;
+
         }
     }
 

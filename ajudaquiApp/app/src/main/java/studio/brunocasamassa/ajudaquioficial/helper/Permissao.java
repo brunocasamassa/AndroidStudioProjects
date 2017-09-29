@@ -27,9 +27,11 @@ public class Permissao {
 
                 Boolean validaPermissao = ContextCompat.checkSelfPermission(activity, permissao) == PackageManager.PERMISSION_GRANTED;
 
+            System.out.println("PERMISSAO "+ permissao.toString() + " "+ validaPermissao);
                 if (!validaPermissao) listaPermissoes.add(permissao);
 
             }
+
             /*Lista vazia de permissoes*/
             if (listaPermissoes.isEmpty())return true;
             String[] novasPermissoes = new String[listaPermissoes.size()];
@@ -39,8 +41,9 @@ public class Permissao {
             System.out.println("vim ate aqui");
             ActivityCompat.requestPermissions(activity, novasPermissoes, requestCode);
 
+
         }
 
-        return true;
+        return false;
     }
 }

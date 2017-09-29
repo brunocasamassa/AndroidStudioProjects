@@ -3,6 +3,12 @@ package studio.brunocasamassa.ajudaquioficial.helper;
 /**
  * Created by bruno on 31/07/2017.
  */
+
+import android.content.res.AssetManager;
+import android.text.Html;
+import android.view.View;
+
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Properties;
 
@@ -21,6 +27,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 /**
  * Created by brandonjenniges on 11/6/15.
  */
@@ -31,10 +39,13 @@ public class Mail extends javax.mail.Authenticator {
     private String[] _to;
     private String _from;
 
+
+    private Html _html;
     private String _port;
     private String _sport;
 
     private String _host;
+    private View _view;
 
     private String _subject;
     private String _body;
@@ -50,12 +61,13 @@ public class Mail extends javax.mail.Authenticator {
         _port = "465"; // default smtp port
         _sport = "465"; // default socketfactory port
 
+
         _user = ""; // username
         _pass = ""; // password
         _from = ""; // email sent from
         _subject = ""; // email subject
         _body = ""; // email body
-
+        _view = null;
         _debuggable = false; // debug mode on or off - default off
         _auth = true; // smtp authentication - default on
 
@@ -104,6 +116,12 @@ public class Mail extends javax.mail.Authenticator {
             // setup message body
             BodyPart messageBodyPart = new MimeBodyPart();
             messageBodyPart.setText(_body);
+            AssetManager am = getApplicationContext().getAssets();
+            InputStream is = null;
+
+            DataSource source = new FileDataSource("invite.jpg");
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName("invite.jpg");
             _multipart.addBodyPart(messageBodyPart);
 
             msg.setHeader("X-Priority", "1");
@@ -133,6 +151,7 @@ public class Mail extends javax.mail.Authenticator {
         return new PasswordAuthentication(_user, _pass);
     }
 
+
     private Properties _setProperties() {
         Properties props = new Properties();
 
@@ -159,6 +178,7 @@ public class Mail extends javax.mail.Authenticator {
     public String getBody() {
         return _body;
     }
+
 
     public void setBody(String _body) {
         this._body = _body;
@@ -250,5 +270,21 @@ public class Mail extends javax.mail.Authenticator {
 
     public void set_multipart(Multipart _multipart) {
         this._multipart = _multipart;
+    }
+
+    public View get_view() {
+        return _view;
+    }
+
+    public void set_view(View _view) {
+        this._view = _view;
+    }
+
+    public Html get_html() {
+        return _html;
+    }
+
+    public void set_html(Html _html) {
+        this._html = _html;
     }
 }

@@ -21,6 +21,8 @@ public class Pedido {
 
     private Double latitude;
 
+    //Doação é requerimento ou oferecimento(pedidndo ou doando) == 0 , 1
+    private int donationType;
     private String donationContact;
     private String endereco;
 
@@ -120,6 +122,7 @@ public class Pedido {
     private String Titulo;
     private String Descricao;
     private ArrayList<String> tagsCategoria = new ArrayList<String>();
+    private String dadosDoador;
 
     public String getCriadorId() {
         return criadorId;
@@ -192,12 +195,30 @@ public class Pedido {
         this.qtdAtual = qtdAtual;
     }
 
+    public String getDadosDoador() {
+        return dadosDoador;
+    }
+
+    public void setDadosDoador(String dadosDoador) {
+        this.dadosDoador = dadosDoador;
+    }
+
+    public int getDonationType() {
+        return donationType;
+    }
+
+    public void setDonationType(int donationType) {
+        this.donationType = donationType;
+    }
+
+
 
 /* STATUS
 aberto - 0
 em andamento - 1
 finalizado - 2
 cancelado - 3
+doacoes- 5
 */
 
 

@@ -19,6 +19,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import org.afinal.simplecache.ACache;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ public class ConversaAdapter extends ArrayAdapter<Conversa> {
     private ArrayList<Conversa> conversas;
     private Context context;
     private StorageReference storage;
+    private ACache mCache;
 
     public ConversaAdapter(Context c, ArrayList<Conversa> objects) {
         super(c, 0, objects);
@@ -48,6 +51,7 @@ public class ConversaAdapter extends ArrayAdapter<Conversa> {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View view = null;
+        mCache = ACache.get(getContext());
 
         // Verifica se a lista está preenchida
         if (conversas != null) {
@@ -76,72 +80,104 @@ public class ConversaAdapter extends ArrayAdapter<Conversa> {
             Conversa conversa = conversas.get(position);
 
             try {
-                nome.setText(String.valueOf(conversa.getNome().substring(0,30) )+ "...");
+                nome.setText(String.valueOf(conversa.getNome().substring(0, 30)) + "...");
                 System.out.println("DADOS PEDIDO NO ADAPTER: " + conversa.getNome());
-            } catch (Exception e){
+            } catch (Exception e) {
                 nome.setText(conversa.getNome());
             }
 
             ultimaMensagem.setText(conversa.getMensagem());
 
-            if(conversa.getChatCount() >0){
-               time.setTextColor(Color.argb(255,255,64,128));
+            if (conversa.getChatCount() > 0) {
+                time.setTextColor(Color.argb(255, 255, 64, 128));
                 chatCount.setBackgroundResource(R.drawable.layout_bg);
                 chatCount.setTextColor(Color.WHITE);
+                chatCount.setText(String.valueOf(conversa.getChatCount()));
             }
-            chatCount.setText(String.valueOf(conversa.getChatCount()));
 
-            String idUser = conversa.getIdUsuario();
+
+            final String idUser = conversa.getIdUsuario();
+            final String imgKey = "imgKey: " + idUser;
+
             if (conversa.getTime() != null) {
                 time.setText(conversa.getTime());
             } else time.setText(currentTime);
             firebase = FirebaseConfig.getFireBase().child("usuarios").child(idUser);
 
             storage = FirebaseConfig.getFirebaseStorage().child("userImages");
-
-            storage.child(idUser + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    try {
-                        //Glide.with(getContext()).load(uri).override(68, 68).into(img);
-                        Picasso.with(getContext()).load(uri).resize(68, 68).into(img);
-                        System.out.println("user image chat " + uri);
-
-                    } catch (Exception e){
-                        img.setImageURI(uri);
-                        System.out.println("exception error" + e);
-                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-
-                    firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+            String cacheData = mCache.getAsString(imgKey);
+            if (cacheData != null) {
+                Picasso.with(getContext()).load(cacheData).resize(680, 680).into(img);
+            } else {
+                firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        try {
                             User user = dataSnapshot.getValue(User.class);
+                            final String facebookUri = user.getProfileImg();
 
-                            if (user.getProfileImg() != null || user.getProfileImageURL() != null) {
-                                //Glide.with(getContext()).load(user.getProfileImg()).into(img);
-                                Picasso.with(getContext()).load(user.getProfileImg()).into(img);
-                                System.out.println("user image chat " + user.getProfileImg());
+                            storage.child(idUser + ".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    try {
+                                        //Glide.with(getContext()).load(uri).override(68, 68).into(img);
+                                        Picasso.with(getContext()).load(uri).resize(680, 680).into(img);
+                                        mCache.put(imgKey, uri.toString(), 2 * ACache.TIME_DAY);
+                                        System.out.println("user image chat " + uri);
 
-                            }
+                                    } catch (Exception e) {
+                                        mCache.put(imgKey, uri.toString(), 2 * ACache.TIME_DAY);
+                                        img.setImageURI(uri);
+                                        System.out.println("exception error" + e);
+                                    }
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
 
+                                    storage.child(idUser + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            try {
+                                                //Glide.with(getContext()).load(uri).override(68, 68).into(img);
+                                                Picasso.with(getContext()).load(uri).resize(68, 68).into(img);
+                                                mCache.put(imgKey, uri.toString(), 2 * ACache.TIME_DAY);
+                                                System.out.println("user image chat " + uri);
+
+                                            } catch (Exception e) {
+                                                Picasso.with(getContext()).load(facebookUri).resize(68, 68).into(img);
+                                                mCache.put(imgKey, uri.toString(), 2 * ACache.TIME_DAY);
+                                                System.out.println("exception error" + e);
+                                            }
+
+                                        }
+                                    });
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    if (facebookUri != null) {
+                                        Picasso.with(getContext()).load(facebookUri).resize(68, 68).into(img);
+                                        mCache.put(imgKey, facebookUri.toString(), 2 * ACache.TIME_DAY);
+                                        System.out.println("exception error" + e);
+                                    }
+                                }
+                            });
+
+                        } catch (Exception e) {
+                            System.out.println("Exception getting user chat image " + e);
                         }
+                    }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                    }
+                });
 
-                }
-            });
-
-
+            }
         }
-
         return view;
     }
 }

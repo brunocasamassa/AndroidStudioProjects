@@ -103,6 +103,9 @@ public class PerfilActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
 
+
+        freeMemory();
+
         final ListView notificacoes = (ListView) findViewById(R.id.perfil_notificacoes);
         profileImg = (CircleImageView) findViewById(R.id.profileImg);
         profileName = (TextView) findViewById(R.id.profileName);
@@ -115,7 +118,8 @@ public class PerfilActivity extends AppCompatActivity {
         horizontal = (RecyclerView) findViewById(R.id.horizontal_scroll);
         final LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.HORIZONTAL);
-        if (profileName.getText().length() < 13){
+
+        if (profileName.getText().length() < 13) {
             userCredits.setTranslationX(Float.valueOf(-10));
         }
 
@@ -214,14 +218,13 @@ public class PerfilActivity extends AppCompatActivity {
 
                 //BADGES TREATMENT
                 ArrayList<Integer> array = new ArrayList<Integer>();
-                if(usuario.getMedalhas() != null) {
+                if (usuario.getMedalhas() != null) {
                     user.setMedalhas(usuario.getMedalhas());
                 }
                 array.addAll(verifyMedals());
                 user.setMedalhas(array);
                 horizontal.setLayoutManager(llm);
-                horizontal.setAdapter(new MedalhasAdapter(array));
-
+                horizontal.setAdapter(new MedalhasAdapter(array, PerfilActivity.this));
 
 
                 //SETTING VALUES TO THE VIEW
@@ -235,21 +238,120 @@ public class PerfilActivity extends AppCompatActivity {
                 } else pedidosFeitos.setText("" + 0);
                 pontosConquistados.setText(String.valueOf(usuario.getPontos()));
 
-                storage.child(userKey + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        profileImg.setBackgroundColor(Color.TRANSPARENT);
-                        Picasso.with(PerfilActivity.this).load(uri).resize(680, 680).into(profileImg);
-                        System.out.println("my groups lets seee2 " + uri);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
-                            Picasso.with(PerfilActivity.this).load(usuario.getProfileImg()).into(profileImg);
+                try {
+                    storage.child(userKey + ".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            profileImg.setBackgroundColor(Color.TRANSPARENT);
+                            Picasso.with(PerfilActivity.this).load(uri).resize(1000, 1000).noFade().into(profileImg);
+                            System.out.println("my groups lets seee2 " + uri);
+
+                            //for better scale adjust
+
+                       /* try {
+                            InputStream imageStream = getContentResolver().openInputStream(uri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
+                            Log.d("image", String.valueOf(bitmap));
+                            //Bitmap resized = Bitmap.createScaledBitmap(bitmap, circleImageView.getWidth(), circleImageView.getHeight(), true);
+                            try {
+                                Bitmap resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                                profileImg.setBackgroundColor(Color.TRANSPARENT);
+                                profileImg.setImageBitmap(resized);
+                            } catch (Exception e) {
+                                System.out.println("memory error " + e);
+                                //resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            System.out.println("error in get image " + e.toString());
+                        }*/
                         }
-                    }
-                });
+
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            storage.child(userKey + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    profileImg.setBackgroundColor(Color.TRANSPARENT);
+                                    Picasso.with(PerfilActivity.this).load(uri).resize(1000, 1000).noFade().into(profileImg);
+                                    System.out.println("my groups lets seee2 " + uri);
+
+                                    //for better scale adjust
+
+                       /* try {
+                            InputStream imageStream = getContentResolver().openInputStream(uri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
+                            Log.d("image", String.valueOf(bitmap));
+                            //Bitmap resized = Bitmap.createScaledBitmap(bitmap, circleImageView.getWidth(), circleImageView.getHeight(), true);
+                            try {
+                                Bitmap resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                                profileImg.setBackgroundColor(Color.TRANSPARENT);
+                                profileImg.setImageBitmap(resized);
+                            } catch (Exception e) {
+                                System.out.println("memory error " + e);
+                                //resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            System.out.println("error in get image " + e.toString());
+                        }*/
+                                }
+
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
+                                        Picasso.with(PerfilActivity.this).load(usuario.getProfileImg()).into(profileImg);
+                                    }
+                                }
+                            });
+
+                        }
+                    });
+                } catch (Exception e) {
+                    storage.child(userKey + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            profileImg.setBackgroundColor(Color.TRANSPARENT);
+                            Picasso.with(PerfilActivity.this).load(uri).resize(1000, 1000).noFade().into(profileImg);
+                            System.out.println("my groups lets seee2 " + uri);
+
+                            //for better scale adjust
+
+                       /* try {
+                            InputStream imageStream = getContentResolver().openInputStream(uri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
+                            Log.d("image", String.valueOf(bitmap));
+                            //Bitmap resized = Bitmap.createScaledBitmap(bitmap, circleImageView.getWidth(), circleImageView.getHeight(), true);
+                            try {
+                                Bitmap resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                                profileImg.setBackgroundColor(Color.TRANSPARENT);
+                                profileImg.setImageBitmap(resized);
+                            } catch (Exception e) {
+                                System.out.println("memory error " + e);
+                                //resized = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 1.6), (int) (bitmap.getHeight() * 1.6), true);
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            System.out.println("error in get image " + e.toString());
+                        }*/
+                        }
+
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            if (dataSnapshot.child("profileImg").exists()) { //todo bug manual register or facebook register
+                                Picasso.with(PerfilActivity.this).load(usuario.getProfileImg()).into(profileImg);
+                            }
+                        }
+                    });
+
+
+                }
 
                 /*
                 usuario.setId(userKey);
@@ -387,7 +489,7 @@ public class PerfilActivity extends AppCompatActivity {
                 for (int i = 0; i < NUMBER_BADGES; i++) {
                     try {
                         medals.add(i, 0);
-                        System.out.println("printing black in position "+ i);
+                        System.out.println("printing black in position " + i);
 
                     } catch (Exception e) {
                         System.out.println("error getting medals 1 " + e.getLocalizedMessage());
@@ -395,7 +497,7 @@ public class PerfilActivity extends AppCompatActivity {
                 }
             }
 
-            DatabaseReference dbUser =FirebaseConfig.getFireBase().child("usuarios");
+            DatabaseReference dbUser = FirebaseConfig.getFireBase().child("usuarios");
             dbUser.child(userKey).child("medalhas").setValue(medals);
         } catch (Exception e) {
             System.out.println("error getting medals 2 " + e.getLocalizedMessage());
@@ -411,11 +513,11 @@ public class PerfilActivity extends AppCompatActivity {
                     try {
                         if (user.getPedidosAtendidos() != null && user.getPedidosAtendidos().size() >= 1) {
                             if (!user.getMedalhas().get(0).equals(1)) {
-                                medals.set(0,1); //primeiro pedido
+                                medals.set(0, 1); //primeiro pedido
                                 user.setMedalhas(medals);
-                                user.setPontos(user.getPontos()+10);
+                                user.setPontos(user.getPontos() + 10);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    Toasty.custom(getApplicationContext(), "Yeah! Você atendeu o primeiro pedido. Que legal!!", getDrawable(R.drawable.logo),
+                                    Toasty.custom(getApplicationContext(), getString(R.string.medalha1_message), getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
                                 }
                             }
@@ -429,9 +531,9 @@ public class PerfilActivity extends AppCompatActivity {
                             if (!user.getMedalhas().get(1).equals(2)) {
                                 medals.set(1, 2);   // 3 pedidos
                                 user.setMedalhas(medals);
-                                user.setPontos(user.getPontos()+50);
+                                user.setPontos(user.getPontos() + 50);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    Toasty.custom(getApplicationContext(), "Uau! Você já atendeu 3 pedidos. Continue assim :D", getDrawable(R.drawable.logo),
+                                    Toasty.custom(getApplicationContext(), getString(R.string.medalha2_message), getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
                                 }
                             }
@@ -445,9 +547,9 @@ public class PerfilActivity extends AppCompatActivity {
                             if (!user.getMedalhas().get(2).equals(3)) {
                                 medals.set(2, 3);   // 10 pedidos
                                 user.setMedalhas(medals);
-                                user.setPontos(user.getPontos()+100);
+                                user.setPontos(user.getPontos() + 100);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    Toasty.custom(getApplicationContext(), "Você já é um expert! São 10 pedidos atendidos", getDrawable(R.drawable.logo),
+                                    Toasty.custom(getApplicationContext(), getString(R.string.medalha3_message), getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
                                 }
                             }
@@ -460,9 +562,9 @@ public class PerfilActivity extends AppCompatActivity {
                             if (!user.getMedalhas().get(3).equals(4)) {
                                 medals.set(3, 4);   // primeiro pedido meu ajudado
                                 user.setMedalhas(medals);
-                                user.setPontos(user.getPontos()+10);
+                                user.setPontos(user.getPontos() + 10);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    Toasty.custom(getApplicationContext(), "Parabens, voce realizou seu primeiro pedido", getDrawable(R.drawable.logo),
+                                    Toasty.custom(getApplicationContext(), getString(R.string.medalha4_message), getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
                                 }
                             }
@@ -479,9 +581,9 @@ public class PerfilActivity extends AppCompatActivity {
                                 if (!user.getMedalhas().get(4).equals(5)) {
                                     medals.set(4, 5);   // 3 pedidos atendidos
                                     user.setMedalhas(medals);
-                                    user.setPontos(user.getPontos()+50);
+                                    user.setPontos(user.getPontos() + 50);
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                        Toasty.custom(getApplicationContext(), "Você esta com tudo hein? Você já teve 3 pedidos atendidos", getDrawable(R.drawable.logo),
+                                        Toasty.custom(getApplicationContext(), getString(R.string.medalha5_message), getDrawable(R.drawable.logo),
                                                 Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
                                     }
                                 }
@@ -499,9 +601,9 @@ public class PerfilActivity extends AppCompatActivity {
                                 if (!user.getMedalhas().get(5).equals(6)) {
                                     medals.set(5, 6);   // 10 pedidos atendidos
                                     user.setMedalhas(medals);
-                                    user.setPontos(user.getPontos()+100);
+                                    user.setPontos(user.getPontos() + 100);
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                        Toasty.custom(getApplicationContext(), "Sensacional, 10 pessoas te ajudaram", getDrawable(R.drawable.logo),
+                                        Toasty.custom(getApplicationContext(), getString(R.string.medalha6_message), getDrawable(R.drawable.logo),
                                                 Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
                                     }
                                 }
@@ -516,9 +618,9 @@ public class PerfilActivity extends AppCompatActivity {
                             if (!user.getMedalhas().get(6).equals(7)) {
                                 medals.set(6, 7);   // primeiro grupo
                                 user.setMedalhas(medals);
-                                user.setPontos(user.getPontos()+50);
+                                user.setPontos(user.getPontos() + 50);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    Toasty.custom(getApplicationContext(), "Muito bem! Você entrou no seu primeiro grupo!", getDrawable(R.drawable.logo),
+                                    Toasty.custom(getApplicationContext(), getString(R.string.medalha7_message), getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
                                 }
                             }
@@ -532,9 +634,9 @@ public class PerfilActivity extends AppCompatActivity {
                             if (!user.getMedalhas().get(7).equals(8)) {
                                 medals.set(7, 8);   // 3 grupos
                                 user.setMedalhas(medals);
-                                user.setPontos(user.getPontos()+200);
+                                user.setPontos(user.getPontos() + 200);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    Toasty.custom(getApplicationContext(), "Você está ficando bom nisso hein? Você já faz parte de 3 grupos", getDrawable(R.drawable.logo),
+                                    Toasty.custom(getApplicationContext(), getString(R.string.medalha8_message), getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
                                 }
                             }
@@ -547,9 +649,9 @@ public class PerfilActivity extends AppCompatActivity {
                             if (!user.getMedalhas().get(8).equals(9)) {
                                 medals.set(8, 9);   // primeiro grupo
                                 user.setMedalhas(medals);
-                                user.setPontos(user.getPontos()+500);
+                                user.setPontos(user.getPontos() + 500);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    Toasty.custom(getApplicationContext(), "Que fantástico!São 10 grupos que você participa", getDrawable(R.drawable.logo),
+                                    Toasty.custom(getApplicationContext(), getString(R.string.medalha9_message), getDrawable(R.drawable.logo),
                                             Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
                                 }
                             }
@@ -667,6 +769,12 @@ public class PerfilActivity extends AppCompatActivity {
         }
     }
 
+    public void freeMemory(){
+        System.runFinalization();
+        Runtime.getRuntime().gc();
+        System.gc();
+    }
+
     private void addGroupIntoUser(User user, String grupoSolicitado, String userKeySolicitante) {
 
         System.out.println("USER SOLICITANTE: " + userKeySolicitante);
@@ -721,4 +829,6 @@ public class PerfilActivity extends AppCompatActivity {
         }
 
     }
+
+
 }

@@ -8,6 +8,8 @@
 
     <include
         android:id="@+id/tb_conversa"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         layout="@layout/toolbar"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"

@@ -40,7 +40,6 @@ public class GrupoAbertoMeusPedidosFragment extends Fragment {
     private int qtdMembros;
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -117,8 +116,12 @@ public class GrupoAbertoMeusPedidosFragment extends Fragment {
                 intent.putExtra("idPedido", pedido.getIdPedido());
                 intent.putExtra("criadorId", pedido.getCriadorId());
                 intent.putExtra("tipo", pedido.getTipo());
+                if(pedido.getTipo().equals("Doacao")){
+                    intent.putExtra("donationType", pedido.getDonationType());
+                }
                 if (pedido.getGrupo() != null) {
                     intent.putExtra("tagsGrupo", pedido.getGrupo());
+                    intent.putExtra("groupId", pedido.getGroupId());
                 }
                 intent.putExtra("descricao", pedido.getDescricao());
                 arraylist_nomes.clear();

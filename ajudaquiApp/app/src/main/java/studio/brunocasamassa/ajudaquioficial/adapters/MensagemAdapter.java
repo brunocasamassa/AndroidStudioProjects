@@ -76,7 +76,7 @@ public class MensagemAdapter extends ArrayAdapter<Mensagem> {
             }
             if (trigger == 2) {
                 image.setBackgroundResource(R.drawable.squared_corner_message_right);
-                Glide.with(image.getContext()).load(mensagem.getFile().getUrl_file()).override(68, 68).fitCenter().into(image);
+                Glide.with(image.getContext()).load(mensagem.getFile().getUrl_file()).override(68,68).into(image);
             }
             if (trigger == 3) {
                 textoMensagem.setText(mensagem.getMensagem());

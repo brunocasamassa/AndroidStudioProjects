@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,12 +20,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import me.gujun.android.taggroup.TagGroup;
 import studio.brunocasamassa.ajudaquioficial.ChatActivity;
 import studio.brunocasamassa.ajudaquioficial.ConversasActivity;
@@ -43,6 +50,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
     private TextView descricao;
     private ImageView pedidoChat;
     private TagGroup tagsCategoria;
+    private int donationType;
     private TagGroup tagsGrupo;
     private ImageView statusImage;
     private Button finalizarPedido;
@@ -50,7 +58,9 @@ public class PedidoCriadoActivity extends AppCompatActivity {
     private String userKey = Base64Decoder.encoderBase64(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     private User user = new User();
     private String keyAtendente;
-    private boolean trigger = false;
+    private boolean trigger = true;
+    private CircleImageView circleImgGroup;
+    private TextView textNameGroup;
 
     @Override
     protected void onStart() {
@@ -67,6 +77,8 @@ public class PedidoCriadoActivity extends AppCompatActivity {
         my_layout = (ConstraintLayout) findViewById(R.id.layout_my_pedido);
         pedidoChat = (ImageView) findViewById(R.id.chat_pedido);
         statusImage = (ImageView) findViewById(R.id.status_image_criado);
+        circleImgGroup = (CircleImageView) findViewById(R.id.circle_img_group);
+        textNameGroup = (TextView) findViewById(R.id.text_name_group);
         toolbar = (Toolbar) findViewById(R.id.toolbar_pedido_criado);
         nomePedido = (TextView) findViewById(R.id.nome_pedido_criado);
         descricao = (TextView) findViewById(R.id.descricao_pedido_criado);
@@ -83,12 +95,19 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             pedido.setDescricao(extra.getString("descricao"));
             pedido.setTitulo(extra.getString("titulo"));
             pedido.setGrupo(extra.getString("tagsGrupo"));
+            pedido.setGroupId(extra.getString("groupId"));
             pedido.setStatus(extra.getInt("status"));
             pedido.setTipo(extra.getString("tipo"));
             pedido.setCriadorId(extra.getString("criadorId"));
             pedido.setAtendenteId(extra.getString("atendenteId"));
+            if(pedido.getTipo().equals("Doacao")){
+                donationType = extra.getInt("donationType");
+                pedido.setDonationType(donationType);
+            }
 
         }
+
+
 
         pedidoChat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +117,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                 dbConversas.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-
+                        //TO CHAT ACTIVITY
                         for (DataSnapshot post : dataSnapshot.getChildren()) {
                             Conversa conversa = post.getValue(Conversa.class);
                             if (Base64Decoder.encoderBase64(conversa.getNome()).equals(pedido.getIdPedido())) {
@@ -109,6 +128,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 finish();
                             } else {
+                                //TO CONVERSAS ACTIVITY
                                 startActivity(new Intent(PedidoCriadoActivity.this, ConversasActivity.class));
                             }
                         }
@@ -230,12 +250,17 @@ public class PedidoCriadoActivity extends AppCompatActivity {
         }
 
         String title;
+
         try {
-            title = pedido.getTitulo().substring(1, 18) + "...";
-        } catch (Exception e){
+            title = pedido.getTitulo().substring(1, 14) + "...";
+        } catch (Exception e) {
             title = pedido.getTitulo().toString();
         }
-            toolbar.setTitle(title.toUpperCase());
+        String toolbarTitle = "Detalhe do Pedido";
+        if(pedido.getTipo().equals("Doacao")){
+            toolbarTitle = "Detalhe da Doação";
+        }
+        toolbar.setTitle(toolbarTitle);
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left);
 
@@ -252,7 +277,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             tagsCategoria.setTags(pedido.getTagsCategoria());
         }
         if (pedido.getGrupo() != null) {
-            tagsGrupo.setTags(pedido.getGrupo());
+            insertGroupData(pedido.getGrupo(), pedido.getGroupId());
         }
 
         if (pedido.getStatus() == 3) {
@@ -286,6 +311,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             });
 
         } else {
+            final String finalDialogTitle = "Finalizar Pedido";
             finalizarPedido.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -295,9 +321,9 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Voce nao pode finalizar um pedido aberto", Toast.LENGTH_SHORT).show();
 
                     } else {
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoCriadoActivity.this);
 
-                        alertDialog.setTitle("Finalizar Pedido");
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(PedidoCriadoActivity.this);
+                        alertDialog.setTitle(finalDialogTitle);
                         alertDialog.setMessage("Deseja finalizar este pedido?");
                         alertDialog.setCancelable(false);
 
@@ -312,9 +338,14 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                         alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                if (pedido.getTipo().equals("Doacao") && donationType==0) {
 
-                                trigger = true;
-                                startStars(trigger);
+                                Toast.makeText(getApplicationContext(), "Você nao pode finalizar uma doação sua, esta ação é feita " +
+                                        "apenas por quem a receberá! ",Toast.LENGTH_LONG).show();
+
+                                }
+                                else {startStars(trigger);}
+
 
                             }
                         }).create().show();
@@ -372,7 +403,7 @@ public class PedidoCriadoActivity extends AppCompatActivity {
                             User user = dataSnapshot.getValue(User.class);
                             user.setPontos(user.getPontos() + rating);
                             //Toast.makeText(getApplicationContext(), String.valueOf(rating), Toast.LENGTH_SHORT).show();
-                            user.setCreditos(user.getCreditos()+1);
+                            user.setCreditos(user.getCreditos() + 1);
                             user.setId(pedido.getAtendenteId());
                             user.save();
 
@@ -395,15 +426,30 @@ public class PedidoCriadoActivity extends AppCompatActivity {
             });
             alertDialog.setView(root);
             alertDialog.show();
-           // alertDialog.setIcon(R.drawable.logo_big);
-
-
-
-
-
-                }
-            }
+            // alertDialog.setIcon(R.drawable.logo_big);
 
 
         }
+    }
+
+    private void insertGroupData(String grupo, final String groupId) {
+
+        StorageReference storage = FirebaseConfig.getFirebaseStorage().child("groupImages");
+        storage.child(groupId + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.with(getApplicationContext()).load(uri).resize(68, 68).into(circleImgGroup);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                //Toast.makeText(getApplicationContext(), groupId + e.toString(),Toast.LENGTH_LONG).show();
+                Picasso.with(getApplicationContext()).load(R.drawable.add_group_logo).resize(68, 68).into(circleImgGroup);
+            }
+        });
+
+        textNameGroup.setText(grupo.toString());
+
+    }
+}
 

@@ -28,7 +28,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
-import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -79,8 +78,6 @@ public class GrupoAbertoActivity extends AppCompatActivity {
     private Grupo grupo;
     private StorageReference storage;
     private ImageButton editName;
-    private FloatingActionMenu menuFAB;
-    private com.github.clans.fab.FloatingActionButton donationFAB;
     private FloatingActionButton pedidoFAB;
     private int premium;
     private String link = "https://play.google.com/store/apps/details?id=studio.brunocasamassa.ajudaquioficial";
@@ -94,11 +91,22 @@ public class GrupoAbertoActivity extends AppCompatActivity {
     private String ajudaquimail = Base64Decoder.encoderBase64("ajudaquisuporte@gmail.com");
     private String ajudaquipass = Base64Decoder.encoderBase64("ajudaqui931931931");
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_grupo_aberto);
         Preferences preferences = new Preferences(getApplicationContext());
         userName = preferences.getNome();
@@ -113,20 +121,21 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         if (extra != null) {
             System.out.println("userName " + userName);
             grupo.setOpened(extra.getBoolean("isOpened"));
-            grupo.setIdAdms(extra.getStringArrayList("idAdmins"));
+            grupo.setIdAdms(extra.getStringArrayList("adminsList"));
             grupo.setDescricao(extra.getString("descricao"));
             grupo.setNome(extra.getString("nome"));
             grupo.setId(extra.getString("groupId"));
             grupo.setQtdMembros(Integer.valueOf(extra.getString("qtdmembros")));
             System.out.println("DESCRICAO 1 "+ grupo.getDescricao());
-
         }
 
         groupKey = extra.getString("groupId").toString();
         System.out.println("group Name bundleded " + extra.getString("nome").toString());
 
         listaAdmins = new ArrayList<>();
-        listaAdmins.addAll(extra.getStringArrayList("adminsList"));
+        if(extra.getStringArrayList("adminsList") != null) {
+            listaAdmins.addAll(extra.getStringArrayList("adminsList"));
+        }
 
         isOpened = extra.getBoolean("isOpened");
         premium = extra.getInt("premium");
@@ -327,8 +336,29 @@ public class GrupoAbertoActivity extends AppCompatActivity {
         invite.setPositiveButton("Alterar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                dbGroup.child(grupo.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Grupo group = dataSnapshot.getValue(Grupo.class);
+                        group.setDescricao(editText.getText().toString());
+                        group.save();
 
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            Toasty.custom(getApplicationContext(), "Descrição alterada com sucesso", getDrawable(R.drawable.logo),
+                                    Color.argb(255, 27, 77, 183), Toast.LENGTH_SHORT, true, true).show();
+                        } else
+                            Toast.makeText(getApplicationContext(), " Descrição alterada com sucesso", Toast.LENGTH_SHORT).show();
+                        finish();
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
+
         }).setNegativeButton("Nao", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -469,6 +499,7 @@ public class GrupoAbertoActivity extends AppCompatActivity {
                     email.m = new Mail(Base64Decoder.decoderBase64(ajudaquimail), Base64Decoder.decoderBase64(ajudaquipass));
                     email.m.set_from("ajudaquisuporte@gmail.com");
                     email.m.setBody("Seu amigo " + userName + " Te convida para participar do Aplicativo Ajudaqui, verifique também o grupo " + groupName + " para que possam compartilhar de suas ajudas: \n\n LINK PARA O APP:\n " + link);
+                    email.m.get_multipart();
                     email.m.set_to(recipients);
                     email.m.set_subject("AJUDAQUI - CONVITE");
                     email.execute();

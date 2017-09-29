@@ -3,6 +3,8 @@ package studio.brunocasamassa.ajudaquioficial;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -11,14 +13,15 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.AccessToken;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -33,7 +36,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
@@ -50,24 +52,20 @@ import studio.brunocasamassa.ajudaquioficial.payment.TermosActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ProfileTracker mProfileTracker;
     private ImageButton cadastrar;
     private ImageButton login;
     private LoginButton btnLogin;
     private CallbackManager callbackManager;
-    private static String userId;
-    private static FirebaseAuth autenticacao;
+    private FirebaseAuth autenticacao;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference firebaseDatabase;
     private StorageReference storage;
-    private MyFirebaseInstanceIdService md = new MyFirebaseInstanceIdService();
-    private static String userName;
-    private User pivotUsuario = new User();
-    public static LoginResult lr;
-    public static User usuario = new User();
-    public String facebookImg;
+    private MyFirebaseInstanceIdService md;
+    private TextView version;
     private ProgressDialog progress = null;
-    private boolean trigger = false;
+    public User usuario;
+    public String facebookImg;
+
 
     @Override
     public void onStart() {
@@ -91,19 +89,19 @@ public class MainActivity extends AppCompatActivity {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             ConnectivityManager conMgr2 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             //verify if user db structure really exist
-            progress = ProgressDialog.show(this, "Aguarde...",
-                    "Verificando dados do usuario", true);
+
 
             if (conMgr2.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
                     && conMgr2.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
 
                 Toast.makeText(getApplicationContext(), "Sem conexao com a internet", Toast.LENGTH_SHORT).show();
-                progress.dismiss();
+                if (progress != null) {
+                    progress.dismiss();
+                }
             }
         }
 
     }
-
 
     // ...
     @Override
@@ -111,60 +109,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*ArrayList<String> arrayTags = new ArrayList<>();
 
-        String sdcard = "/storage/emulated/tags.txt" ;
-        AssetManager am = getApplicationContext().getAssets();
-        InputStream is = null;
-        try {
-            is = am.open("tags.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-//Get the text file
-        File file = new File(sdcard);
-
-        Log.e("TAG", String.valueOf(file.length()));
-//Read text from file
-        StringBuilder text = new StringBuilder();
-        try {
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            String line;
-
-            while ((line = br.readLine()) != null) {
-
-                arrayTags.add(arrayTags.size(), line);
-                Log.e("TAG",line);
-            }
-
-
-            final DatabaseReference emergencyCall = FirebaseConfig.getFireBase().child("tags");
-            emergencyCall.child("Categorias").setValue(arrayTags);
-
-
-            br.close();
-        } catch (IOException e) {
-            Log.e("TAG",e.toString());
-            //You'll need to add proper error handling here
-        }*/
-
-
-
-
-
-      /*  //Determine screen size
-        if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
-            Toast.makeText(this, "Large screen", Toast.LENGTH_LONG).show();
-        } else if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
-            Toast.makeText(this, "Normal sized screen", Toast.LENGTH_LONG).show();
-        } else if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) {
-            Toast.makeText(this, "Small sized screen", Toast.LENGTH_LONG).show();
-        } else if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
-            Toast.makeText(this, "Xlarge sized screen", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "Screen size is neither large, normal or small", Toast.LENGTH_LONG).show();
-        }*/
 
         ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         //verify connection and check version
@@ -180,90 +125,104 @@ public class MainActivity extends AppCompatActivity {
 
         storage = FirebaseConfig.getFirebaseStorage().child("userImages");
 
+        freeMemory();
+
         firebaseDatabase = FirebaseConfig.getFireBase().child("usuarios");
         final Preferences preferencias = new Preferences(MainActivity.this);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                final FirebaseUser authUser = firebaseAuth.getCurrentUser();
                 System.out.println("usuario conectado: " + firebaseAuth.getCurrentUser());
                 try {
+                    final FirebaseUser authUser = firebaseAuth.getCurrentUser();
+                       /* progress = ProgressDialog.show(MainActivity.this, "Aguarde...",
+                                "Verificando dados do usuario", true);*/
                     if (authUser != null) {
-
                         DatabaseReference firebase = FirebaseConfig.getFireBase().child("usuarios").child(Base64Decoder.encoderBase64(authUser.getEmail()));
                         System.out.println("main email " + authUser.getEmail());
                         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                User user = dataSnapshot.getValue(User.class);
-                                if (user == null) {
+                                try {
+                                    User user = dataSnapshot.getValue(User.class);
+                                    if (user == null) {
 
-                                    if (progress != null) {
-                                        progress.dismiss();
-                                    }
-
-                                    LoginManager.getInstance().logOut();
-                                    Toast.makeText(getApplicationContext(), "Falha no login, por favor entre novamente ", Toast.LENGTH_SHORT).show();
-                                    //refresh();
-
-                                } else {
-
-                                    pivotUsuario.setName(user.getName());
-                                    pivotUsuario.setEmail(user.getEmail());
-                                    System.out.println("usernAME " + userName);
-                                    preferencias.saveData(Base64Decoder.encoderBase64(pivotUsuario.getEmail()), pivotUsuario.getName());
-
-                                    if (user.getSenha() != null) {
-                                        preferencias.saveLogin(user.getEmail(), user.getSenha());
-                                    }
-
-                                    Toast.makeText(getApplicationContext(), "Bem vindo " + preferencias.getNome(), Toast.LENGTH_SHORT).show();
-
-                                    String savedToken = preferencias.getToken();
-
-                                    String token = FirebaseInstanceId.getInstance().getToken();
-
-                                    SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z");
-                                    format.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
-                                    String currentTime = format.format(new Date());
-
-                                    ArrayList<String> entradas = new ArrayList<String>();
-
-                                    if (currentTime != null) {
-                                        if (user.getEntradas() != null) {
-                                            entradas.addAll(user.getEntradas());
-                                            entradas.add(entradas.size(), currentTime);
-                                            user.setEntradas(entradas);
-                                        } else {
-                                            entradas.add(0, currentTime);
-                                            user.setEntradas(entradas);
+                                        if (progress != null) {
+                                            progress.dismiss();
                                         }
-                                        user.save();
-                                    }
-                                    md.onTokenRefresh();
-                                /*if (token != savedToken) {
-                                    md.sendRegistrationToServer(token);
-                                } else md.sendRegistrationToServer(savedToken);*/
 
-                                    System.out.println("usuario name " + usuario.getName());
-                                    if (progress != null) {
-                                        progress.dismiss();
-                                    }
+                                        LoginManager.getInstance().logOut();
+                                        Toast.makeText(getApplicationContext(), "Falha no login, por favor entre novamente ", Toast.LENGTH_SHORT).show();
 
-                                    //Toast.makeText(getApplicationContext(), currentTime, Toast.LENGTH_SHORT).show();
-                                    Intent termos = new Intent(MainActivity.this, TermosActivity.class);
-                                    Intent intent = new Intent(MainActivity.this, PedidosActivity.class);
-                                    try {
-                                        if (!user.isTermosAceitos()) {
-                                            termos.putExtra("cameFrom", 0);
-                                            startActivity(termos);
-                                        } else startActivity(intent);
-                                    } catch (Exception e) {
-                                        startActivity(intent);
+                                    } else {
+
+
+                                        try {
+                                            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                                                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+                                        } catch (Exception e){
+                                            System.out.println("error in freezing window "+ e);
+                                        };
+
+                                        preferencias.saveData(Base64Decoder.encoderBase64(user.getEmail()), user.getName());
+
+                                        if (user.getSenha() != null) {
+                                            preferencias.saveLogin(user.getEmail(), user.getSenha());
+                                        }
+
+                                        SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z");
+                                        format.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
+                                        String currentTime = format.format(new Date());
+
+                                        ArrayList<String> entradas = new ArrayList<String>();
+
+                                        if (currentTime != null) {
+                                            if (user.getEntradas() != null) {
+                                                entradas.addAll(user.getEntradas());
+                                                entradas.add(entradas.size(), currentTime);
+                                            } else {
+                                                entradas.add(0, currentTime);
+                                            }
+                                            user.setEntradas(entradas);
+                                            user.setMaxDistance(30);
+                                            user.save();
+                                        }
+                                        md = new MyFirebaseInstanceIdService();
+                                        md.onTokenRefresh();
+
+                                        //Toast.makeText(getApplicationContext(), currentTime, Toast.LENGTH_SHORT).show();
+                                        Intent termos = new Intent(MainActivity.this, TermosActivity.class);
+                                        Intent intent = new Intent(MainActivity.this, PedidosActivity.class);
+                                        termos.putExtra("cameFrom", 0);
+
+                                        try {
+                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                            if (!user.isTermosAceitos()) {
+                                                startActivity(termos);
+                                            } else {
+                                                Toast.makeText(getApplicationContext(), "Bem vindo " + preferencias.getNome(), Toast.LENGTH_SHORT).show();
+
+                                                startActivity(intent);
+                                            }
+                                        } catch (Exception e) {
+                                            //Toast.makeText(getApplicationContext(), "Bem vindo " + preferencias.getNome(), Toast.LENGTH_SHORT).show();
+
+                                            startActivity(intent);
+                                        }
+
                                     }
                                     //Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
+                                } catch (Exception e) {
+                                    System.out.println("Error catch user in Main Activity: "+e);
                                 }
+                                    if (progress != null) {
+                                        progress.dismiss();
+                                    }
+
+
+
                             }
 
                             @Override
@@ -278,6 +237,9 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("OUT", "onAuthStateChanged:signed_out");
                     }
                 } catch (Exception e) {
+                    if (progress != null) {
+                        progress.dismiss();
+                    }
                     System.out.println("EXCEPTION " + e);
                 }
                 // ...
@@ -287,6 +249,16 @@ public class MainActivity extends AppCompatActivity {
 
         cadastrar = (ImageButton) findViewById(R.id.entrar);
         login = (ImageButton) findViewById(R.id.loginButton);
+
+        version = (TextView) findViewById(R.id.version_view);
+
+        try {
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
+            String versionName = pInfo.versionName;
+            version.setText("version: "+ versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
         cadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -304,9 +276,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         callbackManager = CallbackManager.Factory.create();
-
 
         btnLogin = (LoginButton) findViewById(R.id.login_button);
 
@@ -318,6 +288,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(final LoginResult loginResult) {
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 System.out.println("MESSAGE Sucesso no callback, integrando com o firebase, login result >>>>  " + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
                 preferencias.saveAccessToken(loginResult.getAccessToken());
@@ -326,12 +298,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCancel() {
                 System.out.println("cancelede");
+
             }
 
             @Override
             public void onError(FacebookException error) {
                 System.out.println("erro no callback" + error);
-
             }
 
         })
@@ -374,10 +346,11 @@ public class MainActivity extends AppCompatActivity {
                                     if (!dataSnapshot.child(encodedFacebookEmailUser).exists()) {
                                         System.out.println("CRIANDO USUARIO NO DATABASSE");
                                         // FirebaseUser usuarioFireBase = task.getResult().getUser();
+                                        usuario = new User();
                                         usuario.setName(name);
                                         usuario.setTermosAceitos(false);
                                         usuario.setPremiumUser(1);
-                                        usuario.setMaxDistance(10);
+                                        usuario.setMaxDistance(30);
                                         usuario.setProfileImg(photo.toString());
                                         usuario.setEmail(email);
                                         usuario.setId(encodedFacebookEmailUser.toString());
@@ -425,6 +398,9 @@ public class MainActivity extends AppCompatActivity {
                             System.out.println("erro login firebase " + task.getException().toString());
                             Toast.makeText(MainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
+                            if (progress != null) {
+                                progress.dismiss();
+                            }
                         }
 
                     }
@@ -466,7 +442,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
     }
-
+    public void freeMemory(){
+        System.runFinalization();
+        Runtime.getRuntime().gc();
+        System.gc();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -477,3 +457,43 @@ public class MainActivity extends AppCompatActivity {
 
 }
 
+
+       /* ArrayList<String> arrayTags = new ArrayList<>();
+
+        String sdcard = "/storage/emulated/tags.txt" ;
+        AssetManager am = getApplicationContext().getAssets();
+        InputStream is = null;
+        try {
+            is = am.open("tags.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//Get the text file
+        File file = new File(sdcard);
+
+        Log.e("TAG", String.valueOf(file.length()));
+//Read text from file
+        StringBuilder text = new StringBuilder();
+        try {
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+
+                if(!arrayTags.contains(line)){
+                arrayTags.add(arrayTags.size(), line);
+                Log.e("TAG",line);}
+            }
+
+            final DatabaseReference emergencyCall = FirebaseConfig.getFireBase().child("tags");
+            emergencyCall.child("Categorias").setValue(arrayTags);
+
+            br.close();
+        } catch (IOException e) {
+            Log.e("TAG",e.toString());
+            //You'll need to add proper error handling here
+        }
+
+*/

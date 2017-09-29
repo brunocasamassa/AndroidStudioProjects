@@ -1,5 +1,6 @@
 package studio.brunocasamassa.ajudaquioficial;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -7,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,6 +40,7 @@ import java.util.concurrent.ExecutionException;
 import im.delight.android.location.SimpleLocation;
 import studio.brunocasamassa.ajudaquioficial.helper.Base64Decoder;
 import studio.brunocasamassa.ajudaquioficial.helper.FirebaseConfig;
+import studio.brunocasamassa.ajudaquioficial.helper.ModelLatLong;
 import studio.brunocasamassa.ajudaquioficial.helper.NavigationDrawer;
 import studio.brunocasamassa.ajudaquioficial.helper.Pedido;
 import studio.brunocasamassa.ajudaquioficial.helper.PedidosTabAdapter;
@@ -55,39 +56,29 @@ import studio.brunocasamassa.ajudaquioficial.helper.User;
  */
 
 public class PedidosActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
-    private Toolbar toolbar, searchToolbar;
-    private MenuItem action_search;
-    private Menu search_menu;
+    private Toolbar toolbar;
     private ListView listview_nomes;
     private ViewPager viewPager;
     private ArrayAdapter<Pedido> arrayAdapter;
     private ArrayAdapter<Pedido> arrayEscolhidosAdapter;
     private ArrayAdapter<Pedido> arrayMeusPedidosAdapter;
     private SlidingTabLayout slidingTabLayout;
-    private int premium;
     private AlertDialog.Builder alertDialog;
     private String userKey = Base64Decoder.encoderBase64(FirebaseConfig.getFirebaseAuthentication().getCurrentUser().getEmail());
     private SimpleLocation localizacao;
-    private User usuario;
     private String[] permissoesNecessarias = new String[]{
-            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
     };
+
     private String versionFromDb;
-    private Double latitude = 0.0;
+    private Double latitude;
     //private FusedLocationProviderClient mFusedLocationClient;
-    private Double longitude = 0.0;
-    private Location location;
+    private Double longitude;
     private static NavigationDrawer navigator = new NavigationDrawer();
     private FloatingActionButton fab;
-    private DatabaseReference dbUser;
     private DatabaseReference getLocalization;
-    private ValueEventListener localizationListener;
-    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
-    private String keyWord = null;
-    private boolean trigger = true;
-    private ArrayList<String> filter;
-    private String currentTime = null;
 
     @Override
     protected void onStart() {
@@ -99,7 +90,9 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
     @Override
     protected void onResume() {
         super.onResume();
-    /*    localizacao.beginUpdates();
+
+
+    /*
 
 
         localizacao.setListener(new SimpleLocation.Listener() {
@@ -127,8 +120,6 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
     protected void onDestroy() {
         super.onDestroy();
         localizacao.endUpdates();
-
-
     }
 
     @Override
@@ -145,18 +136,51 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hello);
 
+        freeMemory();
+
+/*        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+
+        Toast.makeText(getApplicationContext(),width +"  :  "+height,Toast.LENGTH_SHORT  ).show();
+*/
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        final Intent intent = new Intent(PedidosActivity.this, CriaPedidoActivity.class);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("latitude "+latitude);
+                if (latitude == null) {
+                    Toast.makeText(getApplicationContext(), "Você deve permitir o uso de geolocalização", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    // System.out.println("PREMIUM PASSA" + premiumUser);
+                    intent.putExtra("premium", 1);
+                    intent.putExtra("creditos", 1);
+                    intent.putExtra("latitude", latitude);
+                    intent.putExtra("longitude", longitude);
+                    startActivity(intent);
+
+                }
+
+            }
+        });
+
 
         localizacao = new SimpleLocation(PedidosActivity.this);
 
-        localizacao.beginUpdates();
         boolean permissao = Permissao.validaPermissoes(1, PedidosActivity.this, permissoesNecessarias);
 
         if (permissao) {
             // if we can't access the location yet
-
             if (!localizacao.hasLocationEnabled()) {
                 // ask the user to enable location access
                 SimpleLocation.openSettings(PedidosActivity.this);
+                System.out.println("ENTREI NAO tem permissao");
 
                 /*location = new Location();
                 location.setLatitude(localizacao.getLatitude());
@@ -164,10 +188,13 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
                 latitude = localizacao.getLatitude();
                 longitude = localizacao.getLongitude();
 
-                makeUseOfNewLocation(latitude, longitude);
+                makeUseOfNewLocation(
+                        latitude,
+                        longitude);
 
             } else if (localizacao.hasLocationEnabled()) {
                 //SimpleLocation.openSettings(PedidosActivity.this);
+                localizacao.beginUpdates();
 
                 // SimpleLocation.openSettings(PedidosActivity.this);
 
@@ -178,8 +205,55 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
 
                 makeUseOfNewLocation(latitude, longitude);
 
+//                final Intent intent = new Intent(PedidosActivity.this, CriaPedidoActivity.class);
+
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                    System.out.println("latitude "+latitude);
+                        if (latitude == null) {
+                            Toast.makeText(getApplicationContext(), "Você deve permitir o uso de geolocalização", Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            // System.out.println("PREMIUM PASSA" + premiumUser);
+                            intent.putExtra("premium", 1);
+                            intent.putExtra("creditos", 1);
+                            intent.putExtra("latitude", latitude);
+                            intent.putExtra("longitude", longitude);
+                            startActivity(intent);
+
+                        }
+
+                    }
+                });
+
             }
         }
+
+/*
+
+        final Intent intent = new Intent(PedidosActivity.this, CriaPedidoActivity.class);
+
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // System.out.println("PREMIUM PASSA" + premiumUser);
+                intent.putExtra("premium", 1);
+                intent.putExtra("creditos", 1);
+                intent.putExtra("latitude", latitude);
+                intent.putExtra("longitude", longitude);
+
+                if(latitude == null){
+                    Toast.makeText(getBaseContext(), "Você deve permitir o uso de geolocalização", Toast.LENGTH_SHORT);
+                } else{
+                    startActivity(intent);
+                }
+
+            }
+        });
+*/
+
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_principal_configuracoes);
         toolbar.setTitle(getResources().getString(R.string.menu_pedidos));
@@ -217,7 +291,6 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
 
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -289,7 +362,6 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
                 return true;
 
             case R.id.item_search:
-
                 SearchManager searchManager = (SearchManager)
                         getSystemService(Context.SEARCH_SERVICE);
 
@@ -321,7 +393,6 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
         arrayAdapter = getArrayAdapter();
         arrayAdapter.getFilter().filter(newText);
         arrayAdapter.notifyDataSetChanged();
-
 
         arrayEscolhidosAdapter = getArrayEscolhidosAdapter();
         arrayEscolhidosAdapter.getFilter().filter(newText);
@@ -445,6 +516,16 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
     private void makeUseOfNewLocation(final Double latitude, final Double longitude) {
 
 
+        Preferences preferences = new Preferences(PedidosActivity.this);
+
+        System.out.println("MY NAME IN LOCATION " + preferences.getNome().toString());
+        ModelLatLong coord = new ModelLatLong();
+        coord.setLatitude(latitude);
+        coord.setLongitude(longitude);
+        coord.setEmail(Base64Decoder.decoderBase64(userKey));
+        DatabaseReference insertCoordValues = FirebaseConfig.getFireBase().child("coordenadas");
+        insertCoordValues.child(preferences.getNome()).setValue(coord);
+
         getLocalization = FirebaseConfig.getFireBase().child("usuarios").child(userKey);
 
         getLocalization.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -473,7 +554,6 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
                     Toast.makeText(getApplicationContext(), "Parabens, voce possui um pedido atendido", Toast.LENGTH_LONG).show();
 
                 }
-
                 final int premiumUser = user.getPremiumUser();
                 final int creditos = user.getCreditos();
                 final Intent intent = new Intent(PedidosActivity.this, CriaPedidoActivity.class);
@@ -482,16 +562,20 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
                 intent2.putExtra("latitude", latitude);
                 intent2.putExtra("longitude", longitude);
 
-                fab = (FloatingActionButton) findViewById(R.id.fab);
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        System.out.println("PREMIUM PASSA" + premiumUser);
-                        intent.putExtra("premium", premiumUser);
-                        intent.putExtra("creditos", creditos);
-                        intent.putExtra("latitude", localizacao.getLatitude());
-                        intent.putExtra("longitude", localizacao.getLongitude());
-                        startActivity(intent);
+                        System.out.println("latitude 2" + latitude);
+                        if (latitude == null) {
+                            Toast.makeText(getApplicationContext(), "Você deve permitir o uso de geolocalização", Toast.LENGTH_SHORT).show();
+                        } else {
+                            intent.putExtra("premium", premiumUser);
+                            intent.putExtra("creditos", creditos);
+                            intent.putExtra("latitude", latitude);
+                            intent.putExtra("longitude", longitude);
+                            startActivity(intent);
+                        }
+
                     }
                 });
 
@@ -507,7 +591,13 @@ public class PedidosActivity extends AppCompatActivity implements SearchView.OnQ
         });
     }
 
-    private void updatePedidosUsuarioCoordenadas (final ArrayList<String> userGuests) {
+    public void freeMemory() {
+        System.runFinalization();
+        Runtime.getRuntime().gc();
+        System.gc();
+    }
+
+    private void updatePedidosUsuarioCoordenadas(final ArrayList<String> userGuests) {
 
 //START UPDATE USER GUESTS COORDINATES
         final DatabaseReference userPedidos = FirebaseConfig.getFireBase().child("Pedidos");

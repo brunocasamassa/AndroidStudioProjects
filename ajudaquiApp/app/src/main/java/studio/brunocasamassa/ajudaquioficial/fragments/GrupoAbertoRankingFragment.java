@@ -116,6 +116,7 @@ public class GrupoAbertoRankingFragment extends Fragment {
                 arraylist_nomes.clear();
                 if (adminsList.contains(userKey)) { //admin ranking list
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        try{
                         User rankedUser = postSnapshot.getValue(User.class);
                         System.out.println("idGROUP " + idGroup);
 
@@ -123,30 +124,47 @@ public class GrupoAbertoRankingFragment extends Fragment {
                             System.out.println("user no ranking " + rankedUser.getName());
                             arraylist_nomes.add(rankedUser);
 
-                        }
-                    }
-                } else {  //non admin ranking list
-                    int cont = 1;
-
-                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        User rankedUser = postSnapshot.getValue(User.class);
-                        System.out.println("idGROUP " + idGroup);
-
-                        if (rankedUser.getGrupos() != null && rankedUser.getGrupos().contains(idGroup) && cont <= 3) {
-                            System.out.println("user no ranking " + rankedUser.getName());
-                            arraylist_nomes.add(rankedUser);
-                            cont++;
-                        } else if (rankedUser.getGrupos() != null && rankedUser.getGrupos().contains(idGroup) && rankedUser.getId().equals(userKey)) {
-                            arraylist_nomes.add(rankedUser);
-                            userPlace = cont;
-                        }
-                        cont++;
-
+                        }}
+                     catch (Exception e ){
+                         System.out.println("exception rank "+e);
+                     }
                     }
 
                     Collections.reverse(arraylist_nomes);
                     adapter_nomes.notifyDataSetChanged();
+
+                } else {  //non admin ranking list
+                    int cont = 1;
+                    ArrayList<User> userList = new ArrayList<>();
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        try{
+                        userList.add(userList.size(), postSnapshot.getValue(User.class));
+                        System.out.println("user add " + postSnapshot.getValue(User.class).getName());
+                    }catch (Exception e){
+                            System.out.println("exception rank "+e);
+                    }
+                    }
+                    Collections.reverse(userList);
+                    System.out.println("user add reversal : " + userList.get(0).getName());
+                    for (int i = 0; i < userList.size(); i++) {
+                        if (userList.get(i).getGrupos() != null && userList.get(i).getGrupos().contains(idGroup) && userList.get(i).getId().equals(userKey)) { //verify user in ranking
+                            arraylist_nomes.add(userList.get(i));
+                            userPlace = cont;
+                            cont++;
+                        } else if (userList.get(i).getGrupos() != null && userList.get(i).getGrupos().contains(idGroup) && cont <= 3) { //populate top 3
+                            System.out.println("user no ranking non admin" + userList.get(i).getName());
+                            arraylist_nomes.add(userList.get(i));
+                            cont++;
+                        } else if (userList.get(i).getGrupos() != null && userList.get(i).getGrupos().contains(idGroup)) {  //count position in ranking
+                            cont++;
+                        }
+                    }
+
+                    adapter_nomes.notifyDataSetChanged();
+
+
                 }
+
             }
 
             @Override

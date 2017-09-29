@@ -27,7 +27,6 @@ public class SobreAdapter extends ArrayAdapter {
         this.listaSobre = vector;
     }
 
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = null;

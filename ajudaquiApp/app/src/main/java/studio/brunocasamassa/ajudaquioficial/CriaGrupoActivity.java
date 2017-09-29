@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -52,6 +54,7 @@ public class CriaGrupoActivity extends AppCompatActivity {
     private EditText descricao;
     private DatabaseReference databaseGroups;
     private DatabaseReference databaseUsers;
+    private int currentapiVersion = android.os.Build.VERSION.SDK_INT;
     private Grupo grupo;
     private Switch switcher;
     private String groupId;
@@ -100,6 +103,19 @@ public class CriaGrupoActivity extends AppCompatActivity {
                 groupIsOpen = false;
             }
         });
+
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+
+        //Toast.makeText(getApplicationContext(), width +"  " + height + " "+ switcher.getTextSize(), Toast.LENGTH_SHORT).show();
+        if (currentapiVersion <= 19 && width<768) {
+            switcher.setTranslationX(Float.valueOf(50));
+
+        }
 
         img.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,7 +166,30 @@ public class CriaGrupoActivity extends AppCompatActivity {
 
 
                 }
-                else createGroup();
+                else {
+                    final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CriaGrupoActivity.this);
+
+                        alertDialog.setTitle("Criar Grupo");
+                    alertDialog.setMessage("Deseja efetuar a criação do grupo? Você não poderá excluí-lo:");
+                    alertDialog.setCancelable(false);
+                    alertDialog.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+
+                    alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            createGroup();
+                        }
+                    }).create().show();
+
+
+
+
+                }
 
             }
         });
