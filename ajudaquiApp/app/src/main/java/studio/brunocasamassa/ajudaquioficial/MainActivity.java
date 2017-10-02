@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-
         ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         //verify connection and check version
         if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
@@ -162,9 +161,10 @@ public class MainActivity extends AppCompatActivity {
                                             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                                                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-                                        } catch (Exception e){
-                                            System.out.println("error in freezing window "+ e);
-                                        };
+                                        } catch (Exception e) {
+                                            System.out.println("error in freezing window " + e);
+                                        }
+                                        ;
 
                                         preferencias.saveData(Base64Decoder.encoderBase64(user.getEmail()), user.getName());
 
@@ -186,7 +186,11 @@ public class MainActivity extends AppCompatActivity {
                                                 entradas.add(0, currentTime);
                                             }
                                             user.setEntradas(entradas);
-                                            user.setMaxDistance(30);
+
+                                            if (user.getMaxDistance() == 0) {
+                                                user.setMaxDistance(30);
+                                            }
+
                                             user.save();
                                         }
                                         md = new MyFirebaseInstanceIdService();
@@ -215,12 +219,11 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     //Log.d("IN", "onAuthStateChanged:signed_in:  " + user.getUid());
                                 } catch (Exception e) {
-                                    System.out.println("Error catch user in Main Activity: "+e);
+                                    System.out.println("Error catch user in Main Activity: " + e);
                                 }
-                                    if (progress != null) {
-                                        progress.dismiss();
-                                    }
-
+                                if (progress != null) {
+                                    progress.dismiss();
+                                }
 
 
                             }
@@ -255,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
             String versionName = pInfo.versionName;
-            version.setText("version: "+ versionName);
+            version.setText("version: " + versionName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -442,7 +445,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
     }
-    public void freeMemory(){
+
+    public void freeMemory() {
         System.runFinalization();
         Runtime.getRuntime().gc();
         System.gc();
