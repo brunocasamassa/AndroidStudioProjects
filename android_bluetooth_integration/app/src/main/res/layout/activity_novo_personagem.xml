@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_novo_personagem"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="opt2flow.com.br.magolandiaapp.Controller.NovoPersonagemActivity">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:weightSum="1"
+            android:id="@+id/linearLayout">
+
+            <TextView
+                android:text="Nome de Exibição:"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView10"
+                android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:textStyle="normal|bold"
+                android:textSize="18sp" />
+
+            <EditText
+                android:padding="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/nomeEditText"
+                android:layout_gravity="center_horizontal"
+                android:hint="Digite o nome do personagem que será exibido no aplicativo"
+                android:focusable="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginStart="20dp"
+                android:inputType="text" />
+            <TextView
+                android:text="ID:"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView11"
+                android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:textStyle="normal|bold"
+                android:textSize="18sp" />
+
+            <EditText
+                android:padding="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/idArduinoEditText"
+                android:layout_gravity="center_horizontal"
+                android:hint="Digite o ID do personagem"
+                android:focusable="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginStart="20dp"
+                android:inputType="number" />
+            <TextView
+                android:text="Nome Arduino:"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView12"
+                android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:textStyle="normal|bold"
+                android:textSize="18sp" />
+
+            <EditText
+                android:padding="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/nomeArduinoEditText"
+                android:layout_gravity="center_horizontal"
+                android:hint="Digite o nome do personagem no projeto arduino"
+                android:focusable="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginStart="20dp"
+                android:inputType="text" />
+
+            <Button
+                android:padding="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cadastrar"
+                android:textSize="20dp"
+                android:id="@+id/cadastraPersonagemButton"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="30dp"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/bright_foreground_material_dark" />
+            </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
